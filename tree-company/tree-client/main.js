@@ -215,10 +215,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. ЛОГИКА ФОРМЫ СОИСКАТЕЛЯ ---
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
-        applyForm.addEventListener('submit', (event) => {
+        applyForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            alert(translations['alert_success'][currentLang]);
-            applyForm.reset();
+            
+            // Собираем данные
+            const payload = {
+                type: 'job_application',
+                name: document.getElementById('name') ? document.getElementById('name').value : '',
+                birth_year: document.getElementById('birth_year') ? document.getElementById('birth_year').value : '',
+                experience: document.getElementById('experience') ? document.getElementById('experience').value : '',
+                phone: document.getElementById('phone') ? document.getElementById('phone').value : '',
+                profession: document.getElementById('profession') ? document.getElementById('profession').value : '',
+                price: document.getElementById('price') ? document.getElementById('price').value : '',
+                schedule: document.getElementById('schedule') ? document.getElementById('schedule').value : '',
+                employment: document.getElementById('employment') ? document.getElementById('employment').value : '',
+                message: document.getElementById('message') ? document.getElementById('message').value : ''
+            };
+
+            try {
+                // Отправляем данные на сервер Vercel
+                const response = await fetch('/api/submit-job', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert(translations['alert_success'][currentLang]);
+                    applyForm.reset();
+                } else {
+                    alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
+            }
         });
     }
 
@@ -297,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('success-modal');
         const closeModalBtn = document.getElementById('modal-close-btn');
 
-        orderForm.addEventListener('submit', (event) => {
+        orderForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             
             const checkedServices = document.querySelectorAll('.service-check:checked');
@@ -306,26 +337,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if(modal) modal.classList.add('open');
-            
-            orderForm.reset();
-            document.querySelectorAll('.calc-item.active').forEach(item => {
-                item.classList.remove('active');
-                const subtotalEl = item.querySelector('.calc-subtotal');
-                if (subtotalEl) subtotalEl.textContent = '0 ֏';
+            // Собираем данные заказа
+            const orderDetails = [];
+            checkedServices.forEach(checkbox => {
+                const item = checkbox.closest('.calc-item');
+                const name = item.querySelector('.calc-name').textContent;
+                const price = item.getAttribute('data-price');
+                const qtyInput = item.querySelector('.qty-input');
+                const otherInput = item.querySelector('input[type="text"]');
+                
+                // Если есть поле количества - берем его, если текстовое (для "Иное") - берем его, иначе 1
+                const qtyOrDetails = qtyInput ? qtyInput.value : (otherInput ? otherInput.value : 1);
+                
+                orderDetails.push({ name, price, qtyOrDetails });
             });
-            if(phoneInput) phoneInput.value = '+374 ';
-            calculateGrandTotal();
-            
-            const autoCloseTimeout = setTimeout(() => {
-                if(modal) modal.classList.remove('open');
-            }, 4500);
 
-            if(closeModalBtn) {
-                closeModalBtn.onclick = () => {
-                    clearTimeout(autoCloseTimeout);
-                    modal.classList.remove('open');
-                };
+            const grandTotal = document.getElementById('grandTotal') ? document.getElementById('grandTotal').textContent : '0 ֏';
+            const phone = document.getElementById('phone') ? document.getElementById('phone').value : '';
+            const address = document.getElementById('address') ? document.getElementById('address').value : '';
+            const message = document.getElementById('message') ? document.getElementById('message').value : '';
+
+            const payload = {
+                type: 'order',
+                services: orderDetails,
+                total: grandTotal,
+                phone,
+                address,
+                message
+            };
+
+            try {
+                // Отправляем данные на сервер Vercel
+                const response = await fetch('/api/submit-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    if(modal) modal.classList.add('open');
+                    
+                    orderForm.reset();
+                    document.querySelectorAll('.calc-item.active').forEach(item => {
+                        item.classList.remove('active');
+                        const subtotalEl = item.querySelector('.calc-subtotal');
+                        if (subtotalEl) subtotalEl.textContent = '0 ֏';
+                    });
+                    if(phoneInput) phoneInput.value = '+374 ';
+                    calculateGrandTotal();
+                    
+                    const autoCloseTimeout = setTimeout(() => {
+                        if(modal) modal.classList.remove('open');
+                    }, 4500);
+
+                    if(closeModalBtn) {
+                        closeModalBtn.onclick = () => {
+                            clearTimeout(autoCloseTimeout);
+                            modal.classList.remove('open');
+                        };
+                    }
+                } else {
+                    alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
             }
         });
     }
