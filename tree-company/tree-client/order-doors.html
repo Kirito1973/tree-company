@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TREE COMPANY - Պատվեր</title>
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TREE COMPANY">
+    <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
+
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="noise-overlay"></div>
+    <div class="ambient-glow"></div>
+
+    <div class="app-container">
+        
+        <header class="app-header">
+            <div class="header-controls">
+                <div class="lang-switcher" id="lang-switcher">
+                    <button class="lang-btn-main" id="current-lang-btn" aria-label="Выбрать язык" type="button">
+                        <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
+                    </button>
+                    <div class="lang-dropdown-content">
+                        <button type="button" class="lang-tab active" data-lang="AM" aria-label="Armenian">
+                            <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
+                        </button>
+                        <button type="button" class="lang-tab" data-lang="RU" aria-label="Russian">
+                            <img src="assets/free-icon-russia-9994030.png" alt="RU" class="lang-flag">
+                        </button>
+                        <button type="button" class="lang-tab" data-lang="EN" aria-label="English">
+                            <img src="assets/united-kingdom.png" alt="EN" class="lang-flag">
+                        </button>
+                    </div>
+                </div>
+
+                <button class="theme-btn" id="theme-btn" aria-label="Сменить тему">
+                    <span class="theme-icon" id="theme-icon"></span>
+                </button>
+            </div>
+            <div class="header-logo-container"><img src="assets/tree.svg" alt="Tree Logo" class="main-logo"></div>
+            <a href="index.html" class="nav-btn" data-i18n="btn_main">Գլխավոր<br><span>Էջ</span></a>
+        </header>
+
+        <h1 class="page-title" data-i18n="page_title">Պատվերի<br><span>ձևակերպում</span></h1>
+
+        <form id="order-form" class="form-card" action="#">
+            
+            <div class="input-group">
+                <label class="input-label" data-i18n="lbl_service">Ընտրեք ծառայությունները՝</label>
+                
+                <div class="calc-list">
+                    <div class="calc-item" data-price="13000">
+                        <label class="calc-header">
+                            <input type="checkbox" class="service-check" name="service">
+                            <div class="custom-checkbox"></div>
+                            <div class="calc-info">
+                                <span class="calc-name" data-i18n="s1_name">Միջսենյակային դռների տեղադրում</span>
+                                <span class="calc-price" data-i18n="s1_price">13,000 ֏ / հատ</span>
+                            </div>
+                        </label>
+                        <div class="calc-qty-row">
+                            <div class="qty-control">
+                                <span class="qty-label" data-i18n="qty_item">Քանակ (հատ)</span>
+                                <input type="number" class="qty-input glass-input" min="1" value="">
+                            </div>
+                            <div class="calc-subtotal">0 ֏</div>
+                        </div>
+                    </div>
+
+                    <div class="calc-item" data-price="3500">
+                        <label class="calc-header">
+                            <input type="checkbox" class="service-check" name="service">
+                            <div class="custom-checkbox"></div>
+                            <div class="calc-info">
+                                <span class="calc-name" data-i18n="s2_name">Ապամոնտաժում</span>
+                                <span class="calc-price" data-i18n="s2_price">3,500 ֏ / հատ</span>
+                            </div>
+                        </label>
+                        <div class="calc-qty-row">
+                            <div class="qty-control">
+                                <span class="qty-label" data-i18n="qty_item">Քանակ (հատ)</span>
+                                <input type="number" class="qty-input glass-input" min="1" value="">
+                            </div>
+                            <div class="calc-subtotal">0 ֏</div>
+                        </div>
+                    </div>
+
+                    <div class="calc-item" data-price="2000">
+                        <label class="calc-header">
+                            <input type="checkbox" class="service-check" name="service">
+                            <div class="custom-checkbox"></div>
+                            <div class="calc-info">
+                                <span class="calc-name" data-i18n="s3_name">Պետլիների փորում</span>
+                                <span class="calc-price" data-i18n="s3_price">2,000 ֏ / հատ</span>
+                            </div>
+                        </label>
+                        <div class="calc-qty-row">
+                            <div class="qty-control">
+                                <span class="qty-label" data-i18n="qty_item">Քանակ (հատ)</span>
+                                <input type="number" class="qty-input glass-input" min="1" value="">
+                            </div>
+                            <div class="calc-subtotal">0 ֏</div>
+                        </div>
+                    </div>
+
+                    <div class="calc-item" data-price="5000">
+                        <label class="calc-header">
+                            <input type="checkbox" class="service-check" name="service">
+                            <div class="custom-checkbox"></div>
+                            <div class="calc-info">
+                                <span class="calc-name" data-i18n="s4_name">Փականի փորում</span>
+                                <span class="calc-price" data-i18n="s4_price">5,000 ֏ / հատ</span>
+                            </div>
+                        </label>
+                        <div class="calc-qty-row">
+                            <div class="qty-control">
+                                <span class="qty-label" data-i18n="qty_item">Քանակ (հատ)</span>
+                                <input type="number" class="qty-input glass-input" min="1" value="">
+                            </div>
+                            <div class="calc-subtotal">0 ֏</div>
+                        </div>
+                    </div>
+
+                    <div class="calc-item" data-price="7500">
+                        <label class="calc-header">
+                            <input type="checkbox" class="service-check" name="service">
+                            <div class="custom-checkbox"></div>
+                            <div class="calc-info">
+                                <span class="calc-name" data-i18n="s5_name">Երեսկալի և ավելացուցիչի տեղադրում</span>
+                                <span class="calc-price" data-i18n="s5_price">7,500 ֏ / հատ</span>
+                            </div>
+                        </label>
+                        <div class="calc-qty-row">
+                            <div class="qty-control">
+                                <span class="qty-label" data-i18n="qty_item">Քանակ (հատ)</span>
+                                <input type="number" class="qty-input glass-input" min="1" value="">
+                            </div>
+                            <div class="calc-subtotal">0 ֏</div>
+                        </div>
+                    </div>
+
+                    <div class="calc-item" data-price="6000">
+                        <label class="calc-header">
+                            <input type="checkbox" class="service-check" name="service">
+                            <div class="custom-checkbox"></div>
+                            <div class="calc-info">
+                                <span class="calc-name" data-i18n="s6_name">Ջրից և խոնավությունից պաշտպանող մշակում</span>
+                                <span class="calc-price" data-i18n="s6_price">6,000 ֏ / հատ</span>
+                            </div>
+                        </label>
+                        <div class="calc-qty-row">
+                            <div class="qty-control">
+                                <span class="qty-label" data-i18n="qty_item">Քանակ (հատ)</span>
+                                <input type="number" class="qty-input glass-input" min="1" value="">
+                            </div>
+                            <div class="calc-subtotal">0 ֏</div>
+                        </div>
+                    </div>
+
+                    <div class="calc-item" data-price="0">
+                        <label class="calc-header">
+                            <input type="checkbox" class="service-check" name="service">
+                            <div class="custom-checkbox"></div>
+                            <div class="calc-info">
+                                <span class="calc-name" data-i18n="s7_name">Այլ աշխատանք</span>
+                                <span class="calc-price" data-i18n="s7_price">0 ֏</span>
+                            </div>
+                        </label>
+                        <div class="calc-qty-row">
+                            <div class="input-group" style="width: 100%; margin-bottom: 0;">
+                                <input type="text" class="glass-input" data-i18n-placeholder="pl_other" placeholder="Մանրամասնեք այստեղ...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-box">
+                <div class="total-label-wrap">
+                    <span class="total-title" data-i18n="total_title">Ընդհանուր արժեքը՝</span>
+                    <span class="total-sub" data-i18n="total_sub">* մոտավոր գին դետալների ճշգրտումից առաջ</span>
+                </div>
+                <div class="total-amount" id="grandTotal">0 ֏</div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="phone" data-i18n="lbl_phone">Հեռախոսահամար *</label>
+                <input type="tel" id="phone" class="glass-input" value="+374 " inputmode="tel" required>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="address" data-i18n="lbl_address">Հասցե (Քաղաք, փողոց) *</label>
+                <input type="text" id="address" class="glass-input" data-i18n-placeholder="pl_address" placeholder="Օրինակ՝ Երևան, Աբովյան 1" required>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" for="message" data-i18n="lbl_msg">Լրացուցիչ տեղեկություններ</label>
+                <textarea id="message" class="glass-input" data-i18n-placeholder="pl_msg" placeholder="..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn" data-i18n="submit">Ուղարկել հայտը</button>
+        </form>
+
+    </div>
+
+    <div class="modal-overlay" id="success-modal">
+        <div class="modal-content">
+            <span class="modal-icon"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+            <div class="modal-text" data-i18n="modal_msg">Մեր աշխատակիցները կկապվեն Ձեզ հետ</div>
+            <button type="button" class="submit-btn modal-close-btn" id="modal-close-btn" data-i18n="modal_close">OK</button>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

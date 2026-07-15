@@ -1,0 +1,1248 @@
+// PWA Setup
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => console.error('Ошибка SW:', err));
+    });
+}
+
+// ================= ТЕМА И НАВИГАЦИЯ =================
+function switchTab(screenId, btnElement) {
+    document.querySelectorAll('.admin-screen').forEach(scr => scr.classList.remove('active'));
+    document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+    btnElement.classList.add('active');
+    if (navigator.vibrate) navigator.vibrate(20); 
+}
+
+// Словарь переводов
+const adminTranslations = {
+    "title_orders": { "AM": "Հաճախորդների <span>պատվերներ</span>", "RU": "Заказы <span>клиентов</span>", "EN": "Client <span>Orders</span>" },
+    
+    "lbl_incoming": { "AM": "Ստացված", "RU": "Входящие", "EN": "Incoming" },
+    "filter_incoming": { "AM": "Նոր հայտեր", "RU": "Входящие", "EN": "Requests" },
+    "status_incoming": { "AM": "Սպասում է", "RU": "Ожидает", "EN": "Pending" },
+    "btn_accept_order": { "AM": "Ընդունել", "RU": "Принять", "EN": "Accept" },
+    "btn_reject_order": { "AM": "Մերժել", "RU": "Отказать", "EN": "Reject" },
+    
+    "lbl_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
+    "lbl_completed": { "AM": "Ավարտված", "RU": "Завершено", "EN": "Completed" },
+    "lbl_active_orders": { "AM": "Պատվերների ցանկ", "RU": "Список заказов", "EN": "Orders list" },
+    
+    "pl_search_order": { "AM": "Որոնել ID-ով...", "RU": "Поиск по ID, телефону...", "EN": "Search by ID, phone..." },
+    "filter_all": { "AM": "Բոլորը", "RU": "Все", "EN": "All" },
+    "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
+    "filter_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
+    "filter_completed": { "AM": "Ավարտված", "RU": "Завершенные", "EN": "Completed" },
+    
+    "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
+    "status_pending": { "AM": "Ընթացքի մեջ է", "RU": "В обработке", "EN": "Pending" },
+    "status_success": { "AM": "Ավարտված է", "RU": "Успешно", "EN": "Success" },
+    "status_cancelled": { "AM": "Չեղարկված է", "RU": "Отменен", "EN": "Cancelled" },
+
+    "btn_edit_order": { "AM": "Խմբագրել", "RU": "Изменить", "EN": "Edit" },
+    "btn_cancel_order": { "AM": "Չեղարկել", "RU": "Отменить", "EN": "Cancel" },
+    "btn_add_order": { "AM": "+ Նոր պատվեր", "RU": "+ Новый заказ", "EN": "+ New Order" },
+    
+    "lbl_client_details": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
+    "lbl_worker_details": { "AM": "Աշխատող", "RU": "Сотрудник", "EN": "Worker" },
+    "lbl_client_name": { "AM": "Անուն Ազգանուն / Имя Фамилия", "RU": "Имя Фамилия", "EN": "Full Name" },
+
+    "lbl_services": { "AM": "Ծառայություններ", "RU": "Услуги", "EN": "Services" },
+    "lbl_total": { "AM": "Ընդհանուր", "RU": "Итого", "EN": "Total" },
+    "lbl_profit": { "AM": "Շահույթ", "RU": "Прибыль", "EN": "Profit" },
+    
+    "lbl_date_created": { "AM": "Ստեղծման ամսաթիվ", "RU": "Оформлен", "EN": "Created At" },
+    "lbl_date_completed": { "AM": "Ավարտման ամսաթիվ", "RU": "Завершен", "EN": "Completed At" },
+
+    "title_employees": { "AM": "Կադրեր և <span>հայտեր</span>", "RU": "Кадры и <span>заявки</span>", "EN": "Staff and <span>Requests</span>" },
+    "sw_requests": { "AM": "Հայտեր", "RU": "Заявки", "EN": "Requests" },
+    "sw_employees": { "AM": "Աշխատողներ", "RU": "Сотрудники", "EN": "Employees" },
+    "lbl_new_masters": { "AM": "Նոր հայտեր", "RU": "Новые анкеты", "EN": "New Applications" },
+    "lbl_active_emps": { "AM": "Ակտիվ աշխատողներ", "RU": "Активные сотрудники", "EN": "Active Employees" },
+    
+    "cat_all": { "AM": "Բոլորը", "RU": "Все", "EN": "All" },
+    "cat_doors": { "AM": "Դռներ", "RU": "Двери", "EN": "Doors" },
+    "cat_electro": { "AM": "Էլեկտրիկներ", "RU": "Электрики", "EN": "Electricians" },
+    "cat_universal": { "AM": "Ունիվերսալ", "RU": "Универсальные", "EN": "Universal" },
+
+    "status_check": { "AM": "Ստուգում", "RU": "Проверка", "EN": "Checking" },
+    "status_accepted": { "AM": "Ընդունված է", "RU": "Принят", "EN": "Accepted" },
+
+    "title_finance": { "AM": "Ֆինանսական <span>վերլուծություն</span>", "RU": "Аналитика <span>финансов</span>", "EN": "Financial <span>Analytics</span>" },
+    "lbl_turnover": { "AM": "Շրջանառություն (Ամիս)", "RU": "Оборот (Мес)", "EN": "Turnover (Mo)" },
+    "lbl_income": { "AM": "Եկամուտ (15%)", "RU": "Доход (15%)", "EN": "Income (15%)" },
+    "lbl_history": { "AM": "Վճարումների պատմություն", "RU": "История начислений", "EN": "Payment History" },
+    "com_1": { "AM": "Միջնորդավճար #ORD-003", "RU": "Комиссия по #ORD-003", "EN": "Commission #ORD-003" },
+    "com_2": { "AM": "Միջնորդավճար #ORD-002", "RU": "Комиссия по #ORD-002", "EN": "Commission #ORD-002" },
+    "com_paid_1": { "AM": "Վճարված է կատարողի կողմից • Այսօր 14:12", "RU": "Оплачено исполнителем • Сегодня 14:12", "EN": "Paid by contractor • Today 14:12" },
+    "com_paid_2": { "AM": "Վճարված է կատարողի կողմից • Երեկ 18:45", "RU": "Оплачено исполнителем • Вчера 18:45", "EN": "Paid by contractor • Yday 18:45" },
+
+    "title_promo": { "AM": "Ակցիաներ և <span>բաններներ</span>", "RU": "Акции и <span>баннеры</span>", "EN": "Promotions and <span>banners</span>" },
+    "lbl_manage_promo": { "AM": "Զեղչի առաջարկի կառավարում", "RU": "Управление скидочным предложением", "EN": "Manage discount offer" },
+    "lbl_discount_pct": { "AM": "Զեղչի տոկոս (%)", "RU": "Процент скидки (%)", "EN": "Discount percentage (%)" },
+    "lbl_banner_am": { "AM": "Տեքստ բանների համար (Հայերեն)", "RU": "Текст баннера (Армянский)", "EN": "Banner text (Armenian)" },
+    "lbl_banner_ru": { "AM": "Տեքստ բանների համար (Ռուսերեն)", "RU": "Текст баннера (Русский)", "EN": "Banner text (Russian)" },
+    "lbl_banner_en": { "AM": "Տեքստ բանների համար (Անգլերեն)", "RU": "Текст баннера (Английский)", "EN": "Banner text (English)" },
+    "btn_save_promo": { "AM": "Պահպանել ակցիան", "RU": "Сохранить акцию", "EN": "Save promo" },
+
+    "title_content": { "AM": "Կոնտենտ և <span>գներ</span>", "RU": "Контент и <span>цены</span>", "EN": "Content and <span>prices</span>" },
+    "lbl_localization": { "AM": "Հավելվածի լոկալիզացիա", "RU": "Локализация приложения", "EN": "App localization" },
+    "lbl_loading": { "AM": "Բազայի բեռնում...", "RU": "Загрузка базы...", "EN": "Loading database..." },
+    "btn_save_trans": { "AM": "Պահպանել թարգմանությունները", "RU": "Сохранить переводы", "EN": "Save translations" },
+
+    "tab_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
+    "tab_employees": { "AM": "Կադրեր", "RU": "Кадры", "EN": "Staff" },
+    "tab_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
+    "tab_promo": { "AM": "Ակցիաներ", "RU": "Акции", "EN": "Promo" },
+    "tab_content": { "AM": "Բազա", "RU": "База", "EN": "Data" },
+    "admin_key_title": { "AM": "Բանալի:", "RU": "Ключ:", "EN": "Key:" }
+};
+
+let currentAdminLang = localStorage.getItem('admin_app_lang') || 'AM';
+
+function applyAdminLanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (adminTranslations[key] && adminTranslations[key][currentAdminLang]) {
+            el.innerHTML = adminTranslations[key][currentAdminLang];
+        }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        if (adminTranslations[key] && adminTranslations[key][currentAdminLang]) {
+            el.placeholder = adminTranslations[key][currentAdminLang];
+        }
+    });
+
+    document.querySelectorAll('.translation-key').forEach(el => {
+        const keyName = el.getAttribute('data-key-name');
+        if (keyName && adminTranslations['admin_key_title'][currentAdminLang]) {
+            el.innerHTML = `${adminTranslations['admin_key_title'][currentAdminLang]} ${keyName}`;
+        }
+    });
+
+    document.querySelectorAll('.lang-tab').forEach(tab => {
+        if (tab.getAttribute('data-lang') === currentAdminLang) {
+            tab.classList.add('active');
+            const btnMain = document.getElementById('current-lang-btn');
+            if(btnMain) btnMain.innerHTML = tab.innerHTML;
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+}
+
+// ================= ДАННЫЕ ЗАКАЗОВ И СОТРУДНИКОВ =================
+let ordersData = [
+    {
+        id: 'ORD-004',
+        status: 'incoming', 
+        createdAt: getCurrentDateString(),
+        completedAt: null,
+        clientName: 'Արամ Խաչատրյան',
+        clientPhone: '+374 98 123 789',
+        address: 'Երևան, Տերյան 50',
+        worker: 'Չկա (Не назначен)',
+        workerPhone: '',
+        services: [
+            { name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }
+        ],
+        profit: 500
+    },
+    {
+        id: 'ORD-003',
+        status: 'new', 
+        createdAt: '15.07.2026 10:00',
+        completedAt: null,
+        clientName: 'Գոռ Վարդանյան',
+        clientPhone: '+374 95 188 038',
+        address: 'Երևան, Աբովյան 12',
+        worker: 'Չկա (Не назначен)',
+        workerPhone: '',
+        services: [
+            { name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }
+        ],
+        profit: 3000
+    },
+    {
+        id: 'ORD-002',
+        status: 'progress',
+        createdAt: '14.07.2026 15:30',
+        completedAt: null,
+        clientName: 'Աննա Հովհաննիսյան',
+        clientPhone: '+374 91 555 444',
+        address: 'Երևան, Մաշտոցի 4',
+        worker: 'Արմեն Սարգսյան (Դռներ)',
+        workerPhone: '+374 77 999 888',
+        services: [
+            { name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, 
+            { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }
+        ],
+        profit: 2900
+    },
+    {
+        id: 'ORD-001',
+        status: 'completed',
+        createdAt: '10.07.2026 09:15',
+        completedAt: '11.07.2026 18:20',
+        clientName: 'Դավիթ Պետրոսյան',
+        clientPhone: '+374 99 123 456',
+        address: 'Երևան, Կոմիտաս 20',
+        worker: 'Գոռ Վարդանյան (Դռներ)', // Привязан к Гору
+        workerPhone: '+374 77 111 555',
+        services: [
+            { name: 'Դռների տեղադրում (MDF)', qty: 3, price: 15000, done: true }
+        ],
+        profit: 4500
+    }
+];
+
+// У одного из сотрудников ставим дату рождения на 15 июля (сегодня) для теста баннера!
+let employeesData = [
+    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 98 000 111', exp: '2 տարի / 2 года', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '654321' },
+    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456' },
+    { id: 'EMP-002', status: 'active', name: 'Կարեն Մելքոնյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 55 444 333', exp: '3 տարի / 3 года', rating: 4.5, birthDate: '02.12.1996', address: 'Երևան, Մաշտոցի 12', accessKey: '112233' },
+    { id: 'EMP-003', status: 'active', name: 'Վարդան Գրիգորյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 99 111 222', exp: '10 տարի / 10 лет', rating: 5.0, birthDate: '24.08.1985', address: 'Երևան, Աբովյան 20', accessKey: '998877' },
+    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000' }
+];
+
+let typeLabelsMap = {
+    'doors': 'Դռներ / Двери',
+    'electro': 'Էլեկտրիկ / Электрик',
+    'universal': 'Ունիվերսալ / Универсал',
+    'cleaning': 'Մաքրում / Уборка'
+};
+
+function generateOrderId() {
+    if (ordersData.length === 0) return 'ORD-001';
+    let maxId = 0;
+    ordersData.forEach(o => {
+        let num = parseInt(o.id.replace('ORD-', ''));
+        if (!isNaN(num) && num > maxId) maxId = num;
+    });
+    let nextId = maxId + 1;
+    return 'ORD-' + nextId.toString().padStart(3, '0');
+}
+
+function generateEmpId() {
+    if (employeesData.length === 0) return 'EMP-001';
+    let maxId = 0;
+    employeesData.forEach(o => {
+        let num = parseInt(o.id.replace('EMP-', ''));
+        if (!isNaN(num) && num > maxId) maxId = num;
+    });
+    let nextId = maxId + 1;
+    return 'EMP-' + nextId.toString().padStart(3, '0');
+}
+
+function getCurrentDateString() {
+    const now = new Date();
+    return String(now.getDate()).padStart(2, '0') + '.' +
+           String(now.getMonth() + 1).padStart(2, '0') + '.' +
+           now.getFullYear() + ' ' +
+           String(now.getHours()).padStart(2, '0') + ':' +
+           String(now.getMinutes()).padStart(2, '0');
+}
+
+// === ФУНКЦИЯ РАСЧЕТА ДНЕЙ ДО ДНЯ РОЖДЕНИЯ ===
+function getBirthdayInfo(dateStr) {
+    if (!dateStr || !dateStr.includes('.')) return null;
+    const parts = dateStr.split('.');
+    if (parts.length < 2) return null;
+    
+    const day = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // Месяцы в JS от 0 до 11
+    
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    
+    const currentYear = today.getFullYear();
+    let nextBday = new Date(currentYear, month, day);
+    
+    if (nextBday < today) {
+        nextBday.setFullYear(currentYear + 1);
+    }
+    
+    const diffTime = nextBday - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    const isToday = (today.getDate() === day && today.getMonth() === month);
+    
+    return {
+        isToday: isToday,
+        daysLeft: isToday ? 0 : diffDays
+    };
+}
+
+
+// ================= РЕНДЕР И ЛОГИКА =================
+let currentActiveOrderId = null;
+let currentEditingOrderId = null;
+let currentActiveEmpId = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // Настройка темы
+    const themeBtn = document.getElementById('theme-btn');
+    const themeIcon = document.getElementById('theme-icon');
+    const body = document.body;
+    let rotationDegrees = 0;
+    const savedTheme = localStorage.getItem('admin_theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) { body.classList.add('force-dark'); } else { body.classList.add('force-light'); }
+
+    const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+    const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+
+    function updateThemeIcon() {
+        if (!themeIcon) return;
+        themeIcon.innerHTML = body.classList.contains('force-dark') ? sunIcon : moonIcon;
+    }
+    updateThemeIcon();
+
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+            rotationDegrees += 360;
+            themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
+            if (body.classList.contains('force-dark')) {
+                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('admin_theme', 'dark');
+            } else {
+                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('admin_theme', 'light');
+            }
+            setTimeout(updateThemeIcon, 150); 
+        });
+    }
+
+    // Переключатель языков
+    const langSwitcher = document.getElementById('lang-switcher');
+    const currentLangBtn = document.getElementById('current-lang-btn');
+    if (currentLangBtn && langSwitcher) {
+        currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
+    }
+    document.addEventListener('click', () => { if(langSwitcher) langSwitcher.classList.remove('open'); });
+    document.querySelectorAll('.lang-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentAdminLang = tab.getAttribute('data-lang');
+            localStorage.setItem('admin_app_lang', currentAdminLang);
+            applyAdminLanguage();
+            renderOrders();
+            renderRequests();
+            renderEmployees();
+            langSwitcher.classList.remove('open');
+        });
+    });
+
+    // --- Централизованная функция переключения фильтров ЗАКАЗОВ ---
+    window.setOrderFilter = function(filterValue) {
+        const filterTabs = document.querySelectorAll('#screen-orders .filter-tab');
+        filterTabs.forEach(t => {
+            if (t.getAttribute('data-filter') === filterValue) {
+                t.classList.add('active');
+                t.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            } else {
+                t.classList.remove('active');
+            }
+        });
+        filterOrders();
+    };
+    
+    // --- Рендер списка заказов ---
+    window.renderOrders = function() {
+        const list = document.getElementById('orders-list');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        let counts = { incoming: 0, new: 0, progress: 0, completed: 0 };
+
+        ordersData.forEach(order => {
+            if (counts[order.status] !== undefined) counts[order.status]++;
+            
+            let mainTitle = order.services.length > 0 ? order.services[0].name : "Услуга не указана";
+            if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
+            
+            let statusClass = '', statusI18n = '';
+            if (order.status === 'incoming') { statusClass = 'incoming'; statusI18n = 'status_incoming'; }
+            else if (order.status === 'new') { statusClass = 'new'; statusI18n = 'status_new'; }
+            else if (order.status === 'progress') { statusClass = 'pending'; statusI18n = 'status_pending'; }
+            else if (order.status === 'completed') { statusI18n = 'status_success'; }
+            else if (order.status === 'cancelled') { statusClass = 'cancelled'; statusI18n = 'status_cancelled'; }
+
+            const card = document.createElement('div');
+            card.className = 'entity-card';
+            card.setAttribute('data-status', order.status);
+            card.onclick = () => openOrderModal(order.id);
+            
+            card.innerHTML = `
+                <div class="entity-header">
+                    <span class="entity-id">${order.id}</span>
+                    <span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span>
+                </div>
+                <div class="entity-title">${mainTitle}</div>
+                <div class="entity-meta">Անուն: ${order.clientName || '---'}</div>
+                <div class="entity-meta">Հեռախոս: ${order.clientPhone}</div>
+                <div class="entity-meta">Հասցե: ${order.address}</div>
+            `;
+            list.appendChild(card);
+        });
+
+        document.getElementById('count-incoming').innerText = counts.incoming;
+        document.getElementById('count-new').innerText = counts.new;
+        document.getElementById('count-progress').innerText = counts.progress;
+        document.getElementById('count-completed').innerText = counts.completed;
+
+        applyAdminLanguage();
+        filterOrders();
+    };
+
+    // --- Поиск и фильтрация ЗАКАЗОВ ---
+    const searchInput = document.getElementById('order-search');
+    window.filterOrders = function() {
+        if(!searchInput) return;
+        const searchTerm = searchInput.value.toLowerCase();
+        const activeTab = document.querySelector('#screen-orders .filter-tab.active');
+        if (!activeTab) return;
+        
+        const activeFilter = activeTab.getAttribute('data-filter');
+        const orderCards = document.querySelectorAll('#orders-list .entity-card');
+
+        orderCards.forEach(card => {
+            const text = card.innerText.toLowerCase();
+            const status = card.getAttribute('data-status');
+            const matchesSearch = text.includes(searchTerm);
+            const matchesFilter = activeFilter === 'all' || status === activeFilter;
+            const isCancelled = status === 'cancelled';
+
+            if (isCancelled && activeFilter !== 'all' && searchTerm === '') {
+                card.style.display = 'none';
+            } else {
+                card.style.display = (matchesSearch && matchesFilter) ? 'flex' : 'none';
+            }
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterOrders);
+    
+    window.toggleServiceStatus = function(orderId, serviceIndex, checkboxElem) {
+        const order = ordersData.find(o => o.id === orderId);
+        if (order && order.services[serviceIndex]) {
+            order.services[serviceIndex].done = checkboxElem.checked;
+            const label = checkboxElem.closest('.service-item-static');
+            if (checkboxElem.checked) {
+                label.classList.add('done');
+            } else {
+                label.classList.remove('done');
+            }
+            if (navigator.vibrate) navigator.vibrate(10);
+        }
+    };
+
+
+    // ================= ЛОГИКА СОТРУДНИКОВ (КАДРЫ) =================
+    
+    window.switchEmpView = function(viewName) {
+        document.querySelectorAll('.view-switch-btn').forEach(btn => btn.classList.remove('active'));
+        
+        if (viewName === 'requests') {
+            document.querySelector('[data-i18n="sw_requests"]').classList.add('active');
+            document.getElementById('view-requests').style.display = 'block';
+            document.getElementById('view-employees').style.display = 'none';
+            renderRequests();
+        } else {
+            document.querySelector('[data-i18n="sw_employees"]').classList.add('active');
+            document.getElementById('view-requests').style.display = 'none';
+            document.getElementById('view-employees').style.display = 'block';
+            renderEmployees();
+        }
+        if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    window.setEmpFilter = function(filterValue) {
+        const filterTabs = document.querySelectorAll('#view-employees .filter-tab');
+        filterTabs.forEach(t => {
+            if (t.getAttribute('data-emp-filter') === filterValue) {
+                t.classList.add('active');
+                t.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            } else {
+                t.classList.remove('active');
+            }
+        });
+        renderEmployees();
+    };
+
+    const empSearchInput = document.getElementById('employee-search');
+    window.filterEmployees = function() {
+        renderEmployees();
+    };
+    if (empSearchInput) empSearchInput.addEventListener('input', filterEmployees);
+
+    // Отрисовка ЗАЯВОК (Входящих анкет)
+    window.renderRequests = function() {
+        const list = document.getElementById('candidates-list');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        const requests = employeesData.filter(e => e.status === 'pending');
+        requests.forEach(emp => {
+            const card = document.createElement('div');
+            card.className = 'entity-card';
+            card.onclick = () => openEmployeeModal(emp.id);
+            card.innerHTML = `
+                <div class="entity-header">
+                    <span class="entity-id">${emp.id}</span>
+                    <span class="entity-status pending" data-i18n="status_check">Ստուգում</span>
+                </div>
+                <div class="entity-title">${emp.name}</div>
+                <div class="entity-meta">
+                    <span>Մասն.: ${emp.typeLabel.split(' / ')[0]}</span>
+                </div>
+                <div class="entity-meta">
+                    <span>Փորձ: ${emp.exp.split('/')[0].trim()}</span>
+                </div>
+                <div class="entity-meta" style="margin-top: 4px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text);">${emp.phone}</span>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+        applyAdminLanguage();
+    }
+
+    // Отрисовка АКТИВНЫХ СОТРУДНИКОВ
+    window.renderEmployees = function() {
+        const list = document.getElementById('employees-list');
+        if (!list) return;
+        list.innerHTML = '';
+        
+        const activeTab = document.querySelector('#view-employees .filter-tab.active');
+        const activeFilter = activeTab ? activeTab.getAttribute('data-emp-filter') : 'all';
+        const empSearchTerm = empSearchInput ? empSearchInput.value.toLowerCase() : '';
+
+        const actives = employeesData.filter(e => e.status === 'active');
+        
+        // Массив тех, у кого сегодня ДР для баннера
+        const bdayEmployees = [];
+
+        actives.forEach(emp => {
+            const matchesFilter = activeFilter === 'all' || emp.type === activeFilter;
+            const textToSearch = (emp.name + " " + emp.phone + " " + emp.typeLabel).toLowerCase();
+            const matchesSearch = textToSearch.includes(empSearchTerm);
+            
+            const bdayInfo = getBirthdayInfo(emp.birthDate);
+            if (bdayInfo && bdayInfo.isToday) {
+                bdayEmployees.push(emp.name);
+            }
+
+            if (!matchesFilter || !matchesSearch) return;
+
+            let bdayHtml = '';
+            if (bdayInfo) {
+                if (bdayInfo.isToday) {
+                    bdayHtml = `<div style="color: #FFB347; font-weight: 800; font-size: 10px; margin-top: 6px; display: flex; align-items: center; gap: 4px;">🎉 Այսօր ծննդյան օրն է (С Днем Рождения!)</div>`;
+                } else {
+                    bdayHtml = `<div style="color: var(--text-sec); font-weight: 600; font-size: 9px; margin-top: 6px;">🎂 Ծննդ.՝ ${bdayInfo.daysLeft} օրից (ДР через: ${bdayInfo.daysLeft} дн.)</div>`;
+                }
+            }
+
+            const card = document.createElement('div');
+            card.className = 'entity-card';
+            card.onclick = () => openEmployeeModal(emp.id); 
+            card.innerHTML = `
+                <div class="entity-header">
+                    <span class="entity-id">${emp.id}</span>
+                    <div class="rating-badge">★ ${emp.rating}</div>
+                </div>
+                <div class="entity-title">${emp.name}</div>
+                <div class="entity-meta">
+                    <span>Մասն.: ${emp.typeLabel.split(' / ')[0]}</span>
+                </div>
+                <div class="entity-meta">
+                    <span>Փորձ: ${emp.exp.split('/')[0].trim()}</span>
+                </div>
+                ${bdayHtml}
+                <div class="entity-meta" style="margin-top: 4px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;">
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text);">${emp.phone}</span>
+                    <button class="call-btn" style="width: 26px; height: 26px;" onclick="event.stopPropagation(); window.location.href='tel:${emp.phone.replace(/[^\d+]/g, '')}'">
+                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    </button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+
+        // Управление Баннером Дня Рождения
+        const bannerContainer = document.getElementById('bday-banner-container');
+        if (bannerContainer) {
+            if (bdayEmployees.length > 0) {
+                const namesText = bdayEmployees.join(', ');
+                bannerContainer.innerHTML = `
+                    <div class="glass-panel" style="background: rgba(255, 179, 71, 0.15); border: 1px solid #FFB347; margin-bottom: 12px; padding: 12px; display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 28px; line-height: 1;">🎉</span>
+                        <div>
+                            <div style="font-weight: 900; font-size: 13px; color: #FFB347; margin-bottom: 2px;">ԾՆՆԴՅԱՆ ՕՐ! (ДЕНЬ РОЖДЕНИЯ!)</div>
+                            <div style="font-size: 11px; font-weight: 600; color: var(--text);">Այսօր իրենց ծննդյան օրն են նշում՝ <br><b>${namesText}</b></div>
+                        </div>
+                    </div>
+                `;
+                bannerContainer.style.display = 'block';
+            } else {
+                bannerContainer.style.display = 'none';
+            }
+        }
+
+        applyAdminLanguage();
+    }
+
+    // --- Модальное окно просмотра СОТРУДНИКА ---
+    window.openEmployeeModal = function(empId) {
+        currentActiveEmpId = empId;
+        const emp = employeesData.find(e => e.id === empId);
+        if (!emp) return;
+
+        document.getElementById('modal-emp-id').innerText = emp.id;
+        document.getElementById('modal-emp-type').innerText = emp.typeLabel.split(' / ')[0]; 
+        
+        const typeBadge = document.getElementById('modal-emp-type');
+        if (emp.status === 'pending') {
+            typeBadge.style.background = 'rgba(255, 179, 71, 0.15)';
+            typeBadge.style.color = '#FFB347';
+        } else {
+            typeBadge.style.background = 'rgba(31, 150, 81, 0.15)';
+            typeBadge.style.color = 'var(--tree-light)';
+        }
+
+        document.getElementById('modal-emp-name').innerText = emp.name;
+        document.getElementById('modal-emp-access-key').innerText = emp.accessKey || '------';
+        document.getElementById('modal-emp-birth').innerText = emp.birthDate || '---';
+        
+        // Отрисовка Обратного отсчета до ДР
+        const bdayInfo = getBirthdayInfo(emp.birthDate);
+        const bdayRow = document.getElementById('modal-emp-bday-row');
+        const bdayCountdown = document.getElementById('modal-emp-bday-countdown');
+        if (bdayInfo) {
+            bdayRow.style.display = 'flex';
+            if (bdayInfo.isToday) {
+                bdayCountdown.innerHTML = `<span style="color: #FFB347; font-weight: 900; font-size: 14px;">🎉 ԱՅՍՕՐ Է! (СЕГОДНЯ!)</span>`;
+            } else {
+                bdayCountdown.innerText = `${bdayInfo.daysLeft} օրից (через ${bdayInfo.daysLeft} дн.)`;
+            }
+        } else {
+            bdayRow.style.display = 'none';
+        }
+
+        document.getElementById('modal-emp-phone-text').innerText = emp.phone;
+        
+        const phoneLink = document.getElementById('modal-emp-phone-link');
+        if (emp.phone) {
+            phoneLink.style.display = 'flex';
+            phoneLink.href = `tel:${emp.phone.replace(/[^\d+]/g, '')}`;
+        } else {
+            phoneLink.style.display = 'none';
+        }
+
+        document.getElementById('modal-emp-address').innerText = emp.address || '---';
+        document.getElementById('modal-emp-exp').innerText = emp.exp.split('/')[0].trim();
+        document.getElementById('modal-emp-rating').innerText = `★ ${emp.rating.toFixed(1)}`;
+
+        // Логика Заказов сотрудника
+        const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name));
+        document.getElementById('modal-emp-orders-count').innerText = empOrders.length;
+        
+        const ordersListDiv = document.getElementById('modal-emp-orders-list');
+        ordersListDiv.innerHTML = '';
+        ordersListDiv.classList.remove('open'); 
+
+        if (empOrders.length > 0) {
+            empOrders.forEach(o => {
+                let statColor = '#9BAA9E';
+                if(o.status === 'completed') statColor = 'var(--tree-light)';
+                if(o.status === 'progress') statColor = '#FFB347';
+                
+                ordersListDiv.innerHTML += `
+                    <div class="emp-order-item" onclick="closeEmployeeModal(); openOrderModal('${o.id}');">
+                        <span class="emp-order-id">${o.id} - ${o.createdAt.split(' ')[0]}</span>
+                        <span class="emp-order-stat" style="color: ${statColor}; border: 1px solid ${statColor}40;">
+                            ${adminTranslations['status_'+(o.status==='progress'?'pending':o.status==='completed'?'success':o.status)][currentAdminLang]}
+                        </span>
+                    </div>
+                `;
+            });
+        } else {
+            ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Պատվերներ չկան (Нет заказов)</div>`;
+        }
+
+        // Кнопки действий
+        const btnAccept = document.getElementById('modal-emp-accept-btn');
+        const btnReject = document.getElementById('modal-emp-reject-btn');
+        const btnEdit = document.getElementById('modal-emp-edit-btn');
+
+        if (emp.status === 'pending') {
+            btnAccept.style.display = 'flex';
+            btnReject.style.display = 'flex';
+            btnEdit.style.display = 'none';
+        } else {
+            btnAccept.style.display = 'none';
+            btnReject.style.display = 'none';
+            btnEdit.style.display = 'flex';
+        }
+
+        document.getElementById('employee-modal').classList.add('active');
+        if (navigator.vibrate) navigator.vibrate(15);
+    };
+
+    window.closeEmployeeModal = function() {
+        document.getElementById('employee-modal').classList.remove('active');
+        currentActiveEmpId = null;
+    };
+
+    window.toggleEmpOrders = function() {
+        document.getElementById('modal-emp-orders-list').classList.toggle('open');
+    };
+
+    // Принять заявку сотрудника
+    window.acceptEmployee = function() {
+        if (!currentActiveEmpId) return;
+        const emp = employeesData.find(e => e.id === currentActiveEmpId);
+        if (emp) {
+            emp.status = 'active';
+            renderRequests();
+            renderEmployees();
+            closeEmployeeModal();
+            if (navigator.vibrate) navigator.vibrate(20);
+        }
+    };
+
+    // Отказать сотруднику
+    window.rejectEmployee = function() {
+        if (!currentActiveEmpId) return;
+        if (confirm("Отказать кандидату? (Մերժե՞լ դիմորդին)")) {
+            employeesData = employeesData.filter(e => e.id !== currentActiveEmpId);
+            renderRequests();
+            closeEmployeeModal();
+        }
+    };
+
+    // --- Форма редактирования СОТРУДНИКА ---
+    window.openEmployeeForm = function() {
+        const form = document.getElementById('employee-form');
+        form.reset();
+        
+        if (currentActiveEmpId) {
+            const emp = employeesData.find(e => e.id === currentActiveEmpId);
+            if (emp) {
+                document.getElementById('form-emp-name').value = emp.name;
+                document.getElementById('form-emp-phone').value = emp.phone;
+                document.getElementById('form-emp-address').value = emp.address || '';
+                document.getElementById('form-emp-birth').value = emp.birthDate || '';
+                document.getElementById('form-emp-type').value = emp.type;
+                document.getElementById('form-emp-exp').value = emp.exp ? emp.exp.split('/')[0].trim() : '';
+                document.getElementById('form-emp-access-key').value = emp.accessKey || '';
+            }
+            closeEmployeeModal();
+        }
+        
+        document.getElementById('employee-form-modal').classList.add('active');
+    };
+
+    window.closeEmployeeFormModal = function() {
+        document.getElementById('employee-form-modal').classList.remove('active');
+    };
+
+    window.saveEmployeeForm = function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('form-emp-name').value;
+        const phone = document.getElementById('form-emp-phone').value;
+        const address = document.getElementById('form-emp-address').value;
+        const birthDate = document.getElementById('form-emp-birth').value;
+        const type = document.getElementById('form-emp-type').value;
+        const exp = document.getElementById('form-emp-exp').value;
+        const accessKey = document.getElementById('form-emp-access-key').value;
+
+        if (currentActiveEmpId) {
+            const emp = employeesData.find(e => e.id === currentActiveEmpId);
+            if (emp) {
+                emp.name = name;
+                emp.phone = phone;
+                emp.address = address;
+                emp.birthDate = birthDate;
+                emp.type = type;
+                emp.typeLabel = typeLabelsMap[type] || type;
+                emp.exp = exp;
+                emp.accessKey = accessKey; 
+            }
+        } 
+
+        renderEmployees();
+        renderRequests();
+        closeEmployeeFormModal();
+        if (navigator.vibrate) navigator.vibrate(50);
+    };
+
+
+    // --- Модальное окно просмотра деталей ЗАКАЗА ---
+    window.openOrderModal = function(orderId) {
+        currentActiveOrderId = orderId;
+        const order = ordersData.find(o => o.id === orderId);
+        if (!order) return;
+
+        document.getElementById('modal-order-id').innerText = order.id;
+        const statusEl = document.getElementById('modal-order-status');
+        statusEl.className = 'entity-status';
+        
+        if (order.status === 'incoming') { statusEl.classList.add('incoming'); statusEl.setAttribute('data-i18n', 'status_incoming'); }
+        else if (order.status === 'new') { statusEl.classList.add('new'); statusEl.setAttribute('data-i18n', 'status_new'); }
+        else if (order.status === 'progress') { statusEl.classList.add('pending'); statusEl.setAttribute('data-i18n', 'status_pending'); }
+        else if (order.status === 'completed') { statusEl.setAttribute('data-i18n', 'status_success'); }
+        else if (order.status === 'cancelled') { statusEl.classList.add('cancelled'); statusEl.setAttribute('data-i18n', 'status_cancelled'); }
+
+        // Даты
+        document.getElementById('modal-date-created').innerText = order.createdAt || '---';
+        const completedWrapper = document.getElementById('modal-date-completed-wrapper');
+        if (order.status === 'completed' && order.completedAt) {
+            completedWrapper.style.display = 'flex';
+            document.getElementById('modal-date-completed').innerText = order.completedAt;
+        } else {
+            completedWrapper.style.display = 'none';
+        }
+
+        // --- БЛОК КЛИЕНТА ---
+        document.getElementById('modal-client-name').innerText = order.clientName || '---';
+        document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
+        
+        const clientCallBtn = document.getElementById('modal-client-phone-link');
+        if (order.clientPhone) {
+            clientCallBtn.style.display = 'flex';
+            clientCallBtn.href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
+        } else {
+            clientCallBtn.style.display = 'none';
+        }
+        
+        document.getElementById('modal-client-address').innerText = order.address || '---';
+        
+        // --- БЛОК СОТРУДНИКА ---
+        let wName = order.worker || 'Չկա (Нет)';
+        let wType = '---';
+        
+        if (order.worker && order.worker.includes('(')) {
+            const parts = order.worker.split('(');
+            wName = parts[0].trim();
+            wType = parts[1].replace(')', '').trim();
+        } else if (order.worker === 'Չկա (Не назначен)') {
+            wName = 'Չկա (Не назначен)';
+            wType = '---';
+        }
+
+        document.getElementById('modal-worker-name').innerText = wName;
+        document.getElementById('modal-worker-type').innerText = wType;
+        document.getElementById('modal-worker-phone-text').innerText = order.workerPhone || '---';
+
+        const workerCallBtn = document.getElementById('modal-worker-phone-link');
+        if (order.workerPhone) {
+            workerCallBtn.style.display = 'flex';
+            workerCallBtn.href = `tel:${order.workerPhone.replace(/[^\d+]/g, '')}`;
+        } else {
+            workerCallBtn.style.display = 'none';
+        }
+
+        // --- Услуги (с чекбоксами) ---
+        const servList = document.getElementById('modal-services-list');
+        servList.innerHTML = '';
+        let totalSum = 0;
+
+        order.services.forEach((s, index) => {
+            const rowSum = s.qty * s.price;
+            totalSum += rowSum;
+            
+            const isLocked = (order.status === 'completed' || order.status === 'cancelled') ? 'disabled' : '';
+            const checkedAttr = s.done ? 'checked' : '';
+            const doneClass = s.done ? 'done' : '';
+
+            servList.innerHTML += `
+                <label class="service-item-static ${doneClass}">
+                    <input type="checkbox" class="service-checkbox" ${checkedAttr} ${isLocked} onchange="toggleServiceStatus('${order.id}', ${index}, this)">
+                    <span class="serv-name-static">${s.name}</span>
+                    <span class="serv-qty-static">${s.qty} x ${s.price} ֏</span>
+                    <span class="serv-price-static">${rowSum} ֏</span>
+                </label>
+            `;
+        });
+
+        const profit = order.profit !== undefined ? order.profit : (totalSum * 0.10);
+
+        document.getElementById('modal-total-price').innerText = totalSum.toLocaleString() + ' ֏';
+        document.getElementById('modal-company-profit').innerText = profit.toLocaleString() + ' ֏';
+
+        // --- ЛОГИКА ОТОБРАЖЕНИЯ КНОПОК ---
+        const btnEdit = document.getElementById('modal-edit-btn');
+        const btnCancel = document.getElementById('modal-cancel-btn');
+        const btnAccept = document.getElementById('modal-accept-btn');
+        const btnReject = document.getElementById('modal-reject-btn');
+
+        if (order.status === 'incoming') {
+            btnEdit.style.display = 'none';
+            btnCancel.style.display = 'none';
+            btnAccept.style.display = 'flex';
+            btnReject.style.display = 'flex';
+        } else if (order.status === 'new') {
+            btnEdit.style.display = 'flex';
+            btnCancel.style.display = 'flex'; 
+            btnAccept.style.display = 'none';
+            btnReject.style.display = 'none';
+        } else {
+            btnEdit.style.display = 'flex';
+            btnCancel.style.display = 'none';
+            btnAccept.style.display = 'none';
+            btnReject.style.display = 'none';
+        }
+
+        applyAdminLanguage();
+        document.getElementById('order-modal').classList.add('active');
+        if (navigator.vibrate) navigator.vibrate(15);
+    };
+
+    window.closeOrderModal = function() {
+        document.getElementById('order-modal').classList.remove('active');
+        currentActiveOrderId = null;
+    };
+
+    // Принятие заказа из Входящих
+    window.acceptOrder = function() {
+        if (!currentActiveOrderId) return;
+        const order = ordersData.find(o => o.id === currentActiveOrderId);
+        if (order && order.status === 'incoming') {
+            order.status = 'new';
+            renderOrders();
+            closeOrderModal();
+            setTimeout(() => openOrderForm(order.id), 300);
+        }
+    };
+
+    // Отказ от входящей заявки
+    window.rejectOrder = function() {
+        if (!currentActiveOrderId) return;
+        const order = ordersData.find(o => o.id === currentActiveOrderId);
+        if (order && order.status === 'incoming') {
+            if (confirm("Отказать в заявке? (Մերժե՞լ հայտը)")) {
+                order.status = 'cancelled';
+                renderOrders();
+                closeOrderModal();
+            }
+        }
+    };
+
+    // Отмена уже принятого (нового) заказа
+    window.cancelOrder = function() {
+        if (!currentActiveOrderId) return;
+        const order = ordersData.find(o => o.id === currentActiveOrderId);
+        
+        if (order && order.status !== 'new') {
+            alert("Կարելի է չեղարկել միայն նոր պատվերները (Можно отменить только новые заказы)");
+            return;
+        }
+
+        if (confirm("Չեղարկե՞լ այս պատվերը (Отменить этот заказ?)")) {
+            if(order) {
+                order.status = 'cancelled';
+                renderOrders();
+            }
+            closeOrderModal();
+        }
+    };
+
+    // --- Универсальная форма (Создание и Редактирование) ---
+    window.openOrderForm = function(orderId = null) {
+        currentEditingOrderId = orderId;
+        const form = document.getElementById('order-form');
+        form.reset();
+        document.getElementById('form-services-container').innerHTML = '';
+        
+        // Перезаполняем список мастеров в селекте на основе активных сотрудников
+        const workerSelect = document.getElementById('form-worker');
+        workerSelect.innerHTML = '<option value="" data-phone="">Չկա (Не назначен)</option>';
+        employeesData.filter(e => e.status === 'active').forEach(emp => {
+            workerSelect.innerHTML += `<option value="${emp.name} (${emp.typeLabel.split('/')[0].trim()})" data-phone="${emp.phone}">${emp.name} - ${emp.typeLabel}</option>`;
+        });
+
+        if (orderId) {
+            // Режим редактирования
+            document.getElementById('order-form-title').innerText = adminTranslations['btn_edit_order'][currentAdminLang] || 'Редактировать заказ';
+            const order = ordersData.find(o => o.id === orderId);
+            
+            if (order) {
+                document.getElementById('form-client-name').value = order.clientName || '';
+                document.getElementById('form-phone').value = order.clientPhone;
+                document.getElementById('form-address').value = order.address;
+                document.getElementById('form-worker').value = order.worker === 'Չկա (Не назначен)' ? '' : order.worker;
+                
+                order.services.forEach(s => addFormServiceRow(s.name, s.qty, s.price, s.done || false));
+                calculateOrderFormTotals();
+                
+                if (order.profit !== undefined) {
+                    document.getElementById('form-profit-sum').value = order.profit;
+                    updateFormProfitFromSum();
+                }
+            }
+            closeOrderModal(); 
+        } else {
+            // Режим добавления
+            document.getElementById('order-form-title').innerText = adminTranslations['btn_add_order'][currentAdminLang] || '+ Новый заказ';
+            document.getElementById('form-total-price').innerText = '0 ֏';
+            document.getElementById('form-profit-pct').value = '10';
+            document.getElementById('form-profit-sum').value = '0';
+            addFormServiceRow();
+        }
+        
+        document.getElementById('order-form-modal').classList.add('active');
+    };
+
+    window.closeOrderFormModal = function() {
+        document.getElementById('order-form-modal').classList.remove('active');
+        currentEditingOrderId = null;
+    };
+
+    window.calculateOrderFormTotals = function() {
+        let totalSum = 0;
+        const rows = document.querySelectorAll('#form-services-container .service-row-edit');
+        
+        rows.forEach(row => {
+            const qty = parseInt(row.querySelector('.serv-col-qty').value) || 0;
+            const price = parseFloat(row.querySelector('.serv-col-price').value) || 0;
+            totalSum += (qty * price);
+        });
+        
+        document.getElementById('form-total-price').innerText = totalSum.toLocaleString() + ' ֏';
+        
+        const pct = parseFloat(document.getElementById('form-profit-pct').value) || 0;
+        document.getElementById('form-profit-sum').value = Math.round(totalSum * (pct / 100));
+    };
+
+    window.updateFormProfitFromPct = function() {
+        let totalSum = 0;
+        document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => {
+            const qty = parseInt(row.querySelector('.serv-col-qty').value) || 0;
+            const price = parseFloat(row.querySelector('.serv-col-price').value) || 0;
+            totalSum += (qty * price);
+        });
+        const pct = parseFloat(document.getElementById('form-profit-pct').value) || 0;
+        document.getElementById('form-profit-sum').value = Math.round(totalSum * (pct / 100));
+    };
+
+    window.updateFormProfitFromSum = function() {
+        let totalSum = 0;
+        document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => {
+            const qty = parseInt(row.querySelector('.serv-col-qty').value) || 0;
+            const price = parseFloat(row.querySelector('.serv-col-price').value) || 0;
+            totalSum += (qty * price);
+        });
+        const sum = parseFloat(document.getElementById('form-profit-sum').value) || 0;
+        if (totalSum > 0) {
+            document.getElementById('form-profit-pct').value = ((sum / totalSum) * 100).toFixed(2);
+        } else {
+            document.getElementById('form-profit-pct').value = 0;
+        }
+    };
+
+    window.addFormServiceRow = function(name = '', qty = 1, price = '', done = false) {
+        const container = document.getElementById('form-services-container');
+        const row = document.createElement('div');
+        row.className = 'service-row-edit';
+        row.setAttribute('data-done', done); 
+        row.innerHTML = `
+            <input type="text" class="glass-input serv-col-name" placeholder="Անվանում (Название)" value="${name}" required>
+            <input type="number" class="glass-input serv-col-qty" placeholder="Քան." min="1" value="${qty}" required oninput="calculateOrderFormTotals()">
+            <input type="number" class="glass-input serv-col-price" placeholder="Գինը (Цена ֏)" min="0" value="${price}" required oninput="calculateOrderFormTotals()">
+            <button type="button" class="serv-del-btn" onclick="removeFormServiceRow(this)">X</button>
+        `;
+        container.appendChild(row);
+    };
+
+    window.removeFormServiceRow = function(btnElement) {
+        const row = btnElement.closest('.service-row-edit');
+        if (row) {
+            row.remove();
+            calculateOrderFormTotals();
+        }
+    };
+
+    window.saveOrderForm = function(event) {
+        event.preventDefault();
+        
+        const clientName = document.getElementById('form-client-name').value;
+        const phone = document.getElementById('form-phone').value;
+        const address = document.getElementById('form-address').value;
+        const workerSelect = document.getElementById('form-worker');
+        
+        let worker = workerSelect.value.trim();
+        let workerPhone = '';
+        if (worker) {
+            workerPhone = workerSelect.options[workerSelect.selectedIndex].getAttribute('data-phone') || '';
+        }
+        if (!worker) worker = 'Չկա (Не назначен)';
+
+        const services = [];
+        const rows = document.querySelectorAll('#form-services-container .service-row-edit');
+        rows.forEach(row => {
+            const name = row.querySelector('.serv-col-name').value;
+            const qty = parseInt(row.querySelector('.serv-col-qty').value);
+            const price = parseFloat(row.querySelector('.serv-col-price').value);
+            const done = row.getAttribute('data-done') === 'true'; 
+            if (name && qty > 0 && price >= 0) {
+                services.push({ name, qty, price, done });
+            }
+        });
+
+        if (services.length === 0) {
+            alert('Խնդրում ենք ավելացնել գոնե մեկ ծառայություն (Добавьте хотя бы одну услугу)');
+            return;
+        }
+
+        const customProfit = parseFloat(document.getElementById('form-profit-sum').value) || 0;
+
+        if (currentEditingOrderId) {
+            const order = ordersData.find(o => o.id === currentEditingOrderId);
+            if (order) {
+                order.clientName = clientName;
+                order.clientPhone = phone;
+                order.address = address;
+                order.worker = worker;
+                order.workerPhone = workerPhone;
+                order.services = services;
+                order.profit = customProfit;
+            }
+        } else {
+            const newOrder = {
+                id: generateOrderId(),
+                status: 'new',
+                createdAt: getCurrentDateString(),
+                completedAt: null,
+                clientName: clientName,
+                clientPhone: phone,
+                address: address,
+                worker: worker,
+                workerPhone: workerPhone,
+                services: services,
+                profit: customProfit 
+            };
+            ordersData.unshift(newOrder); 
+        }
+
+        renderOrders();
+        closeOrderFormModal();
+        if (navigator.vibrate) navigator.vibrate(50);
+    };
+
+    applyAdminLanguage();
+    renderOrders();
+    renderRequests();
+    renderEmployees(); 
+
+
+    // ================= РАБОТА С БАЗОЙ ДАННЫХ (Vercel KV) =================
+    let serverTranslations = {};
+
+    async function fetchAppDatabase() {
+        try {
+            const res = await fetch('/api/data');
+            const data = await res.json();
+            serverTranslations = data || {};
+            document.getElementById('loader-wrap').style.display = 'none';
+            renderTranslationsEditor();
+            loadPromoValues();
+        } catch (err) {
+            console.error("Database error:", err);
+            document.getElementById('loader-wrap').innerHTML = '<span style="font-size:10px; color:red; font-weight:bold;">Սերվերի հետ կապի սխալ (Ошибка Vercel KV)</span>';
+        }
+    }
+
+    function loadPromoValues() {
+        if(serverTranslations['promo_title']) {
+            if(serverTranslations['promo_title']['AM']) document.getElementById('promo-text-am').value = serverTranslations['promo_title']['AM'];
+            if(serverTranslations['promo_title']['RU']) document.getElementById('promo-text-ru').value = serverTranslations['promo_title']['RU'];
+            if(serverTranslations['promo_title']['EN']) document.getElementById('promo-text-en').value = serverTranslations['promo_title']['EN'];
+        }
+    }
+
+    window.savePromo = async function(event) {
+        event.preventDefault();
+        const btn = document.getElementById('promo-submit-btn');
+        const span = btn.querySelector('span');
+        const origText = span.innerHTML;
+        span.innerHTML = '...';
+        
+        if (!serverTranslations['promo_title']) serverTranslations['promo_title'] = {};
+        serverTranslations['promo_title']['AM'] = document.getElementById('promo-text-am').value;
+        serverTranslations['promo_title']['RU'] = document.getElementById('promo-text-ru').value;
+        serverTranslations['promo_title']['EN'] = document.getElementById('promo-text-en').value;
+
+        await uploadToServer(btn, origText, span);
+    }
+
+    function renderTranslationsEditor() {
+        const list = document.getElementById('translations-list');
+        list.innerHTML = '';
+        const keyPrefix = adminTranslations['admin_key_title'][currentAdminLang] || "Բանալի:";
+
+        for (const key in serverTranslations) {
+            if(typeof serverTranslations[key] !== 'object') continue;
+
+            const div = document.createElement('div');
+            div.className = 'translation-card';
+            div.innerHTML = `
+                <div class="translation-key" data-key-name="${key}">${keyPrefix} ${key}</div>
+                <div class="lang-row">
+                    <img src="assets/free-icon-armenia-197516.png" alt="AM">
+                    <input type="text" value="${(serverTranslations[key]['AM'] || '').replace(/"/g, '&quot;')}" onchange="updateLiveValue('${key}', 'AM', this.value)">
+                </div>
+                <div class="lang-row">
+                    <img src="assets/free-icon-russia-9994030.png" alt="RU">
+                    <input type="text" value="${(serverTranslations[key]['RU'] || '').replace(/"/g, '&quot;')}" onchange="updateLiveValue('${key}', 'RU', this.value)">
+                </div>
+                <div class="lang-row">
+                    <img src="assets/united-kingdom.png" alt="EN">
+                    <input type="text" value="${(serverTranslations[key]['EN'] || '').replace(/"/g, '&quot;')}" onchange="updateLiveValue('${key}', 'EN', this.value)">
+                </div>
+            `;
+            list.appendChild(div);
+        }
+    }
+
+    window.updateLiveValue = function(key, lang, val) {
+        if(!serverTranslations[key]) serverTranslations[key] = {};
+        serverTranslations[key][lang] = val;
+    }
+
+    window.saveTranslations = async function() {
+        const btn = document.getElementById('trans-save-btn');
+        const span = btn.querySelector('span');
+        const origText = span.innerHTML;
+        span.innerHTML = '...';
+        await uploadToServer(btn, origText, span);
+    }
+
+    async function uploadToServer(buttonElement, originalText, spanElement) {
+        try {
+            const response = await fetch('/api/data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(serverTranslations)
+            });
+            const resData = await response.json();
+            if(resData.success) {
+                buttonElement.classList.add('success');
+                spanElement.innerHTML = '✅';
+                if (navigator.vibrate) navigator.vibrate(50);
+                setTimeout(() => {
+                    buttonElement.classList.remove('success');
+                    spanElement.innerHTML = originalText;
+                }, 2500);
+            }
+        } catch(e) {
+            alert('Սերվերի հետ կապի սխալ (Ошибка базы)');
+            spanElement.innerHTML = originalText;
+        }
+    }
+
+    fetchAppDatabase();
+});
