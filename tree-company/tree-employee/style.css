@@ -284,7 +284,7 @@ body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
 .fab-btn svg { width: 28px; height: 28px; stroke: white; }
 .admin-screen:not(.active) .fab-btn { display: none; }
 
-/* ИЗМЕНЕНИЕ: Стили для неактивных кнопок */
+/* Стили для неактивных кнопок */
 .submit-btn:disabled, .submit-btn.disabled {
     opacity: 0.4;
     cursor: not-allowed;
