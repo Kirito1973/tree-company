@@ -5,6 +5,10 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// ================= НАСТРОЙКИ КОМПАНИИ =================
+// Процент, который компания берет с заказа. (0.20 = 20%)
+const COMPANY_FEE_PERCENT = 0.20; 
+
 // ================= ТЕМА И НАВИГАЦИЯ =================
 function switchEmpTab(screenId, btnElement) {
     document.querySelectorAll('.emp-screen').forEach(scr => scr.classList.remove('active'));
@@ -26,8 +30,8 @@ const translations = {
     "title_emp_finance": { "AM": "Իմ <span>Ֆինանսները</span>", "RU": "Мои <span>Финансы</span>", "EN": "My <span>Finance</span>" },
     "title_emp_profile": { "AM": "Անձնական <span>տվյալներ</span>", "RU": "Личные <span>Данные</span>", "EN": "Personal <span>Profile</span>" },
     "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
-    "status_pending": { "AM": "Ընթացքի մեջ է", "RU": "В процессе", "EN": "Pending" },
-    "status_success": { "AM": "Ավարտված է", "RU": "Завершен", "EN": "Success" }
+    "status_pending": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "Pending" },
+    "status_success": { "AM": "Ավարտված", "RU": "Завершен", "EN": "Success" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -56,17 +60,23 @@ let ordersData = [
     {
         id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00',
         clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12',
-        worker: 'Արմեն Սարգսյան (Դռներ)',
+        worker: 'Արմեն Սարգսյան',
         services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }]
     },
     {
         id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30',
         clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4',
-        worker: 'Արմեն Սարգսյան (Դռներ)',
+        worker: 'Արմեն Սարգսյան',
         services: [
             { name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, 
             { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }
         ]
+    },
+    {
+        id: 'ORD-001', status: 'completed', createdAt: '10.07.2026 09:00',
+        clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1',
+        worker: 'Արմեն Սարգսյան',
+        services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true }]
     }
 ];
 
@@ -78,6 +88,7 @@ let employeesData = [
 // ================= ЛОГИКА =================
 let loggedInEmpId = null;
 let currentActiveOrderId = null;
+let currentOrderFilter = 'new'; // Фильтр заказов по умолчанию
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -180,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstName = emp.name.split(' ')[0];
         document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `Բարև, <b>${firstName}</b>!`);
         
-        renderEmployeeOrders(emp);
+        renderEmployeeOrders();
         renderEmployeeProfile(emp);
     };
 
@@ -192,15 +203,31 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('emp-bottom-nav').style.display = 'none';
     };
 
-    window.renderEmployeeOrders = function(emp) {
+    // ФИЛЬТРАЦИЯ ЗАКАЗОВ
+    window.filterEmpOrders = function(statusFilter, btnElement) {
+        currentOrderFilter = statusFilter;
+        
+        // Обновляем активную кнопку-таб
+        document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+        
+        if (navigator.vibrate) navigator.vibrate(15);
+        renderEmployeeOrders();
+    };
+
+    window.renderEmployeeOrders = function() {
+        const emp = employeesData.find(e => e.id === loggedInEmpId);
         const list = document.getElementById('emp-personal-orders-list');
-        if (!list) return;
+        if (!list || !emp) return;
         list.innerHTML = '';
         
-        const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name) && o.status !== 'cancelled');
+        // Оставляем только те заказы, которые принадлежат мастеру и соответствуют фильтру
+        const empOrders = ordersData.filter(o => 
+            o.worker && o.worker.includes(emp.name) && o.status === currentOrderFilter
+        );
         
         if (empOrders.length === 0) {
-            list.innerHTML = `<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--text-sec);">Ակտիվ պատվերներ չկան<br>(У вас нет активных заказов)</div>`;
+            list.innerHTML = `<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--text-sec);">Այս պահին պատվերներ չկան<br>(Нет заказов в этой категории)</div>`;
             return;
         }
 
@@ -236,17 +263,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if (!order) return;
 
+        // Статус
+        let statusI18n = order.status === 'new' ? 'status_new' : (order.status === 'progress' ? 'status_pending' : 'status_success');
+        let statusClass = order.status === 'new' ? 'new' : (order.status === 'progress' ? 'pending' : '');
+        document.getElementById('modal-order-status').className = `entity-status ${statusClass}`;
+        document.getElementById('modal-order-status').setAttribute('data-i18n', statusI18n);
+
         document.getElementById('modal-order-id').innerText = order.id;
         document.getElementById('modal-client-name').innerText = order.clientName || '---';
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
         document.getElementById('modal-client-address').innerText = order.address || '---';
 
+        // Подсчет финансов
+        let totalPrice = 0;
         const servList = document.getElementById('modal-services-list');
         servList.innerHTML = '';
         
         order.services.forEach((s, index) => {
-            const isLocked = (order.status === 'completed' || order.status === 'cancelled') ? 'disabled' : '';
+            totalPrice += (s.price * s.qty);
+            
+            // Если заказ НОВЫЙ или ЗАВЕРШЕН, галочки трогать нельзя
+            const isLocked = (order.status !== 'progress') ? 'disabled' : '';
             const checkedAttr = s.done ? 'checked' : '';
             const doneClass = s.done ? 'done' : '';
 
@@ -259,6 +297,41 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
+        // Заполнение блока финансов
+        let companyFee = totalPrice * COMPANY_FEE_PERCENT;
+        let masterNet = totalPrice - companyFee;
+        
+        document.getElementById('modal-fin-total').innerText = `${totalPrice.toLocaleString()} ֏`;
+        document.getElementById('modal-fin-company').innerText = `- ${companyFee.toLocaleString()} ֏`;
+        document.getElementById('modal-fin-master').innerText = `${masterNet.toLocaleString()} ֏`;
+
+        // Кнопки управления заказом
+        const btnContainer = document.getElementById('modal-action-buttons');
+        btnContainer.innerHTML = ''; // Очищаем старые кнопки
+
+        if (order.status === 'new') {
+            btnContainer.innerHTML = `
+                <button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')">
+                    Ընդունել պատվերը (Принять заказ)
+                </button>
+            `;
+        } else if (order.status === 'progress') {
+            btnContainer.innerHTML = `
+                <button type="button" id="btn-finish-order" class="submit-btn" style="width: 100%; border-radius: 16px;" onclick="finishOrder('${order.id}')">
+                    Ավարտել պատվերը (Завершить заказ)
+                </button>
+            `;
+            checkIfOrderCanBeFinished(order.id); // Проверяем, можно ли активировать кнопку
+        }
+
+        // Кнопка закрытия всегда доступна
+        btnContainer.innerHTML += `
+            <button type="button" class="submit-btn" style="width: 100%; border-radius: 16px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderModal()">
+                Փակել (Закрыть)
+            </button>
+        `;
+
+        applyLanguage();
         document.getElementById('order-modal').classList.add('active');
     };
 
@@ -268,13 +341,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.toggleServiceStatus = function(orderId, serviceIndex, checkboxElem) {
         const order = ordersData.find(o => o.id === orderId);
-        if (order && order.services[serviceIndex]) {
+        if (order && order.services[serviceIndex] && order.status === 'progress') {
             order.services[serviceIndex].done = checkboxElem.checked;
             const label = checkboxElem.closest('.service-item-static');
             if (checkboxElem.checked) { label.classList.add('done'); } else { label.classList.remove('done'); }
             if (navigator.vibrate) navigator.vibrate(10);
             
-            // Если мы используем настоящий сервер, здесь должен быть fetch запрос для обновления статуса услуги в базе
+            // Проверяем, можно ли теперь нажать кнопку "Завершить заказ"
+            checkIfOrderCanBeFinished(orderId);
+        }
+    };
+
+    // Проверка: включить ли кнопку завершения заказа
+    window.checkIfOrderCanBeFinished = function(orderId) {
+        const order = ordersData.find(o => o.id === orderId);
+        const finishBtn = document.getElementById('btn-finish-order');
+        if (order && finishBtn) {
+            const allServicesDone = order.services.every(s => s.done);
+            if (allServicesDone) {
+                finishBtn.disabled = false;
+                finishBtn.classList.remove('disabled');
+            } else {
+                finishBtn.disabled = true;
+                finishBtn.classList.add('disabled');
+            }
+        }
+    };
+
+    // Принятие заказа
+    window.acceptOrder = function(orderId) {
+        const order = ordersData.find(o => o.id === orderId);
+        if(order) {
+            order.status = 'progress';
+            if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
+            closeOrderModal();
+            filterEmpOrders('progress', document.getElementById('tab-progress')); // Переключаем вкладку на "В процессе"
+        }
+    };
+
+    // Завершение заказа
+    window.finishOrder = function(orderId) {
+        const order = ordersData.find(o => o.id === orderId);
+        if(order) {
+            order.status = 'completed';
+            if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
+            closeOrderModal();
+            filterEmpOrders('completed', document.getElementById('tab-completed')); // Переключаем вкладку на "Завершенные"
         }
     };
 
@@ -313,8 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
         closeEmpSelfEdit();
         renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
-        
-        // В будущем: отправка данных на сервер (Vercel)
     };
     
     applyLanguage();
