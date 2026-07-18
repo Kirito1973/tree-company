@@ -283,3 +283,13 @@ body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
 .fab-btn:active { transform: scale(0.9); box-shadow: 0 4px 12px rgba(31, 150, 81, 0.3); }
 .fab-btn svg { width: 28px; height: 28px; stroke: white; }
 .admin-screen:not(.active) .fab-btn { display: none; }
+
+/* ИЗМЕНЕНИЕ: Стили для неактивных кнопок */
+.submit-btn:disabled, .submit-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: rgba(128, 128, 128, 0.3);
+    color: var(--text-sec);
+    box-shadow: none;
+    transform: none !important;
+}
