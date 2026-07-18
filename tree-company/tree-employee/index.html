@@ -165,9 +165,15 @@
                             </a>
                         </span>
                     </div>
+                    <!-- ИЗМЕНЕНИЕ ЗДЕСЬ: Добавлена кнопка карты -->
                     <div class="detail-row">
                         <span class="detail-label" data-i18n="prof_address">Հասցե:</span>
-                        <span class="detail-value" id="modal-client-address"></span>
+                        <span class="detail-value">
+                            <span id="modal-client-address-text" style="flex: 1; text-align: right;"></span>
+                            <a href="#" target="_blank" class="map-btn" id="modal-client-map-link" aria-label="Map">
+                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            </a>
+                        </span>
                     </div>
                 </div>
 
