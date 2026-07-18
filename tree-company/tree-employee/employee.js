@@ -88,11 +88,10 @@ let employeesData = [
 // ================= ЛОГИКА =================
 let loggedInEmpId = null;
 let currentActiveOrderId = null;
-let currentOrderFilter = 'new'; // Фильтр заказов по умолчанию
+let currentOrderFilter = 'new'; 
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Тема
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
     const body = document.body;
@@ -123,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Язык
     const langSwitcher = document.getElementById('lang-switcher');
     const currentLangBtn = document.getElementById('current-lang-btn');
     if (currentLangBtn && langSwitcher) {
@@ -141,41 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
             langSwitcher.classList.remove('open');
         });
     });
-
-    // --- ЛОГИКА ВХОДА ---
-    loggedInEmpId = localStorage.getItem('loggedInEmpId');
-    const pinInput = document.getElementById('emp-pin-input');
-    
-    if (loggedInEmpId) {
-        showEmployeeDashboard(loggedInEmpId);
-    }
-
-    if (pinInput) {
-        pinInput.addEventListener('input', (e) => {
-            let val = e.target.value.replace(/\D/g, '');
-            e.target.value = val;
-            
-            if (val.length === 6) {
-                const emp = employeesData.find(emp => emp.accessKey === val && emp.status === 'active');
-                if (emp) {
-                    e.target.blur(); 
-                    localStorage.setItem('loggedInEmpId', emp.id);
-                    loggedInEmpId = emp.id;
-                    e.target.value = '';
-                    if (navigator.vibrate) navigator.vibrate(50);
-                    showEmployeeDashboard(emp.id);
-                } else {
-                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-                    e.target.classList.add('error-shake');
-                    setTimeout(() => {
-                        e.target.value = '';
-                        e.target.classList.remove('error-shake');
-                        e.target.focus();
-                    }, 500);
-                }
-            }
-        });
-    }
 
     window.showEmployeeDashboard = function(empId) {
         const emp = employeesData.find(e => e.id === empId);
@@ -203,14 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('emp-bottom-nav').style.display = 'none';
     };
 
-    // ФИЛЬТРАЦИЯ ЗАКАЗОВ
     window.filterEmpOrders = function(statusFilter, btnElement) {
         currentOrderFilter = statusFilter;
-        
-        // Обновляем активную кнопку-таб
         document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
-        
         if (navigator.vibrate) navigator.vibrate(15);
         renderEmployeeOrders();
     };
@@ -221,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!list || !emp) return;
         list.innerHTML = '';
         
-        // Оставляем только те заказы, которые принадлежат мастеру и соответствуют фильтру
         const empOrders = ordersData.filter(o => 
             o.worker && o.worker.includes(emp.name) && o.status === currentOrderFilter
         );
@@ -263,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if (!order) return;
 
-        // Статус
         let statusI18n = order.status === 'new' ? 'status_new' : (order.status === 'progress' ? 'status_pending' : 'status_success');
         let statusClass = order.status === 'new' ? 'new' : (order.status === 'progress' ? 'pending' : '');
         document.getElementById('modal-order-status').className = `entity-status ${statusClass}`;
@@ -275,15 +232,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
         document.getElementById('modal-client-address').innerText = order.address || '---';
 
-        // Подсчет финансов
         let totalPrice = 0;
         const servList = document.getElementById('modal-services-list');
         servList.innerHTML = '';
         
         order.services.forEach((s, index) => {
             totalPrice += (s.price * s.qty);
-            
-            // Если заказ НОВЫЙ или ЗАВЕРШЕН, галочки трогать нельзя
             const isLocked = (order.status !== 'progress') ? 'disabled' : '';
             const checkedAttr = s.done ? 'checked' : '';
             const doneClass = s.done ? 'done' : '';
@@ -297,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
 
-        // Заполнение блока финансов
         let companyFee = totalPrice * COMPANY_FEE_PERCENT;
         let masterNet = totalPrice - companyFee;
         
@@ -305,9 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-fin-company').innerText = `- ${companyFee.toLocaleString()} ֏`;
         document.getElementById('modal-fin-master').innerText = `${masterNet.toLocaleString()} ֏`;
 
-        // Кнопки управления заказом
         const btnContainer = document.getElementById('modal-action-buttons');
-        btnContainer.innerHTML = ''; // Очищаем старые кнопки
+        btnContainer.innerHTML = ''; 
 
         if (order.status === 'new') {
             btnContainer.innerHTML = `
@@ -321,10 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     Ավարտել պատվերը (Завершить заказ)
                 </button>
             `;
-            checkIfOrderCanBeFinished(order.id); // Проверяем, можно ли активировать кнопку
+            checkIfOrderCanBeFinished(order.id); 
         }
 
-        // Кнопка закрытия всегда доступна
         btnContainer.innerHTML += `
             <button type="button" class="submit-btn" style="width: 100%; border-radius: 16px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderModal()">
                 Փակել (Закрыть)
@@ -347,12 +298,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (checkboxElem.checked) { label.classList.add('done'); } else { label.classList.remove('done'); }
             if (navigator.vibrate) navigator.vibrate(10);
             
-            // Проверяем, можно ли теперь нажать кнопку "Завершить заказ"
             checkIfOrderCanBeFinished(orderId);
         }
     };
 
-    // Проверка: включить ли кнопку завершения заказа
     window.checkIfOrderCanBeFinished = function(orderId) {
         const order = ordersData.find(o => o.id === orderId);
         const finishBtn = document.getElementById('btn-finish-order');
@@ -368,25 +317,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Принятие заказа
     window.acceptOrder = function(orderId) {
         const order = ordersData.find(o => o.id === orderId);
         if(order) {
             order.status = 'progress';
             if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeOrderModal();
-            filterEmpOrders('progress', document.getElementById('tab-progress')); // Переключаем вкладку на "В процессе"
+            filterEmpOrders('progress', document.getElementById('tab-progress')); 
         }
     };
 
-    // Завершение заказа
     window.finishOrder = function(orderId) {
         const order = ordersData.find(o => o.id === orderId);
         if(order) {
             order.status = 'completed';
             if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
             closeOrderModal();
-            filterEmpOrders('completed', document.getElementById('tab-completed')); // Переключаем вкладку на "Завершенные"
+            filterEmpOrders('completed', document.getElementById('tab-completed')); 
         }
     };
 
@@ -426,6 +373,41 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
     };
+
+    // ЛОГИКА ВХОДА (перемещена в конец для корректной работы после обновления страницы)
+    loggedInEmpId = localStorage.getItem('loggedInEmpId');
+    const pinInput = document.getElementById('emp-pin-input');
     
+    if (pinInput) {
+        pinInput.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            e.target.value = val;
+            
+            if (val.length === 6) {
+                const emp = employeesData.find(emp => emp.accessKey === val && emp.status === 'active');
+                if (emp) {
+                    e.target.blur(); 
+                    localStorage.setItem('loggedInEmpId', emp.id);
+                    loggedInEmpId = emp.id;
+                    e.target.value = '';
+                    if (navigator.vibrate) navigator.vibrate(50);
+                    showEmployeeDashboard(emp.id);
+                } else {
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                    e.target.classList.add('error-shake');
+                    setTimeout(() => {
+                        e.target.value = '';
+                        e.target.classList.remove('error-shake');
+                        e.target.focus();
+                    }, 500);
+                }
+            }
+        });
+    }
+
+    if (loggedInEmpId) {
+        showEmployeeDashboard(loggedInEmpId);
+    }
+
     applyLanguage();
 });
