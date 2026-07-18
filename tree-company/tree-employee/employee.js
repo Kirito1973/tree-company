@@ -296,7 +296,17 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-client-name').innerText = order.clientName || '---';
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
-        document.getElementById('modal-client-address').innerText = order.address || '---';
+        
+        // ИЗМЕНЕНИЕ ЗДЕСЬ: Логика Яндекс-карт
+        document.getElementById('modal-client-address-text').innerText = order.address || '---';
+        const mapLink = document.getElementById('modal-client-map-link');
+        if (order.address) {
+            mapLink.style.display = 'flex';
+            // rtext=~ означает, что начальная точка - это текущая геопозиция устройства
+            mapLink.href = `https://yandex.ru/maps/?mode=routes&rtext=~${encodeURIComponent(order.address)}`;
+        } else {
+            mapLink.style.display = 'none';
+        }
 
         let totalPrice = 0;
         const servList = document.getElementById('modal-services-list');
