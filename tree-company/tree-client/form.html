@@ -63,7 +63,6 @@
 
             <div class="input-row">
                 <div class="input-group">
-                    <!-- ИЗМЕНЕНО: input type="date" -->
                     <label class="input-label" for="birth_date" data-i18n="lbl_year">Ծննդյան ամսաթիվ *</label>
                     <input type="date" id="birth_date" class="glass-input" required>
                 </div>
@@ -90,7 +89,6 @@
             </div>
 
             <div class="input-group">
-                <!-- ИЗМЕНЕНО: Два поля input type="time" -->
                 <label class="input-label" data-i18n="lbl_schedule">Աշխատանքային գրաֆիկ *</label>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <span style="font-size: 14px; font-weight: 700; opacity: 0.8;">Սկսած՝</span>
@@ -115,7 +113,8 @@
                 <textarea id="message" class="glass-input" data-i18n-placeholder="pl_msg" placeholder="Այստեղ կարող եք գրել այն ամենը, ինչը կարևոր եք համարում նշել..."></textarea>
             </div>
 
-            <button type="submit" class="submit-btn" data-i18n="submit">Ուղարկել հայտը</button>
+            <!-- ИЗМЕНЕНО: data-i18n="submit_resume" -->
+            <button type="submit" class="submit-btn" data-i18n="submit_resume">Ուղարկել հայտը</button>
 
         </form>
 
