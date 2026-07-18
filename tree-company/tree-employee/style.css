@@ -230,6 +230,11 @@ body.force-dark .detail-block { background: rgba(0, 0, 0, 0.15); }
 .call-btn:active { transform: scale(0.9); background: rgba(31, 150, 81, 0.25); }
 .call-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
 
+/* ИЗМЕНЕНИЕ: Кнопка карты (Синяя) */
+.map-btn { background: rgba(0, 163, 255, 0.15); color: #00A3FF; border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; text-decoration: none; transition: transform 0.2s, background 0.2s; flex-shrink: 0; }
+.map-btn:active { transform: scale(0.9); background: rgba(0, 163, 255, 0.25); }
+.map-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
 /* Ряды услуг (создание и просмотр) С ЧЕКБОКСАМИ */
 .service-item-static { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text); padding-bottom: 8px; border-bottom: 1px dashed rgba(128,128,128,0.2); margin-bottom: 8px; cursor: pointer; transition: all 0.3s; user-select: none; -webkit-user-select: none; }
 .service-item-static:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
