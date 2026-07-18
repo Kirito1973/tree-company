@@ -6,7 +6,6 @@ if ('serviceWorker' in navigator) {
 }
 
 // ================= НАСТРОЙКИ КОМПАНИИ =================
-// Процент, который компания берет с заказа. (0.20 = 20%)
 const COMPANY_FEE_PERCENT = 0.20; 
 
 // ================= ТЕМА И НАВИГАЦИЯ =================
@@ -26,12 +25,56 @@ const translations = {
     "tab_emp_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
     "tab_emp_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
     "tab_emp_profile": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" },
-    "title_emp_news": { "AM": "Տեղեկատվություն <br><span style='font-size: 12px;'>(Информация)</span>", "RU": "Уведомления <br><span style='font-size: 12px;'>(Новости)</span>", "EN": "Info & News" },
+    "title_emp_news": { "AM": "Տեղեկատվություն", "RU": "Уведомления", "EN": "Info & News" },
     "title_emp_finance": { "AM": "Իմ <span>Ֆինանսները</span>", "RU": "Мои <span>Финансы</span>", "EN": "My <span>Finance</span>" },
     "title_emp_profile": { "AM": "Անձնական <span>տվյալներ</span>", "RU": "Личные <span>Данные</span>", "EN": "Personal <span>Profile</span>" },
+    
+    "login_title": { "AM": "Մուտք", "RU": "Вход", "EN": "Login" },
+    "login_desc": { "AM": "Մուտքագրեք 6-նիշանոց PIN կոդը", "RU": "Введите 6-значный ключ доступа", "EN": "Enter 6-digit PIN code" },
+    
+    "welcome_title": { "AM": "Բարի գալուստ TREE!", "RU": "Добро пожаловать в TREE!", "EN": "Welcome to TREE!" },
+    "welcome_desc": { "AM": "Այստեղ կհայտնվեն կարևոր ծանուցումները և նորությունները։", "RU": "Здесь будут появляться важные уведомления и новости.", "EN": "Important notifications and news will appear here." },
+    
+    "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
+    "filter_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
+    "filter_completed": { "AM": "Ավարտված", "RU": "Завершенные", "EN": "Completed" },
+    "no_orders": { "AM": "Այս պահին պատվերներ չկան", "RU": "Нет заказов в этой категории", "EN": "No orders currently" },
+    
     "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
     "status_pending": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "Pending" },
-    "status_success": { "AM": "Ավարտված", "RU": "Завершен", "EN": "Success" }
+    "status_success": { "AM": "Ավարտված", "RU": "Завершен", "EN": "Success" },
+
+    "card_client": { "AM": "Հաճախորդ:", "RU": "Клиент:", "EN": "Client:" },
+    "card_address": { "AM": "<b>Հասցե:</b>", "RU": "<b>Адрес:</b>", "EN": "<b>Address:</b>" },
+
+    "stats_week": { "AM": "Այս շաբաթ", "RU": "На этой неделе", "EN": "This week" },
+    "stats_month": { "AM": "Այս ամիս", "RU": "В этом месяце", "EN": "This month" },
+
+    "logout_btn": { "AM": "Ելք", "RU": "Выйти", "EN": "Logout" },
+    "prof_name": { "AM": "Անուն:", "RU": "Имя:", "EN": "Name:" },
+    "prof_type": { "AM": "Մասնագիտություն:", "RU": "Профессия:", "EN": "Profession:" },
+    "prof_birth": { "AM": "Ծննդյան օր:", "RU": "Дата рожд.:", "EN": "Birth Date:" },
+    "prof_phone": { "AM": "Հեռախոս:", "RU": "Телефон:", "EN": "Phone:" },
+    "prof_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
+    "prof_edit_btn": { "AM": "<span>Խմբագրել</span>", "RU": "<span>Редактировать</span>", "EN": "<span>Edit</span>" },
+
+    "modal_client_title": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
+    "modal_fin_title": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
+    "modal_fin_total": { "AM": "Ընդհանուր:", "RU": "Сумма:", "EN": "Total:" },
+    "modal_fin_company": { "AM": "Ընկերության %:", "RU": "Комиссия:", "EN": "Company %:" },
+    "modal_fin_master": { "AM": "Ձեր եկամուտը:", "RU": "Ваш доход:", "EN": "Your Income:" },
+    "modal_services_title": { "AM": "Ծառայություններ (Նշեք ավարտվածները)", "RU": "Услуги (Отметьте выполненное)", "EN": "Services (Check completed)" },
+    "btn_accept_order": { "AM": "Ընդունել պատվերը", "RU": "Принять заказ", "EN": "Accept Order" },
+    "btn_finish_order": { "AM": "Ավարտել պատվերը", "RU": "Завершить заказ", "EN": "Finish Order" },
+    "btn_close": { "AM": "Փակել", "RU": "Закрыть", "EN": "Close" },
+
+    "edit_profile_title": { "AM": "Խմբագրել պրոֆիլը", "RU": "Редактировать профиль", "EN": "Edit Profile" },
+    "edit_name_label": { "AM": "Անուն Ազգանուն", "RU": "Имя Фамилия", "EN": "Full Name" },
+    "edit_phone_label": { "AM": "Հեռախոս", "RU": "Телефон", "EN": "Phone" },
+    "edit_birth_label": { "AM": "Ծննդյան օր", "RU": "Дата рождения", "EN": "Birth Date" },
+    "edit_address_label": { "AM": "Հասցե", "RU": "Адрес", "EN": "Address" },
+    "btn_save": { "AM": "<span>Պահպանել</span>", "RU": "<span>Сохранить</span>", "EN": "<span>Save</span>" },
+    "btn_cancel": { "AM": "Չեղարկել", "RU": "Отмена", "EN": "Cancel" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -53,6 +96,13 @@ function applyLanguage() {
             tab.classList.remove('active');
         }
     });
+    
+    const birthInput = document.getElementById('self-edit-birth');
+    if(birthInput) {
+        if(currentLang === 'AM') birthInput.placeholder = "ՕՕ.ԱԱ.ՏՏՏՏ";
+        else if(currentLang === 'RU') birthInput.placeholder = "ДД.ММ.ГГГГ";
+        else birthInput.placeholder = "DD.MM.YYYY";
+    }
 }
 
 // ================= БАЗА ДАННЫХ (MOCK) =================
@@ -134,8 +184,22 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             currentLang = tab.getAttribute('data-lang');
             localStorage.setItem('emp_app_lang', currentLang);
+            
             applyLanguage();
-            if (loggedInEmpId) showEmployeeDashboard(loggedInEmpId);
+            
+            if (loggedInEmpId) {
+                renderEmployeeOrders();
+                renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
+                
+                const emp = employeesData.find(emp => emp.id === loggedInEmpId);
+                const firstName = emp.name.split(' ')[0];
+                const greetings = { "AM": "Բարև", "RU": "Привет", "EN": "Hello" };
+                document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `${greetings[currentLang]}, <b>${firstName}</b>!`);
+
+                if (document.getElementById('order-modal').classList.contains('active') && currentActiveOrderId) {
+                    openOrderModal(currentActiveOrderId);
+                }
+            }
             langSwitcher.classList.remove('open');
         });
     });
@@ -152,7 +216,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('emp-bottom-nav').style.display = 'flex';
         
         const firstName = emp.name.split(' ')[0];
-        document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `Բարև, <b>${firstName}</b>!`);
+        const greetings = { "AM": "Բարև", "RU": "Привет", "EN": "Hello" };
+        document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `${greetings[currentLang]}, <b>${firstName}</b>!`);
         
         renderEmployeeOrders();
         renderEmployeeProfile(emp);
@@ -185,7 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
         );
         
         if (empOrders.length === 0) {
-            list.innerHTML = `<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--text-sec);">Այս պահին պատվերներ չկան<br>(Нет заказов в этой категории)</div>`;
+            list.innerHTML = `<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--text-sec);" data-i18n="no_orders">Այս պահին պատվերներ չկան</div>`;
+            applyLanguage();
             return;
         }
 
@@ -206,9 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="entity-title" style="margin-top: 4px; color: var(--tree-light);">${mainTitle}</div>
                     
                     <div class="detail-block" style="background: rgba(255,255,255,0.4); margin-top: 10px; padding: 10px;">
-                        <div style="font-size:10px; color:var(--text-sec); font-weight:800; margin-bottom:4px;">Հաճախորդ (Клиент):</div>
+                        <div style="font-size:10px; color:var(--text-sec); font-weight:800; margin-bottom:4px;" data-i18n="card_client">Հաճախորդ:</div>
                         <div style="font-size:12px; font-weight:700;">${order.clientName}</div>
-                        <div style="font-size:11px; margin-top:8px;"><b>Адрес:</b> ${order.address}</div>
+                        <div style="font-size:11px; margin-top:8px;"><span data-i18n="card_address"><b>Հասցե:</b></span> ${order.address}</div>
                     </div>
                 </div>
             `;
@@ -263,22 +329,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (order.status === 'new') {
             btnContainer.innerHTML = `
-                <button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')">
-                    Ընդունել պատվերը (Принять заказ)
+                <button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')" data-i18n="btn_accept_order">
+                    Ընդունել պատվերը
                 </button>
             `;
         } else if (order.status === 'progress') {
             btnContainer.innerHTML = `
-                <button type="button" id="btn-finish-order" class="submit-btn" style="width: 100%; border-radius: 16px;" onclick="finishOrder('${order.id}')">
-                    Ավարտել պատվերը (Завершить заказ)
+                <button type="button" id="btn-finish-order" class="submit-btn" style="width: 100%; border-radius: 16px;" onclick="finishOrder('${order.id}')" data-i18n="btn_finish_order">
+                    Ավարտել պատվերը
                 </button>
             `;
             checkIfOrderCanBeFinished(order.id); 
         }
 
         btnContainer.innerHTML += `
-            <button type="button" class="submit-btn" style="width: 100%; border-radius: 16px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderModal()">
-                Փակել (Закрыть)
+            <button type="button" class="submit-btn" style="width: 100%; border-radius: 16px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderModal()" data-i18n="btn_close">
+                Փակել
             </button>
         `;
 
@@ -339,7 +405,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.renderEmployeeProfile = function(emp) {
         document.getElementById('profile-name').innerText = emp.name;
-        document.getElementById('profile-type').innerText = emp.typeLabel.split(' / ')[0];
+        
+        let pType = emp.typeLabel.split(' / ');
+        if(currentLang === 'AM') {
+            document.getElementById('profile-type').innerText = pType[0];
+        } else {
+            document.getElementById('profile-type').innerText = pType[1] || pType[0];
+        }
+
         document.getElementById('profile-birth').innerText = emp.birthDate || '---';
         document.getElementById('profile-phone').innerText = emp.phone;
         document.getElementById('profile-address').innerText = emp.address || '---';
@@ -374,7 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
-    // ЛОГИКА ВХОДА (перемещена в конец для корректной работы после обновления страницы)
     loggedInEmpId = localStorage.getItem('loggedInEmpId');
     const pinInput = document.getElementById('emp-pin-input');
     
