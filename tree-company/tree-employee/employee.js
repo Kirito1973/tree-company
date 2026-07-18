@@ -297,13 +297,25 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
         
-        // ИЗМЕНЕНИЕ ЗДЕСЬ: Логика Яндекс-карт
+        // ЛОГИКА МАРШРУТОВ ЯНДЕКСА
         document.getElementById('modal-client-address-text').innerText = order.address || '---';
         const mapLink = document.getElementById('modal-client-map-link');
+        
         if (order.address) {
             mapLink.style.display = 'flex';
-            // rtext=~ означает, что начальная точка - это текущая геопозиция устройства
-            mapLink.href = `https://yandex.ru/maps/?mode=routes&rtext=~${encodeURIComponent(order.address)}`;
+            // Умный клик: пытаемся открыть приложение Яндекс.Карты, если не выйдет - веб версию
+            mapLink.onclick = (e) => {
+                e.preventDefault();
+                const addressEncoded = encodeURIComponent(order.address);
+                
+                // 1. Попытка открыть нативное приложение Яндекс.Карты
+                window.location.href = `yandexmaps://maps.yandex.ru/?rtext=~${addressEncoded}&rtt=auto`;
+                
+                // 2. Fallback: если приложение не отреагировало, открываем браузерную версию
+                setTimeout(() => {
+                    window.open(`https://yandex.ru/maps/?mode=routes&rtext=~${addressEncoded}&rtt=auto`, '_blank');
+                }, 600);
+            };
         } else {
             mapLink.style.display = 'none';
         }
