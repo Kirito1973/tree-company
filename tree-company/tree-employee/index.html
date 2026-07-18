@@ -77,9 +77,16 @@
 
         <section class="emp-screen" id="screen-emp-orders">
             <h2 class="screen-title" data-i18n="tab_emp_orders">Պատվերներ (Заказы)</h2>
+            
+            <!-- ИЗМЕНЕНИЕ: Три вкладки (фильтра) для заказов -->
+            <div class="filter-tabs" style="margin-bottom: 12px;">
+                <button class="filter-tab active" id="tab-new" onclick="filterEmpOrders('new', this)">Նոր (Новые)</button>
+                <button class="filter-tab" id="tab-progress" onclick="filterEmpOrders('progress', this)">Ընթացքի մեջ (В процессе)</button>
+                <button class="filter-tab" id="tab-completed" onclick="filterEmpOrders('completed', this)">Ավարտված (Заверш.)</button>
+            </div>
+
             <div class="glass-panel">
-                <div class="entity-list" id="emp-personal-orders-list">
-                    </div>
+                <div class="entity-list" id="emp-personal-orders-list"></div>
             </div>
         </section>
 
@@ -137,6 +144,7 @@
             </div>
         </section>
 
+        <!-- Модальное окно заказа -->
         <div class="modal-overlay" id="order-modal" onclick="closeOrderModal()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                 <div class="entity-header">
@@ -165,15 +173,30 @@
                     </div>
                 </div>
 
+                <!-- ИЗМЕНЕНИЕ: Блок финансов (доли) -->
+                <div class="detail-block" id="modal-finance-block" style="background: rgba(35, 169, 91, 0.1); border-color: rgba(35, 169, 91, 0.3);">
+                    <div class="input-label" style="color: var(--tree-light); margin-bottom: 6px;">Ֆինանսներ / Финансы</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Ընդհանուր / Сумма:</span>
+                        <span class="detail-value" id="modal-fin-total">0 ֏</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Ընկերության % / Фирме:</span>
+                        <span class="detail-value" id="modal-fin-company" style="color: #ff4444;">- 0 ֏</span>
+                    </div>
+                    <div class="detail-row" style="border-top: 1px solid rgba(31, 150, 81, 0.3); padding-top: 8px; margin-top: 4px;">
+                        <span class="detail-label" style="color: var(--text); font-weight: 800;">Ձեր եկամուտը / Доход:</span>
+                        <span class="detail-value" id="modal-fin-master" style="color: var(--tree-light); font-size: 14px;">0 ֏</span>
+                    </div>
+                </div>
+
                 <div class="detail-block">
                     <div class="input-label">Ծառայություններ / Услуги (Отметьте выполненное)</div>
                     <div id="modal-services-list" style="margin-top: 8px; display:flex; flex-direction:column;"></div>
                 </div>
 
-                <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; width: 100%;">
-                    <button type="button" class="submit-btn" style="width: 100%; border-radius: 30px; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 12px; margin: 0; display: flex; justify-content: center; align-items: center;" onclick="closeOrderModal()">
-                        Փակել (Закрыть)
-                    </button>
+                <div id="modal-action-buttons" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px; width: 100%;">
+                    <!-- Кнопки управления заказом будут вставляться сюда через JS -->
                 </div>
             </div>
         </div>
