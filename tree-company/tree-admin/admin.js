@@ -1,7 +1,18 @@
-// PWA Setup
+// PWA Setup с автоматическим обновлением «на лету»
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.error('Ошибка SW:', err));
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            reg.update(); // Принудительная проверка обновлений на сервере
+        }).catch(err => console.error('Ошибка SW:', err));
+    });
+
+    // Слушатель для мгновенной перезагрузки страницы при получении новых файлов
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+        }
     });
 }
 
