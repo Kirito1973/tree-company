@@ -1,39 +1,49 @@
-const CACHE_NAME = 'tree-admin-v2';
-const ASSETS = [
+const CACHE_NAME = 'tree-admin-cache-v2';
+const urlsToCache = [
   './',
   './index.html',
+  './style.css',
+  './admin.js',
   './manifest.json',
-  './assets/icon-192.png',
-  './assets/apple-touch-icon.png',
-  './assets/free-icon-armenia-197516.png',
-  './assets/free-icon-russia-9994030.png',
-  './assets/united-kingdom.png',
   './assets/tree.svg'
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((keys) => {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('/api/')) return;
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
+    return;
+  }
   event.respondWith(
-    caches.match(event.request).then((response) => response || fetch(event.request))
+    fetch(event.request)
+      .then(response => {
+        if (response && response.status === 200 && response.type === 'basic') {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+        }
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
