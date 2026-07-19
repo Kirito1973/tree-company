@@ -1,7 +1,17 @@
-// PWA Setup
+// PWA Setup с автоматическим обновлением «на лету»
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(err => console.error('Ошибка SW:', err));
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            reg.update(); // Принудительный опрос сервера при каждом заходе
+        }).catch(err => console.error('Ошибка SW:', err));
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+        }
     });
 }
 
@@ -32,7 +42,7 @@ const translations = {
     "login_title": { "AM": "Մուտք", "RU": "Вход", "EN": "Login" },
     "login_desc": { "AM": "Մուտքագրեք 6-նիշանոց PIN կոդը", "RU": "Введите 6-значный ключ доступа", "EN": "Enter 6-digit PIN code" },
     
-    "welcome_title": { "AM": "Բարի գալուստ TREE!", "RU": "Добро пожаловать в TREE!", "EN": "Welcome to TREE!" },
+    "welcome_title": { "AM": "Բարի գալուստ TREE!", "RU": "Добро welcome в TREE!", "EN": "Welcome to TREE!" },
     "welcome_desc": { "AM": "Այստեղ կհայտնվեն կարևոր ծանուցումները և նորությունները։", "RU": "Здесь будут появляться важные уведомления и новости.", "EN": "Important notifications and news will appear here." },
     
     "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
@@ -141,7 +151,6 @@ let currentActiveOrderId = null;
 let currentOrderFilter = 'new'; 
 
 document.addEventListener('DOMContentLoaded', () => {
-    
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
     const body = document.body;
@@ -164,9 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
             rotationDegrees += 360;
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
             if (body.classList.contains('force-dark')) {
-                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('emp_theme', 'dark');
+                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('emp_theme', 'light');
             } else {
-                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('emp_theme', 'light');
+                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('emp_theme', 'dark');
             }
             setTimeout(updateThemeIcon, 150); 
         });
@@ -297,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
         
-        // ЛОГИКА МАРШРУТОВ ЯНДЕКСА (ПОИСК ПО АДРЕСУ)
         document.getElementById('modal-client-address-text').innerText = order.address || '---';
         const mapLink = document.getElementById('modal-client-map-link');
         
