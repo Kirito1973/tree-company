@@ -30,7 +30,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Игнорируем POST запросы и запросы к API (чтобы не кэшировать динамические данные)
   if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
     return;
   }
