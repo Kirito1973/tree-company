@@ -2,7 +2,7 @@
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
-            reg.update(); // Принудительный опрос сервера при каждом заходе
+            reg.update();
         }).catch(err => console.error('Ошибка SW:', err));
     });
 
@@ -13,6 +13,17 @@ if ('serviceWorker' in navigator) {
             window.location.reload();
         }
     });
+}
+
+// ================= ВРЕМЯ И ФОРМАТИРОВАНИЕ =================
+// Функция для генерации текущего времени в формате ДД.ММ.ГГГГ ЧЧ:ММ
+function getNowString() {
+    const now = new Date();
+    return String(now.getDate()).padStart(2, '0') + '.' +
+           String(now.getMonth() + 1).padStart(2, '0') + '.' +
+           now.getFullYear() + ' ' +
+           String(now.getHours()).padStart(2, '0') + ':' +
+           String(now.getMinutes()).padStart(2, '0');
 }
 
 // ================= НАСТРОЙКИ КОМПАНИИ =================
@@ -42,7 +53,7 @@ const translations = {
     "login_title": { "AM": "Մուտք", "RU": "Вход", "EN": "Login" },
     "login_desc": { "AM": "Մուտքագրեք 6-նիշանոց PIN կոդը", "RU": "Введите 6-значный ключ доступа", "EN": "Enter 6-digit PIN code" },
     
-    "welcome_title": { "AM": "Բարի գալուստ TREE!", "RU": "Добро welcome в TREE!", "EN": "Welcome to TREE!" },
+    "welcome_title": { "AM": "Բարի գալուստ TREE!", "RU": "Добро пожаловать в TREE!", "EN": "Welcome to TREE!" },
     "welcome_desc": { "AM": "Այստեղ կհայտնվեն կարևոր ծանուցումները և նորությունները։", "RU": "Здесь будут появляться важные уведомления и новости.", "EN": "Important notifications and news will appear here." },
     
     "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
@@ -84,7 +95,12 @@ const translations = {
     "edit_birth_label": { "AM": "Ծննդյան օր", "RU": "Дата рождения", "EN": "Birth Date" },
     "edit_address_label": { "AM": "Հասցե", "RU": "Адрес", "EN": "Address" },
     "btn_save": { "AM": "<span>Պահպանել</span>", "RU": "<span>Сохранить</span>", "EN": "<span>Save</span>" },
-    "btn_cancel": { "AM": "Չեղարկել", "RU": "Отмена", "EN": "Cancel" }
+    "btn_cancel": { "AM": "Չեղարկել", "RU": "Отмена", "EN": "Cancel" },
+
+    // Новые переводы для динамики времени
+    "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
+    "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
+    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -118,25 +134,28 @@ function applyLanguage() {
 // ================= БАЗА ДАННЫХ (MOCK) =================
 let ordersData = [
     {
-        id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00',
+        id: 'ORD-003', status: 'new', 
+        createdAt: '15.07.2026 10:00', acceptedAt: null, completedAt: null,
         clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12',
         worker: 'Արմեն Սարգսյան',
-        services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }]
+        services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false, doneAt: null }]
     },
     {
-        id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30',
+        id: 'ORD-002', status: 'progress', 
+        createdAt: '14.07.2026 15:30', acceptedAt: '14.07.2026 16:00', completedAt: null,
         clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4',
         worker: 'Արմեն Սարգսյան',
         services: [
-            { name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, 
-            { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }
+            { name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true, doneAt: '15.07.2026 11:30' }, 
+            { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false, doneAt: null }
         ]
     },
     {
-        id: 'ORD-001', status: 'completed', createdAt: '10.07.2026 09:00',
+        id: 'ORD-001', status: 'completed', 
+        createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00',
         clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1',
         worker: 'Արմեն Սարգսյան',
-        services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true }]
+        services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true, doneAt: '11.07.2026 13:50' }]
     }
 ];
 
@@ -151,6 +170,7 @@ let currentActiveOrderId = null;
 let currentOrderFilter = 'new'; 
 
 document.addEventListener('DOMContentLoaded', () => {
+    
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
     const body = document.body;
@@ -173,9 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
             rotationDegrees += 360;
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
             if (body.classList.contains('force-dark')) {
-                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('emp_theme', 'light');
+                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('emp_theme', 'dark');
             } else {
-                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('emp_theme', 'dark');
+                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('emp_theme', 'light');
             }
             setTimeout(updateThemeIcon, 150); 
         });
@@ -302,6 +322,46 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-order-status').setAttribute('data-i18n', statusI18n);
 
         document.getElementById('modal-order-id').innerText = order.id;
+
+        // --- ВНЕДРЕНИЕ ТАЙМЛАЙНА ЗАКАЗА ---
+        // Ищем контейнер таймлайна, если нет - создаем перед деталями клиента
+        let timelineBlock = document.getElementById('modal-timeline-block');
+        if (!timelineBlock) {
+            timelineBlock = document.createElement('div');
+            timelineBlock.id = 'modal-timeline-block';
+            timelineBlock.className = 'detail-block';
+            timelineBlock.style.background = 'rgba(0, 200, 255, 0.05)';
+            timelineBlock.style.borderColor = 'rgba(0, 200, 255, 0.2)';
+            
+            const clientTitle = document.querySelector('[data-i18n="modal_client_title"]');
+            clientTitle.parentNode.insertBefore(timelineBlock, clientTitle);
+        }
+
+        let timelineHtml = `
+            <div class="detail-row">
+                <span class="detail-label" data-i18n="date_created">Создан:</span>
+                <span class="detail-value" style="color: var(--text-sec); font-weight: 600;">${order.createdAt || '---'}</span>
+            </div>
+        `;
+        if (order.acceptedAt) {
+            timelineHtml += `
+                <div class="detail-row">
+                    <span class="detail-label" data-i18n="date_accepted">Принят:</span>
+                    <span class="detail-value" style="color: #FFB347;">${order.acceptedAt}</span>
+                </div>
+            `;
+        }
+        if (order.completedAt) {
+            timelineHtml += `
+                <div class="detail-row">
+                    <span class="detail-label" data-i18n="date_completed">Завершен:</span>
+                    <span class="detail-value" style="color: var(--tree-light);">${order.completedAt}</span>
+                </div>
+            `;
+        }
+        timelineBlock.innerHTML = timelineHtml;
+        // ---------------------------------
+
         document.getElementById('modal-client-name').innerText = order.clientName || '---';
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
@@ -330,12 +390,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLocked = (order.status !== 'progress') ? 'disabled' : '';
             const checkedAttr = s.done ? 'checked' : '';
             const doneClass = s.done ? 'done' : '';
+            
+            // Дата выполнения конкретной услуги
+            const timeDisplayHtml = s.done && s.doneAt 
+                ? `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: flex; align-items: center; gap: 4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${s.doneAt}</div>` 
+                : `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: none; align-items: center; gap: 4px;"></div>`;
 
             servList.innerHTML += `
-                <label class="service-item-static ${doneClass}">
-                    <input type="checkbox" class="service-checkbox" ${checkedAttr} ${isLocked} onchange="toggleServiceStatus('${order.id}', ${index}, this)">
-                    <span class="serv-name-static">${s.name}</span>
-                    <span class="serv-qty-static">${s.qty} հատ</span>
+                <label class="service-item-static ${doneClass}" style="flex-direction: column; align-items: flex-start;">
+                    <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; flex: 1;">
+                            <input type="checkbox" class="service-checkbox" ${checkedAttr} ${isLocked} onchange="toggleServiceStatus('${order.id}', ${index}, this)">
+                            <span class="serv-name-static">${s.name}</span>
+                        </div>
+                        <span class="serv-qty-static">${s.qty} հատ</span>
+                    </div>
+                    ${timeDisplayHtml}
                 </label>
             `;
         });
@@ -382,11 +452,31 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleServiceStatus = function(orderId, serviceIndex, checkboxElem) {
         const order = ordersData.find(o => o.id === orderId);
         if (order && order.services[serviceIndex] && order.status === 'progress') {
-            order.services[serviceIndex].done = checkboxElem.checked;
-            const label = checkboxElem.closest('.service-item-static');
-            if (checkboxElem.checked) { label.classList.add('done'); } else { label.classList.remove('done'); }
-            if (navigator.vibrate) navigator.vibrate(10);
             
+            const isDone = checkboxElem.checked;
+            order.services[serviceIndex].done = isDone;
+            
+            // Фиксируем время выполнения услуги
+            order.services[serviceIndex].doneAt = isDone ? getNowString() : null;
+
+            const label = checkboxElem.closest('.service-item-static');
+            const timeSpan = label.querySelector('.serv-time-static');
+
+            if (isDone) { 
+                label.classList.add('done'); 
+                if (timeSpan) {
+                    timeSpan.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${order.services[serviceIndex].doneAt}`;
+                    timeSpan.style.display = 'flex';
+                }
+            } else { 
+                label.classList.remove('done'); 
+                if (timeSpan) {
+                    timeSpan.innerHTML = '';
+                    timeSpan.style.display = 'none';
+                }
+            }
+            
+            if (navigator.vibrate) navigator.vibrate(10);
             checkIfOrderCanBeFinished(orderId);
         }
     };
@@ -410,6 +500,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if(order) {
             order.status = 'progress';
+            order.acceptedAt = getNowString(); // Фиксируем время принятия заказа
             if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeOrderModal();
             filterEmpOrders('progress', document.getElementById('tab-progress')); 
@@ -420,6 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if(order) {
             order.status = 'completed';
+            order.completedAt = getNowString(); // Фиксируем время окончательного завершения
             if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
             closeOrderModal();
             filterEmpOrders('completed', document.getElementById('tab-completed')); 
