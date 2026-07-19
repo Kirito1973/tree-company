@@ -1,14 +1,12 @@
-// Регистрация Service Worker для PWA (Без бесконечной перезагрузки)
+// PWA Setup с жестким обходом кэша
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
-            // Тихо проверяем наличие обновлений файла sw.js на сервере
             reg.update(); 
         }).catch(err => console.error('Ошибка SW:', err));
     });
 
     let refreshing = false;
-    // Сработает только один раз, когда реально выйдет новая версия sw.js
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!refreshing) {
             refreshing = true;
@@ -19,65 +17,17 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. ТЕМА ---
-    const themeBtn = document.getElementById('theme-btn');
-    const themeIcon = document.getElementById('theme-icon');
-    const body = document.body;
+    // 1. БАЗОВЫЕ ПЕРЕМЕННЫЕ
+    let currentClientId = localStorage.getItem('tree_client_id');
+    let currentLang = localStorage.getItem('app_lang') || 'AM';
     let rotationDegrees = 0;
-
+    
+    const body = document.body;
+    const themeIcon = document.getElementById('theme-icon');
     const savedTheme = localStorage.getItem('app_theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-        body.classList.add('force-dark');
-    } else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
-        body.classList.add('force-light');
-    }
 
-    const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-    const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-
-    function updateThemeIcon() {
-        if (!themeIcon) return;
-        const isDark = body.classList.contains('force-dark') || (!body.classList.contains('force-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        themeIcon.innerHTML = isDark ? sunIcon : moonIcon;
-    }
-    updateThemeIcon();
-
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            rotationDegrees += 360;
-            themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
-            let newTheme = 'light';
-            if (body.classList.contains('force-dark')) {
-                body.classList.remove('force-dark'); body.classList.add('force-light');
-            } else if (body.classList.contains('force-light')) {
-                body.classList.remove('force-light'); body.classList.add('force-dark'); newTheme = 'dark';
-            } else {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    body.classList.add('force-light');
-                } else {
-                    body.classList.add('force-dark'); newTheme = 'dark';
-                }
-            }
-            localStorage.setItem('app_theme', newTheme);
-            setTimeout(updateThemeIcon, 150); 
-        });
-    }
-
-    // --- 2. МУЛЬТИЯЗЫЧНОСТЬ ---
-    let currentLang = localStorage.getItem('app_lang') || 'AM';
-    const langSwitcher = document.getElementById('lang-switcher');
-    const currentLangBtn = document.getElementById('current-lang-btn');
-
-    if (currentLangBtn && langSwitcher) {
-        currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
-    }
-
-    document.addEventListener('click', (e) => {
-        if (langSwitcher && !langSwitcher.contains(e.target)) langSwitcher.classList.remove('open');
-    });
-
+    // 2. СЛОВАРЬ ПЕРЕВОДОВ
     const translations = {
         "btn_main": { "AM": "Գլխավոր<br><span>Էջ</span>", "RU": "Главная<br><span>Страница</span>", "EN": "Main<br><span>Page</span>" },
         "contact_title": { "AM": "Կապվեք մեզ հետ Ձեզ հարմար եղանակով", "RU": "Свяжитесь с нами удобным способом", "EN": "Contact us conveniently" },
@@ -187,102 +137,23 @@ document.addEventListener('DOMContentLoaded', () => {
         "nav_jobs": { "AM": "Աշխատանք", "RU": "Вакансии", "EN": "Jobs" },
         "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" }
     };
-    
-    function applyLanguage() {
-        document.querySelectorAll('.lang-tab').forEach(tab => {
-            if (tab.getAttribute('data-lang') === currentLang) {
-                tab.classList.add('active');
-                if(currentLangBtn) {
-                    currentLangBtn.innerHTML = tab.innerHTML;
-                }
-            } else {
-                tab.classList.remove('active');
-            }
-        });
-        
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[key] && translations[key][currentLang]) {
-                el.innerHTML = translations[key][currentLang];
-            }
-        });
 
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const key = el.getAttribute('data-i18n-placeholder');
-            if (translations[key] && translations[key][currentLang]) {
-                el.placeholder = translations[key][currentLang];
-            }
-        });
-
-        const applyForm = document.getElementById('apply-form');
-        if (applyForm) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const profKey = urlParams.get('prof'); 
-            const profInput = document.getElementById('profession');
-            if (profKey && translations[profKey] && translations[profKey][currentLang] && profInput) {
-                profInput.value = translations[profKey][currentLang];
-            }
-        }
-        
-        if (document.getElementById('account-page-marker')) {
-            renderCabinetOrders();
-        }
-    }
-
-    document.querySelectorAll('.lang-tab').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            currentLang = tab.getAttribute('data-lang');
-            localStorage.setItem('app_lang', currentLang);
-            applyLanguage();
-            if(langSwitcher) {
-                langSwitcher.classList.remove('open');
-            }
-        });
-    });
-
-    applyLanguage();
-
-    // --- 3. ЛОГИКА СТРАНИЦЫ АККАУНТА (ACCOUNT.HTML) ---
-    let currentClientId = localStorage.getItem('tree_client_id');
-
-    window.checkClientAuth = function() {
-        const loginView = document.getElementById('account-login-view');
-        const profileView = document.getElementById('account-profile-view');
-        const idDisplay = document.getElementById('cabinet-id-display');
-
-        const loginLinks = document.querySelectorAll('.id-login-link');
-        if (currentClientId) {
-            loginLinks.forEach(link => link.style.display = 'none');
-        } else {
-            loginLinks.forEach(link => link.style.display = 'inline-block');
-        }
-
-        if (loginView && profileView) {
-            if (currentClientId) {
-                loginView.style.display = 'none';
-                profileView.style.display = 'block';
-                if (idDisplay) idDisplay.innerText = currentClientId;
-                renderCabinetOrders();
-            } else {
-                loginView.style.display = 'block';
-                profileView.style.display = 'none';
-            }
-        }
-    };
-
-    window.renderCabinetOrders = function() {
+    // 3. ФУНКЦИИ ЛОГИКИ (Объявлены заранее во избежание ошибок)
+    function renderCabinetOrders() {
         const list = document.getElementById('cabinet-orders-list');
         if (!list) return;
 
         let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
         
+        // Добавляем тестовые заказы, если история пуста
         if (!orders || orders.length === 0) {
             orders = [
                 { id: 'ORD-982', date: '10.07.2026', total: '15,000 ֏', status: 'completed', rating: 0 },
                 { id: 'ORD-995', date: '18.07.2026', total: '8,500 ֏', status: 'progress', rating: 0 }
             ];
-            localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
+            if(currentClientId) {
+                localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
+            }
         }
 
         list.innerHTML = '';
@@ -333,6 +204,73 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function checkClientAuth() {
+        const loginView = document.getElementById('account-login-view');
+        const profileView = document.getElementById('account-profile-view');
+        const idDisplay = document.getElementById('cabinet-id-display');
+
+        const loginLinks = document.querySelectorAll('.id-login-link');
+        if (currentClientId) {
+            loginLinks.forEach(link => link.style.display = 'none');
+        } else {
+            loginLinks.forEach(link => link.style.display = 'inline-block');
+        }
+
+        if (loginView && profileView) {
+            if (currentClientId) {
+                loginView.style.display = 'none';
+                profileView.style.display = 'block';
+                if (idDisplay) idDisplay.innerText = currentClientId;
+                renderCabinetOrders();
+            } else {
+                loginView.style.display = 'block';
+                profileView.style.display = 'none';
+            }
+        }
+    }
+
+    function applyLanguage() {
+        document.querySelectorAll('.lang-tab').forEach(tab => {
+            if (tab.getAttribute('data-lang') === currentLang) {
+                tab.classList.add('active');
+                if(currentLangBtn) {
+                    currentLangBtn.innerHTML = tab.innerHTML;
+                }
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+        
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[key] && translations[key][currentLang]) {
+                el.innerHTML = translations[key][currentLang];
+            }
+        });
+
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[key] && translations[key][currentLang]) {
+                el.placeholder = translations[key][currentLang];
+            }
+        });
+
+        const applyForm = document.getElementById('apply-form');
+        if (applyForm) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const profKey = urlParams.get('prof'); 
+            const profInput = document.getElementById('profession');
+            if (profKey && translations[profKey] && translations[profKey][currentLang] && profInput) {
+                profInput.value = translations[profKey][currentLang];
+            }
+        }
+        
+        if (document.getElementById('account-page-marker')) {
+            renderCabinetOrders();
+        }
+    }
+
+    // 4. ПУБЛИЧНЫЕ ФУНКЦИИ (Для onClick в HTML)
     window.rateOrder = function(index, rating) {
         let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
         if(orders && orders[index]) {
@@ -372,10 +310,60 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
+    const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+    const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+
+    function updateThemeIcon() {
+        if (!themeIcon) return;
+        const isDark = body.classList.contains('force-dark') || (!body.classList.contains('force-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        themeIcon.innerHTML = isDark ? sunIcon : moonIcon;
+    }
+
+    // 5. ИНИЦИАЛИЗАЦИЯ И ОБРАБОТЧИКИ СОБЫТИЙ
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        body.classList.add('force-dark');
+    } else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
+        body.classList.add('force-light');
+    }
+    
+    updateThemeIcon();
+    applyLanguage();
     checkClientAuth(); 
 
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+            rotationDegrees += 360;
+            themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
+            let newTheme = 'light';
+            if (body.classList.contains('force-dark')) {
+                body.classList.remove('force-dark'); body.classList.add('force-light');
+            } else if (body.classList.contains('force-light')) {
+                body.classList.remove('force-light'); body.classList.add('force-dark'); newTheme = 'dark';
+            } else {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    body.classList.add('force-light');
+                } else {
+                    body.classList.add('force-dark'); newTheme = 'dark';
+                }
+            }
+            localStorage.setItem('app_theme', newTheme);
+            setTimeout(updateThemeIcon, 150); 
+        });
+    }
 
-    // --- 4. ФОРМЫ ---
+    document.querySelectorAll('.lang-tab').forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            currentLang = tab.getAttribute('data-lang');
+            localStorage.setItem('app_lang', currentLang);
+            applyLanguage();
+            if(langSwitcher) {
+                langSwitcher.classList.remove('open');
+            }
+        });
+    });
+
+    // Обработчики форм
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
         applyForm.addEventListener('submit', async (event) => {
