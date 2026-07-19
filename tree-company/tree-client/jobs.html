@@ -123,8 +123,53 @@
                 <a href="https://www.tiktok.com/@tree__company" class="social-btn" aria-label="TikTok" target="_blank"><svg viewBox="0 0 24 24" width="28" height="28"><circle cx="12" cy="12" r="12" fill="#000"/><path fill="#69C9D0" d="M14.6 9.4A4.3 4.3 0 0017 10v2a6.3 6.3 0 01-3.6-1.1v4A4.5 4.5 0 119 10.5v2.2A2.3 2.3 0 1011.2 15v-9h2.2c.1 1 .5 1.9 1.2 2.4z"/><path fill="#EE1D52" d="M13.8 9.9A4.3 4.3 0 0016.2 10.5v2a6.3 6.3 0 01-3.6-1.1v4A4.5 4.5 0 118.2 11v2.2A2.3 2.3 0 1010.4 15.5v-9h2.2c.1 1 .5 1.9 1.2 2.4z"/><path fill="#FFF" d="M14.2 9.6A4.3 4.3 0 0016.6 10.2v2a6.3 6.3 0 01-3.6-1.1v4A4.5 4.5 0 118.6 10.7v2.2A2.3 2.3 0 1010.8 15.2v-9h2.2c.1 1 .5 1.9 1.2 2.4z"/></svg></a>
                 <a href="https://www.list.am/user/3259524" class="social-btn" aria-label="List.am" target="_blank"><span class="list-am-logo">List</span></a>
             </div>
-        </div>
 
+            <!-- ССЫЛКА НА ВОССТАНОВЛЕНИЕ ID -->
+            <div style="margin-top: 24px;">
+                <a href="#" class="id-login-link" onclick="openLoginModal(event)" data-i18n="already_id">Արդեն ունե՞ք ID: (Уже есть ID?)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- КНОПКА ЛИЧНОГО КАБИНЕТА -->
+    <button class="fab-cabinet" id="fab-cabinet" onclick="openCabinet()" style="display: none;">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span data-i18n="cab_btn">Իմ էջը</span>
+    </button>
+
+    <!-- МОДАЛЬНОЕ ОКНО ЛИЧНОГО КАБИНЕТА -->
+    <div class="modal-overlay" id="cabinet-modal">
+        <div class="modal-content glass-panel" style="max-width: 380px;">
+            <h3 class="screen-title" data-i18n="cab_title" style="margin-bottom: 10px;">Իմ պատվերները (Мои заказы)</h3>
+            <div class="input-label" style="margin-bottom: 20px;">ID: <span id="cabinet-id-display" style="color: var(--tree-light); font-weight: 900; font-size: 16px; letter-spacing: 1px;"></span></div>
+            
+            <div id="cabinet-orders-list" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; max-height: 40vh; overflow-y: auto;">
+                <div style="font-size: 11px; color: var(--text-sec);" data-i18n="cab_empty">Այստեղ կցուցադրվեն Ձեր պատվերները</div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="submit-btn" style="background: transparent; border: 1px solid rgba(255, 50, 50, 0.5); color: #ff4444; padding: 12px; margin-top: 0; flex: 1;" onclick="logoutClient()">
+                    <span data-i18n="logout_btn">Ելք (Выйти)</span>
+                </button>
+                <button type="button" class="submit-btn modal-close-btn" style="margin-top: 0; padding: 12px; flex: 1;" onclick="closeCabinet()">
+                    <span data-i18n="modal_close">OK</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ВВОДА СУЩЕСТВУЮЩЕГО ID -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-content glass-panel">
+            <h3 class="screen-title" data-i18n="enter_id_title" style="margin-bottom: 16px;">Մուտքագրեք ID (Введите ID)</h3>
+            <input type="text" id="login-id-input" class="glass-input" data-i18n-placeholder="enter_id_pl" placeholder="TR-1234" style="text-align: center; font-weight: 900; font-size: 20px; letter-spacing: 2px;">
+            <button type="button" class="submit-btn success" style="margin-top: 16px;" onclick="loginClient()">
+                <span data-i18n="btn_login">Մուտք (Войти)</span>
+            </button>
+            <button type="button" class="submit-btn modal-close-btn" style="margin-top: 10px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeLoginModal()">
+                <span data-i18n="modal_close">Փակել (Закрыть)</span>
+            </button>
+        </div>
     </div>
 
     <script src="main.js"></script>
