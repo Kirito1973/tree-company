@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tree-employee-cache-v1';
+const CACHE_NAME = 'tree-employee-cache-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -8,17 +8,13 @@ const urlsToCache = [
   './assets/tree.svg'
 ];
 
-// Установка Service Worker и кэширование файлов
 self.addEventListener('install', event => {
+  self.skipWaiting(); 
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-// Активация и очистка старого кэша
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -29,19 +25,27 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-// Перехват запросов (работа в оффлайне)
 self.addEventListener('fetch', event => {
+  // Игнорируем POST запросы и запросы к API (чтобы не кэшировать динамические данные)
+  if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        if (response) {
-          return response; // Возвращаем из кэша
+        if (response && response.status === 200 && response.type === 'basic') {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
         }
-        return fetch(event.request); // Идем в сеть
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
       })
   );
 });
