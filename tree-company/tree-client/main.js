@@ -17,13 +17,16 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. БАЗОВЫЕ ПЕРЕМЕННЫЕ
+    // 1. БАЗОВЫЕ ПЕРЕМЕННЫЕ (Исправлено: добавлены все нужные элементы)
     let currentClientId = localStorage.getItem('tree_client_id');
     let currentLang = localStorage.getItem('app_lang') || 'AM';
     let rotationDegrees = 0;
     
     const body = document.body;
+    const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
+    const langSwitcher = document.getElementById('lang-switcher');
+    const currentLangBtn = document.getElementById('current-lang-btn');
     const savedTheme = localStorage.getItem('app_theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -138,14 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
         "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" }
     };
 
-    // 3. ФУНКЦИИ ЛОГИКИ (Объявлены заранее во избежание ошибок)
+    // 3. ФУНКЦИИ ЛОГИКИ
     function renderCabinetOrders() {
         const list = document.getElementById('cabinet-orders-list');
         if (!list) return;
 
         let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
         
-        // Добавляем тестовые заказы, если история пуста
+        // Тестовые данные, если пусто
         if (!orders || orders.length === 0) {
             orders = [
                 { id: 'ORD-982', date: '10.07.2026', total: '15,000 ֏', status: 'completed', rating: 0 },
@@ -350,6 +353,19 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(updateThemeIcon, 150); 
         });
     }
+
+    if (currentLangBtn && langSwitcher) {
+        currentLangBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            langSwitcher.classList.toggle('open'); 
+        });
+    }
+
+    document.addEventListener('click', (e) => {
+        if (langSwitcher && !langSwitcher.contains(e.target)) {
+            langSwitcher.classList.remove('open');
+        }
+    });
 
     document.querySelectorAll('.lang-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
