@@ -184,7 +184,6 @@ input[type="checkbox"]:checked + .custom-checkbox::after { content: ''; position
 .modal-text { font-size: 14px; font-weight: 900; color: var(--text); line-height: 1.4; text-transform: uppercase; letter-spacing: 0.3px; }
 .modal-close-btn { margin-top: 24px; padding: 12px 35px; width: auto; font-size: 12px; display: inline-block; }
 
-
 /* ==================== НОВОЕ: ЛИЧНЫЙ КАБИНЕТ И ID ==================== */
 
 /* Плавающая кнопка Кабинета (Появляется только после получения ID) */
@@ -249,4 +248,106 @@ input[type="checkbox"]:checked + .custom-checkbox::after { content: ''; position
     color: var(--text);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* ==================== ОФОРМЛЕНИЕ КАРТОЧЕК ЗАКАЗОВ В КАБИНЕТЕ ==================== */
+
+.cab-order-card {
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+
+body.force-dark .cab-order-card {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.cab-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(128, 128, 128, 0.2);
+    padding-bottom: 8px;
+}
+
+.cab-order-id {
+    font-weight: 900;
+    font-size: 12px;
+    color: var(--text);
+}
+
+.cab-order-date {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sec);
+}
+
+.cab-order-status {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 8px;
+    border: 1px solid;
+}
+
+/* ==================== СИСТЕМА ОЦЕНКИ МАСТЕРА (5 ЗВЕЗД) ==================== */
+
+.cab-rating-block {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(128, 128, 128, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.star-rating {
+    display: flex;
+    font-size: 28px; /* Крупные звезды для удобного нажатия пальцем */
+    line-height: 1;
+    color: rgba(128, 128, 128, 0.3);
+}
+
+/* Интерактивные звезды (когда клиент еще не ставил оценку) */
+.star-rating.interactive {
+    flex-direction: row-reverse; /* Меняем направление, чтобы CSS hover работал корректно слева-направо */
+    justify-content: center;
+}
+
+.star-rating.interactive .star {
+    cursor: pointer;
+    transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 4px;
+}
+
+/* Эффект наведения: подсвечиваются все звезды до выбранной */
+.star-rating.interactive .star:hover,
+.star-rating.interactive .star:hover ~ .star {
+    color: #FFB347;
+}
+
+.star-rating.interactive .star:active {
+    transform: scale(1.2);
+}
+
+/* Сохраненная оценка (клиент уже проголосовал) */
+.star-rating.rated {
+    justify-content: center;
+}
+
+.star-rating.rated .star {
+    padding: 0 4px;
+    cursor: default;
+}
+
+/* Закрашенная звезда */
+.star-rating.rated .star.filled {
+    color: #FFB347;
+    filter: drop-shadow(0 2px 4px rgba(255, 179, 71, 0.3));
 }
