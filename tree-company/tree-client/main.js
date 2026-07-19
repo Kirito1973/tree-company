@@ -1,7 +1,9 @@
-// PWA Setup
+// PWA Setup с жестким обходом кэша
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
+        // Заставляем браузер всегда скачивать свежий sw.js
+        const swUrl = './sw.js?t=' + new Date().getTime();
+        navigator.serviceWorker.register(swUrl).then(reg => {
             reg.update(); 
         }).catch(err => console.error('Ошибка SW:', err));
     });
@@ -168,6 +170,12 @@ document.addEventListener('DOMContentLoaded', () => {
         "logout_btn": { "AM": "Ելք", "RU": "Выйти", "EN": "Logout" },
         "acc_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Account</span>" },
         "acc_login_desc": { "AM": "Մուտքագրեք Ձեր ID-ն պատվերները տեսնելու համար", "RU": "Введите ваш ID, чтобы увидеть заказы", "EN": "Enter your ID to view orders" },
+        "how_to_get_id": { "AM": "Ինչպե՞ս գրանցվել:", "RU": "Как зарегистрироваться?", "EN": "How to register?" },
+        "no_reg_needed": { 
+            "AM": "Գրանցվելու կարիք չկա: Ուղղակի ձևակերպեք Ձեր առաջին պատվերը, և համակարգը ավտոմատ կստեղծի Ձեր անձնական էջն ու կտրամադրի եզակի ID:", 
+            "RU": "Вам не нужно регистрироваться! Просто оформите свой первый заказ, и система автоматически создаст ваш личный кабинет и выдаст уникальный ID для входа.", 
+            "EN": "No need to register! Just place your first order, and the system will automatically create your personal account and provide a unique ID." 
+        },
         
         "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
         "status_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
@@ -177,15 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
         "nav_jobs": { "AM": "Աշխատանք", "RU": "Вакансии", "EN": "Jobs" },
-        "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" },
-
-        // НОВЫЕ СТРОКИ ДЛЯ БЛОКА РЕГИСТРАЦИИ
-        "how_to_get_id": { "AM": "Ինչպե՞ս գրանցվել:", "RU": "Как зарегистрироваться?", "EN": "How to register?" },
-        "no_reg_needed": { 
-            "AM": "Գրանցվելու կարիք չկա: Ուղղակի ձևակերպեք Ձեր առաջին պատվերը, և համակարգը ավտոմատ կստեղծի Ձեր անձնական էջն ու կտրամադրի եզակի ID:", 
-            "RU": "Вам не нужно регистрироваться! Просто оформите свой первый заказ, и система автоматически создаст ваш личный кабинет и выдаст уникальный ID для входа.", 
-            "EN": "No need to register! Just place your first order, and the system will automatically create your personal account and provide a unique ID." 
-        }
+        "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" }
     };
     
     function applyLanguage() {
@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
     checkClientAuth(); 
 
 
-    // --- 4. ЛОГИКА ФОРМЫ СОИСКАТЕЛЯ ---
+    // --- 4. ФОРМЫ ---
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
         applyForm.addEventListener('submit', async (event) => {
@@ -389,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. ЛОГИКА КАЛЬКУЛЯТОРА И ЗАКАЗА ---
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
         function formatNumber(num) { return num.toLocaleString('en-US') + ' ֏'; }
@@ -511,3 +510,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
