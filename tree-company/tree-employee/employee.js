@@ -133,7 +133,6 @@ function applyLanguage() {
 }
 
 // ================= БАЗА ДАННЫХ (MOCK) =================
-// Добавили isCommissionPaid для расчета долга компании
 let ordersData = [
     {
         id: 'ORD-003', status: 'new', 
@@ -170,6 +169,34 @@ let employeesData = [
 let loggedInEmpId = null;
 let currentActiveOrderId = null;
 let currentOrderFilter = 'new'; 
+
+window.updateOrderCounts = function() {
+    const emp = employeesData.find(e => e.id === loggedInEmpId);
+    if (!emp) return;
+
+    const myOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name));
+
+    const newCount = myOrders.filter(o => o.status === 'new').length;
+    const progressCount = myOrders.filter(o => o.status === 'progress').length;
+    const completedCount = myOrders.filter(o => o.status === 'completed').length;
+
+    const elNew = document.getElementById('count-new');
+    const elProg = document.getElementById('count-progress');
+    const elComp = document.getElementById('count-completed');
+
+    if (elNew) { 
+        elNew.innerText = newCount; 
+        elNew.style.display = newCount > 0 ? 'inline-flex' : 'none'; 
+    }
+    if (elProg) { 
+        elProg.innerText = progressCount; 
+        elProg.style.display = progressCount > 0 ? 'inline-flex' : 'none'; 
+    }
+    if (elComp) { 
+        elComp.innerText = completedCount; 
+        elComp.style.display = completedCount > 0 ? 'inline-flex' : 'none'; 
+    }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -253,7 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         renderEmployeeOrders();
         renderEmployeeProfile(emp);
-        renderEmployeeFinance(); // Инициализация динамических финансов
+        renderEmployeeFinance();
+        
+        updateOrderCounts(); // Обновление счетчиков при входе
     };
 
     window.logoutEmployee = function() {
@@ -292,7 +321,6 @@ document.addEventListener('DOMContentLoaded', () => {
         empOrders.forEach(order => {
             let orderTotal = 0;
             
-            // Считаем общую стоимость услуг заказа
             order.services.forEach(s => {
                 if (order.status === 'completed') {
                     if (s.done) orderTotal += (s.price * s.qty);
@@ -307,12 +335,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (order.status === 'completed') {
                 totalAllTime += masterNet;
 
-                // Если долг компании не оплачен, добавляем его в красную карточку
                 if (!order.isCommissionPaid) {
                     companyDebt += companyFee;
                 }
 
-                // Группируем по месяцам для выпадающего списка
                 const targetDate = order.completedAt || order.createdAt;
                 if (targetDate) {
                     const dateParts = targetDate.split(' ')[0].split('.');
@@ -321,29 +347,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (!monthlyData[monthYear]) monthlyData[monthYear] = 0;
                         monthlyData[monthYear] += masterNet;
                         
-                        // Заработок за текущий месяц
                         if (monthYear === currMonthStr) {
                             currentMonthTotal += masterNet;
                         }
                     }
                 }
             } else if (order.status === 'progress') {
-                // Ожидаемый заработок за незавершенные заказы (В процессе)
                 uncompletedTotal += masterNet;
             }
         });
 
-        // Перезаписываем HTML секции финансов
         financeSection.innerHTML = `
             <h2 class="screen-title" data-i18n="title_emp_finance">Իմ <span>Ֆինանսները</span></h2>
             
-            <!-- Блок Долга компании -->
             <div class="glass-panel" style="margin-top: 10px; background: rgba(255, 50, 50, 0.1); border: 1px solid rgba(255, 50, 50, 0.3);">
                 <div style="font-size: 11px; font-weight: 800; color: #ff4444; text-transform: uppercase; margin-bottom: 6px;" data-i18n="stats_debt">Долг компании</div>
                 <div style="font-size: 28px; font-weight: 900; color: var(--text);">${companyDebt.toLocaleString()} ֏</div>
             </div>
 
-            <!-- Сетка: Текущий месяц и В процессе -->
             <div class="stats-grid" style="margin-top: 12px;">
                 <div class="stat-box" style="background: rgba(35, 169, 91, 0.1); border-color: rgba(35, 169, 91, 0.3);">
                     <div class="stat-value" style="color: var(--tree-light); font-size: 20px;">${currentMonthTotal.toLocaleString()} ֏</div>
@@ -355,20 +376,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
 
-            <!-- За все время (Accordion) -->
             <div class="glass-panel" style="margin-top: 12px; cursor: pointer; text-align: center; padding: 16px;" onclick="toggleMonthlyFinance()">
                 <div style="font-size: 11px; font-weight: 800; color: var(--text-sec); text-transform: uppercase; margin-bottom: 6px;" data-i18n="stats_all_time">За все время</div>
                 <div style="font-size: 24px; font-weight: 900; color: var(--text);">${totalAllTime.toLocaleString()} ֏</div>
                 <div style="font-size: 9px; color: var(--text-sec); margin-top: 8px; opacity: 0.8;" data-i18n="click_to_view">⬇ Нажмите, чтобы посмотреть по месяцам ⬇</div>
             </div>
 
-            <div id="monthly-finance-list" style="display: none; flex-direction: column; gap: 8px; margin-top: 12px; width: 100%;">
-                <!-- Сюда вставляются периоды месяцев -->
-            </div>
+            <div id="monthly-finance-list" style="display: none; flex-direction: column; gap: 8px; margin-top: 12px; width: 100%;"></div>
         `;
 
         const listContainer = document.getElementById('monthly-finance-list');
-        // Сортируем месяцы от новых к старым
         const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
             const [mA, yA] = a.split('.');
             const [mB, yB] = b.split('.');
@@ -461,7 +478,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('modal-order-id').innerText = order.id;
 
-        // --- ВНЕДРЕНИЕ ТАЙМЛАЙНА ЗАКАЗА ---
         let timelineBlock = document.getElementById('modal-timeline-block');
         if (!timelineBlock) {
             timelineBlock = document.createElement('div');
@@ -497,7 +513,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
         timelineBlock.innerHTML = timelineHtml;
-        // ---------------------------------
 
         document.getElementById('modal-client-name').innerText = order.clientName || '---';
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
@@ -638,6 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
             order.acceptedAt = getNowString(); 
             if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeOrderModal();
+            updateOrderCounts(); // Обновление счетчиков при принятии
             filterEmpOrders('progress', document.getElementById('tab-progress')); 
         }
     };
@@ -647,11 +663,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if(order) {
             order.status = 'completed';
             order.completedAt = getNowString();
-            order.isCommissionPaid = false; // Долг компании записывается при завершении
+            order.isCommissionPaid = false; 
             if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
             closeOrderModal();
+            updateOrderCounts(); // Обновление счетчиков при завершении
             filterEmpOrders('completed', document.getElementById('tab-completed')); 
-            renderEmployeeFinance(); // Обновляем финансы после завершения
+            renderEmployeeFinance(); 
         }
     };
 
