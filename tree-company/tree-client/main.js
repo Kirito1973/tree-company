@@ -1,14 +1,14 @@
-// PWA Setup с жестким обходом кэша
+// Регистрация Service Worker для PWA (Без бесконечной перезагрузки)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Заставляем браузер всегда скачивать свежий sw.js
-        const swUrl = './sw.js?t=' + new Date().getTime();
-        navigator.serviceWorker.register(swUrl).then(reg => {
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            // Тихо проверяем наличие обновлений файла sw.js на сервере
             reg.update(); 
         }).catch(err => console.error('Ошибка SW:', err));
     });
 
     let refreshing = false;
+    // Сработает только один раз, когда реально выйдет новая версия sw.js
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!refreshing) {
             refreshing = true;
@@ -510,4 +510,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
