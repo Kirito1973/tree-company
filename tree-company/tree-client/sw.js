@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tree-client-cache-v3'; // Изменили версию для принудительного обновления
+const CACHE_NAME = 'tree-client-cache-v4'; // Обновили версию для сброса старого кэша
 const urlsToCache = [
   './',
   './index.html',
@@ -33,7 +33,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Игнорируем POST запросы и запросы к API (динамические данные)
   if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
     return;
   }
