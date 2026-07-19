@@ -1,53 +1,28 @@
-const CACHE_NAME = 'tree-client-cache-v9';
-const urlsToCache = [
-  './',
-  './index.html',
-  './form.html',
-  './jobs.html',
-  './order-baseboards.html',
-  './order-doors.html',
-  './account.html',
-  './style.css',
-  './main.js',
-  './manifest.json'
-];
+const CACHE_NAME = 'tree-dev-cache-v10';
 
 self.addEventListener('install', event => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-  );
+    self.skipWaiting(); // Моментально активируем новый Service Worker
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim())
-  );
+    event.waitUntil(self.clients.claim()); // Забираем контроль над страницей
 });
 
+// Стратегия Network First (Сначала сеть, потом кэш)
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
-    return;
-  }
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response && response.status === 200 && response.type === 'basic') {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      })
-  );
+    if (event.request.method !== 'GET' || event.request.url.includes('/api/')) return;
+    
+    event.respondWith(
+        fetch(event.request)
+            .then(response => {
+                // Если интернет есть, сохраняем свежий файл в кэш
+                const clone = response.clone();
+                caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                return response;
+            })
+            .catch(() => {
+                // Если интернета нет, берем из кэша
+                return caches.match(event.request);
+            })
+    );
 });
