@@ -177,7 +177,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
         "nav_jobs": { "AM": "Աշխատանք", "RU": "Вакансии", "EN": "Jobs" },
-        "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" }
+        "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" },
+
+        // НОВЫЕ СТРОКИ ДЛЯ БЛОКА РЕГИСТРАЦИИ
+        "how_to_get_id": { "AM": "Ինչպե՞ս գրանցվել:", "RU": "Как зарегистрироваться?", "EN": "How to register?" },
+        "no_reg_needed": { 
+            "AM": "Գրանցվելու կարիք չկա: Ուղղակի ձևակերպեք Ձեր առաջին պատվերը, և համակարգը ավտոմատ կստեղծի Ձեր անձնական էջն ու կտրամադրի եզակի ID:", 
+            "RU": "Вам не нужно регистрироваться! Просто оформите свой первый заказ, и система автоматически создаст ваш личный кабинет и выдаст уникальный ID для входа.", 
+            "EN": "No need to register! Just place your first order, and the system will automatically create your personal account and provide a unique ID." 
+        }
     };
     
     function applyLanguage() {
@@ -243,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const profileView = document.getElementById('account-profile-view');
         const idDisplay = document.getElementById('cabinet-id-display');
 
-        // Логика скрытия ссылки "Уже есть ID?" на других страницах
         const loginLinks = document.querySelectorAll('.id-login-link');
         if (currentClientId) {
             loginLinks.forEach(link => link.style.display = 'none');
@@ -251,7 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
             loginLinks.forEach(link => link.style.display = 'inline-block');
         }
 
-        // Если мы находимся на странице Аккаунта
         if (loginView && profileView) {
             if (currentClientId) {
                 loginView.style.display = 'none';
@@ -346,7 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
             checkClientAuth();
             if (navigator.vibrate) navigator.vibrate(50);
             
-            // Если вошли через ссылку "Уже есть ID?" на другой странице - перекидываем в Аккаунт
             if (!document.getElementById('account-page-marker')) {
                 window.location.href = 'account.html';
             }
@@ -355,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Глобальная функция для ссылки в подвале
     window.openLoginModal = function(e) {
         e.preventDefault();
         window.location.href = 'account.html';
@@ -458,14 +462,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // ГЕНЕРАЦИЯ ID (ЕСЛИ НЕТ)
             if (!currentClientId) {
                 currentClientId = 'TR-' + Math.floor(1000 + Math.random() * 9000);
                 localStorage.setItem('tree_client_id', currentClientId);
                 checkClientAuth();
             }
 
-            // СОХРАНЕНИЕ НОВОГО ЗАКАЗА В ИСТОРИЮ
             const now = new Date();
             const dateStr = String(now.getDate()).padStart(2, '0') + '.' + 
                             String(now.getMonth() + 1).padStart(2, '0') + '.' + 
@@ -482,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
 
-            // ПОКАЗ ID В ОКНЕ УСПЕХА
             const idContainer = document.getElementById('success-id-container');
             const idDisplay = document.getElementById('success-id-display');
             if (idContainer && idDisplay) {
