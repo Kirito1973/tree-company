@@ -1,9 +1,9 @@
-// PWA Setup с автоматическим обновлением «на лету»
+// PWA Setup
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
             reg.update(); 
-        }).catch(err => console.error('Ошибка SW клиентского приложения:', err));
+        }).catch(err => console.error('Ошибка SW:', err));
     });
 
     let refreshing = false;
@@ -17,7 +17,7 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. ТЕМА (DARK / LIGHT) ---
+    // --- 1. ТЕМА ---
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
     const body = document.body;
@@ -47,20 +47,15 @@ document.addEventListener('DOMContentLoaded', () => {
             rotationDegrees += 360;
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
             let newTheme = 'light';
-
             if (body.classList.contains('force-dark')) {
-                body.classList.remove('force-dark');
-                body.classList.add('force-light');
+                body.classList.remove('force-dark'); body.classList.add('force-light');
             } else if (body.classList.contains('force-light')) {
-                body.classList.remove('force-light');
-                body.classList.add('force-dark');
-                newTheme = 'dark';
+                body.classList.remove('force-light'); body.classList.add('force-dark'); newTheme = 'dark';
             } else {
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     body.classList.add('force-light');
                 } else {
-                    body.classList.add('force-dark');
-                    newTheme = 'dark';
+                    body.classList.add('force-dark'); newTheme = 'dark';
                 }
             }
             localStorage.setItem('app_theme', newTheme);
@@ -74,16 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentLangBtn = document.getElementById('current-lang-btn');
 
     if (currentLangBtn && langSwitcher) {
-        currentLangBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            langSwitcher.classList.toggle('open');
-        });
+        currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
     }
 
     document.addEventListener('click', (e) => {
-        if (langSwitcher && !langSwitcher.contains(e.target)) {
-            langSwitcher.classList.remove('open');
-        }
+        if (langSwitcher && !langSwitcher.contains(e.target)) langSwitcher.classList.remove('open');
     });
 
     const translations = {
@@ -168,22 +158,26 @@ document.addEventListener('DOMContentLoaded', () => {
         "submit": { "AM": "Ուղարկել հայտը", "RU": "Отправить", "EN": "Submit" },
         "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
         
-        "cab_btn": { "AM": "Իմ էջը", "RU": "Кабинет", "EN": "Cabinet" },
         "already_id": { "AM": "Արդեն ունե՞ք ID:", "RU": "Уже есть ID?", "EN": "Already have an ID?" },
-        "modal_success_id": { "AM": "Ձեր անձնական ID-ն՝ (Пароль для входа)", "RU": "Ваш личный ID:", "EN": "Your personal ID:" },
+        "modal_success_id": { "AM": "Ձեր անձնական ID-ն՝ (Պահպանեք այն)", "RU": "Ваш личный ID:", "EN": "Your personal ID:" },
         "cab_title": { "AM": "Իմ պատվերները", "RU": "Мои заказы", "EN": "My Orders" },
         "cab_empty": { "AM": "Այստեղ կցուցադրվեն Ձեր պատվերները", "RU": "Здесь будут отображаться ваши заказы", "EN": "Your orders will be displayed here" },
         "enter_id_title": { "AM": "Մուտքագրեք ID", "RU": "Введите ID", "EN": "Enter ID" },
         "enter_id_pl": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
         "btn_login": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
         "logout_btn": { "AM": "Ելք", "RU": "Выйти", "EN": "Logout" },
+        "acc_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Account</span>" },
+        "acc_login_desc": { "AM": "Մուտքագրեք Ձեր ID-ն պատվերները տեսնելու համար", "RU": "Введите ваш ID, чтобы увидеть заказы", "EN": "Enter your ID to view orders" },
         
-        // НОВЫЕ ПЕРЕВОДЫ ДЛЯ СТАТУСОВ И РЕЙТИНГА
         "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
         "status_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
         "status_completed": { "AM": "Ավարտված", "RU": "Завершен", "EN": "Completed" },
         "rate_master": { "AM": "Գնահատեք վարպետի աշխատանքը:", "RU": "Оцените работу мастера:", "EN": "Rate the master's work:" },
-        "thanks_rating": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за оценку!", "EN": "Thank you for rating!" }
+        "thanks_rating": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за оценку!", "EN": "Thank you for rating!" },
+
+        "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
+        "nav_jobs": { "AM": "Աշխատանք", "RU": "Вакансии", "EN": "Jobs" },
+        "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" }
     };
     
     function applyLanguage() {
@@ -222,8 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // Перерисовываем кабинет при смене языка, если он открыт
-        if (document.getElementById('cabinet-modal') && document.getElementById('cabinet-modal').classList.contains('open')) {
+        if (document.getElementById('account-page-marker')) {
             renderCabinetOrders();
         }
     }
@@ -242,18 +235,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyLanguage();
 
-    // --- 3. ЛОГИКА ЛИЧНОГО КАБИНЕТА, ИСТОРИИ И РЕЙТИНГА ---
-    const fabCabinet = document.getElementById('fab-cabinet');
-    const loginLinks = document.querySelectorAll('.id-login-link');
+    // --- 3. ЛОГИКА СТРАНИЦЫ АККАУНТА (ACCOUNT.HTML) ---
     let currentClientId = localStorage.getItem('tree_client_id');
 
     window.checkClientAuth = function() {
+        const loginView = document.getElementById('account-login-view');
+        const profileView = document.getElementById('account-profile-view');
+        const idDisplay = document.getElementById('cabinet-id-display');
+
+        // Логика скрытия ссылки "Уже есть ID?" на других страницах
+        const loginLinks = document.querySelectorAll('.id-login-link');
         if (currentClientId) {
-            if(fabCabinet) fabCabinet.style.display = 'flex';
             loginLinks.forEach(link => link.style.display = 'none');
         } else {
-            if(fabCabinet) fabCabinet.style.display = 'none';
             loginLinks.forEach(link => link.style.display = 'inline-block');
+        }
+
+        // Если мы находимся на странице Аккаунта
+        if (loginView && profileView) {
+            if (currentClientId) {
+                loginView.style.display = 'none';
+                profileView.style.display = 'block';
+                if (idDisplay) idDisplay.innerText = currentClientId;
+                renderCabinetOrders();
+            } else {
+                loginView.style.display = 'block';
+                profileView.style.display = 'none';
+            }
         }
     };
 
@@ -263,30 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
         
-        // --- ДЛЯ ТЕСТА: Если заказов нет, создаем пару фейковых ---
         if (!orders || orders.length === 0) {
             orders = [
-                {
-                    id: 'ORD-982',
-                    date: '10.07.2026',
-                    total: '15,000 ֏',
-                    status: 'completed',
-                    rating: 0
-                },
-                {
-                    id: 'ORD-995',
-                    date: '18.07.2026',
-                    total: '8,500 ֏',
-                    status: 'progress',
-                    rating: 0
-                }
+                { id: 'ORD-982', date: '10.07.2026', total: '15,000 ֏', status: 'completed', rating: 0 },
+                { id: 'ORD-995', date: '18.07.2026', total: '8,500 ֏', status: 'progress', rating: 0 }
             ];
             localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
         }
 
         list.innerHTML = '';
-        
-        // Новые заказы сверху
         const sortedOrders = [...orders].reverse();
 
         sortedOrders.forEach((o) => {
@@ -306,31 +299,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="cab-order-date">${o.date}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                        <span style="font-weight: 900; font-size: 14px; color: var(--text);">${o.total}</span>
+                        <span style="font-weight: 900; font-size: 16px; color: var(--text);">${o.total}</span>
                         <span class="cab-order-status" style="color: ${statusColor}; background: ${statusColor}15; border-color: ${statusColor}40;">${statusText}</span>
                     </div>
             `;
 
-            // Если заказ завершен — добавляем блок рейтинга (5 звезд)
             if (o.status === 'completed') {
                 html += `<div class="cab-rating-block">`;
                 
                 if (o.rating > 0) {
-                    // Уже оценили
                     const ratedText = currentLang === 'AM' ? 'Ձեր գնահատականը՝' : (currentLang === 'RU' ? 'Ваша оценка:' : 'Your rating:');
                     html += `<div style="font-size: 10px; color: var(--text-sec); margin-bottom: 6px; font-weight: 800;">${ratedText}</div>
                              <div class="star-rating rated">`;
-                    for(let i=1; i<=5; i++) {
-                        html += `<span class="star ${i <= o.rating ? 'filled' : ''}">★</span>`;
-                    }
+                    for(let i=1; i<=5; i++) { html += `<span class="star ${i <= o.rating ? 'filled' : ''}">★</span>`; }
                     html += `</div>`;
                 } else {
-                    // Еще не оценили - интерактивные звезды (направление RTL в CSS для hover эффекта)
                     html += `<div style="font-size: 10px; font-weight: 800; color: var(--tree-light); margin-bottom: 6px;">${translations['rate_master'][currentLang]}</div>
                              <div class="star-rating interactive">`;
-                    for(let i=5; i>=1; i--) {
-                        html += `<span class="star" onclick="rateOrder(${realIndex}, ${i})">★</span>`;
-                    }
+                    for(let i=5; i>=1; i--) { html += `<span class="star" onclick="rateOrder(${realIndex}, ${i})">★</span>`; }
                     html += `</div>`;
                 }
                 html += `</div>`;
@@ -341,45 +327,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Сохранение оценки клиента
     window.rateOrder = function(index, rating) {
         let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
         if(orders && orders[index]) {
             orders[index].rating = rating;
             localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
-            renderCabinetOrders(); // Перерисовываем список, чтобы звезды закрасились
-            
+            renderCabinetOrders(); 
             if (navigator.vibrate) navigator.vibrate(50);
-            
-            setTimeout(() => {
-                alert(translations['thanks_rating'][currentLang]);
-            }, 50);
+            setTimeout(() => { alert(translations['thanks_rating'][currentLang]); }, 50);
         }
     }
-
-    window.openCabinet = function() {
-        const modal = document.getElementById('cabinet-modal');
-        document.getElementById('cabinet-id-display').innerText = currentClientId;
-        renderCabinetOrders(); 
-        if (modal) modal.classList.add('open');
-        if (navigator.vibrate) navigator.vibrate(15);
-    };
-
-    window.closeCabinet = function() {
-        const modal = document.getElementById('cabinet-modal');
-        if (modal) modal.classList.remove('open');
-    };
-
-    window.openLoginModal = function(e) {
-        e.preventDefault();
-        const modal = document.getElementById('login-modal');
-        if (modal) modal.classList.add('open');
-    };
-
-    window.closeLoginModal = function() {
-        const modal = document.getElementById('login-modal');
-        if (modal) modal.classList.remove('open');
-    };
 
     window.loginClient = function() {
         const inputVal = document.getElementById('login-id-input').value.trim().toUpperCase();
@@ -387,20 +344,27 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('tree_client_id', inputVal);
             currentClientId = inputVal;
             checkClientAuth();
-            closeLoginModal();
-            document.getElementById('login-id-input').value = '';
             if (navigator.vibrate) navigator.vibrate(50);
-            openCabinet();
+            
+            // Если вошли через ссылку "Уже есть ID?" на другой странице - перекидываем в Аккаунт
+            if (!document.getElementById('account-page-marker')) {
+                window.location.href = 'account.html';
+            }
         } else {
             alert(currentLang === 'RU' ? 'Неверный формат ID' : 'Սխալ ID ձևաչափ (Неверный формат ID)');
         }
+    };
+
+    // Глобальная функция для ссылки в подвале
+    window.openLoginModal = function(e) {
+        e.preventDefault();
+        window.location.href = 'account.html';
     };
 
     window.logoutClient = function() {
         localStorage.removeItem('tree_client_id');
         currentClientId = null;
         checkClientAuth();
-        closeCabinet();
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
@@ -416,8 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(translations['alert_success'][currentLang]);
                 applyForm.reset();
             } catch (error) {
-                console.error('Network error:', error);
-                alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
+                alert('Տեղի է ունեցել սխալ: / Произошла ошибка.');
             }
         });
     }
@@ -425,9 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. ЛОГИКА КАЛЬКУЛЯТОРА И ЗАКАЗА ---
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
-        function formatNumber(num) {
-            return num.toLocaleString('en-US') + ' ֏';
-        }
+        function formatNumber(num) { return num.toLocaleString('en-US') + ' ֏'; }
 
         function calculateGrandTotal() {
             let grandTotal = 0;
@@ -436,12 +397,10 @@ document.addEventListener('DOMContentLoaded', () => {
             items.forEach(item => {
                 const checkbox = item.querySelector('.service-check');
                 const subtotalEl = item.querySelector('.calc-subtotal');
-                
                 if (checkbox.checked) {
                     let price = parseInt(item.getAttribute('data-price'));
                     const qtyInput = item.querySelector('.qty-input');
                     const qty = qtyInput ? (qtyInput.value === '' ? 0 : parseInt(qtyInput.value)) : 1;
-                    
                     const subtotal = price * qty;
                     if (subtotalEl) subtotalEl.textContent = formatNumber(subtotal);
                     grandTotal += subtotal;
@@ -449,7 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (subtotalEl) subtotalEl.textContent = '0 ֏';
                 }
             });
-            
             const gtEl = document.getElementById('grandTotal');
             if(gtEl) gtEl.textContent = formatNumber(grandTotal);
         }
@@ -457,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.calc-item').forEach(item => {
             const checkbox = item.querySelector('.service-check');
             const qtyInput = item.querySelector('.qty-input');
-
             checkbox.addEventListener('change', () => {
                 if (checkbox.checked) {
                     item.classList.add('active');
@@ -467,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 calculateGrandTotal();
             });
-
             if (qtyInput) {
                 qtyInput.addEventListener('input', () => {
                     if(qtyInput.value !== '' && qtyInput.value < 1) qtyInput.value = 1;
@@ -480,17 +436,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (phoneInput) {
             phoneInput.addEventListener('input', function() {
                 let val = this.value;
-                if (!val.startsWith('+374 ')) {
-                    this.value = '+374 ';
-                } else {
+                if (!val.startsWith('+374 ')) { this.value = '+374 '; } else {
                     let restOfNumber = val.substring(5).replace(/[^\d\s]/g, '');
                     this.value = '+374 ' + restOfNumber;
                 }
             });
             phoneInput.addEventListener('focus', function() {
-                if (this.value === '' || this.value === '+374' || this.value === '+374 ') {
-                    this.value = '+374 ';
-                }
+                if (this.value === '' || this.value === '+374' || this.value === '+374 ') this.value = '+374 ';
             });
         }
 
