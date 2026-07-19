@@ -203,10 +203,31 @@ body.force-dark .entity-card { background: rgba(0, 0, 0, 0.2); }
 .filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px; width: 100%; scrollbar-width: none; }
 .filter-tabs::-webkit-scrollbar { display: none; }
 
-.filter-tab { background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 20px; padding: 10px 18px; font-size: 11px; font-weight: 800; color: var(--text-sec); white-space: nowrap; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 10px var(--shadow); }
+.filter-tab { 
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 20px; padding: 10px 18px; font-size: 11px; font-weight: 800; color: var(--text-sec); white-space: nowrap; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 10px var(--shadow); 
+}
 body.force-dark .filter-tab { background: rgba(0, 0, 0, 0.2); }
 .filter-tab:active { transform: scale(0.95); }
 .filter-tab.active { background: var(--tree-light); color: white; border-color: var(--tree-light); box-shadow: 0 6px 15px rgba(31,150,81,0.3); }
+
+/* Стили счетчиков для вкладок */
+.count-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(128, 128, 128, 0.2);
+    color: inherit;
+    border-radius: 50%;
+    min-width: 16px;
+    height: 16px;
+    font-size: 9px;
+    font-weight: 900;
+    margin-left: 6px;
+    padding: 0 4px;
+    transition: background 0.3s ease;
+}
+.filter-tab.active .count-badge { background: rgba(255, 255, 255, 0.3); color: white; }
 
 /* МОДАЛЬНЫЕ ОКНА И ДЕТАЛИ */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
@@ -230,7 +251,7 @@ body.force-dark .detail-block { background: rgba(0, 0, 0, 0.15); }
 .call-btn:active { transform: scale(0.9); background: rgba(31, 150, 81, 0.25); }
 .call-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
 
-/* ИЗМЕНЕНИЕ: Кнопка карты (Синяя) */
+/* Кнопка карты (Синяя) */
 .map-btn { background: rgba(0, 163, 255, 0.15); color: #00A3FF; border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; cursor: pointer; text-decoration: none; transition: transform 0.2s, background 0.2s; flex-shrink: 0; }
 .map-btn:active { transform: scale(0.9); background: rgba(0, 163, 255, 0.25); }
 .map-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
