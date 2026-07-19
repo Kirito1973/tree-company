@@ -54,8 +54,7 @@ body {
     transition: background-color 0.8s ease, color 0.4s ease; position: relative; overflow-x: hidden;
 }
 
-/* Увеличили нижний padding чтобы кнопка кабинета не перекрывала футер */
-.app-container { width: 100%; max-width: 420px; padding: 0 16px 90px 16px; display: flex; flex-direction: column; align-items: center; }
+.app-container { width: 100%; max-width: 420px; padding: 0 16px 100px 16px; display: flex; flex-direction: column; align-items: center; }
 
 /* Фоны */
 .noise-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; opacity: 0.04; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
@@ -66,8 +65,7 @@ body {
 .app-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 0 16px 0; margin-bottom: 20px; }
 .header-controls { display: flex; gap: 10px; align-items: center; }
 .theme-btn, .nav-btn, .job-btn { background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); box-shadow: 0 8px 24px var(--btn-shadow), var(--glass-rim); color: var(--text); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
-.theme-btn { border-radius: 50%; width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; }
-.theme-btn { font-size: 22px; padding: 0; }
+.theme-btn { border-radius: 50%; width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; font-size: 22px; padding: 0; }
 .theme-btn:active { transform: scale(0.85); box-shadow: 0 4px 12px var(--shadow); }
 .theme-icon { display: inline-block; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
@@ -184,79 +182,139 @@ input[type="checkbox"]:checked + .custom-checkbox::after { content: ''; position
 .modal-text { font-size: 14px; font-weight: 900; color: var(--text); line-height: 1.4; text-transform: uppercase; letter-spacing: 0.3px; }
 .modal-close-btn { margin-top: 24px; padding: 12px 35px; width: auto; font-size: 12px; display: inline-block; }
 
-/* ==================== НОВОЕ: ЛИЧНЫЙ КАБИНЕТ И ID ==================== */
 
-/* Плавающая кнопка Кабинета (Появляется только после получения ID) */
-.fab-cabinet {
+/* ==================== НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (BOTTOM NAV) ==================== */
+.bottom-nav {
     position: fixed;
-    bottom: 24px;
-    right: 20px;
-    background: linear-gradient(135deg, #23A95B, #1F9651);
-    color: white;
-    border: none;
-    border-radius: 24px;
-    padding: 14px 20px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    height: 76px;
+    background: var(--card-bg);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-top: 1px solid var(--card-border);
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05), var(--glass-rim);
     display: flex;
+    justify-content: space-around;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 8px 24px rgba(31, 150, 81, 0.4);
-    cursor: pointer;
+    padding: 0 10px;
     z-index: 1000;
-    font-family: inherit;
-    font-weight: 800;
-    font-size: 12px;
-    text-transform: uppercase;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    animation: slideInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.fab-cabinet:active {
-    transform: scale(0.9);
-    box-shadow: 0 4px 12px rgba(31, 150, 81, 0.3);
-}
-
-.fab-cabinet svg {
-    stroke: white;
-}
-
-@keyframes slideInUp {
-    from { transform: translateY(100px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-/* Ссылка на восстановление ID в подвале */
-.id-login-link {
-    font-size: 10px;
-    font-weight: 800;
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     color: var(--text-sec);
-    text-decoration: underline;
+    text-decoration: none;
+    font-size: 8px;
+    font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 30%;
+    height: 100%;
     cursor: pointer;
-    transition: color 0.2s ease;
-    display: inline-block;
-    padding: 10px;
 }
 
-.id-login-link:active {
+.tab-item svg {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    stroke: var(--text-sec);
+    fill: none;
+}
+
+.tab-item.active {
     color: var(--tree-light);
 }
 
-/* Заголовок окна (для модалки входа) */
-.screen-title {
-    font-size: 16px;
-    font-weight: 900;
-    color: var(--text);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.tab-item.active svg {
+    stroke: var(--tree-light);
+    transform: translateY(-4px) scale(1.15);
+    filter: drop-shadow(0 4px 8px rgba(31, 150, 81, 0.25));
 }
 
-/* ==================== ОФОРМЛЕНИЕ КАРТОЧЕК ЗАКАЗОВ В КАБИНЕТЕ ==================== */
+
+/* ==================== СТРАНИЦА АККАУНТА (КРАСИВЫЙ СТИЛЬ) ==================== */
+
+.acc-id-card {
+    background: linear-gradient(135deg, rgba(35, 169, 91, 0.1), rgba(0, 200, 255, 0.05));
+    border: 1px solid var(--tree-light);
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(35, 169, 91, 0.15), var(--glass-rim);
+    overflow: hidden;
+}
+
+.acc-id-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.acc-id-label {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-sec);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.acc-id-value {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--tree-light);
+    letter-spacing: 3px;
+    text-shadow: 0 2px 10px rgba(35, 169, 91, 0.3);
+}
+
+.logout-mini-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 50, 50, 0.1);
+    color: #ff4444;
+    border: 1px solid rgba(255, 50, 50, 0.2);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logout-mini-btn:active {
+    transform: scale(0.9);
+    background: rgba(255, 50, 50, 0.2);
+}
 
 .cab-order-card {
     background: rgba(255, 255, 255, 0.4);
     border: 1px solid rgba(128, 128, 128, 0.2);
     border-radius: 16px;
-    padding: 14px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     transition: transform 0.2s;
@@ -277,30 +335,28 @@ body.force-dark .cab-order-card {
 
 .cab-order-id {
     font-weight: 900;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text);
 }
 
 .cab-order-date {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     color: var(--text-sec);
 }
 
 .cab-order-status {
-    font-size: 9px;
-    font-weight: 800;
+    font-size: 10px;
+    font-weight: 900;
     text-transform: uppercase;
-    padding: 4px 8px;
-    border-radius: 8px;
+    padding: 6px 10px;
+    border-radius: 10px;
     border: 1px solid;
 }
 
-/* ==================== СИСТЕМА ОЦЕНКИ МАСТЕРА (5 ЗВЕЗД) ==================== */
-
 .cab-rating-block {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 14px;
+    padding-top: 14px;
     border-top: 1px solid rgba(128, 128, 128, 0.15);
     display: flex;
     flex-direction: column;
@@ -309,24 +365,22 @@ body.force-dark .cab-order-card {
 
 .star-rating {
     display: flex;
-    font-size: 28px; /* Крупные звезды для удобного нажатия пальцем */
+    font-size: 32px;
     line-height: 1;
     color: rgba(128, 128, 128, 0.3);
 }
 
-/* Интерактивные звезды (когда клиент еще не ставил оценку) */
 .star-rating.interactive {
-    flex-direction: row-reverse; /* Меняем направление, чтобы CSS hover работал корректно слева-направо */
+    flex-direction: row-reverse;
     justify-content: center;
 }
 
 .star-rating.interactive .star {
     cursor: pointer;
-    transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.2s, transform 0.2s;
     padding: 0 4px;
 }
 
-/* Эффект наведения: подсвечиваются все звезды до выбранной */
 .star-rating.interactive .star:hover,
 .star-rating.interactive .star:hover ~ .star {
     color: #FFB347;
@@ -336,7 +390,6 @@ body.force-dark .cab-order-card {
     transform: scale(1.2);
 }
 
-/* Сохраненная оценка (клиент уже проголосовал) */
 .star-rating.rated {
     justify-content: center;
 }
@@ -346,7 +399,6 @@ body.force-dark .cab-order-card {
     cursor: default;
 }
 
-/* Закрашенная звезда */
 .star-rating.rated .star.filled {
     color: #FFB347;
     filter: drop-shadow(0 2px 4px rgba(255, 179, 71, 0.3));
