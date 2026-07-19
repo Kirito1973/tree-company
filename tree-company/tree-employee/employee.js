@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
         
-        // ЛОГИКА МАРШРУТОВ ЯНДЕКСА (ОБНОВЛЕННАЯ)
+        // ЛОГИКА МАРШРУТОВ ЯНДЕКСА (ПОИСК ПО АДРЕСУ)
         document.getElementById('modal-client-address-text').innerText = order.address || '---';
         const mapLink = document.getElementById('modal-client-map-link');
         
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mapLink.onclick = (e) => {
                 e.preventDefault();
                 const addressEncoded = encodeURIComponent(order.address);
-                const yandexUrl = `https://yandex.ru/maps/?mode=routes&rtext=~${addressEncoded}&rtt=auto`;
+                const yandexUrl = `https://yandex.ru/maps/?text=${addressEncoded}`;
                 window.open(yandexUrl, '_blank');
             };
         } else {
