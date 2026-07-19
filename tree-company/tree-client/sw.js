@@ -1,50 +1,53 @@
-const CACHE_NAME = 'tree-company-v2';
-const ASSETS = [
+const CACHE_NAME = 'tree-client-cache-v3'; // Изменили версию для принудительного обновления
+const urlsToCache = [
   './',
   './index.html',
-  './jobs.html',
   './form.html',
-  './order-doors.html',
+  './jobs.html',
   './order-baseboards.html',
+  './order-doors.html',
   './style.css',
   './main.js',
-  './manifest.json',
-  './assets/tree.svg',
-  './assets/icon-192.png',
-  './assets/icon-512.png',
-  './assets/icon-512-maskable.png',
-  './assets/apple-touch-icon.png',
-  './assets/free-icon-armenia-197516.png',
-  './assets/free-icon-russia-9994030.png',
-  './assets/united-kingdom.png'
+  './manifest.json'
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((keys) => {
+    caches.keys().then(cacheNames => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
+  // Игнорируем POST запросы и запросы к API (динамические данные)
+  if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
+    return;
+  }
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
+    fetch(event.request)
+      .then(response => {
+        if (response && response.status === 200 && response.type === 'basic') {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
+        }
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
