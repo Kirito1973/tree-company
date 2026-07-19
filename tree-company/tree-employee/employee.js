@@ -16,7 +16,6 @@ if ('serviceWorker' in navigator) {
 }
 
 // ================= ВРЕМЯ И ФОРМАТИРОВАНИЕ =================
-// Функция для генерации текущего времени в формате ДД.ММ.ГГГГ ЧЧ:ММ
 function getNowString() {
     const now = new Date();
     return String(now.getDate()).padStart(2, '0') + '.' +
@@ -70,8 +69,9 @@ const translations = {
 
     "stats_all_time": { "AM": "Ընդհանուր եկամուտ", "RU": "За все время", "EN": "All Time Total" },
     "click_to_view": { "AM": "⬇ Սեղմեք՝ ըստ ամիսների տեսնելու համար ⬇", "RU": "⬇ Нажмите, чтобы посмотреть по месяцам ⬇", "EN": "⬇ Click to view by months ⬇" },
-    "stats_week": { "AM": "Այս շաբաթ", "RU": "На этой неделе", "EN": "This week" },
     "stats_month": { "AM": "Այս ամիս", "RU": "В этом месяце", "EN": "This month" },
+    "stats_uncompleted": { "AM": "Ընթացիկ պատվերներ", "RU": "Незавершенные", "EN": "In Progress" },
+    "stats_debt": { "AM": "Պարտք ընկերությանը", "RU": "Долг компании", "EN": "Company Debt" },
 
     "logout_btn": { "AM": "Ելք", "RU": "Выйти", "EN": "Logout" },
     "prof_name": { "AM": "Անուն:", "RU": "Имя:", "EN": "Name:" },
@@ -133,6 +133,7 @@ function applyLanguage() {
 }
 
 // ================= БАЗА ДАННЫХ (MOCK) =================
+// Добавили isCommissionPaid для расчета долга компании
 let ordersData = [
     {
         id: 'ORD-003', status: 'new', 
@@ -152,7 +153,7 @@ let ordersData = [
         ]
     },
     {
-        id: 'ORD-001', status: 'completed', 
+        id: 'ORD-001', status: 'completed', isCommissionPaid: false,
         createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00',
         clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1',
         worker: 'Արմեն Սարգսյան',
@@ -271,70 +272,98 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEmployeeOrders();
     };
 
-    // ================= ДИНАМИКА ФИНАНСОВ ПО ЗАВЕРШЕННЫМ ЗАКАЗАМ =================
+    // ================= ДИНАМИКА ФИНАНСОВ =================
     window.renderEmployeeFinance = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         const financeSection = document.getElementById('screen-emp-finance');
         if (!emp || !financeSection) return;
 
-        // Берем только реально завершенные заказы мастера
-        const empCompletedOrders = ordersData.filter(o => 
-            o.worker && o.worker.includes(emp.name) && o.status === 'completed'
-        );
-
-        let totalAllTime = 0;
-        const monthlyData = {};
-
-        empCompletedOrders.forEach(order => {
-            let orderTotal = 0;
-            order.services.forEach(s => {
-                if (s.done) orderTotal += (s.price * s.qty);
-            });
-            // Чистый доход мастера с вычетом процента компании
-            let masterNet = orderTotal - (orderTotal * COMPANY_FEE_PERCENT);
-            totalAllTime += masterNet;
-
-            // Группируем по месяцам (берем дату завершения)
-            const targetDate = order.completedAt || order.createdAt;
-            if (targetDate) {
-                const dateParts = targetDate.split(' ')[0].split('.');
-                if (dateParts.length === 3) {
-                    const monthYear = `${dateParts[1]}.${dateParts[2]}`; // Формат MM.YYYY
-                    if (!monthlyData[monthYear]) monthlyData[monthYear] = 0;
-                    monthlyData[monthYear] += masterNet;
-                }
-            }
-        });
+        const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name));
 
         const now = new Date();
         const currMonthStr = String(now.getMonth() + 1).padStart(2, '0') + '.' + now.getFullYear();
-        const currentMonthTotal = monthlyData[currMonthStr] || 0;
+
+        let totalAllTime = 0;
+        let currentMonthTotal = 0;
+        let uncompletedTotal = 0;
+        let companyDebt = 0;
+        const monthlyData = {};
+
+        empOrders.forEach(order => {
+            let orderTotal = 0;
+            
+            // Считаем общую стоимость услуг заказа
+            order.services.forEach(s => {
+                if (order.status === 'completed') {
+                    if (s.done) orderTotal += (s.price * s.qty);
+                } else if (order.status === 'progress') {
+                    orderTotal += (s.price * s.qty);
+                }
+            });
+
+            let companyFee = orderTotal * COMPANY_FEE_PERCENT;
+            let masterNet = orderTotal - companyFee;
+
+            if (order.status === 'completed') {
+                totalAllTime += masterNet;
+
+                // Если долг компании не оплачен, добавляем его в красную карточку
+                if (!order.isCommissionPaid) {
+                    companyDebt += companyFee;
+                }
+
+                // Группируем по месяцам для выпадающего списка
+                const targetDate = order.completedAt || order.createdAt;
+                if (targetDate) {
+                    const dateParts = targetDate.split(' ')[0].split('.');
+                    if (dateParts.length === 3) {
+                        const monthYear = `${dateParts[1]}.${dateParts[2]}`;
+                        if (!monthlyData[monthYear]) monthlyData[monthYear] = 0;
+                        monthlyData[monthYear] += masterNet;
+                        
+                        // Заработок за текущий месяц
+                        if (monthYear === currMonthStr) {
+                            currentMonthTotal += masterNet;
+                        }
+                    }
+                }
+            } else if (order.status === 'progress') {
+                // Ожидаемый заработок за незавершенные заказы (В процессе)
+                uncompletedTotal += masterNet;
+            }
+        });
 
         // Перезаписываем HTML секции финансов
         financeSection.innerHTML = `
             <h2 class="screen-title" data-i18n="title_emp_finance">Իմ <span>Ֆինանսները</span></h2>
             
-            <div class="glass-panel" style="margin-top: 10px; cursor: pointer; text-align: center; background: rgba(35, 169, 91, 0.1); border: 1px solid rgba(35, 169, 91, 0.3);" onclick="toggleMonthlyFinance()">
-                <div style="font-size: 11px; font-weight: 800; color: var(--tree-light); text-transform: uppercase; margin-bottom: 6px;" data-i18n="stats_all_time">За все время</div>
-                <div style="font-size: 32px; font-weight: 900; color: var(--text);">${totalAllTime.toLocaleString()} ֏</div>
-                <div style="font-size: 9px; color: var(--tree-light); margin-top: 8px; opacity: 0.8;" data-i18n="click_to_view">⬇ Нажмите, чтобы посмотреть по месяцам ⬇</div>
+            <!-- Блок Долга компании -->
+            <div class="glass-panel" style="margin-top: 10px; background: rgba(255, 50, 50, 0.1); border: 1px solid rgba(255, 50, 50, 0.3);">
+                <div style="font-size: 11px; font-weight: 800; color: #ff4444; text-transform: uppercase; margin-bottom: 6px;" data-i18n="stats_debt">Долг компании</div>
+                <div style="font-size: 28px; font-weight: 900; color: var(--text);">${companyDebt.toLocaleString()} ֏</div>
+            </div>
+
+            <!-- Сетка: Текущий месяц и В процессе -->
+            <div class="stats-grid" style="margin-top: 12px;">
+                <div class="stat-box" style="background: rgba(35, 169, 91, 0.1); border-color: rgba(35, 169, 91, 0.3);">
+                    <div class="stat-value" style="color: var(--tree-light); font-size: 20px;">${currentMonthTotal.toLocaleString()} ֏</div>
+                    <div class="stat-label" data-i18n="stats_month">В этом месяце</div>
+                </div>
+                <div class="stat-box" style="background: rgba(255, 179, 71, 0.1); border-color: rgba(255, 179, 71, 0.3);">
+                    <div class="stat-value" style="color: #FFB347; font-size: 20px;">${uncompletedTotal.toLocaleString()} ֏</div>
+                    <div class="stat-label" data-i18n="stats_uncompleted">Незавершенные</div>
+                </div>
+            </div>
+
+            <!-- За все время (Accordion) -->
+            <div class="glass-panel" style="margin-top: 12px; cursor: pointer; text-align: center; padding: 16px;" onclick="toggleMonthlyFinance()">
+                <div style="font-size: 11px; font-weight: 800; color: var(--text-sec); text-transform: uppercase; margin-bottom: 6px;" data-i18n="stats_all_time">За все время</div>
+                <div style="font-size: 24px; font-weight: 900; color: var(--text);">${totalAllTime.toLocaleString()} ֏</div>
+                <div style="font-size: 9px; color: var(--text-sec); margin-top: 8px; opacity: 0.8;" data-i18n="click_to_view">⬇ Нажмите, чтобы посмотреть по месяцам ⬇</div>
             </div>
 
             <div id="monthly-finance-list" style="display: none; flex-direction: column; gap: 8px; margin-top: 12px; width: 100%;">
                 <!-- Сюда вставляются периоды месяцев -->
-            </div>
-
-            <div class="glass-panel" style="margin-top: 12px;">
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-value">0 ֏</div>
-                        <div class="stat-label" data-i18n="stats_week">Այս շաբաթ</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value">${currentMonthTotal.toLocaleString()} ֏</div>
-                        <div class="stat-label" data-i18n="stats_month">Այս ամիս</div>
-                    </div>
-                </div>
             </div>
         `;
 
@@ -351,7 +380,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             sortedMonths.forEach(mKey => {
                 const [mm, yyyy] = mKey.split('.');
-                // Вычисляем последний день этого месяца
                 const lastDay = new Date(yyyy, mm, 0).getDate();
                 const periodStr = `01.${mm}.${yyyy} - ${lastDay}.${mm}.${yyyy}`;
                 
@@ -618,7 +646,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if(order) {
             order.status = 'completed';
-            order.completedAt = getNowString(); 
+            order.completedAt = getNowString();
+            order.isCommissionPaid = false; // Долг компании записывается при завершении
             if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
             closeOrderModal();
             filterEmpOrders('completed', document.getElementById('tab-completed')); 
