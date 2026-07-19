@@ -2,7 +2,7 @@
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js').then(reg => {
-            reg.update(); // Принудительная проверка обновлений на сервере
+            reg.update(); 
         }).catch(err => console.error('Ошибка SW клиентского приложения:', err));
     });
 
@@ -168,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "submit": { "AM": "Ուղարկել հայտը", "RU": "Отправить", "EN": "Submit" },
         "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
         
-        // НОВЫЕ КЛЮЧИ ДЛЯ ЛИЧНОГО КАБИНЕТА
         "cab_btn": { "AM": "Իմ էջը", "RU": "Кабинет", "EN": "Cabinet" },
         "already_id": { "AM": "Արդեն ունե՞ք ID:", "RU": "Уже есть ID?", "EN": "Already have an ID?" },
         "modal_success_id": { "AM": "Ձեր անձնական ID-ն՝ (Пароль для входа)", "RU": "Ваш личный ID:", "EN": "Your personal ID:" },
@@ -177,7 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
         "enter_id_title": { "AM": "Մուտքագրեք ID", "RU": "Введите ID", "EN": "Enter ID" },
         "enter_id_pl": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
         "btn_login": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
-        "logout_btn": { "AM": "Ելք", "RU": "Выйти", "EN": "Logout" }
+        "logout_btn": { "AM": "Ելք", "RU": "Выйти", "EN": "Logout" },
+        
+        // НОВЫЕ ПЕРЕВОДЫ ДЛЯ СТАТУСОВ И РЕЙТИНГА
+        "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
+        "status_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
+        "status_completed": { "AM": "Ավարտված", "RU": "Завершен", "EN": "Completed" },
+        "rate_master": { "AM": "Գնահատեք վարպետի աշխատանքը:", "RU": "Оцените работу мастера:", "EN": "Rate the master's work:" },
+        "thanks_rating": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за оценку!", "EN": "Thank you for rating!" }
     };
     
     function applyLanguage() {
@@ -215,6 +221,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 profInput.value = translations[profKey][currentLang];
             }
         }
+        
+        // Перерисовываем кабинет при смене языка, если он открыт
+        if (document.getElementById('cabinet-modal') && document.getElementById('cabinet-modal').classList.contains('open')) {
+            renderCabinetOrders();
+        }
     }
 
     document.querySelectorAll('.lang-tab').forEach(tab => {
@@ -231,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyLanguage();
 
-    // --- 3. ЛОГИКА ЛИЧНОГО КАБИНЕТА И ID (НОВОЕ) ---
+    // --- 3. ЛОГИКА ЛИЧНОГО КАБИНЕТА, ИСТОРИИ И РЕЙТИНГА ---
     const fabCabinet = document.getElementById('fab-cabinet');
     const loginLinks = document.querySelectorAll('.id-login-link');
     let currentClientId = localStorage.getItem('tree_client_id');
@@ -246,10 +257,110 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.renderCabinetOrders = function() {
+        const list = document.getElementById('cabinet-orders-list');
+        if (!list) return;
+
+        let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
+        
+        // --- ДЛЯ ТЕСТА: Если заказов нет, создаем пару фейковых ---
+        if (!orders || orders.length === 0) {
+            orders = [
+                {
+                    id: 'ORD-982',
+                    date: '10.07.2026',
+                    total: '15,000 ֏',
+                    status: 'completed',
+                    rating: 0
+                },
+                {
+                    id: 'ORD-995',
+                    date: '18.07.2026',
+                    total: '8,500 ֏',
+                    status: 'progress',
+                    rating: 0
+                }
+            ];
+            localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
+        }
+
+        list.innerHTML = '';
+        
+        // Новые заказы сверху
+        const sortedOrders = [...orders].reverse();
+
+        sortedOrders.forEach((o) => {
+            const realIndex = orders.findIndex(order => order.id === o.id);
+
+            let statusColor = '#00A3FF'; 
+            let statusKey = 'status_new';
+            if (o.status === 'progress') { statusColor = '#FFB347'; statusKey = 'status_progress'; }
+            if (o.status === 'completed') { statusColor = 'var(--tree-light)'; statusKey = 'status_completed'; }
+
+            const statusText = translations[statusKey][currentLang] || o.status;
+
+            let html = `
+                <div class="cab-order-card">
+                    <div class="cab-order-header">
+                        <span class="cab-order-id">#${o.id}</span>
+                        <span class="cab-order-date">${o.date}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                        <span style="font-weight: 900; font-size: 14px; color: var(--text);">${o.total}</span>
+                        <span class="cab-order-status" style="color: ${statusColor}; background: ${statusColor}15; border-color: ${statusColor}40;">${statusText}</span>
+                    </div>
+            `;
+
+            // Если заказ завершен — добавляем блок рейтинга (5 звезд)
+            if (o.status === 'completed') {
+                html += `<div class="cab-rating-block">`;
+                
+                if (o.rating > 0) {
+                    // Уже оценили
+                    const ratedText = currentLang === 'AM' ? 'Ձեր գնահատականը՝' : (currentLang === 'RU' ? 'Ваша оценка:' : 'Your rating:');
+                    html += `<div style="font-size: 10px; color: var(--text-sec); margin-bottom: 6px; font-weight: 800;">${ratedText}</div>
+                             <div class="star-rating rated">`;
+                    for(let i=1; i<=5; i++) {
+                        html += `<span class="star ${i <= o.rating ? 'filled' : ''}">★</span>`;
+                    }
+                    html += `</div>`;
+                } else {
+                    // Еще не оценили - интерактивные звезды (направление RTL в CSS для hover эффекта)
+                    html += `<div style="font-size: 10px; font-weight: 800; color: var(--tree-light); margin-bottom: 6px;">${translations['rate_master'][currentLang]}</div>
+                             <div class="star-rating interactive">`;
+                    for(let i=5; i>=1; i--) {
+                        html += `<span class="star" onclick="rateOrder(${realIndex}, ${i})">★</span>`;
+                    }
+                    html += `</div>`;
+                }
+                html += `</div>`;
+            }
+
+            html += `</div>`;
+            list.innerHTML += html;
+        });
+    }
+
+    // Сохранение оценки клиента
+    window.rateOrder = function(index, rating) {
+        let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
+        if(orders && orders[index]) {
+            orders[index].rating = rating;
+            localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
+            renderCabinetOrders(); // Перерисовываем список, чтобы звезды закрасились
+            
+            if (navigator.vibrate) navigator.vibrate(50);
+            
+            setTimeout(() => {
+                alert(translations['thanks_rating'][currentLang]);
+            }, 50);
+        }
+    }
+
     window.openCabinet = function() {
         const modal = document.getElementById('cabinet-modal');
         document.getElementById('cabinet-id-display').innerText = currentClientId;
-        // Здесь в будущем можно сделать fetch запрос к БД за историей заказов
+        renderCabinetOrders(); 
         if (modal) modal.classList.add('open');
         if (navigator.vibrate) navigator.vibrate(15);
     };
@@ -293,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
-    checkClientAuth(); // Вызываем при загрузке
+    checkClientAuth(); 
 
 
     // --- 4. ЛОГИКА ФОРМЫ СОИСКАТЕЛЯ ---
@@ -301,24 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (applyForm) {
         applyForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            
-            // Собираем данные
-            const payload = {
-                type: 'job_application',
-                name: document.getElementById('name') ? document.getElementById('name').value : '',
-                birth_year: document.getElementById('birth_date') ? document.getElementById('birth_date').value : '',
-                experience: document.getElementById('experience') ? document.getElementById('experience').value : '',
-                phone: document.getElementById('phone') ? document.getElementById('phone').value : '',
-                profession: document.getElementById('profession') ? document.getElementById('profession').value : '',
-                price: document.getElementById('price') ? document.getElementById('price').value : '',
-                schedule_start: document.getElementById('time_start') ? document.getElementById('time_start').value : '',
-                schedule_end: document.getElementById('time_end') ? document.getElementById('time_end').value : '',
-                employment: document.getElementById('employment') ? document.getElementById('employment').value : '',
-                message: document.getElementById('message') ? document.getElementById('message').value : ''
-            };
-
             try {
-                // Временно имитируем успешную отправку (пока API нет)
                 alert(translations['alert_success'][currentLang]);
                 applyForm.reset();
             } catch (error) {
@@ -419,6 +513,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkClientAuth();
             }
 
+            // СОХРАНЕНИЕ НОВОГО ЗАКАЗА В ИСТОРИЮ
+            const now = new Date();
+            const dateStr = String(now.getDate()).padStart(2, '0') + '.' + 
+                            String(now.getMonth() + 1).padStart(2, '0') + '.' + 
+                            now.getFullYear();
+            const grandTotal = document.getElementById('grandTotal') ? document.getElementById('grandTotal').textContent : '0 ֏';
+
+            let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId)) || [];
+            orders.push({
+                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+                date: dateStr,
+                total: grandTotal,
+                status: 'new',
+                rating: 0
+            });
+            localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
+
             // ПОКАЗ ID В ОКНЕ УСПЕХА
             const idContainer = document.getElementById('success-id-container');
             const idDisplay = document.getElementById('success-id-display');
@@ -427,7 +538,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 idContainer.style.display = 'block';
             }
 
-            // Имитация успешной отправки
             if(modal) modal.classList.add('open');
             if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
             
