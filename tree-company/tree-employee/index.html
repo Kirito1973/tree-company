@@ -78,9 +78,18 @@
             <h2 class="screen-title" data-i18n="tab_emp_orders">Պատվերներ</h2>
             
             <div class="filter-tabs" style="margin-bottom: 12px;">
-                <button class="filter-tab active" id="tab-new" onclick="filterEmpOrders('new', this)" data-i18n="filter_new">Նոր</button>
-                <button class="filter-tab" id="tab-progress" onclick="filterEmpOrders('progress', this)" data-i18n="filter_progress">Ընթացքի մեջ</button>
-                <button class="filter-tab" id="tab-completed" onclick="filterEmpOrders('completed', this)" data-i18n="filter_completed">Ավարտված</button>
+                <button class="filter-tab active" id="tab-new" onclick="filterEmpOrders('new', this)">
+                    <span data-i18n="filter_new">Նոր</span>
+                    <span class="count-badge" id="count-new" style="display:none;">0</span>
+                </button>
+                <button class="filter-tab" id="tab-progress" onclick="filterEmpOrders('progress', this)">
+                    <span data-i18n="filter_progress">Ընթացքի մեջ</span>
+                    <span class="count-badge" id="count-progress" style="display:none;">0</span>
+                </button>
+                <button class="filter-tab" id="tab-completed" onclick="filterEmpOrders('completed', this)">
+                    <span data-i18n="filter_completed">Ավարտված</span>
+                    <span class="count-badge" id="count-completed" style="display:none;">0</span>
+                </button>
             </div>
 
             <div class="glass-panel">
@@ -165,7 +174,6 @@
                             </a>
                         </span>
                     </div>
-                    <!-- ИЗМЕНЕНИЕ ЗДЕСЬ: Добавлена кнопка карты -->
                     <div class="detail-row">
                         <span class="detail-label" data-i18n="prof_address">Հասցե:</span>
                         <span class="detail-value">
