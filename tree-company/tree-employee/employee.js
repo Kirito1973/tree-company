@@ -68,6 +68,8 @@ const translations = {
     "card_client": { "AM": "Հաճախորդ:", "RU": "Клиент:", "EN": "Client:" },
     "card_address": { "AM": "<b>Հասցե:</b>", "RU": "<b>Адрес:</b>", "EN": "<b>Address:</b>" },
 
+    "stats_all_time": { "AM": "Ընդհանուր եկամուտ", "RU": "За все время", "EN": "All Time Total" },
+    "click_to_view": { "AM": "⬇ Սեղմեք՝ ըստ ամիսների տեսնելու համար ⬇", "RU": "⬇ Нажмите, чтобы посмотреть по месяцам ⬇", "EN": "⬇ Click to view by months ⬇" },
     "stats_week": { "AM": "Այս շաբաթ", "RU": "На этой неделе", "EN": "This week" },
     "stats_month": { "AM": "Այս ամիս", "RU": "В этом месяце", "EN": "This month" },
 
@@ -97,7 +99,6 @@ const translations = {
     "btn_save": { "AM": "<span>Պահպանել</span>", "RU": "<span>Сохранить</span>", "EN": "<span>Save</span>" },
     "btn_cancel": { "AM": "Չեղարկել", "RU": "Отмена", "EN": "Cancel" },
 
-    // Новые переводы для динамики времени
     "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
     "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
     "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" }
@@ -219,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (loggedInEmpId) {
                 renderEmployeeOrders();
                 renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
+                renderEmployeeFinance();
                 
                 const emp = employeesData.find(emp => emp.id === loggedInEmpId);
                 const firstName = emp.name.split(' ')[0];
@@ -250,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         renderEmployeeOrders();
         renderEmployeeProfile(emp);
+        renderEmployeeFinance(); // Инициализация динамических финансов
     };
 
     window.logoutEmployee = function() {
@@ -268,6 +271,113 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEmployeeOrders();
     };
 
+    // ================= ДИНАМИКА ФИНАНСОВ ПО ЗАВЕРШЕННЫМ ЗАКАЗАМ =================
+    window.renderEmployeeFinance = function() {
+        const emp = employeesData.find(e => e.id === loggedInEmpId);
+        const financeSection = document.getElementById('screen-emp-finance');
+        if (!emp || !financeSection) return;
+
+        // Берем только реально завершенные заказы мастера
+        const empCompletedOrders = ordersData.filter(o => 
+            o.worker && o.worker.includes(emp.name) && o.status === 'completed'
+        );
+
+        let totalAllTime = 0;
+        const monthlyData = {};
+
+        empCompletedOrders.forEach(order => {
+            let orderTotal = 0;
+            order.services.forEach(s => {
+                if (s.done) orderTotal += (s.price * s.qty);
+            });
+            // Чистый доход мастера с вычетом процента компании
+            let masterNet = orderTotal - (orderTotal * COMPANY_FEE_PERCENT);
+            totalAllTime += masterNet;
+
+            // Группируем по месяцам (берем дату завершения)
+            const targetDate = order.completedAt || order.createdAt;
+            if (targetDate) {
+                const dateParts = targetDate.split(' ')[0].split('.');
+                if (dateParts.length === 3) {
+                    const monthYear = `${dateParts[1]}.${dateParts[2]}`; // Формат MM.YYYY
+                    if (!monthlyData[monthYear]) monthlyData[monthYear] = 0;
+                    monthlyData[monthYear] += masterNet;
+                }
+            }
+        });
+
+        const now = new Date();
+        const currMonthStr = String(now.getMonth() + 1).padStart(2, '0') + '.' + now.getFullYear();
+        const currentMonthTotal = monthlyData[currMonthStr] || 0;
+
+        // Перезаписываем HTML секции финансов
+        financeSection.innerHTML = `
+            <h2 class="screen-title" data-i18n="title_emp_finance">Իմ <span>Ֆինանսները</span></h2>
+            
+            <div class="glass-panel" style="margin-top: 10px; cursor: pointer; text-align: center; background: rgba(35, 169, 91, 0.1); border: 1px solid rgba(35, 169, 91, 0.3);" onclick="toggleMonthlyFinance()">
+                <div style="font-size: 11px; font-weight: 800; color: var(--tree-light); text-transform: uppercase; margin-bottom: 6px;" data-i18n="stats_all_time">За все время</div>
+                <div style="font-size: 32px; font-weight: 900; color: var(--text);">${totalAllTime.toLocaleString()} ֏</div>
+                <div style="font-size: 9px; color: var(--tree-light); margin-top: 8px; opacity: 0.8;" data-i18n="click_to_view">⬇ Нажмите, чтобы посмотреть по месяцам ⬇</div>
+            </div>
+
+            <div id="monthly-finance-list" style="display: none; flex-direction: column; gap: 8px; margin-top: 12px; width: 100%;">
+                <!-- Сюда вставляются периоды месяцев -->
+            </div>
+
+            <div class="glass-panel" style="margin-top: 12px;">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">0 ֏</div>
+                        <div class="stat-label" data-i18n="stats_week">Այս շաբաթ</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">${currentMonthTotal.toLocaleString()} ֏</div>
+                        <div class="stat-label" data-i18n="stats_month">Այս ամիս</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const listContainer = document.getElementById('monthly-finance-list');
+        // Сортируем месяцы от новых к старым
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => {
+            const [mA, yA] = a.split('.');
+            const [mB, yB] = b.split('.');
+            return new Date(yB, mB - 1) - new Date(yA, mA - 1);
+        });
+
+        if (sortedMonths.length === 0) {
+            listContainer.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec); padding: 10px;">Տվյալներ չկան / Нет данных</div>`;
+        } else {
+            sortedMonths.forEach(mKey => {
+                const [mm, yyyy] = mKey.split('.');
+                // Вычисляем последний день этого месяца
+                const lastDay = new Date(yyyy, mm, 0).getDate();
+                const periodStr = `01.${mm}.${yyyy} - ${lastDay}.${mm}.${yyyy}`;
+                
+                listContainer.innerHTML += `
+                    <div class="detail-block" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255,255,255,0.4);">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-sec);">${periodStr}</span>
+                        <span style="font-size: 14px; font-weight: 900; color: var(--text);">${monthlyData[mKey].toLocaleString()} ֏</span>
+                    </div>
+                `;
+            });
+        }
+
+        applyLanguage();
+    };
+
+    window.toggleMonthlyFinance = function() {
+        const list = document.getElementById('monthly-finance-list');
+        if (list.style.display === 'none') {
+            list.style.display = 'flex';
+        } else {
+            list.style.display = 'none';
+        }
+        if (navigator.vibrate) navigator.vibrate(10);
+    };
+
+    // ================= РЕНДЕР ЗАКАЗОВ =================
     window.renderEmployeeOrders = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         const list = document.getElementById('emp-personal-orders-list');
@@ -324,7 +434,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-order-id').innerText = order.id;
 
         // --- ВНЕДРЕНИЕ ТАЙМЛАЙНА ЗАКАЗА ---
-        // Ищем контейнер таймлайна, если нет - создаем перед деталями клиента
         let timelineBlock = document.getElementById('modal-timeline-block');
         if (!timelineBlock) {
             timelineBlock = document.createElement('div');
@@ -391,7 +500,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const checkedAttr = s.done ? 'checked' : '';
             const doneClass = s.done ? 'done' : '';
             
-            // Дата выполнения конкретной услуги
             const timeDisplayHtml = s.done && s.doneAt 
                 ? `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: flex; align-items: center; gap: 4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${s.doneAt}</div>` 
                 : `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: none; align-items: center; gap: 4px;"></div>`;
@@ -456,7 +564,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const isDone = checkboxElem.checked;
             order.services[serviceIndex].done = isDone;
             
-            // Фиксируем время выполнения услуги
             order.services[serviceIndex].doneAt = isDone ? getNowString() : null;
 
             const label = checkboxElem.closest('.service-item-static');
@@ -500,7 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if(order) {
             order.status = 'progress';
-            order.acceptedAt = getNowString(); // Фиксируем время принятия заказа
+            order.acceptedAt = getNowString(); 
             if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeOrderModal();
             filterEmpOrders('progress', document.getElementById('tab-progress')); 
@@ -511,10 +618,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if(order) {
             order.status = 'completed';
-            order.completedAt = getNowString(); // Фиксируем время окончательного завершения
+            order.completedAt = getNowString(); 
             if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
             closeOrderModal();
             filterEmpOrders('completed', document.getElementById('tab-completed')); 
+            renderEmployeeFinance(); // Обновляем финансы после завершения
         }
     };
 
