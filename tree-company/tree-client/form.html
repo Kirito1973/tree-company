@@ -8,6 +8,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TREE COMPANY">
     <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
 
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -51,7 +52,7 @@
             <div style="width: 48px;"></div>
         </header>
 
-        <h1 class="page-title" data-i18n="resume_title">Լրացրեք<br><span>Ձեր հայտը</span></h1>
+        <h1 class="page-title" data-i18n="page_title">Լրացրեք<br><span>Ձեր հայտը</span></h1>
 
         <form id="apply-form" class="form-card" action="#">
             
@@ -62,8 +63,8 @@
 
             <div class="input-row">
                 <div class="input-group">
-                    <label class="input-label" for="birth_date" data-i18n="lbl_year">Ծննդյան ամսաթիվ *</label>
-                    <input type="date" id="birth_date" class="glass-input" required>
+                    <label class="input-label" for="birth_year" data-i18n="lbl_year">Ծննդյան տարեթիվ *</label>
+                    <input type="number" id="birth_year" class="glass-input" data-i18n-placeholder="pl_year" placeholder="Օր.՝ 1990" min="1940" max="2010" required>
                 </div>
 
                 <div class="input-group">
@@ -88,13 +89,8 @@
             </div>
 
             <div class="input-group">
-                <label class="input-label" data-i18n="lbl_schedule">Աշխատանքային գրաֆիկ *</label>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <span style="font-size: 14px; font-weight: 700; opacity: 0.8;">Սկսած՝</span>
-                    <input type="time" id="time_start" class="glass-input" style="flex: 1;" required>
-                    <span style="font-size: 14px; font-weight: 700; opacity: 0.8;">Մինչև՝</span>
-                    <input type="time" id="time_end" class="glass-input" style="flex: 1;" required>
-                </div>
+                <label class="input-label" for="schedule" data-i18n="lbl_schedule">Աշխատանքային գրաֆիկ *</label>
+                <input type="text" id="schedule" class="glass-input" data-i18n-placeholder="pl_schedule" placeholder="Օրինակ՝ Ամեն օր 10:00-19:00, կամ ազատ" required>
             </div>
 
             <div class="input-group">
@@ -112,7 +108,8 @@
                 <textarea id="message" class="glass-input" data-i18n-placeholder="pl_msg" placeholder="Այստեղ կարող եք գրել այն ամենը, ինչը կարևոր եք համարում նշել..."></textarea>
             </div>
 
-            <button type="submit" class="submit-btn" data-i18n="submit_resume">Ուղարկել հայտը</button>
+            <button type="submit" class="submit-btn" data-i18n="submit">Ուղարկել հայտը</button>
+
         </form>
 
     </div>
