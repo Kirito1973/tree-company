@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tree-client-cache-v4'; // Обновили версию для сброса старого кэша
+const CACHE_NAME = 'tree-client-cache-v7';
 const urlsToCache = [
   './',
   './index.html',
@@ -6,6 +6,7 @@ const urlsToCache = [
   './jobs.html',
   './order-baseboards.html',
   './order-doors.html',
+  './account.html',
   './style.css',
   './main.js',
   './manifest.json'
@@ -50,3 +51,4 @@ self.addEventListener('fetch', event => {
       })
   );
 });
+
