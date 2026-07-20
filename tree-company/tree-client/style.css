@@ -61,11 +61,14 @@ body {
 .ambient-glow { position: fixed; top: -50vh; left: -20vw; width: 140vw; height: 200vh; background: linear-gradient(180deg, var(--blob-1) 0%, transparent 25%, var(--blob-2) 50%, transparent 75%, var(--blob-3) 100%); filter: blur(90px); z-index: -2; opacity: 0.85; pointer-events: none; animation: vertical-glow 14s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; }
 @keyframes vertical-glow { 0% { transform: translateY(40%); } 100% { transform: translateY(-40%); } }
 
-/* Шапка */
+/* Шапка с кнопкой НАЗАД */
 .app-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 0 16px 0; margin-bottom: 20px; }
-.header-left, .header-right { width: 48px; display: flex; justify-content: center; align-items: center; } 
-.theme-btn { background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); box-shadow: 0 8px 24px var(--btn-shadow), var(--glass-rim); color: var(--text); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border-radius: 50%; width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; padding: 0; font-size: 22px; }
-.theme-btn:active { transform: scale(0.85); box-shadow: 0 4px 12px var(--shadow); }
+.header-left { width: 110px; display: flex; justify-content: flex-start; align-items: center; gap: 10px; } 
+.header-right { width: 110px; display: flex; justify-content: flex-end; align-items: center; gap: 10px; } 
+
+.theme-btn, .back-btn { background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); box-shadow: 0 8px 24px var(--btn-shadow), var(--glass-rim); color: var(--text); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border-radius: 50%; width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; padding: 0; flex-shrink: 0; }
+.theme-btn { font-size: 22px; }
+.theme-btn:active, .back-btn:active { transform: scale(0.85); box-shadow: 0 4px 12px var(--shadow); }
 .theme-icon { display: inline-block; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
 /* Языки */
