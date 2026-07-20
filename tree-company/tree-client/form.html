@@ -50,7 +50,20 @@
                 <div class="input-group"><label class="input-label" for="experience" data-i18n="lbl_exp">Փորձ (տարի) *</label><input type="number" id="experience" class="glass-input" data-i18n-placeholder="pl_exp" min="0" required></div>
             </div>
             <div class="input-group"><label class="input-label" for="phone" data-i18n="lbl_phone">Հեռախոսահամար *</label><input type="tel" id="phone" class="glass-input" data-i18n-placeholder="pl_phone" required></div>
-            <div class="input-group"><label class="input-label" for="profession" data-i18n="lbl_prof">Ի՞նչ մասնագետ եք *</label><input type="text" id="profession" class="glass-input" data-i18n-placeholder="pl_prof" required></div>
+            
+            <div class="input-group">
+                <label class="input-label" for="profession" data-i18n="lbl_prof">Ի՞նչ մասնագետ եք *</label>
+                <select id="profession" class="glass-input" required>
+                    <option value="" disabled selected data-i18n="opt_1">Ընտրեք տարբերակը...</option>
+                    <option value="door_master" data-i18n="door_master">Դռան վարպետ</option>
+                    <option value="baseboard_master" data-i18n="baseboard_master">Պլինտուսի վարպետ</option>
+                    <option value="universal_master" data-i18n="universal_master">Ունիվերսալ վարպետ</option>
+                    <option value="assistant" data-i18n="assistant">Վարպետի օգնական</option>
+                    <option value="other" data-i18n="opt_prof_other">Այլ (նշել)</option>
+                </select>
+                <input type="text" id="custom_profession" class="glass-input" data-i18n-placeholder="pl_custom_prof" style="display: none; margin-top: 8px;">
+            </div>
+
             <div class="input-group"><label class="input-label" for="price" data-i18n="lbl_price">Ծառայությունների արժեքը *</label><input type="text" id="price" class="glass-input" data-i18n-placeholder="pl_price" required></div>
             <div class="input-group"><label class="input-label" for="schedule" data-i18n="lbl_schedule">Աշխատանքային գրաֆիկ *</label><input type="text" id="schedule" class="glass-input" data-i18n-placeholder="pl_schedule" required></div>
             <div class="input-group">
