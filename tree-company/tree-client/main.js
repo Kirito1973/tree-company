@@ -133,8 +133,16 @@ document.addEventListener('DOMContentLoaded', () => {
         "pl_exp": { "AM": "Օր.՝ 3", "RU": "Напр.: 3", "EN": "Ex: 3" },
         "lbl_phone": { "AM": "Հեռախոսահամար *", "RU": "Номер телефона *", "EN": "Phone Number *" },
         "pl_phone": { "AM": "+374 00 000 000", "RU": "+374 00 000 000", "EN": "+374 00 000 000" },
-        "lbl_prof": { "AM": "Ի՞նչ մասնագետ եք (կատարվող աշխատանքը) *", "RU": "Какой вы специалист? *", "EN": "What specialist are you? *" },
-        "pl_prof": { "AM": "Օրինակ՝ Դռան և լամինատի վարպետ", "RU": "Например: Мастер по дверям", "EN": "Example: Door/laminate master" },
+        
+        "lbl_prof": { "AM": "Ի՞նչ մասնագետ եք *", "RU": "Какой вы специалист? *", "EN": "What specialist are you? *" },
+        "opt_prof_other": { "AM": "Այլ (նշել)", "RU": "Другое (указать)", "EN": "Other (specify)" },
+        "pl_custom_prof": { "AM": "Նշեք մասնագիտությունը...", "RU": "Напишите вашу профессию...", "EN": "Specify your profession..." },
+        "page_jobs_title": { "AM": "Համագործակցություն", "RU": "Сотрудничество", "EN": "Cooperation" },
+        "btn_become_employee": { "AM": "Դառնալ աշխատակից", "RU": "Стать сотрудником", "EN": "Become an employee" },
+        "desc_employee": { "AM": "Լրացրեք հայտը մեր թիմին միանալու համար", "RU": "Заполните анкету для присоединения к команде", "EN": "Fill out the form to join our team" },
+        "btn_become_partner": { "AM": "Սկսել համագործակցություն", "RU": "Сотрудничать с нами", "EN": "Cooperate with us" },
+        "desc_partner": { "AM": "Բիզնես առաջարկներ և B2B համագործակցություն", "RU": "Бизнес-предложения и B2B сотрудничество", "EN": "Business offers and B2B cooperation" },
+
         "lbl_price": { "AM": "Ծառայությունների արժեքը (գներ) *", "RU": "Стоимость услуг (цены) *", "EN": "Service costs (prices) *" },
         "pl_price": { "AM": "Օրինակ՝ 5000-15000֏...", "RU": "Например: 5000-15000 драм...", "EN": "Example: 5000-15000 AMD..." },
         "lbl_schedule": { "AM": "Աշխատանքային գրաֆիկ *", "RU": "График работы *", "EN": "Work Schedule *" },
@@ -157,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
         "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
-        "nav_jobs": { "AM": "Աշխատանք", "RU": "Сотрудник", "EN": "Jobs" },
+        "nav_jobs": { "AM": "Համագործ.", "RU": "Сотрудн-во", "EN": "Cooperate" },
         "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" },
 
         "rating_title": { "AM": "Մեր վարկանիշը", "RU": "Наш рейтинг", "EN": "Our Rating" },
@@ -361,12 +369,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (addressInput && localStorage.getItem('tree_client_address')) addressInput.value = localStorage.getItem('tree_client_address');
     }
 
+    // Логика выбора профессии (Другое) в form.html
+    const profSelect = document.getElementById('profession');
+    const customProfInput = document.getElementById('custom_profession');
+    if (profSelect && customProfInput) {
+        profSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'other') {
+                customProfInput.style.display = 'block';
+                customProfInput.required = true;
+            } else {
+                customProfInput.style.display = 'none';
+                customProfInput.required = false;
+                customProfInput.value = '';
+            }
+        });
+    }
+
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
         applyForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             alert(translations['alert_success'][currentLang]);
             applyForm.reset();
+            if (customProfInput) customProfInput.style.display = 'none';
         });
     }
 
