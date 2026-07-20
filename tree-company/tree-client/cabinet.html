@@ -15,7 +15,6 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
 
-    <!-- СКРИПТ АНТИ-МИГАНИЯ ТЕМЫ -->
     <script>
         (function() {
             try {
@@ -71,9 +70,11 @@
             </div>
         </header>
 
-        <h1 class="page-title" data-i18n="cab_title">Անձնական<br><span>Էջ</span></h1>
+        <h1 class="page-title" style="line-height: 1.25;">
+            <span data-i18n="cab_greeting" style="color: var(--text); font-size: 20px; font-weight: 700;">Բարև,</span><br>
+            <span id="client-name-display" style="color: var(--tree-light); font-size: 28px;">Անուն Ազգանուն</span>
+        </h1>
 
-        <!-- ID Բլոկ -->
         <div class="form-card" style="text-align: center; margin-bottom: 24px; padding: 20px;">
             <div style="font-size: 11px; font-weight: 800; color: var(--text-sec); text-transform: uppercase;" data-i18n="cab_id">Ձեր բանալին (ID)՝</div>
             <div class="modal-id-highlight" id="client-id-display" style="font-size: 28px; margin-top: 10px; border: none; background: rgba(35, 169, 91, 0.15);">...</div>
@@ -83,10 +84,7 @@
 
         <div class="grid-title" data-i18n="cab_history_title">Պատվերների պատմություն</div>
 
-        <!-- Քարտ՝ Ընթացիկ պատվեր դետալներով -->
         <div class="form-card" style="padding: 18px; margin-bottom: 16px;">
-            
-            <!-- Կարգավիճակ -->
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
                 <span style="font-size:12px; font-weight:900; color:var(--text-sec); padding: 4px 8px; background: rgba(128,128,128,0.1); border-radius: 8px;">#ORD-982</span>
                 <span style="font-size:11px; font-weight:800; color:#FFB347; display: flex; align-items: center; gap: 4px;" data-i18n="status_in_progress">
@@ -94,7 +92,6 @@
                 </span>
             </div>
             
-            <!-- Վարպետի տվյալներ -->
             <div style="display: flex; align-items: center; gap: 14px; background: rgba(128,128,128,0.05); padding: 12px; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1); margin-bottom: 16px;">
                 <img src="https://i.pravatar.cc/150?img=11" alt="Master" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid var(--tree-light); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <div style="flex: 1;">
@@ -106,7 +103,6 @@
                 </a>
             </div>
 
-            <!-- Ծառայությունների ցանկ և առաջընթաց -->
             <div class="order-progress-list">
                 <div class="progress-item completed">
                     <div class="progress-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
@@ -122,13 +118,11 @@
                 </div>
             </div>
 
-            <!-- Գին -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px dashed rgba(128,128,128,0.2);">
                 <span style="font-size: 12px; font-weight: 800; color: var(--text-sec);" data-i18n="cab_total_paid">Ընդհանուր գումարը՝</span>
                 <span style="font-size: 16px; font-weight: 900; color: var(--tree-light);">29,500 ֏</span>
             </div>
 
-            <!-- Գնահատման Համակարգ -->
             <div class="review-box">
                 <div class="review-title" data-i18n="cab_rate_master">Գնահատեք վարպետի աշխատանքը</div>
                 <div class="star-rating" id="star-rating-982">
@@ -141,14 +135,12 @@
                 <textarea class="glass-input review-input" data-i18n-placeholder="cab_review_pl" placeholder="Թողեք Ձեր կարծիքը..." style="min-height: 80px; margin-top: 12px; display: none;"></textarea>
                 <button class="submit-btn review-submit" style="padding: 12px; font-size:11px; margin-top: 8px; display: none;" data-i18n="cab_review_btn">Ուղարկել կարծիքը</button>
             </div>
-
         </div>
 
         <button id="logout-btn" class="submit-btn" style="background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); box-shadow: none; margin-top: 20px;" data-i18n="cab_logout">Դուրս գալ</button>
 
     </div>
 
-    <!-- ՆԵՐՔԵՎԻ ՆԱՎԻԳԱՑԻԱ -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item" id="nav-orders">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
