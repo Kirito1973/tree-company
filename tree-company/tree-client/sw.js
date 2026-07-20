@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tree-company-v3';
+const CACHE_NAME = 'tree-company-v4';
 const ASSETS = [
   './',
   './index.html',
