@@ -1,11 +1,9 @@
-// Агрессивное обновление Service Worker
+// Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=11')
-            .then(reg => {
-                reg.update(); // Проверяем обновления при каждом заходе
-            })
-            .catch(err => console.error('Ошибка SW:', err));
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker зарегистрирован', reg))
+            .catch(err => console.error('Ошибка регистрации SW:', err));
     });
 }
 
@@ -62,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 2. МУЛЬТИЯЗЫЧНОСТЬ И СЛОВАРЬ ---
+    // --- 2. МУЛЬТИЯЗЫЧНОСТЬ ---
     let currentLang = localStorage.getItem('app_lang') || 'AM';
     const langSwitcher = document.getElementById('lang-switcher');
     const currentLangBtn = document.getElementById('current-lang-btn');
@@ -132,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "b4_name": { "AM": "Հին պլինտուսի ապամոնտաժում", "RU": "Демонтаж старого плинтуса", "EN": "Old baseboard dismantling" },
         "b4_price": { "AM": "300 ֏ / մ", "RU": "300 ֏ / м", "EN": "300 ֏ / m" },
         "total_title": { "AM": "Ընդհանուր արժեքը՝", "RU": "Итоговая стоимость:", "EN": "Total Cost:" },
-        "total_sub": { "AM": "* մոտավոր գին դետալների ճշգրտումից առաջ", "RU": "* это приблизительная сумма за услуги", "EN": "* approximate cost for services" },
+        "total_sub": { "AM": "* մոտավոր գին դետալների ճշգրտումից առաջ", "RU": "* это приблизительная сумма за услуги", "EN": "* this is an approximate cost for services" },
         "lbl_address": { "AM": "Հասցե (Քաղաք, փողոց) *", "RU": "Адрес (Город, улица) *", "EN": "Address (City, street) *" },
         "pl_address": { "AM": "Օրինակ՝ Երևան, Աբովյան 1", "RU": "Например: Ереван, Абовяна 1", "EN": "Example: Yerevan, Abovyan 1" },
         "alert_error": { "AM": "Խնդրում ենք ընտրել գոնե մեկ ծառայություն:", "RU": "Пожалуйста, выберите хотя бы одну услугу.", "EN": "Please select at least one service." },
@@ -162,30 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         "submit": { "AM": "Ուղարկել", "RU": "Отправить", "EN": "Submit" },
         "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
         
-        "already_id": { "AM": "Արդեն ունե՞ք ID:", "RU": "Уже есть ID?", "EN": "Already have an ID?" },
-        "modal_success_id": { "AM": "Ձեր անձնական ID-ն՝ (Պահպանեք այն)", "RU": "Ваш личный ID:", "EN": "Your personal ID:" },
-        "cab_title": { "AM": "Իմ պատվերները", "RU": "Мои заказы", "EN": "My Orders" },
-        "cab_empty": { "AM": "Այստեղ կցուցադրվեն Ձեր պատվերները", "RU": "Здесь будут отображаться ваши заказы", "EN": "Your orders will be displayed here" },
-        "enter_id_title": { "AM": "Մուտքագրեք ID", "RU": "Введите ID", "EN": "Enter ID" },
-        "enter_id_pl": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
-        "btn_login": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
-        "logout_btn": { "AM": "Ելք", "RU": "Выйти", "EN": "Logout" },
-        "acc_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Account</span>" },
-        "acc_login_desc": { "AM": "Մուտքագրեք Ձեր ID-ն պատվերները տեսնելու համար", "RU": "Введите ваш ID, чтобы увидеть заказы", "EN": "Enter your ID to view orders" },
-        "how_to_get_id": { "AM": "Ինչպե՞ս գրանցվել:", "RU": "Как зарегистрироваться?", "EN": "How to register?" },
-        "no_reg_needed": { 
-            "AM": "Գրանցվելու կարիք չկա: Ուղղակի ձևակերպեք Ձեր առաջին պատվերը, և համակարգը ավտոմատ կստեղծի Ձեր անձնական էջն ու կտրամադրի եզակի ID:", 
-            "RU": "Вам не нужно регистрироваться! Просто оформите свой первый заказ, и система автоматически создаст ваш личный кабинет и выдаст уникальный ID для входа.", 
-            "EN": "No need to register! Just place your first order, and the system will automatically create your personal account and provide a unique ID." 
-        },
-        "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
-        "status_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
-        "status_completed": { "AM": "Ավարտված", "RU": "Завершен", "EN": "Completed" },
-        "rate_master": { "AM": "Գնահատեք վարպետի աշխատանքը:", "RU": "Оцените работу мастера:", "EN": "Rate the master's work:" },
-        "thanks_rating": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за оценку!", "EN": "Thank you for rating!" },
-        "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
-        "nav_jobs": { "AM": "Աշխատանք", "RU": "Вакансии", "EN": "Jobs" },
-        "nav_account": { "AM": "Իմ էջը", "RU": "Профиль", "EN": "Profile" }
+        // Переводы для логики Личного Кабинета
+        "auth_title": { "AM": "Մուտքագրեք Ձեր ID-ն", "RU": "Введите ваш ID", "EN": "Enter your ID" },
+        "auth_placeholder": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
+        "auth_btn": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
+        "auth_err": { "AM": "Սխալ ID", "RU": "Неверный ID", "EN": "Invalid ID" },
+        "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" }
     };
     
     function applyLanguage() {
@@ -223,10 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 profInput.value = translations[profKey][currentLang];
             }
         }
-        
-        if (document.getElementById('account-page-marker')) {
-            window.renderCabinetOrders();
-        }
     }
 
     document.querySelectorAll('.lang-tab').forEach(tab => {
@@ -243,136 +219,114 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyLanguage();
 
-    // --- 3. ЛОГИКА ЛИЧНОГО КАБИНЕТА ---
-    let currentClientId = localStorage.getItem('tree_client_id');
-
-    window.checkClientAuth = function() {
-        const loginView = document.getElementById('account-login-view');
-        const profileView = document.getElementById('account-profile-view');
-        const idDisplay = document.getElementById('cabinet-id-display');
-
-        if (loginView && profileView) {
-            if (currentClientId) {
-                loginView.style.display = 'none';
-                profileView.style.display = 'block';
-                if (idDisplay) idDisplay.innerText = currentClientId;
-                window.renderCabinetOrders();
-            } else {
-                loginView.style.display = 'block';
-                profileView.style.display = 'none';
-            }
+    // --- ЛОГИКА АВТОРИЗАЦИИ (БЕЗ ПЕРЕЗАГРУЗОК) ---
+    const profileBtn = document.getElementById('profile-btn');
+    
+    if(profileBtn) {
+        if(localStorage.getItem('tree_client_id')) {
+            profileBtn.classList.add('logged-in');
         }
-    };
-
-    window.renderCabinetOrders = function() {
-        const list = document.getElementById('cabinet-orders-list');
-        if (!list) return;
-
-        let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
         
-        if (!orders || orders.length === 0) {
-            orders = [
-                { id: 'ORD-982', date: '10.07.2026', total: '15,000 ֏', status: 'completed', rating: 0 },
-                { id: 'ORD-995', date: '18.07.2026', total: '8,500 ֏', status: 'progress', rating: 0 }
-            ];
-            localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
-        }
-
-        list.innerHTML = '';
-        const sortedOrders = [...orders].reverse();
-
-        sortedOrders.forEach((o) => {
-            const realIndex = orders.findIndex(order => order.id === o.id);
-
-            let statusColor = '#00A3FF'; 
-            let statusKey = 'status_new';
-            if (o.status === 'progress') { statusColor = '#FFB347'; statusKey = 'status_progress'; }
-            if (o.status === 'completed') { statusColor = 'var(--tree-light)'; statusKey = 'status_completed'; }
-
-            const statusText = translations[statusKey][currentLang] || o.status;
-
-            let html = `
-                <div class="cab-order-card">
-                    <div class="cab-order-header">
-                        <span class="cab-order-id">#${o.id}</span>
-                        <span class="cab-order-date">${o.date}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                        <span style="font-weight: 900; font-size: 16px; color: var(--text);">${o.total}</span>
-                        <span class="cab-order-status" style="color: ${statusColor}; background: ${statusColor}15; border-color: ${statusColor}40;">${statusText}</span>
-                    </div>
-            `;
-
-            if (o.status === 'completed') {
-                html += `<div class="cab-rating-block">`;
-                
-                if (o.rating > 0) {
-                    const ratedText = currentLang === 'AM' ? 'Ձեր գնահատականը՝' : (currentLang === 'RU' ? 'Ваша оценка:' : 'Your rating:');
-                    html += `<div style="font-size: 10px; color: var(--text-sec); margin-bottom: 6px; font-weight: 800;">${ratedText}</div>
-                             <div class="star-rating rated">`;
-                    for(let i=1; i<=5; i++) { html += `<span class="star ${i <= o.rating ? 'filled' : ''}">★</span>`; }
-                    html += `</div>`;
-                } else {
-                    html += `<div style="font-size: 10px; font-weight: 800; color: var(--tree-light); margin-bottom: 6px;">${translations['rate_master'][currentLang]}</div>
-                             <div class="star-rating interactive">`;
-                    for(let i=5; i>=1; i--) { html += `<span class="star" onclick="window.rateOrder(${realIndex}, ${i})">★</span>`; }
-                    html += `</div>`;
-                }
-                html += `</div>`;
+        profileBtn.addEventListener('click', () => {
+            if(localStorage.getItem('tree_client_id')) {
+                window.location.href = 'cabinet.html';
+            } else {
+                const authModal = document.getElementById('auth-modal');
+                if(authModal) authModal.classList.add('open');
             }
-
-            html += `</div>`;
-            list.innerHTML += html;
         });
     }
 
-    window.rateOrder = function(index, rating) {
-        let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId));
-        if(orders && orders[index]) {
-            orders[index].rating = rating;
-            localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
-            window.renderCabinetOrders(); 
-            if (navigator.vibrate) navigator.vibrate(50);
-            setTimeout(() => { alert(translations['thanks_rating'][currentLang]); }, 50);
+    // Инъекция модального окна входа, если его еще нет в DOM
+    if(!document.getElementById('auth-modal')) {
+        const authModalHTML = `
+        <div class="modal-overlay" id="auth-modal">
+            <div class="modal-content">
+                <span class="modal-icon"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+                <div class="modal-text" data-i18n="auth_title">Մուտքագրեք Ձեր ID-ն</div>
+                <div class="input-group" style="margin: 20px 0;">
+                    <input type="text" id="auth-id-input" class="glass-input" data-i18n-placeholder="auth_placeholder" placeholder="Օր.՝ TR-1234" style="text-align: center; text-transform: uppercase;">
+                </div>
+                <button type="button" class="submit-btn" id="auth-submit-btn" data-i18n="auth_btn">Մուտք</button>
+                <button type="button" class="submit-btn modal-close-btn" id="auth-close-btn" style="background: transparent; color: var(--text-sec); box-shadow: none; margin-top: 10px; padding: 12px;" data-i18n="modal_close">Փակել</button>
+            </div>
+        </div>`;
+        document.body.insertAdjacentHTML('beforeend', authModalHTML);
+        applyLanguage(); // Применяем переводы к инжектированному окну
+        
+        document.getElementById('auth-close-btn').addEventListener('click', () => {
+            document.getElementById('auth-modal').classList.remove('open');
+        });
+
+        document.getElementById('auth-submit-btn').addEventListener('click', () => {
+            const val = document.getElementById('auth-id-input').value.trim().toUpperCase();
+            if(val.length > 3) {
+                // В будущем здесь будет проверка ID через API, сейчас мокаем:
+                localStorage.setItem('tree_client_id', val);
+                document.getElementById('auth-modal').classList.remove('open');
+                if(profileBtn) profileBtn.classList.add('logged-in');
+                window.location.href = 'cabinet.html';
+            } else {
+                alert(translations['auth_err'][currentLang]);
+            }
+        });
+    }
+
+    // --- СКРЫТИЕ ПОЛЕЙ АДРЕСА И ТЕЛЕФОНА ДЛЯ АВТОРИЗОВАННЫХ ---
+    const phoneGroup = document.getElementById('phone-group');
+    const addressGroup = document.getElementById('address-group');
+    
+    if(localStorage.getItem('tree_client_id')) {
+        if(phoneGroup) {
+            phoneGroup.style.display = 'none';
+            document.getElementById('phone').removeAttribute('required');
+        }
+        if(addressGroup) {
+            addressGroup.style.display = 'none';
+            document.getElementById('address').removeAttribute('required');
         }
     }
 
-    window.loginClient = function() {
-        const inputVal = document.getElementById('login-id-input').value.trim().toUpperCase();
-        if (inputVal.startsWith('TR-') && inputVal.length >= 6) {
-            localStorage.setItem('tree_client_id', inputVal);
-            currentClientId = inputVal;
-            window.checkClientAuth();
-            if (navigator.vibrate) navigator.vibrate(50);
-            
-            if (!document.getElementById('account-page-marker')) {
-                window.location.href = 'account.html';
-            }
-        } else {
-            alert(currentLang === 'RU' ? 'Неверный формат ID' : 'Սխալ ID ձևաչափ (Неверный формат ID)');
-        }
-    };
-
-    window.logoutClient = function() {
-        localStorage.removeItem('tree_client_id');
-        currentClientId = null;
-        window.checkClientAuth();
-        if (navigator.vibrate) navigator.vibrate(50);
-    };
-
-    window.checkClientAuth(); 
-
-
-    // --- 4. ЛОГИКА ФОРМ ---
+    // --- 3. ЛОГИКА ФОРМЫ СОИСКАТЕЛЯ ---
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
         applyForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            alert(translations['alert_success'][currentLang]);
-            applyForm.reset();
+            
+            const payload = {
+                type: 'job_application',
+                name: document.getElementById('name') ? document.getElementById('name').value : '',
+                birth_year: document.getElementById('birth_year') ? document.getElementById('birth_year').value : '',
+                experience: document.getElementById('experience') ? document.getElementById('experience').value : '',
+                phone: document.getElementById('phone') ? document.getElementById('phone').value : '',
+                profession: document.getElementById('profession') ? document.getElementById('profession').value : '',
+                price: document.getElementById('price') ? document.getElementById('price').value : '',
+                schedule: document.getElementById('schedule') ? document.getElementById('schedule').value : '',
+                employment: document.getElementById('employment') ? document.getElementById('employment').value : '',
+                message: document.getElementById('message') ? document.getElementById('message').value : ''
+            };
+
+            try {
+                const response = await fetch('/api/submit-job', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    alert(translations['alert_success'][currentLang]);
+                    applyForm.reset();
+                } else {
+                    alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
+            }
         });
     }
 
+    // --- 4. ЛОГИКА КАЛЬКУЛЯТОРА И ЗАКАЗА ---
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
         function formatNumber(num) {
@@ -456,52 +410,80 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Генерируем ID пользователя, если его нет
-            if (!currentClientId) {
-                currentClientId = 'TR-' + Math.floor(1000 + Math.random() * 9000);
-                localStorage.setItem('tree_client_id', currentClientId);
-                window.checkClientAuth();
-            }
+            const orderDetails = [];
+            checkedServices.forEach(checkbox => {
+                const item = checkbox.closest('.calc-item');
+                const name = item.querySelector('.calc-name').textContent;
+                const price = item.getAttribute('data-price');
+                const qtyInput = item.querySelector('.qty-input');
+                const otherInput = item.querySelector('input[type="text"]');
+                
+                const qtyOrDetails = qtyInput ? qtyInput.value : (otherInput ? otherInput.value : 1);
+                orderDetails.push({ name, price, qtyOrDetails });
+            });
 
-            const now = new Date();
-            const dateStr = String(now.getDate()).padStart(2, '0') + '.' + 
-                            String(now.getMonth() + 1).padStart(2, '0') + '.' + 
-                            now.getFullYear();
             const grandTotal = document.getElementById('grandTotal') ? document.getElementById('grandTotal').textContent : '0 ֏';
-
-            let orders = JSON.parse(localStorage.getItem('tree_client_orders_' + currentClientId)) || [];
-            orders.push({
-                id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
-                date: dateStr,
-                total: grandTotal,
-                status: 'new',
-                rating: 0
-            });
-            localStorage.setItem('tree_client_orders_' + currentClientId, JSON.stringify(orders));
-
-            const idContainer = document.getElementById('success-id-container');
-            const idDisplay = document.getElementById('success-id-display');
-            if (idContainer && idDisplay) {
-                idDisplay.innerText = currentClientId;
-                idContainer.style.display = 'block';
-            }
-
-            if(modal) modal.classList.add('open');
-            if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
             
-            orderForm.reset();
-            document.querySelectorAll('.calc-item.active').forEach(item => {
-                item.classList.remove('active');
-                const subtotalEl = item.querySelector('.calc-subtotal');
-                if (subtotalEl) subtotalEl.textContent = '0 ֏';
-            });
-            if(phoneInput) phoneInput.value = '+374 ';
-            calculateGrandTotal();
+            // Если клиент уже авторизован, мы берем его ID вместо того, чтобы требовать телефон
+            let savedClientId = localStorage.getItem('tree_client_id');
+            const phone = savedClientId ? 'Auth-' + savedClientId : (document.getElementById('phone') ? document.getElementById('phone').value : '');
+            const address = savedClientId ? 'Auth-' + savedClientId : (document.getElementById('address') ? document.getElementById('address').value : '');
+            const message = document.getElementById('message') ? document.getElementById('message').value : '';
 
-            if(closeModalBtn) {
-                closeModalBtn.onclick = () => {
-                    modal.classList.remove('open');
-                };
+            const payload = {
+                type: 'order',
+                client_id: savedClientId || null,
+                services: orderDetails,
+                total: grandTotal,
+                phone,
+                address,
+                message
+            };
+
+            try {
+                const response = await fetch('/api/submit-order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    
+                    // --- ГЕНЕРАЦИЯ ID ДЛЯ НОВЫХ КЛИЕНТОВ ---
+                    if(!savedClientId) {
+                        savedClientId = 'TR-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+                        localStorage.setItem('tree_client_id', savedClientId);
+                        if(profileBtn) profileBtn.classList.add('logged-in');
+                    }
+                    
+                    // Выводим ID в модальное окно успеха
+                    const msgEl = document.getElementById('modal-id-msg');
+                    if(msgEl) {
+                        msgEl.innerHTML = `<div style="margin-top:16px; font-size:10px; color:var(--text-sec);" data-i18n="order_success_id">${translations['order_success_id'][currentLang]}</div><div class="modal-id-highlight">${savedClientId}</div>`;
+                    }
+
+                    if(modal) modal.classList.add('open');
+                    
+                    orderForm.reset();
+                    document.querySelectorAll('.calc-item.active').forEach(item => {
+                        item.classList.remove('active');
+                        const subtotalEl = item.querySelector('.calc-subtotal');
+                        if (subtotalEl) subtotalEl.textContent = '0 ֏';
+                    });
+                    if(phoneInput && !localStorage.getItem('tree_client_id')) phoneInput.value = '+374 ';
+                    calculateGrandTotal();
+                    
+                    if(closeModalBtn) {
+                        closeModalBtn.onclick = () => {
+                            modal.classList.remove('open');
+                        };
+                    }
+                } else {
+                    alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
             }
         });
     }
