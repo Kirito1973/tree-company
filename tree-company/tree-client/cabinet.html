@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TREE COMPANY - Անձնական Էջ</title>
-    
     <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
-    
+    <link rel="manifest" href="manifest.json">
     <script>
         (function() {
             try {
@@ -22,10 +21,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="noise-overlay"></div>
     <div class="ambient-glow"></div>
-
     <div class="app-container">
         
         <header class="app-header">
@@ -61,7 +58,6 @@
         <div class="grid-title" data-i18n="cab_history_title">Պատվերների պատմություն</div>
 
         <div class="form-card" style="padding: 18px; margin-bottom: 16px;">
-            
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
                 <span style="font-size:12px; font-weight:900; color:var(--text-sec); padding: 4px 8px; background: rgba(128,128,128,0.1); border-radius: 8px;">#ORD-982</span>
                 <span class="order-status" style="font-size:11px; font-weight:800; color:#FFB347; display: flex; align-items: center; gap: 4px;" data-i18n="status_in_progress">
@@ -70,7 +66,7 @@
             </div>
             
             <div style="display: flex; align-items: center; gap: 14px; background: rgba(128,128,128,0.05); padding: 12px; border-radius: 16px; border: 1px solid rgba(128,128,128,0.1); margin-bottom: 16px;">
-                <img src="https://i.pravatar.cc/150?img=11" alt="Master" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid var(--tree-light); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <img src="https://i.pravatar.cc/150?img=11" style="width: 54px; height: 54px; border-radius: 50%; object-fit: cover; border: 2px solid var(--tree-light); box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <div style="flex: 1;">
                     <div style="font-size:13px; font-weight:900;" data-i18n="master_name_1">Արամ Խաչատրյան</div>
                     <div style="font-size:10px; font-weight:700; color:var(--text-sec); margin-top: 2px;" data-i18n="master_prof_1">Դռների վարպետ</div>
@@ -100,10 +96,8 @@
                 <span style="font-size: 16px; font-weight: 900; color: var(--tree-light);">29,500 ֏</span>
             </div>
 
-            <!-- КНОПКА ПРИНЯТЬ РАБОТУ -->
             <button class="submit-btn accept-work-btn" style="padding: 14px; margin-top: 16px; font-size:12px; background: transparent; border: 2px solid var(--tree-light); color: var(--tree-light); box-shadow: none;" data-i18n="btn_accept_work">Ընդունել աշխատանքը</button>
 
-            <!-- БЛОК ОЦЕНКИ (Скрыт до принятия работы) -->
             <div class="review-box" style="display: none;">
                 <div class="review-title" data-i18n="cab_rate_master">Գնահատեք վարպետի աշխատանքը</div>
                 <div class="star-rating" id="star-rating-982">
@@ -116,14 +110,10 @@
                 <textarea class="glass-input review-input" data-i18n-placeholder="cab_review_pl" placeholder="Թողեք Ձեր կարծիքը..." style="min-height: 80px; margin-top: 12px; display: none; width: 100%;"></textarea>
                 <button class="submit-btn review-submit" style="padding: 12px; font-size:11px; margin-top: 8px; display: none;" data-i18n="cab_review_btn">Ուղարկել կարծիքը</button>
             </div>
-
         </div>
-
         <button id="logout-btn" class="submit-btn" style="background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); box-shadow: none; margin-top: 20px;" data-i18n="cab_logout">Դուրս գալ</button>
-
     </div>
 
-    <!-- 4 КНОПКИ -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item" id="nav-home">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -142,7 +132,6 @@
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
-
     <script src="main.js"></script>
 </body>
 </html>
