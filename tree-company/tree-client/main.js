@@ -1,7 +1,11 @@
-// Регистрация Service Worker для PWA
+// Регистрация Service Worker для PWA (ДОБАВЛЕНО ПРИНУДИТЕЛЬНОЕ ОБНОВЛЕНИЕ)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
+            .then(reg => {
+                // Заставляем браузер проверить новую версию sw.js
+                reg.update();
+            })
             .catch(err => console.error('Ошибка регистрации SW:', err));
     });
 }
@@ -173,7 +177,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "reviews_title": { "AM": "Կարծիքներ", "RU": "Отзывы", "EN": "Reviews" },
         "coop_title": { "AM": "Համագործակցություն", "RU": "Сотрудничество", "EN": "Cooperation" },
         "coop_banner_sub": { "AM": "ԲԻԶՆԵՍԻ ՀԱՄԱՐ", "RU": "ДЛЯ БИЗНЕСА", "EN": "FOR BUSINESS" },
-        "coop_banner_title": { "AM": "Դարձեք մեր գործընկերը", "RU": "Станьте нашим партнером", "EN": "Become our partner" },
+        // ИЗМЕНЕНО: Текст баннера на главной странице
+        "coop_banner_title": { "AM": "Դարձեք մեր գործընկերը", "RU": "Стать нашим бизнес-партнером", "EN": "Become our business partner" },
         "coop_name": { "AM": "Ընկերության կամ անձի անուն *", "RU": "Название компании или имя *", "EN": "Company or Person Name *" },
         "coop_desc": { "AM": "Համագործակցության նկարագրություն *", "RU": "Описание сотрудничества *", "EN": "Cooperation description *" },
 
@@ -369,7 +374,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (addressInput && localStorage.getItem('tree_client_address')) addressInput.value = localStorage.getItem('tree_client_address');
     }
 
-    // Логика выбора профессии (Другое) в form.html
     const profSelect = document.getElementById('profession');
     const customProfInput = document.getElementById('custom_profession');
     if (profSelect && customProfInput) {
