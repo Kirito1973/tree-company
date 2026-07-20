@@ -1,4 +1,3 @@
-// Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -79,9 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const translations = {
-        "btn_main": { "AM": "Գլխավոր<br><span>Էջ</span>", "RU": "Главная<br><span>Страница</span>", "EN": "Main<br><span>Page</span>" },
         "contact_title": { "AM": "Կապվեք մեզ հետ Ձեզ հարմար եղանակով", "RU": "Свяжитесь с нами удобным способом", "EN": "Contact us conveniently" },
-        "btn_job": { "AM": "Դառնալ<br><span>Աշխատակից</span>", "RU": "Стать<br><span>Сотрудником</span>", "EN": "Become<br><span>Employee</span>" },
         "promo_sub": { "AM": "ՄԵՆՔ ԳՆԱՀԱՏՈՒՄ ԵՆՔ ՁԵԶ", "RU": "МЫ ЦЕНИМ ВАС", "EN": "WE VALUE YOU" },
         "promo_title": { "AM": "Պատվիրեք հավելվածով և ստացեք <span class=\"promo-highlight\">10% զեղչ</span> հենց հիմա", "RU": "Закажите в приложении и получите <span class=\"promo-highlight\">скидку 10%</span>", "EN": "Order in the app and get a <span class=\"promo-highlight\">10% discount</span> now" },
         "title_services": { "AM": "Ծառայություններ", "RU": "Услуги", "EN": "Services" },
@@ -160,21 +157,29 @@ document.addEventListener('DOMContentLoaded', () => {
         "submit": { "AM": "Ուղարկել", "RU": "Отправить", "EN": "Submit" },
         "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
         
-        // Переводы для логики Личного Кабинета
         "auth_title": { "AM": "Մուտքագրեք Ձեր ID-ն", "RU": "Введите ваш ID", "EN": "Enter your ID" },
         "auth_placeholder": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
         "auth_btn": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
         "auth_err": { "AM": "Սխալ ID", "RU": "Неверный ID", "EN": "Invalid ID" },
-        "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" }
+        "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" },
+
+        "cab_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Dashboard</span>" },
+        "cab_id": { "AM": "Ձեր բանալին (ID)՝", "RU": "Ваш ключ входа (ID):", "EN": "Your login key (ID):" },
+        "cab_new_order": { "AM": "Նոր պատվեր ստեղծել", "RU": "Создать новый заказ", "EN": "Create New Order" },
+        "cab_history_title": { "AM": "Պատվերների պատմություն", "RU": "История заказов", "EN": "Order History" },
+        "cab_rate": { "AM": "Գնահատել որակը", "RU": "Оценить качество", "EN": "Rate Quality" },
+        "cab_logout": { "AM": "Դուրս գալ", "RU": "Выйти из аккаунта", "EN": "Log Out" },
+
+        "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
+        "nav_jobs": { "AM": "Աշխատանք", "RU": "Сотрудник", "EN": "Jobs" },
+        "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" }
     };
     
     function applyLanguage() {
         document.querySelectorAll('.lang-tab').forEach(tab => {
             if (tab.getAttribute('data-lang') === currentLang) {
                 tab.classList.add('active');
-                if(currentLangBtn) {
-                    currentLangBtn.innerHTML = tab.innerHTML;
-                }
+                if(currentLangBtn) currentLangBtn.innerHTML = tab.innerHTML;
             } else {
                 tab.classList.remove('active');
             }
@@ -193,16 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.placeholder = translations[key][currentLang];
             }
         });
-
-        const applyForm = document.getElementById('apply-form');
-        if (applyForm) {
-            const urlParams = new URLSearchParams(window.location.search);
-            const profKey = urlParams.get('prof'); 
-            const profInput = document.getElementById('profession');
-            if (profKey && translations[profKey] && translations[profKey][currentLang] && profInput) {
-                profInput.value = translations[profKey][currentLang];
-            }
-        }
     }
 
     document.querySelectorAll('.lang-tab').forEach(tab => {
@@ -211,23 +206,26 @@ document.addEventListener('DOMContentLoaded', () => {
             currentLang = tab.getAttribute('data-lang');
             localStorage.setItem('app_lang', currentLang);
             applyLanguage();
-            if(langSwitcher) {
-                langSwitcher.classList.remove('open');
-            }
+            if(langSwitcher) langSwitcher.classList.remove('open');
         });
     });
 
     applyLanguage();
 
-    // --- ЛОГИКА АВТОРИЗАЦИИ (БЕЗ ПЕРЕЗАГРУЗОК) ---
-    const profileBtn = document.getElementById('profile-btn');
-    
-    if(profileBtn) {
-        if(localStorage.getItem('tree_client_id')) {
-            profileBtn.classList.add('logged-in');
-        }
-        
-        profileBtn.addEventListener('click', () => {
+    // --- НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ ---
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('jobs.html') || currentPath.includes('form.html')) {
+        document.getElementById('nav-jobs')?.classList.add('active');
+    } else if (currentPath.includes('cabinet.html')) {
+        document.getElementById('nav-cabinet')?.classList.add('active');
+    } else {
+        document.getElementById('nav-orders')?.classList.add('active');
+    }
+
+    const navCabinetBtn = document.getElementById('nav-cabinet');
+    if(navCabinetBtn) {
+        navCabinetBtn.addEventListener('click', (e) => {
+            e.preventDefault(); 
             if(localStorage.getItem('tree_client_id')) {
                 window.location.href = 'cabinet.html';
             } else {
@@ -237,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Инъекция модального окна входа, если его еще нет в DOM
     if(!document.getElementById('auth-modal')) {
         const authModalHTML = `
         <div class="modal-overlay" id="auth-modal">
@@ -252,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         </div>`;
         document.body.insertAdjacentHTML('beforeend', authModalHTML);
-        applyLanguage(); // Применяем переводы к инжектированному окну
+        applyLanguage(); 
         
         document.getElementById('auth-close-btn').addEventListener('click', () => {
             document.getElementById('auth-modal').classList.remove('open');
@@ -261,10 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('auth-submit-btn').addEventListener('click', () => {
             const val = document.getElementById('auth-id-input').value.trim().toUpperCase();
             if(val.length > 3) {
-                // В будущем здесь будет проверка ID через API, сейчас мокаем:
                 localStorage.setItem('tree_client_id', val);
                 document.getElementById('auth-modal').classList.remove('open');
-                if(profileBtn) profileBtn.classList.add('logged-in');
                 window.location.href = 'cabinet.html';
             } else {
                 alert(translations['auth_err'][currentLang]);
@@ -272,7 +267,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- СКРЫТИЕ ПОЛЕЙ АДРЕСА И ТЕЛЕФОНА ДЛЯ АВТОРИЗОВАННЫХ ---
+    if (window.location.pathname.includes('cabinet.html')) {
+        const savedId = localStorage.getItem('tree_client_id');
+        if (!savedId) {
+            window.location.replace('index.html');
+        } else {
+            const display = document.getElementById('client-id-display');
+            if (display) display.textContent = savedId;
+        }
+
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('tree_client_id');
+                window.location.replace('index.html');     
+            });
+        }
+    }
+
     const phoneGroup = document.getElementById('phone-group');
     const addressGroup = document.getElementById('address-group');
     
@@ -292,7 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (applyForm) {
         applyForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            
             const payload = {
                 type: 'job_application',
                 name: document.getElementById('name') ? document.getElementById('name').value : '',
@@ -305,14 +316,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 employment: document.getElementById('employment') ? document.getElementById('employment').value : '',
                 message: document.getElementById('message') ? document.getElementById('message').value : ''
             };
-
             try {
                 const response = await fetch('/api/submit-job', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
                 if (response.ok) {
                     alert(translations['alert_success'][currentLang]);
                     applyForm.reset();
@@ -329,23 +338,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. ЛОГИКА КАЛЬКУЛЯТОРА И ЗАКАЗА ---
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
-        function formatNumber(num) {
-            return num.toLocaleString('en-US') + ' ֏';
-        }
+        function formatNumber(num) { return num.toLocaleString('en-US') + ' ֏'; }
 
         function calculateGrandTotal() {
             let grandTotal = 0;
-            const items = document.querySelectorAll('.calc-item');
-            
-            items.forEach(item => {
+            document.querySelectorAll('.calc-item').forEach(item => {
                 const checkbox = item.querySelector('.service-check');
                 const subtotalEl = item.querySelector('.calc-subtotal');
-                
                 if (checkbox.checked) {
                     let price = parseInt(item.getAttribute('data-price'));
                     const qtyInput = item.querySelector('.qty-input');
                     const qty = qtyInput ? (qtyInput.value === '' ? 0 : parseInt(qtyInput.value)) : 1;
-                    
                     const subtotal = price * qty;
                     if (subtotalEl) subtotalEl.textContent = formatNumber(subtotal);
                     grandTotal += subtotal;
@@ -353,7 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (subtotalEl) subtotalEl.textContent = '0 ֏';
                 }
             });
-            
             const gtEl = document.getElementById('grandTotal');
             if(gtEl) gtEl.textContent = formatNumber(grandTotal);
         }
@@ -361,7 +363,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.calc-item').forEach(item => {
             const checkbox = item.querySelector('.service-check');
             const qtyInput = item.querySelector('.qty-input');
-
             checkbox.addEventListener('change', () => {
                 if (checkbox.checked) {
                     item.classList.add('active');
@@ -371,7 +372,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 calculateGrandTotal();
             });
-
             if (qtyInput) {
                 qtyInput.addEventListener('input', () => {
                     if(qtyInput.value !== '' && qtyInput.value < 1) qtyInput.value = 1;
@@ -424,7 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const grandTotal = document.getElementById('grandTotal') ? document.getElementById('grandTotal').textContent : '0 ֏';
             
-            // Если клиент уже авторизован, мы берем его ID вместо того, чтобы требовать телефон
             let savedClientId = localStorage.getItem('tree_client_id');
             const phone = savedClientId ? 'Auth-' + savedClientId : (document.getElementById('phone') ? document.getElementById('phone').value : '');
             const address = savedClientId ? 'Auth-' + savedClientId : (document.getElementById('address') ? document.getElementById('address').value : '');
@@ -448,15 +447,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    
-                    // --- ГЕНЕРАЦИЯ ID ДЛЯ НОВЫХ КЛИЕНТОВ ---
                     if(!savedClientId) {
                         savedClientId = 'TR-' + Math.random().toString(36).substr(2, 4).toUpperCase();
                         localStorage.setItem('tree_client_id', savedClientId);
-                        if(profileBtn) profileBtn.classList.add('logged-in');
                     }
                     
-                    // Выводим ID в модальное окно успеха
                     const msgEl = document.getElementById('modal-id-msg');
                     if(msgEl) {
                         msgEl.innerHTML = `<div style="margin-top:16px; font-size:10px; color:var(--text-sec);" data-i18n="order_success_id">${translations['order_success_id'][currentLang]}</div><div class="modal-id-highlight">${savedClientId}</div>`;
