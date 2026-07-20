@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TREE COMPANY - Համագործակցություն</title>
-    
     <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
-    
+    <link rel="manifest" href="manifest.json">
     <script>
         (function() {
             try {
@@ -22,10 +21,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="noise-overlay"></div>
-    <div class="ambient-glow"></div>
-
+    <div class="noise-overlay"></div><div class="ambient-glow"></div>
     <div class="app-container">
         
         <header class="app-header">
@@ -49,28 +45,22 @@
         <h1 class="page-title" data-i18n="coop_title">Համագործակցություն</h1>
 
         <form id="coop-form" class="form-card" action="#">
-            
             <div class="input-group">
                 <label class="input-label" for="coop_name" data-i18n="coop_name">Ընկերության կամ անձի անուն *</label>
                 <input type="text" id="coop_name" class="glass-input" required>
             </div>
-
             <div class="input-group">
                 <label class="input-label" for="phone" data-i18n="lbl_phone">Հեռախոսահամար *</label>
                 <input type="tel" id="phone" class="glass-input" value="+374 " inputmode="tel" required>
             </div>
-
             <div class="input-group">
                 <label class="input-label" for="message" data-i18n="coop_desc">Համագործակցության նկարագրություն *</label>
                 <textarea id="message" class="glass-input" required style="min-height: 120px;"></textarea>
             </div>
-
             <button type="submit" class="submit-btn" data-i18n="submit">Ուղարկել հայտը</button>
-
         </form>
     </div>
 
-    <!-- 4 КНОПКИ -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item" id="nav-home">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -89,7 +79,6 @@
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
-
     <script src="main.js"></script>
 </body>
 </html>
