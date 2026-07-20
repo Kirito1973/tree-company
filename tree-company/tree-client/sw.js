@@ -1,50 +1,53 @@
-const CACHE_NAME = 'tree-app-v12';
+const CACHE_NAME = 'tree-company-v3';
 const ASSETS = [
-    './',
-    './index.html',
-    './jobs.html',
-    './form.html',
-    './order-doors.html',
-    './order-baseboards.html',
-    './account.html',
-    './style.css',
-    './main.js',
-    './manifest.json'
+  './',
+  './index.html',
+  './orders.html',
+  './cabinet.html',
+  './cooperation.html',
+  './jobs.html',
+  './form.html',
+  './order-doors.html',
+  './order-baseboards.html',
+  './style.css',
+  './main.js',
+  './manifest.json',
+  './assets/tree.svg',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
+  './assets/icon-512-maskable.png',
+  './assets/apple-touch-icon.png',
+  './assets/free-icon-armenia-197516.png',
+  './assets/free-icon-russia-9994030.png',
+  './assets/united-kingdom.png'
 ];
 
 self.addEventListener('install', (event) => {
-    self.skipWaiting(); // Заставляем браузер немедленно принять эту версию
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-    );
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS);
+    })
+  );
 });
 
 self.addEventListener('activate', (event) => {
-    // Этот код уничтожит ВСЕ старые кэши на телефоне
-    event.waitUntil(
-        caches.keys().then((keys) => {
-            return Promise.all(
-                keys.map((key) => {
-                    if (key !== CACHE_NAME) {
-                        return caches.delete(key);
-                    }
-                })
-            );
-        }).then(() => self.clients.claim())
-    );
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
 });
 
-// Стратегия: Сначала сеть (Интернет), если нет интернета — берем из кэша
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') return;
-    
-    event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                const responseClone = response.clone();
-                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
-                return response;
-            })
-            .catch(() => caches.match(event.request))
-    );
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });
