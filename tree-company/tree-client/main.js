@@ -1,4 +1,3 @@
-// Регистрация Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -9,10 +8,10 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. ЛОГИКА ТЕМЫ (Кнопка и иконка) ---
+    // --- 1. ЛОГИКА ТЕМЫ ---
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
-    const htmlElem = document.documentElement; // Берем HTML, так как классы теперь там
+    const htmlElem = document.documentElement; 
     let rotationDegrees = 0;
 
     const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
@@ -24,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
                        (!htmlElem.classList.contains('force-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
         themeIcon.innerHTML = isDark ? sunIcon : moonIcon;
     }
-    updateThemeIcon(); // Ставим правильную иконку при загрузке
+    updateThemeIcon();
 
     if (themeBtn) {
         themeBtn.addEventListener('click', () => {
@@ -40,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 htmlElem.classList.add('force-dark');
                 newTheme = 'dark';
             } else {
-                // Если классов не было (тема подхватилась из системы)
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     htmlElem.classList.add('force-light');
                 } else {
@@ -53,11 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Слушатель системной темы: если телефон сам поменял тему, меняем иконку (если нет ручного выбора)
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        if (!localStorage.getItem('app_theme')) {
-            updateThemeIcon();
-        }
+        if (!localStorage.getItem('app_theme')) updateThemeIcon();
     });
 
     // --- 2. МУЛЬТИЯЗЫЧНОСТЬ ---
@@ -73,9 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.addEventListener('click', (e) => {
-        if (langSwitcher && !langSwitcher.contains(e.target)) {
-            langSwitcher.classList.remove('open');
-        }
+        if (langSwitcher && !langSwitcher.contains(e.target)) langSwitcher.classList.remove('open');
     });
 
     const translations = {
@@ -157,23 +150,33 @@ document.addEventListener('DOMContentLoaded', () => {
         "pl_msg": { "AM": "...", "RU": "...", "EN": "..." },
         "submit": { "AM": "Ուղարկել", "RU": "Отправить", "EN": "Submit" },
         "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
-        
         "auth_title": { "AM": "Մուտքագրեք Ձեր ID-ն", "RU": "Введите ваш ID", "EN": "Enter your ID" },
         "auth_placeholder": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
         "auth_btn": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
         "auth_err": { "AM": "Սխալ ID", "RU": "Неверный ID", "EN": "Invalid ID" },
         "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" },
+        "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
+        "nav_jobs": { "AM": "Աշխատանք", "RU": "Сотрудник", "EN": "Jobs" },
+        "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" },
 
+        // НОВЫЕ СТРОКИ ДЛЯ КАБИНЕТА
         "cab_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Dashboard</span>" },
         "cab_id": { "AM": "Ձեր բանալին (ID)՝", "RU": "Ваш ключ входа (ID):", "EN": "Your login key (ID):" },
         "cab_new_order": { "AM": "Նոր պատվեր ստեղծել", "RU": "Создать новый заказ", "EN": "Create New Order" },
         "cab_history_title": { "AM": "Պատվերների պատմություն", "RU": "История заказов", "EN": "Order History" },
         "cab_rate": { "AM": "Գնահատել որակը", "RU": "Оценить качество", "EN": "Rate Quality" },
         "cab_logout": { "AM": "Դուրս գալ", "RU": "Выйти из аккаунта", "EN": "Log Out" },
-
-        "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
-        "nav_jobs": { "AM": "Աշխատանք", "RU": "Сотрудник", "EN": "Jobs" },
-        "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" }
+        "status_in_progress": { "AM": "<span style=\"display:block; width:8px; height:8px; background:#FFB347; border-radius:50%; animation: pulse-dot 2s infinite;\"></span> Ընթացքի մեջ է", "RU": "<span style=\"display:block; width:8px; height:8px; background:#FFB347; border-radius:50%; animation: pulse-dot 2s infinite;\"></span> В процессе", "EN": "<span style=\"display:block; width:8px; height:8px; background:#FFB347; border-radius:50%; animation: pulse-dot 2s infinite;\"></span> In progress" },
+        "master_name_1": { "AM": "Արամ Խաչատրյան", "RU": "Арам Хачатрян", "EN": "Aram Khachatryan" },
+        "master_prof_1": { "AM": "Դռների վարպետ", "RU": "Мастер по дверям", "EN": "Door Master" },
+        "s1_qty": { "AM": "Միջսենյակային դռների տեղադրում (2 հատ)", "RU": "Установка межкомнатных дверей (2 шт)", "EN": "Interior door installation (2 pcs)" },
+        "s2_qty": { "AM": "Ապամոնտաժում (1 հատ)", "RU": "Демонтаж (1 шт)", "EN": "Dismantling (1 pc)" },
+        "s5_qty": { "AM": "Երեսկալի և ավելացուցիչի տեղադրում", "RU": "Установка наличников и доборов", "EN": "Casing and extension installation" },
+        "cab_total_paid": { "AM": "Ընդհանուր գումարը՝", "RU": "Итоговая сумма:", "EN": "Total amount:" },
+        "cab_rate_master": { "AM": "Գնահատեք վարպետի աշխատանքը", "RU": "Оцените работу мастера", "EN": "Rate the master's work" },
+        "cab_review_pl": { "AM": "Թողեք Ձեր կարծիքը...", "RU": "Оставьте ваш отзыв...", "EN": "Leave your review..." },
+        "cab_review_btn": { "AM": "Ուղարկել կարծիքը", "RU": "Отправить отзыв", "EN": "Submit review" },
+        "review_thanks": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за вашу оценку!", "EN": "Thank you for your rating!" }
     };
     
     function applyLanguage() {
@@ -285,6 +288,37 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+
+    // --- ЛОГИКА ОЦЕНКИ ЗАКАЗА (ЗВЕЗДЫ) ---
+    document.querySelectorAll('.star-rating').forEach(ratingContainer => {
+        const stars = ratingContainer.querySelectorAll('.star');
+        const reviewInput = ratingContainer.parentElement.querySelector('.review-input');
+        const reviewSubmit = ratingContainer.parentElement.querySelector('.review-submit');
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const val = parseInt(this.getAttribute('data-value'));
+                stars.forEach(s => {
+                    if(parseInt(s.getAttribute('data-value')) <= val) {
+                        s.classList.add('active');
+                        s.style.color = '#FFB347';
+                    } else {
+                        s.classList.remove('active');
+                        s.style.color = 'rgba(128,128,128,0.3)';
+                    }
+                });
+                
+                if(reviewInput) reviewInput.style.display = 'block';
+                if(reviewSubmit) reviewSubmit.style.display = 'block';
+            });
+        });
+
+        if(reviewSubmit) {
+            reviewSubmit.addEventListener('click', () => {
+                ratingContainer.parentElement.innerHTML = `<div style="color: var(--tree-light); font-size: 12px; font-weight: 800; text-align: center; padding: 20px 0;">${translations['review_thanks'][currentLang]}</div>`;
+            });
+        }
+    });
 
     const phoneGroup = document.getElementById('phone-group');
     const addressGroup = document.getElementById('address-group');
