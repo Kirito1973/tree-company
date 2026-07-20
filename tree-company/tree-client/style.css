@@ -214,3 +214,88 @@ input[type="checkbox"]:checked + .custom-checkbox::after { content: ''; position
 .nav-item:active { transform: scale(0.9); }
 .nav-item.active { color: var(--tree-light); background: rgba(35, 169, 91, 0.08); }
 .nav-item.active svg { filter: drop-shadow(0 0 6px rgba(35, 169, 91, 0.4)); transform: translateY(-2px); }
+
+/* ==========================================================================
+   АДАПТИВНОСТЬ ДЛЯ ПК И ПЛАНШЕТОВ (DESKTOP & TABLET)
+   ========================================================================== */
+
+/* Планшеты и небольшие экраны (от 768px) */
+@media (min-width: 768px) {
+    .app-container {
+        max-width: 720px;
+        padding-bottom: 60px;
+    }
+    
+    .services-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .jobs-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    
+    /* Калькулятор разбивается на 2 колонки */
+    .calc-list { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    
+    .form-card { padding: 32px 30px; }
+}
+
+/* Десктопы (ПК, Mac, Ноутбуки от 1024px) */
+@media (min-width: 1024px) {
+    .app-container {
+        max-width: 1200px;
+        padding-left: 160px; /* Выделяем место слева под боковое меню */
+        padding-right: 40px;
+        padding-bottom: 40px;
+    }
+
+    /* Магия трансформации: Нижнее меню превращается в боковой Dashboard */
+    .bottom-nav {
+        top: 50%;
+        bottom: auto;
+        left: 40px;
+        transform: translateY(-50%); /* Строго по центру экрана по вертикали */
+        width: 100px;
+        height: auto;
+        flex-direction: column;
+        gap: 40px;
+        padding: 40px 10px;
+        border-radius: 30px;
+    }
+
+    .nav-item {
+        font-size: 11px;
+        padding: 10px;
+    }
+
+    .nav-item svg {
+        width: 28px;
+        height: 28px;
+        margin-bottom: 4px;
+    }
+
+    /* Раскрываем сетки на максимум */
+    .services-grid { grid-template-columns: repeat(5, 1fr); gap: 24px; }
+    .jobs-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .benefits-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+    /* Увеличиваем главный баннер */
+    .promo-banner {
+        padding: 40px;
+        border-radius: 32px;
+    }
+    .promo-title { font-size: 24px; line-height: 1.5; }
+    .promo-highlight { font-size: 32px; }
+
+    .page-title { font-size: 32px; margin-bottom: 32px; }
+    
+    /* Центрируем и ограничиваем формы, чтобы инпуты не были шириной в километр */
+    .form-card {
+        max-width: 800px; 
+        margin: 0 auto;
+        padding: 40px;
+        border-radius: 32px;
+        gap: 20px;
+    }
+    
+    .calc-list { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    
+    /* Модальные окна становятся крупнее */
+    .modal-content { max-width: 450px; padding: 45px 30px; }
+    .modal-text { font-size: 16px; }
+}
