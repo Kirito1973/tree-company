@@ -1,3 +1,4 @@
+// Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -158,9 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
         "nav_jobs": { "AM": "Աշխատանք", "RU": "Сотрудник", "EN": "Jobs" },
         "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" },
-
-        // НОВЫЕ СТРОКИ ДЛЯ КАБИНЕТА
         "cab_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Dashboard</span>" },
+        "cab_greeting": { "AM": "Բարև,", "RU": "Здравствуйте,", "EN": "Hello," },
         "cab_id": { "AM": "Ձեր բանալին (ID)՝", "RU": "Ваш ключ входа (ID):", "EN": "Your login key (ID):" },
         "cab_new_order": { "AM": "Նոր պատվեր ստեղծել", "RU": "Создать новый заказ", "EN": "Create New Order" },
         "cab_history_title": { "AM": "Պատվերների պատմություն", "RU": "История заказов", "EN": "Order History" },
@@ -176,7 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
         "cab_rate_master": { "AM": "Գնահատեք վարպետի աշխատանքը", "RU": "Оцените работу мастера", "EN": "Rate the master's work" },
         "cab_review_pl": { "AM": "Թողեք Ձեր կարծիքը...", "RU": "Оставьте ваш отзыв...", "EN": "Leave your review..." },
         "cab_review_btn": { "AM": "Ուղարկել կարծիքը", "RU": "Отправить отзыв", "EN": "Submit review" },
-        "review_thanks": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за вашу оценку!", "EN": "Thank you for your rating!" }
+        "review_thanks": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за вашу оценку!", "EN": "Thank you for your rating!" },
+        "fallback_name": { "AM": "Հարգելի հաճախորդ", "RU": "Уважаемый клиент", "EN": "Dear customer" }
     };
     
     function applyLanguage() {
@@ -271,19 +272,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- ЛОГИКА КАБИНЕТА И ВЫХОДА ---
     if (window.location.pathname.includes('cabinet.html')) {
         const savedId = localStorage.getItem('tree_client_id');
         if (!savedId) {
             window.location.replace('index.html');
         } else {
-            const display = document.getElementById('client-id-display');
-            if (display) display.textContent = savedId;
+            const displayId = document.getElementById('client-id-display');
+            if (displayId) displayId.textContent = savedId;
+            
+            const displayName = document.getElementById('client-name-display');
+            if (displayName) {
+                const savedName = localStorage.getItem('tree_client_name');
+                displayName.textContent = savedName ? savedName : translations['fallback_name'][currentLang];
+            }
         }
 
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
                 localStorage.removeItem('tree_client_id');
+                localStorage.removeItem('tree_client_name');
+                localStorage.removeItem('tree_client_phone');
+                localStorage.removeItem('tree_client_address');
                 window.location.replace('index.html');     
             });
         }
@@ -307,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         s.style.color = 'rgba(128,128,128,0.3)';
                     }
                 });
-                
                 if(reviewInput) reviewInput.style.display = 'block';
                 if(reviewSubmit) reviewSubmit.style.display = 'block';
             });
@@ -320,17 +330,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const phoneGroup = document.getElementById('phone-group');
-    const addressGroup = document.getElementById('address-group');
-    
+    // --- ЛОГИКА ПРЕДЗАПОЛНЕНИЯ ПОЛЕЙ ---
     if(localStorage.getItem('tree_client_id')) {
-        if(phoneGroup) {
-            phoneGroup.style.display = 'none';
-            document.getElementById('phone').removeAttribute('required');
+        const nameInput = document.getElementById('client_name');
+        const phoneInput = document.getElementById('phone');
+        const addressInput = document.getElementById('address');
+        
+        if (nameInput && localStorage.getItem('tree_client_name')) {
+            nameInput.value = localStorage.getItem('tree_client_name');
         }
-        if(addressGroup) {
-            addressGroup.style.display = 'none';
-            document.getElementById('address').removeAttribute('required');
+        if (phoneInput && localStorage.getItem('tree_client_phone')) {
+            phoneInput.value = localStorage.getItem('tree_client_phone');
+        }
+        if (addressInput && localStorage.getItem('tree_client_address')) {
+            addressInput.value = localStorage.getItem('tree_client_address');
         }
     }
 
@@ -460,18 +473,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const grandTotal = document.getElementById('grandTotal') ? document.getElementById('grandTotal').textContent : '0 ֏';
             
             let savedClientId = localStorage.getItem('tree_client_id');
-            const phone = savedClientId ? 'Auth-' + savedClientId : (document.getElementById('phone') ? document.getElementById('phone').value : '');
-            const address = savedClientId ? 'Auth-' + savedClientId : (document.getElementById('address') ? document.getElementById('address').value : '');
-            const message = document.getElementById('message') ? document.getElementById('message').value : '';
+            const clientNameVal = document.getElementById('client_name') ? document.getElementById('client_name').value : '';
+            const phoneVal = document.getElementById('phone') ? document.getElementById('phone').value : '';
+            const addressVal = document.getElementById('address') ? document.getElementById('address').value : '';
+            const messageVal = document.getElementById('message') ? document.getElementById('message').value : '';
 
             const payload = {
                 type: 'order',
                 client_id: savedClientId || null,
+                client_name: clientNameVal,
                 services: orderDetails,
                 total: grandTotal,
-                phone,
-                address,
-                message
+                phone: phoneVal,
+                address: addressVal,
+                message: messageVal
             };
 
             try {
@@ -485,6 +500,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if(!savedClientId) {
                         savedClientId = 'TR-' + Math.random().toString(36).substr(2, 4).toUpperCase();
                         localStorage.setItem('tree_client_id', savedClientId);
+                        localStorage.setItem('tree_client_name', clientNameVal);
+                        localStorage.setItem('tree_client_phone', phoneVal);
+                        localStorage.setItem('tree_client_address', addressVal);
                     }
                     
                     const msgEl = document.getElementById('modal-id-msg');
@@ -500,7 +518,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         const subtotalEl = item.querySelector('.calc-subtotal');
                         if (subtotalEl) subtotalEl.textContent = '0 ֏';
                     });
-                    if(phoneInput && !localStorage.getItem('tree_client_id')) phoneInput.value = '+374 ';
+                    
+                    if(localStorage.getItem('tree_client_id')) {
+                        if (document.getElementById('client_name')) document.getElementById('client_name').value = localStorage.getItem('tree_client_name');
+                        if (document.getElementById('phone')) document.getElementById('phone').value = localStorage.getItem('tree_client_phone');
+                        if (document.getElementById('address')) document.getElementById('address').value = localStorage.getItem('tree_client_address');
+                    } else if(phoneInput) {
+                        phoneInput.value = '+374 ';
+                    }
+                    
                     calculateGrandTotal();
                     
                     if(closeModalBtn) {
