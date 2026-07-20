@@ -15,6 +15,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
 
+    <!-- СКРИПТ АНТИ-МИГАНИЯ ТЕМЫ -->
     <script>
         (function() {
             try {
@@ -41,7 +42,11 @@
         
         <header class="app-header">
             <div class="header-left">
-                <button class="theme-btn" id="theme-btn" aria-label="Сменить тему">
+                <!-- Кнопка Назад -->
+                <button class="back-btn" onclick="window.history.back()" aria-label="Հետ">
+                    <svg viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <button class="theme-btn" id="theme-btn" aria-label="Փոխել թեման">
                     <span class="theme-icon" id="theme-icon"></span>
                 </button>
             </div>
@@ -52,7 +57,7 @@
             
             <div class="header-right">
                 <div class="lang-switcher" id="lang-switcher">
-                    <button class="lang-btn-main" id="current-lang-btn" aria-label="Выбрать язык" type="button">
+                    <button class="lang-btn-main" id="current-lang-btn" aria-label="Ընտրել լեզուն" type="button">
                         <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
                     </button>
                     <div class="lang-dropdown-content">
@@ -241,11 +246,14 @@
         <div class="modal-content">
             <span class="modal-icon"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
             <div class="modal-text" data-i18n="modal_msg">Մեր աշխատակիցները կկապվեն Ձեզ հետ</div>
+            
             <div id="modal-id-msg"></div>
+
             <button type="button" class="submit-btn modal-close-btn" id="modal-close-btn" data-i18n="modal_close">OK</button>
         </div>
     </div>
 
+    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item" id="nav-orders">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
