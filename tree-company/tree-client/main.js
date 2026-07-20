@@ -1,3 +1,4 @@
+// Регистрация Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -8,30 +9,22 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // --- 1. ТЕМА (DARK / LIGHT) ---
+    // --- 1. ЛОГИКА ТЕМЫ (Кнопка и иконка) ---
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
-    const body = document.body;
+    const htmlElem = document.documentElement; // Берем HTML, так как классы теперь там
     let rotationDegrees = 0;
-
-    const savedTheme = localStorage.getItem('app_theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-        body.classList.add('force-dark');
-    } else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
-        body.classList.add('force-light');
-    }
 
     const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
     const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 
     function updateThemeIcon() {
         if (!themeIcon) return;
-        const isDark = body.classList.contains('force-dark') || (!body.classList.contains('force-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const isDark = htmlElem.classList.contains('force-dark') || 
+                       (!htmlElem.classList.contains('force-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
         themeIcon.innerHTML = isDark ? sunIcon : moonIcon;
     }
-    updateThemeIcon();
+    updateThemeIcon(); // Ставим правильную иконку при загрузке
 
     if (themeBtn) {
         themeBtn.addEventListener('click', () => {
@@ -39,18 +32,19 @@ document.addEventListener('DOMContentLoaded', () => {
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
             let newTheme = 'light';
 
-            if (body.classList.contains('force-dark')) {
-                body.classList.remove('force-dark');
-                body.classList.add('force-light');
-            } else if (body.classList.contains('force-light')) {
-                body.classList.remove('force-light');
-                body.classList.add('force-dark');
+            if (htmlElem.classList.contains('force-dark')) {
+                htmlElem.classList.remove('force-dark');
+                htmlElem.classList.add('force-light');
+            } else if (htmlElem.classList.contains('force-light')) {
+                htmlElem.classList.remove('force-light');
+                htmlElem.classList.add('force-dark');
                 newTheme = 'dark';
             } else {
+                // Если классов не было (тема подхватилась из системы)
                 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    body.classList.add('force-light');
+                    htmlElem.classList.add('force-light');
                 } else {
-                    body.classList.add('force-dark');
+                    htmlElem.classList.add('force-dark');
                     newTheme = 'dark';
                 }
             }
@@ -58,6 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(updateThemeIcon, 150); 
         });
     }
+
+    // Слушатель системной темы: если телефон сам поменял тему, меняем иконку (если нет ручного выбора)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (!localStorage.getItem('app_theme')) {
+            updateThemeIcon();
+        }
+    });
 
     // --- 2. МУЛЬТИЯЗЫЧНОСТЬ ---
     let currentLang = localStorage.getItem('app_lang') || 'AM';
