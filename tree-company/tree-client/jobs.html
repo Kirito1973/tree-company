@@ -15,6 +15,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
 
+    <!-- СКРИПТ АНТИ-МИГАНИЯ ТЕМЫ -->
     <script>
         (function() {
             try {
@@ -41,6 +42,10 @@
         
         <header class="app-header">
             <div class="header-left">
+                <!-- Кнопка Назад -->
+                <button class="back-btn" onclick="window.history.back()" aria-label="Հետ">
+                    <svg viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
                 <button class="theme-btn" id="theme-btn" aria-label="Сменить тему">
                     <span class="theme-icon" id="theme-icon"></span>
                 </button>
