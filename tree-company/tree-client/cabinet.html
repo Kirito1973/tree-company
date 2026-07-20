@@ -16,6 +16,19 @@
     <link rel="manifest" href="manifest.json">
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('app_theme');
+                var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                    document.documentElement.classList.add('force-dark');
+                } else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
+                    document.documentElement.classList.add('force-light');
+                }
+            } catch (e) {}
+        })();
+    </script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
