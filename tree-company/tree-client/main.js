@@ -1,4 +1,4 @@
-// Регистрация Service Worker для PWA
+// Регистрация Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             rotationDegrees += 360;
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
             let newTheme = 'light';
-
             if (htmlElem.classList.contains('force-dark')) {
                 htmlElem.classList.remove('force-dark');
                 htmlElem.classList.add('force-light');
@@ -52,11 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        if (!localStorage.getItem('app_theme')) updateThemeIcon();
-    });
-
-    // --- 2. МУЛЬТИЯЗЫЧНОСТЬ ---
+    // --- 2. МУЛЬТИЯЗЫЧНОСТЬ И ПЕРЕВОДЫ ---
     let currentLang = localStorage.getItem('app_lang') || 'AM';
     const langSwitcher = document.getElementById('lang-switcher');
     const currentLangBtn = document.getElementById('current-lang-btn');
@@ -67,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
             langSwitcher.classList.toggle('open');
         });
     }
-
     document.addEventListener('click', (e) => {
         if (langSwitcher && !langSwitcher.contains(e.target)) langSwitcher.classList.remove('open');
     });
@@ -151,22 +145,39 @@ document.addEventListener('DOMContentLoaded', () => {
         "pl_msg": { "AM": "...", "RU": "...", "EN": "..." },
         "submit": { "AM": "Ուղարկել", "RU": "Отправить", "EN": "Submit" },
         "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
+        
         "auth_title": { "AM": "Մուտքագրեք Ձեր ID-ն", "RU": "Введите ваш ID", "EN": "Enter your ID" },
         "auth_placeholder": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
         "auth_btn": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
         "auth_err": { "AM": "Սխալ ID", "RU": "Неверный ID", "EN": "Invalid ID" },
         "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" },
+
+        "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
         "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
         "nav_jobs": { "AM": "Աշխատանք", "RU": "Сотрудник", "EN": "Jobs" },
         "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" },
+
+        // ГЛАВНАЯ (РЕЙТИНГ) И СОТРУДНИЧЕСТВО
+        "rating_title": { "AM": "Մեր վարկանիշը", "RU": "Наш рейтинг", "EN": "Our Rating" },
+        "rating_sub": { "AM": "հիմնված 124 կարծիքի վրա", "RU": "на основе 124 отзывов", "EN": "based on 124 reviews" },
+        "reviews_title": { "AM": "Կարծիքներ", "RU": "Отзывы клиентов", "EN": "Customer Reviews" },
+        "coop_title": { "AM": "Համագործակցություն", "RU": "Сотрудничество", "EN": "Cooperation" },
+        "coop_banner_sub": { "AM": "ԲԻԶՆԵՍԻ ՀԱՄԱՐ", "RU": "ДЛЯ БИЗНЕСА", "EN": "FOR BUSINESS" },
+        "coop_banner_title": { "AM": "Դարձեք մեր գործընկերը", "RU": "Станьте нашим партнером", "EN": "Become our partner" },
+        "coop_name": { "AM": "Ընկերության կամ անձի անուն *", "RU": "Название компании или имя *", "EN": "Company or Person Name *" },
+        "coop_desc": { "AM": "Համագործակցության նկարագրություն *", "RU": "Описание сотрудничества *", "EN": "Cooperation description *" },
+
+        // КАБИНЕТ
         "cab_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Dashboard</span>" },
         "cab_greeting": { "AM": "Բարև,", "RU": "Здравствуйте,", "EN": "Hello," },
         "cab_id": { "AM": "Ձեր բանալին (ID)՝", "RU": "Ваш ключ входа (ID):", "EN": "Your login key (ID):" },
         "cab_new_order": { "AM": "Նոր պատվեր ստեղծել", "RU": "Создать новый заказ", "EN": "Create New Order" },
         "cab_history_title": { "AM": "Պատվերների պատմություն", "RU": "История заказов", "EN": "Order History" },
+        "btn_accept_work": { "AM": "Ընդունել աշխատանքը", "RU": "Принять работу", "EN": "Accept Work" },
         "cab_rate": { "AM": "Գնահատել որակը", "RU": "Оценить качество", "EN": "Rate Quality" },
         "cab_logout": { "AM": "Դուրս գալ", "RU": "Выйти из аккаунта", "EN": "Log Out" },
         "status_in_progress": { "AM": "<span style=\"display:block; width:8px; height:8px; background:#FFB347; border-radius:50%; animation: pulse-dot 2s infinite;\"></span> Ընթացքի մեջ է", "RU": "<span style=\"display:block; width:8px; height:8px; background:#FFB347; border-radius:50%; animation: pulse-dot 2s infinite;\"></span> В процессе", "EN": "<span style=\"display:block; width:8px; height:8px; background:#FFB347; border-radius:50%; animation: pulse-dot 2s infinite;\"></span> In progress" },
+        "status_completed": { "AM": "Ավարտված է", "RU": "Завершено", "EN": "Completed" },
         "master_name_1": { "AM": "Արամ Խաչատրյան", "RU": "Арам Хачатрян", "EN": "Aram Khachatryan" },
         "master_prof_1": { "AM": "Դռների վարպետ", "RU": "Мастер по дверям", "EN": "Door Master" },
         "s1_qty": { "AM": "Միջսենյակային դռների տեղադրում (2 հատ)", "RU": "Установка межкомнатных дверей (2 шт)", "EN": "Interior door installation (2 pcs)" },
@@ -217,14 +228,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyLanguage();
 
-    // --- НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ ---
+    // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ ---
     const currentPath = window.location.pathname;
     if (currentPath.includes('jobs.html') || currentPath.includes('form.html')) {
         document.getElementById('nav-jobs')?.classList.add('active');
     } else if (currentPath.includes('cabinet.html')) {
         document.getElementById('nav-cabinet')?.classList.add('active');
-    } else {
+    } else if (currentPath.includes('orders.html') || currentPath.includes('order-')) {
         document.getElementById('nav-orders')?.classList.add('active');
+    } else {
+        document.getElementById('nav-home')?.classList.add('active');
     }
 
     const navCabinetBtn = document.getElementById('nav-cabinet');
@@ -272,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- ЛОГИКА КАБИНЕТА И ВЫХОДА ---
+    // --- 4. ЛОГИКА КАБИНЕТА (ОЦЕНКА И ПРИНЯТИЕ РАБОТЫ) ---
     if (window.location.pathname.includes('cabinet.html')) {
         const savedId = localStorage.getItem('tree_client_id');
         if (!savedId) {
@@ -280,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             const displayId = document.getElementById('client-id-display');
             if (displayId) displayId.textContent = savedId;
-            
             const displayName = document.getElementById('client-name-display');
             if (displayName) {
                 const savedName = localStorage.getItem('tree_client_name');
@@ -298,56 +310,68 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.replace('index.html');     
             });
         }
-    }
 
-    // --- ЛОГИКА ОЦЕНКИ ЗАКАЗА (ЗВЕЗДЫ) ---
-    document.querySelectorAll('.star-rating').forEach(ratingContainer => {
-        const stars = ratingContainer.querySelectorAll('.star');
-        const reviewInput = ratingContainer.parentElement.querySelector('.review-input');
-        const reviewSubmit = ratingContainer.parentElement.querySelector('.review-submit');
+        // Кнопка "Принять работу"
+        const acceptBtns = document.querySelectorAll('.accept-work-btn');
+        acceptBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const card = this.closest('.form-card');
+                this.style.display = 'none'; // Прячем кнопку
+                
+                // Меняем статус
+                const statusEl = card.querySelector('.order-status');
+                if(statusEl) {
+                    statusEl.innerHTML = `<span style="display:block; width:8px; height:8px; background:var(--tree-light); border-radius:50%;"></span> ${translations['status_completed'][currentLang]}`;
+                    statusEl.style.color = 'var(--tree-light)';
+                }
 
-        stars.forEach(star => {
-            star.addEventListener('click', function() {
-                const val = parseInt(this.getAttribute('data-value'));
-                stars.forEach(s => {
-                    if(parseInt(s.getAttribute('data-value')) <= val) {
-                        s.classList.add('active');
-                        s.style.color = '#FFB347';
-                    } else {
-                        s.classList.remove('active');
-                        s.style.color = 'rgba(128,128,128,0.3)';
-                    }
-                });
-                if(reviewInput) reviewInput.style.display = 'block';
-                if(reviewSubmit) reviewSubmit.style.display = 'block';
+                // Показываем блок с отзывами
+                const reviewBox = card.querySelector('.review-box');
+                if (reviewBox) reviewBox.style.display = 'flex';
             });
         });
 
-        if(reviewSubmit) {
-            reviewSubmit.addEventListener('click', () => {
-                ratingContainer.parentElement.innerHTML = `<div style="color: var(--tree-light); font-size: 12px; font-weight: 800; text-align: center; padding: 20px 0;">${translations['review_thanks'][currentLang]}</div>`;
-            });
-        }
-    });
+        // Звезды рейтинга
+        document.querySelectorAll('.star-rating').forEach(ratingContainer => {
+            const stars = ratingContainer.querySelectorAll('.star');
+            const reviewInput = ratingContainer.parentElement.querySelector('.review-input');
+            const reviewSubmit = ratingContainer.parentElement.querySelector('.review-submit');
 
-    // --- ЛОГИКА ПРЕДЗАПОЛНЕНИЯ ПОЛЕЙ ---
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const val = parseInt(this.getAttribute('data-value'));
+                    stars.forEach(s => {
+                        if(parseInt(s.getAttribute('data-value')) <= val) {
+                            s.classList.add('active');
+                            s.style.color = '#FFB347';
+                        } else {
+                            s.classList.remove('active');
+                            s.style.color = 'rgba(128,128,128,0.3)';
+                        }
+                    });
+                    if(reviewInput) reviewInput.style.display = 'block';
+                    if(reviewSubmit) reviewSubmit.style.display = 'block';
+                });
+            });
+
+            if(reviewSubmit) {
+                reviewSubmit.addEventListener('click', () => {
+                    ratingContainer.parentElement.innerHTML = `<div style="color: var(--tree-light); font-size: 12px; font-weight: 800; text-align: center; padding: 20px 0;">${translations['review_thanks'][currentLang]}</div>`;
+                });
+            }
+        });
+    }
+
+    // --- 5. ФОРМЫ (ПРЕДЗАПОЛНЕНИЕ, КАЛЬКУЛЯТОР, ОТПРАВКА) ---
     if(localStorage.getItem('tree_client_id')) {
         const nameInput = document.getElementById('client_name');
         const phoneInput = document.getElementById('phone');
         const addressInput = document.getElementById('address');
-        
-        if (nameInput && localStorage.getItem('tree_client_name')) {
-            nameInput.value = localStorage.getItem('tree_client_name');
-        }
-        if (phoneInput && localStorage.getItem('tree_client_phone')) {
-            phoneInput.value = localStorage.getItem('tree_client_phone');
-        }
-        if (addressInput && localStorage.getItem('tree_client_address')) {
-            addressInput.value = localStorage.getItem('tree_client_address');
-        }
+        if (nameInput && localStorage.getItem('tree_client_name')) nameInput.value = localStorage.getItem('tree_client_name');
+        if (phoneInput && localStorage.getItem('tree_client_phone')) phoneInput.value = localStorage.getItem('tree_client_phone');
+        if (addressInput && localStorage.getItem('tree_client_address')) addressInput.value = localStorage.getItem('tree_client_address');
     }
 
-    // --- 3. ЛОГИКА ФОРМЫ СОИСКАТЕЛЯ ---
     const applyForm = document.getElementById('apply-form');
     if (applyForm) {
         applyForm.addEventListener('submit', async (event) => {
@@ -355,35 +379,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const payload = {
                 type: 'job_application',
                 name: document.getElementById('name') ? document.getElementById('name').value : '',
-                birth_year: document.getElementById('birth_year') ? document.getElementById('birth_year').value : '',
-                experience: document.getElementById('experience') ? document.getElementById('experience').value : '',
                 phone: document.getElementById('phone') ? document.getElementById('phone').value : '',
                 profession: document.getElementById('profession') ? document.getElementById('profession').value : '',
-                price: document.getElementById('price') ? document.getElementById('price').value : '',
-                schedule: document.getElementById('schedule') ? document.getElementById('schedule').value : '',
-                employment: document.getElementById('employment') ? document.getElementById('employment').value : '',
                 message: document.getElementById('message') ? document.getElementById('message').value : ''
             };
             try {
-                const response = await fetch('/api/submit-job', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (response.ok) {
-                    alert(translations['alert_success'][currentLang]);
-                    applyForm.reset();
-                } else {
-                    alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
-                }
-            } catch (error) {
-                console.error('Network error:', error);
-                alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
-            }
+                const response = await fetch('/api/submit-job', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (response.ok) { alert(translations['alert_success'][currentLang]); applyForm.reset(); } 
+                else { alert('Տեղի է ունեցել սխալ: / Произошла ошибка.'); }
+            } catch (error) { alert('Տեղի է ունեցել սխալ: / Произошла ошибка.'); }
         });
     }
 
-    // --- 4. ЛОГИКА КАЛЬКУЛЯТОРА И ЗАКАЗА ---
+    const coopForm = document.getElementById('coop-form');
+    if (coopForm) {
+        coopForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            alert(translations['alert_success'][currentLang]);
+            coopForm.reset();
+        });
+    }
+
     const orderForm = document.getElementById('order-form');
     if (orderForm) {
         function formatNumber(num) { return num.toLocaleString('en-US') + ' ֏'; }
@@ -432,17 +448,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (phoneInput) {
             phoneInput.addEventListener('input', function() {
                 let val = this.value;
-                if (!val.startsWith('+374 ')) {
-                    this.value = '+374 ';
-                } else {
-                    let restOfNumber = val.substring(5).replace(/[^\d\s]/g, '');
-                    this.value = '+374 ' + restOfNumber;
-                }
+                if (!val.startsWith('+374 ')) this.value = '+374 ';
+                else this.value = '+374 ' + val.substring(5).replace(/[^\d\s]/g, '');
             });
             phoneInput.addEventListener('focus', function() {
-                if (this.value === '' || this.value === '+374' || this.value === '+374 ') {
-                    this.value = '+374 ';
-                }
+                if (this.value === '' || this.value === '+374' || this.value === '+374 ') this.value = '+374 ';
             });
         }
 
@@ -451,32 +461,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         orderForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            
             const checkedServices = document.querySelectorAll('.service-check:checked');
-            if(checkedServices.length === 0) {
-                alert(translations['alert_error'][currentLang]);
-                return;
-            }
+            if(checkedServices.length === 0) { alert(translations['alert_error'][currentLang]); return; }
 
             const orderDetails = [];
             checkedServices.forEach(checkbox => {
                 const item = checkbox.closest('.calc-item');
-                const name = item.querySelector('.calc-name').textContent;
-                const price = item.getAttribute('data-price');
                 const qtyInput = item.querySelector('.qty-input');
                 const otherInput = item.querySelector('input[type="text"]');
-                
-                const qtyOrDetails = qtyInput ? qtyInput.value : (otherInput ? otherInput.value : 1);
-                orderDetails.push({ name, price, qtyOrDetails });
+                orderDetails.push({ 
+                    name: item.querySelector('.calc-name').textContent, 
+                    price: item.getAttribute('data-price'), 
+                    qtyOrDetails: qtyInput ? qtyInput.value : (otherInput ? otherInput.value : 1) 
+                });
             });
 
             const grandTotal = document.getElementById('grandTotal') ? document.getElementById('grandTotal').textContent : '0 ֏';
-            
             let savedClientId = localStorage.getItem('tree_client_id');
             const clientNameVal = document.getElementById('client_name') ? document.getElementById('client_name').value : '';
             const phoneVal = document.getElementById('phone') ? document.getElementById('phone').value : '';
             const addressVal = document.getElementById('address') ? document.getElementById('address').value : '';
-            const messageVal = document.getElementById('message') ? document.getElementById('message').value : '';
 
             const payload = {
                 type: 'order',
@@ -485,16 +489,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 services: orderDetails,
                 total: grandTotal,
                 phone: phoneVal,
-                address: addressVal,
-                message: messageVal
+                address: addressVal
             };
 
             try {
-                const response = await fetch('/api/submit-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+                const response = await fetch('/api/submit-order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 
                 if (response.ok) {
                     if(!savedClientId) {
@@ -506,41 +505,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     
                     const msgEl = document.getElementById('modal-id-msg');
-                    if(msgEl) {
-                        msgEl.innerHTML = `<div style="margin-top:16px; font-size:10px; color:var(--text-sec);" data-i18n="order_success_id">${translations['order_success_id'][currentLang]}</div><div class="modal-id-highlight">${savedClientId}</div>`;
-                    }
-
-                    if(modal) modal.classList.add('open');
+                    if(msgEl) msgEl.innerHTML = `<div style="margin-top:16px; font-size:10px; color:var(--text-sec);" data-i18n="order_success_id">${translations['order_success_id'][currentLang]}</div><div class="modal-id-highlight">${savedClientId}</div>`;
                     
+                    if(modal) modal.classList.add('open');
                     orderForm.reset();
                     document.querySelectorAll('.calc-item.active').forEach(item => {
                         item.classList.remove('active');
-                        const subtotalEl = item.querySelector('.calc-subtotal');
-                        if (subtotalEl) subtotalEl.textContent = '0 ֏';
+                        if (item.querySelector('.calc-subtotal')) item.querySelector('.calc-subtotal').textContent = '0 ֏';
                     });
                     
                     if(localStorage.getItem('tree_client_id')) {
                         if (document.getElementById('client_name')) document.getElementById('client_name').value = localStorage.getItem('tree_client_name');
                         if (document.getElementById('phone')) document.getElementById('phone').value = localStorage.getItem('tree_client_phone');
                         if (document.getElementById('address')) document.getElementById('address').value = localStorage.getItem('tree_client_address');
-                    } else if(phoneInput) {
-                        phoneInput.value = '+374 ';
                     }
-                    
                     calculateGrandTotal();
                     
-                    if(closeModalBtn) {
-                        closeModalBtn.onclick = () => {
-                            modal.classList.remove('open');
-                        };
-                    }
-                } else {
-                    alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
-                }
-            } catch (error) {
-                console.error('Network error:', error);
-                alert('Տեղի է ունեցել սխալ: / Произошла ошибка. / An error occurred.');
-            }
+                    if(closeModalBtn) closeModalBtn.onclick = () => { modal.classList.remove('open'); };
+                } else { alert('Տեղի է ունեցել սխալ: / Произошла ошибка.'); }
+            } catch (error) { alert('Տեղի է ունեցել սխալ: / Произошла ошибка.'); }
         });
     }
 });
