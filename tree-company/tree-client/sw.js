@@ -1,4 +1,5 @@
-const CACHE_NAME = 'tree-company-v4';
+// Версия 5 - с правильным динамическим обновлением
+const CACHE_NAME = 'tree-company-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -23,6 +24,8 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Заставляем Service Worker активироваться немедленно
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS);
@@ -31,6 +34,10 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
+  // Получаем контроль над всеми клиентами сразу после активации
+  event.waitUntil(clients.claim());
+  
+  // Удаляем все старые кэши
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -44,10 +51,23 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Стратегия "Сначала сеть, потом кэш" с динамическим обновлением
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        // Если скачали новый файл из сети, обновляем его в кэше, чтобы в оффлайне всегда была последняя версия
+        const responseClone = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseClone);
+        });
+        return networkResponse;
+      })
+      .catch(() => {
+        // Если сети нет, берем из кэша
+        return caches.match(event.request);
+      })
   );
 });
