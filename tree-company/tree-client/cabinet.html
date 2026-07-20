@@ -5,31 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TREE COMPANY - Անձնական Էջ</title>
     
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="TREE COMPANY">
     <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
-
-    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
-    <link rel="manifest" href="manifest.json">
-
-    <!-- СКРИПТ АНТИ-МИГАНИЯ ТЕМЫ -->
+    
     <script>
         (function() {
             try {
                 var savedTheme = localStorage.getItem('app_theme');
                 var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-                    document.documentElement.classList.add('force-dark');
-                } else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
-                    document.documentElement.classList.add('force-light');
-                }
+                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) document.documentElement.classList.add('force-dark');
+                else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) document.documentElement.classList.add('force-light');
             } catch (e) {}
         })();
     </script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -42,34 +30,17 @@
         
         <header class="app-header">
             <div class="header-left">
-                <!-- Кнопка Назад добавлена сюда -->
-                <button class="back-btn" onclick="window.history.back()" aria-label="Հետ">
-                    <svg viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                </button>
-                <button class="theme-btn" id="theme-btn" aria-label="Փոխել թեման">
-                    <span class="theme-icon" id="theme-icon"></span>
-                </button>
+                <button class="back-btn" onclick="window.history.back()" aria-label="Հետ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                <button class="theme-btn" id="theme-btn"><span class="theme-icon" id="theme-icon"></span></button>
             </div>
-            
-            <div class="header-logo-container">
-                <img src="assets/tree.svg" alt="Tree Logo" class="main-logo">
-            </div>
-            
+            <div class="header-logo-container"><img src="assets/tree.svg" class="main-logo"></div>
             <div class="header-right">
                 <div class="lang-switcher" id="lang-switcher">
-                    <button class="lang-btn-main" id="current-lang-btn" aria-label="Ընտրել լեզուն" type="button">
-                        <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
-                    </button>
+                    <button class="lang-btn-main" id="current-lang-btn" type="button"><img src="assets/free-icon-armenia-197516.png" class="lang-flag"></button>
                     <div class="lang-dropdown-content">
-                        <button type="button" class="lang-tab active" data-lang="AM" aria-label="Armenian">
-                            <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
-                        </button>
-                        <button type="button" class="lang-tab" data-lang="RU" aria-label="Russian">
-                            <img src="assets/free-icon-russia-9994030.png" alt="RU" class="lang-flag">
-                        </button>
-                        <button type="button" class="lang-tab" data-lang="EN" aria-label="English">
-                            <img src="assets/united-kingdom.png" alt="EN" class="lang-flag">
-                        </button>
+                        <button type="button" class="lang-tab active" data-lang="AM"><img src="assets/free-icon-armenia-197516.png" class="lang-flag"></button>
+                        <button type="button" class="lang-tab" data-lang="RU"><img src="assets/free-icon-russia-9994030.png" class="lang-flag"></button>
+                        <button type="button" class="lang-tab" data-lang="EN"><img src="assets/united-kingdom.png" class="lang-flag"></button>
                     </div>
                 </div>
             </div>
@@ -85,14 +56,15 @@
             <div class="modal-id-highlight" id="client-id-display" style="font-size: 28px; margin-top: 10px; border: none; background: rgba(35, 169, 91, 0.15);">...</div>
         </div>
 
-        <a href="index.html" class="submit-btn" style="text-align:center; display:block; text-decoration:none; margin-bottom: 32px;" data-i18n="cab_new_order">Նոր պատվեր ստեղծել</a>
+        <a href="orders.html" class="submit-btn" style="text-align:center; display:block; text-decoration:none; margin-bottom: 32px;" data-i18n="cab_new_order">Նոր պատվեր ստեղծել</a>
 
         <div class="grid-title" data-i18n="cab_history_title">Պատվերների պատմություն</div>
 
         <div class="form-card" style="padding: 18px; margin-bottom: 16px;">
+            
             <div style="display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center;">
                 <span style="font-size:12px; font-weight:900; color:var(--text-sec); padding: 4px 8px; background: rgba(128,128,128,0.1); border-radius: 8px;">#ORD-982</span>
-                <span style="font-size:11px; font-weight:800; color:#FFB347; display: flex; align-items: center; gap: 4px;" data-i18n="status_in_progress">
+                <span class="order-status" style="font-size:11px; font-weight:800; color:#FFB347; display: flex; align-items: center; gap: 4px;" data-i18n="status_in_progress">
                     <span style="display:block; width:8px; height:8px; background:#FFB347; border-radius:50%; animation: pulse-dot 2s infinite;"></span> Ընթացքի մեջ է
                 </span>
             </div>
@@ -128,7 +100,11 @@
                 <span style="font-size: 16px; font-weight: 900; color: var(--tree-light);">29,500 ֏</span>
             </div>
 
-            <div class="review-box">
+            <!-- КНОПКА ПРИНЯТЬ РАБОТУ -->
+            <button class="submit-btn accept-work-btn" style="padding: 14px; margin-top: 16px; font-size:12px; background: transparent; border: 2px solid var(--tree-light); color: var(--tree-light); box-shadow: none;" data-i18n="btn_accept_work">Ընդունել աշխատանքը</button>
+
+            <!-- БЛОК ОЦЕНКИ (Скрыт до принятия работы) -->
+            <div class="review-box" style="display: none;">
                 <div class="review-title" data-i18n="cab_rate_master">Գնահատեք վարպետի աշխատանքը</div>
                 <div class="star-rating" id="star-rating-982">
                     <span class="star" data-value="1">★</span>
@@ -137,27 +113,32 @@
                     <span class="star" data-value="4">★</span>
                     <span class="star" data-value="5">★</span>
                 </div>
-                <textarea class="glass-input review-input" data-i18n-placeholder="cab_review_pl" placeholder="Թողեք Ձեր կարծիքը..." style="min-height: 80px; margin-top: 12px; display: none;"></textarea>
+                <textarea class="glass-input review-input" data-i18n-placeholder="cab_review_pl" placeholder="Թողեք Ձեր կարծիքը..." style="min-height: 80px; margin-top: 12px; display: none; width: 100%;"></textarea>
                 <button class="submit-btn review-submit" style="padding: 12px; font-size:11px; margin-top: 8px; display: none;" data-i18n="cab_review_btn">Ուղարկել կարծիքը</button>
             </div>
+
         </div>
 
         <button id="logout-btn" class="submit-btn" style="background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); box-shadow: none; margin-top: 20px;" data-i18n="cab_logout">Դուրս գալ</button>
 
     </div>
 
-    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
+    <!-- 4 КНОПКИ -->
     <nav class="bottom-nav">
-        <a href="index.html" class="nav-item" id="nav-orders">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <a href="index.html" class="nav-item" id="nav-home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span data-i18n="nav_home">Գլխավոր</span>
+        </a>
+        <a href="orders.html" class="nav-item" id="nav-orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             <span data-i18n="nav_orders">Պատվերներ</span>
         </a>
         <a href="jobs.html" class="nav-item" id="nav-jobs">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
             <span data-i18n="nav_jobs">Աշխատանք</span>
         </a>
         <a href="#" class="nav-item" id="nav-cabinet">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
