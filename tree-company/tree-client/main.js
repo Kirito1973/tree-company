@@ -1,3 +1,4 @@
+// Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -48,6 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(updateThemeIcon, 150); 
         });
     }
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (!localStorage.getItem('app_theme')) updateThemeIcon();
+    });
 
     // --- 2. МУЛЬТИЯЗЫЧНОСТЬ ---
     let currentLang = localStorage.getItem('app_lang') || 'AM';
@@ -268,7 +273,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('tree_client_id', val);
                 document.getElementById('auth-modal').classList.remove('open');
                 window.location.href = 'cabinet.html';
-            } else { alert(translations['auth_err'][currentLang]); }
+            } else {
+                alert(translations['auth_err'][currentLang]);
+            }
         });
     }
 
@@ -442,7 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const phoneVal = document.getElementById('phone') ? document.getElementById('phone').value : '';
             const addressVal = document.getElementById('address') ? document.getElementById('address').value : '';
 
-            // Генерация локального мок-ответа без реального сервера пока что
             if(!savedClientId) {
                 savedClientId = 'TR-' + Math.random().toString(36).substr(2, 4).toUpperCase();
                 localStorage.setItem('tree_client_id', savedClientId);
