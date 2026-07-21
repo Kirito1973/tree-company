@@ -2,7 +2,7 @@
    TREE COMPANY - ПРЕМИАЛЬНАЯ ДИЗАЙН-СИСТЕМА (ГЛОБАЛЬНЫЙ СТИЛЬ)
    ========================================================================== */
 
-:root {
+:root, html[data-theme="light"] {
     --bg-base: #F4F7F5;
     --blob-1: rgba(35, 169, 91, 0.65);  
     --blob-2: rgba(0, 200, 255, 0.55);  
@@ -17,43 +17,29 @@
     --btn-shadow: rgba(17, 56, 36, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-base: #0B110D;
-        --blob-1: rgba(35, 169, 91, 0.45);   
-        --blob-2: rgba(92, 53, 196, 0.45);   
-        --blob-3: rgba(0, 150, 136, 0.45);   
-        --card-bg: rgba(255, 255, 255, 0.05);
-        --card-border: rgba(255, 255, 255, 0.12);
-        --glass-rim: inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
-        --text: #F0F4F2;
-        --text-sec: #9BAA9E;
-        --tree-light: #34C759;
-        --shadow: rgba(0, 0, 0, 0.4);
-        --btn-shadow: rgba(0, 0, 0, 0.5);
-    }
-}
-
-html.force-dark {
-    --bg-base: #0B110D; --blob-1: rgba(35, 169, 91, 0.45); --blob-2: rgba(92, 53, 196, 0.45); --blob-3: rgba(0, 150, 136, 0.45);
-    --card-bg: rgba(255, 255, 255, 0.05); --card-border: rgba(255, 255, 255, 0.12); --glass-rim: inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
-    --text: #F0F4F2; --text-sec: #9BAA9E; --tree-light: #34C759; --shadow: rgba(0, 0, 0, 0.4); --btn-shadow: rgba(0, 0, 0, 0.5);
-}
-
-html.force-light {
-    --bg-base: #F4F7F5; --blob-1: rgba(35, 169, 91, 0.65); --blob-2: rgba(0, 200, 255, 0.55); --blob-3: rgba(255, 179, 71, 0.55);
-    --card-bg: rgba(255, 255, 255, 0.45); --card-border: rgba(255, 255, 255, 0.8); --glass-rim: inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
-    --text: #0A170F; --text-sec: #4A5B52; --tree-light: #1F9651; --shadow: rgba(17, 56, 36, 0.08); --btn-shadow: rgba(17, 56, 36, 0.12);
+html[data-theme="dark"] {
+    --bg-base: #0B110D;
+    --blob-1: rgba(35, 169, 91, 0.45);   
+    --blob-2: rgba(92, 53, 196, 0.45);   
+    --blob-3: rgba(0, 150, 136, 0.45);   
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border: rgba(255, 255, 255, 0.12);
+    --glass-rim: inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+    --text: #F0F4F2;
+    --text-sec: #9BAA9E;
+    --tree-light: #34C759;
+    --shadow: rgba(0, 0, 0, 0.4);
+    --btn-shadow: rgba(0, 0, 0, 0.5);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body { font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif; background-color: var(--bg-base); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; transition: background-color 0.8s ease, color 0.4s ease; position: relative; overflow-x: hidden; -webkit-text-size-adjust: 100%; }
 .app-container { width: 100%; max-width: 420px; padding: 0 16px 110px 16px; display: flex; flex-direction: column; align-items: center; }
 
-/* Фоны */
+/* Фоны и исправление блюра для iOS */
 .noise-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: -1; opacity: 0.04; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
-.ambient-glow { position: fixed; top: -50vh; left: -20vw; width: 140vw; height: 200vh; background: linear-gradient(180deg, var(--blob-1) 0%, transparent 25%, var(--blob-2) 50%, transparent 75%, var(--blob-3) 100%); filter: blur(90px); z-index: -2; opacity: 0.85; pointer-events: none; animation: vertical-glow 14s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; }
-@keyframes vertical-glow { 0% { transform: translateY(40%); } 100% { transform: translateY(-40%); } }
+.ambient-glow { position: fixed; top: -50vh; left: -20vw; width: 140vw; height: 200vh; background: linear-gradient(180deg, var(--blob-1) 0%, transparent 25%, var(--blob-2) 50%, transparent 75%, var(--blob-3) 100%); filter: blur(90px); -webkit-filter: blur(90px); z-index: -2; opacity: 0.85; pointer-events: none; animation: vertical-glow 14s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; transform: translate3d(0, 0, 0); }
+@keyframes vertical-glow { 0% { transform: translate3d(0, 40%, 0); } 100% { transform: translate3d(0, -40%, 0); } }
 
 /* Шапка */
 .app-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 0 16px 0; margin-bottom: 20px; }
@@ -65,12 +51,11 @@ body { font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif; background-c
 .theme-icon { display: inline-block; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .theme-btn svg, .back-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; }
 
-/* ЛОГОТИП: ОРИГИНАЛЬНАЯ ПРОЗРАЧНОСТЬ */
+/* ЛОГОТИП */
 .header-logo-container { width: 90px; display: flex; justify-content: center; align-items: center; }
 .main-logo { width: 100%; height: auto; transition: all 0.4s ease; }
-html.force-light .main-logo { mix-blend-mode: multiply; filter: contrast(1.1); }
-html.force-dark .main-logo { mix-blend-mode: normal; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4)) contrast(1.1); }
-@media (prefers-color-scheme: dark) { html:not(.force-light) .main-logo { mix-blend-mode: normal; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4)) contrast(1.1); } }
+html[data-theme="light"] .main-logo { mix-blend-mode: multiply; filter: contrast(1.1); }
+html[data-theme="dark"] .main-logo { mix-blend-mode: normal; filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4)) contrast(1.1); }
 
 /* Языки */
 .lang-switcher { position: relative; display: inline-block; }
@@ -112,20 +97,19 @@ html.force-dark .main-logo { mix-blend-mode: normal; filter: drop-shadow(0 0 8px
 .service-phone-badge { margin-top: 10px; background: rgba(35, 169, 91, 0.15); color: var(--tree-light); font-size: 9px; font-weight: 800; padding: 8px 4px; width: 90%; border-radius: 12px; display: flex; align-items: center; justify-content: center; text-align: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.2px; }
 .service-card.coming-soon .service-phone-badge { background: rgba(90, 107, 98, 0.15); color: var(--text-sec); font-size: 9px; }
 
-@media (prefers-color-scheme: dark) { .service-phone-badge { background: rgba(255, 255, 255, 0.1); } .service-card.coming-soon .service-phone-badge { background: rgba(255, 255, 255, 0.05); } }
-html.force-dark .service-phone-badge { background: rgba(255, 255, 255, 0.1); }
-html.force-dark .service-card.coming-soon .service-phone-badge { background: rgba(255, 255, 255, 0.05); }
+html[data-theme="dark"] .service-phone-badge { background: rgba(255, 255, 255, 0.1); }
+html[data-theme="dark"] .service-card.coming-soon .service-phone-badge { background: rgba(255, 255, 255, 0.05); }
 
 /* Формы */
 .form-card { width: 100%; background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 28px; padding: 24px 20px; box-shadow: 0 10px 30px var(--shadow), var(--glass-rim); display: flex; flex-direction: column; gap: 16px; }
 .input-group { display: flex; flex-direction: column; gap: 8px; }
 .input-row { display: flex; gap: 12px; width: 100%; } .input-row .input-group { flex: 1; }
 .input-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-sec); margin-left: 4px; }
-.glass-input { width: 100%; background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 16px; padding: 16px; color: var(--text); font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif; font-size: 14px; font-weight: 500; outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+.glass-input { width: 100%; border-radius: 16px; padding: 16px; color: var(--text); font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif; font-size: 14px; font-weight: 500; outline: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
 
-@media (prefers-color-scheme: dark) { .glass-input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); } select.glass-input option { background-color: var(--bg-base); color: var(--text); } }
-html.force-dark .glass-input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); }
-html.force-light .glass-input { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(128, 128, 128, 0.2); }
+html[data-theme="light"] .glass-input { background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(128, 128, 128, 0.2); }
+html[data-theme="dark"] .glass-input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); }
+html[data-theme="dark"] select.glass-input option { background-color: var(--bg-base); color: var(--text); }
 
 .glass-input::placeholder { color: var(--text-sec); opacity: 0.7; }
 .glass-input:focus { border-color: var(--tree-light); box-shadow: 0 0 0 3px rgba(35, 169, 91, 0.15), inset 0 2px 5px rgba(0,0,0,0.02); transform: translateY(-1px); }
@@ -143,18 +127,16 @@ select.glass-input { appearance: none; -webkit-appearance: none; background-imag
 .social-btn:active { transform: scale(0.85); box-shadow: 0 4px 12px var(--shadow); }
 .social-btn svg, .social-btn .list-am-logo { transition: transform 0.3s ease; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
 .social-btn:active svg, .social-btn:active .list-am-logo { transform: scale(0.9); }
-/* СТИЛЬ ДЛЯ ЛОГОТИПА LIST.AM */
 .list-am-logo { background-color: #0072C6; color: #FFFFFF !important; font-family: Arial, Helvetica, sans-serif; font-weight: 900; font-size: 13px; padding: 4px 6px; border-radius: 4px; letter-spacing: -0.3px; line-height: 1; }
 
 /* Калькулятор услуг */
 .calc-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
-.calc-item { background: rgba(255, 255, 255, 0.3); border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 18px; padding: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.calc-item { border-radius: 18px; padding: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(128, 128, 128, 0.2); }
 
-@media (prefers-color-scheme: dark) { .calc-item { background: rgba(0, 0, 0, 0.2); } }
-html.force-dark .calc-item { background: rgba(0, 0, 0, 0.2); } 
-html.force-light .calc-item { background: rgba(255, 255, 255, 0.3); }
+html[data-theme="light"] .calc-item { background: rgba(255, 255, 255, 0.3); }
+html[data-theme="dark"] .calc-item { background: rgba(0, 0, 0, 0.2); border-color: rgba(255, 255, 255, 0.1); }
 
-.calc-item.active { border-color: var(--tree-light); background: rgba(35, 169, 91, 0.08); box-shadow: 0 4px 15px rgba(35, 169, 91, 0.1); }
+.calc-item.active { border-color: var(--tree-light) !important; background: rgba(35, 169, 91, 0.08) !important; box-shadow: 0 4px 15px rgba(35, 169, 91, 0.1); }
 .calc-header { display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
 .custom-checkbox { width: 22px; height: 22px; border-radius: 6px; border: 2px solid rgba(128, 128, 128, 0.5); background: transparent; position: relative; transition: all 0.2s; flex-shrink: 0; }
 input[type="checkbox"] { display: none; }
