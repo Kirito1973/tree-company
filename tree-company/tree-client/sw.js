@@ -1,5 +1,5 @@
-// Версия 6 - Полностью обновленный кэш (принудительный сброс старых файлов)
-const CACHE_NAME = 'tree-company-v6';
+// Версия 7 - Полностью обновленный кэш (принудительный сброс старых файлов для BFCache и iOS)
+const CACHE_NAME = 'tree-company-v7';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=6.0',
-  './main.js?v=6.0',
+  './style.css?v=7.0',
+  './main.js?v=7.0',
   './manifest.json',
   './assets/tree.svg',
   './assets/icon-192.png',
@@ -37,7 +37,7 @@ self.addEventListener('activate', (event) => {
   // Получаем контроль над всеми клиентами сразу после активации
   event.waitUntil(clients.claim());
   
-  // Удаляем все старые кэши (включая tree-company-v5)
+  // Удаляем все старые кэши (включая tree-company-v6)
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
