@@ -1,5 +1,5 @@
-// Версия 5 - с правильным динамическим обновлением
-const CACHE_NAME = 'tree-company-v5';
+// Версия 6 - Полностью обновленный кэш (принудительный сброс старых файлов)
+const CACHE_NAME = 'tree-company-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css',
-  './main.js',
+  './style.css?v=6.0',
+  './main.js?v=6.0',
   './manifest.json',
   './assets/tree.svg',
   './assets/icon-192.png',
@@ -37,7 +37,7 @@ self.addEventListener('activate', (event) => {
   // Получаем контроль над всеми клиентами сразу после активации
   event.waitUntil(clients.claim());
   
-  // Удаляем все старые кэши
+  // Удаляем все старые кэши (включая tree-company-v5)
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -51,14 +51,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Стратегия "Сначала сеть, потом кэш" с динамическим обновлением
+// Стратегия "Сначала сеть, потом кэш"
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // Если скачали новый файл из сети, обновляем его в кэше, чтобы в оффлайне всегда была последняя версия
+        // Если скачали новый файл из сети, обновляем его в кэше
         const responseClone = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, responseClone);
