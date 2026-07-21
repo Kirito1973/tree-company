@@ -1,5 +1,5 @@
-// Версия 11.2 - Окончательный переход на растровые картинки (png) для соцсетей
-const CACHE_NAME = 'tree-company-v11.2';
+// Версия 12.0 - Кэш-бастинг картинок и удаление стекла
+const CACHE_NAME = 'tree-company-v12.0';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=11.2',
-  './main.js?v=11.2',
+  './style.css?v=12.0',
+  './main.js?v=12.0',
   './manifest.json',
   './assets/tree.png',
   './assets/icon-192.png',
@@ -21,12 +21,12 @@ const ASSETS = [
   './assets/free-icon-armenia-197516.png',
   './assets/free-icon-russia-9994030.png',
   './assets/united-kingdom.png',
-  './assets/phone.png',
-  './assets/whatsapp.png',
-  './assets/viber.png',
-  './assets/telegram.png',
-  './assets/list-am.png',
-  './assets/tiktok.png'
+  './assets/phone.png?v=12',
+  './assets/whatsapp.png?v=12',
+  './assets/viber.png?v=12',
+  './assets/telegram.png?v=12',
+  './assets/list-am.png?v=12',
+  './assets/tiktok.png?v=12'
 ];
 
 self.addEventListener('install', (event) => {
