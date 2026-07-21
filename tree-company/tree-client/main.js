@@ -1,7 +1,7 @@
-// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ)
+// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v7.0)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=6.0')
+        navigator.serviceWorker.register('./sw.js?v=7.0')
             .then(reg => {
                 reg.update();
             })
@@ -504,4 +504,50 @@ document.addEventListener('DOMContentLoaded', () => {
             if(closeModalBtn) closeModalBtn.onclick = () => { modal.classList.remove('open'); };
         });
     }
+
+    // --- 6. IOS PWA ПОДСКАЗКА ---
+    const isIos = () => {
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        return /iphone|ipad|ipod/.test(userAgent);
+    };
+    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+    if (isIos() && !isInStandaloneMode()) {
+        if (!localStorage.getItem('ios_pwa_prompt_closed')) {
+            const iosPromptHTML = `
+            <div id="ios-pwa-prompt" style="position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: flex; align-items: center; gap: 12px; color: #000; font-family: 'Montserrat', sans-serif;">
+                <div style="font-size: 24px;">📲</div>
+                <div style="flex: 1; font-size: 11px; font-weight: 700; line-height: 1.4;">
+                    Տեղադրեք հավելվածը (Установите приложение):<br>
+                    Սեղմեք <b style="font-size: 14px;">«Поделиться»</b> ներքևում, ապա ընտրեք <b style="font-size: 12px;">«На экран "Домой"» ➕</b>
+                </div>
+                <button id="close-ios-prompt" style="background: none; border: none; font-size: 20px; color: #999; padding: 0 5px; cursor: pointer;">&times;</button>
+            </div>`;
+            
+            document.body.insertAdjacentHTML('beforeend', iosPromptHTML);
+            
+            document.getElementById('close-ios-prompt').addEventListener('click', () => {
+                document.getElementById('ios-pwa-prompt').style.display = 'none';
+                localStorage.setItem('ios_pwa_prompt_closed', 'true');
+            });
+        }
+    }
+
+    // --- 7. СИНХРОНИЗАЦИЯ ПРИ ВОЗВРАТЕ НА СТРАНИЦУ (BFCache FIX) ---
+    window.addEventListener('pageshow', (event) => {
+        // Принудительная синхронизация темы (если она была изменена на другой странице)
+        const savedTheme = localStorage.getItem('app_theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        htmlElem.classList.remove('force-dark', 'force-light');
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            htmlElem.classList.add('force-dark');
+        } else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
+            htmlElem.classList.add('force-light');
+        }
+        updateThemeIcon();
+
+        // Принудительная синхронизация языка
+        currentLang = localStorage.getItem('app_lang') || 'AM';
+        applyLanguage();
+    });
 });
