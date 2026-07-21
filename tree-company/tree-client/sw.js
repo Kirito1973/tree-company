@@ -1,5 +1,5 @@
-// Версия 9 - Разделение стилей Android/iOS и фикс логотипа
-const CACHE_NAME = 'tree-company-v9';
+// Версия 10 - Полная сборка: фикс логотипа, Apple Touch Icon и реальные соцсети
+const CACHE_NAME = 'tree-company-v10';
 const ASSETS = [
   './',
   './index.html',
@@ -10,10 +10,10 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=9.0',
-  './main.js?v=9.0',
+  './style.css?v=10.0',
+  './main.js?v=10.0',
   './manifest.json',
-  './assets/tree.svg',
+  './assets/tree.png',
   './assets/icon-192.png',
   './assets/icon-512.png',
   './assets/icon-512-maskable.png',
