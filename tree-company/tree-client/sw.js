@@ -1,5 +1,5 @@
-// Версия 10 - Полная сборка: фикс логотипа, Apple Touch Icon и реальные соцсети
-const CACHE_NAME = 'tree-company-v10';
+// Версия 11 - Строгий data-theme и фикс ядовитых цветов iOS
+const CACHE_NAME = 'tree-company-v11';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=10.0',
-  './main.js?v=10.0',
+  './style.css?v=11.0',
+  './main.js?v=11.0',
   './manifest.json',
   './assets/tree.png',
   './assets/icon-192.png',
