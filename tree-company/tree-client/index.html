@@ -18,13 +18,16 @@
             try {
                 var savedTheme = localStorage.getItem('app_theme');
                 var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) document.documentElement.classList.add('force-dark');
-                else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) document.documentElement.classList.add('force-light');
+                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
             } catch (e) {}
         })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=10.0">
+    <link rel="stylesheet" href="style.css?v=11.0">
 </head>
 <body>
     <div class="noise-overlay"></div><div class="ambient-glow"></div>
@@ -76,7 +79,6 @@
             <div class="review-text">Պլինտուսների տեղադրումը կատարվեց անթերի: Խորհուրդ եմ տալիս բոլորին օգտվել այս ծառայությունից:</div>
         </div>
 
-        <!-- Блок контактов с реальными ссылками -->
         <div class="contact-section">
             <div class="contact-title" data-i18n="contact_title">Կապվեք մեզ հետ Ձեզ հարմար եղանակով</div>
             <div class="social-icons">
@@ -108,6 +110,6 @@
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
-    <script src="main.js?v=10.0"></script>
+    <script src="main.js?v=11.0"></script>
 </body>
 </html>
