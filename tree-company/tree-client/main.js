@@ -1,7 +1,7 @@
-// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v9.0)
+// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v10.0)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=9.0')
+        navigator.serviceWorker.register('./sw.js?v=10.0')
             .then(reg => {
                 reg.update();
             })
