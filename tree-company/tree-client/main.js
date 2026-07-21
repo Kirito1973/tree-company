@@ -1,7 +1,7 @@
-// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v10.0)
+// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v11.0)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=10.0')
+        navigator.serviceWorker.register('./sw.js?v=11.0')
             .then(reg => {
                 reg.update();
             })
@@ -10,20 +10,9 @@ if ('serviceWorker' in navigator) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- 0. ОПРЕДЕЛЕНИЕ ОПЕРАЦИОННОЙ СИСТЕМЫ (ANDROID / IOS) ---
-    const ua = window.navigator.userAgent || window.navigator.vendor || window.opera;
     const htmlElem = document.documentElement;
     
-    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-        htmlElem.classList.add('os-ios');
-    } else if (/Android/.test(ua)) {
-        htmlElem.classList.add('os-android');
-    } else {
-        htmlElem.classList.add('os-desktop');
-    }
-
-    // --- 1. ТЕМА ---
+    // --- 1. СТРОГАЯ ЛОГИКА ТЕМЫ (Атрибут data-theme) ---
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
     let rotationDegrees = 0;
@@ -33,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateThemeIcon() {
         if (!themeIcon) return;
-        const isDark = htmlElem.classList.contains('force-dark') || 
-                       (!htmlElem.classList.contains('force-light') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const isDark = htmlElem.getAttribute('data-theme') === 'dark';
         themeIcon.innerHTML = isDark ? sunIcon : moonIcon;
     }
     updateThemeIcon();
@@ -43,29 +31,22 @@ document.addEventListener('DOMContentLoaded', () => {
         themeBtn.addEventListener('click', () => {
             rotationDegrees += 360;
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
-            let newTheme = 'light';
-            if (htmlElem.classList.contains('force-dark')) {
-                htmlElem.classList.remove('force-dark');
-                htmlElem.classList.add('force-light');
-            } else if (htmlElem.classList.contains('force-light')) {
-                htmlElem.classList.remove('force-light');
-                htmlElem.classList.add('force-dark');
-                newTheme = 'dark';
-            } else {
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    htmlElem.classList.add('force-light');
-                } else {
-                    htmlElem.classList.add('force-dark');
-                    newTheme = 'dark';
-                }
-            }
+            
+            let currentTheme = htmlElem.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElem.setAttribute('data-theme', newTheme);
             localStorage.setItem('app_theme', newTheme);
             setTimeout(updateThemeIcon, 150); 
         });
     }
 
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        if (!localStorage.getItem('app_theme')) updateThemeIcon();
+    // Слушатель системной темы
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        if (!localStorage.getItem('app_theme')) {
+            htmlElem.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+            updateThemeIcon();
+        }
     });
 
     // --- 2. МУЛЬТИЯЗЫЧНОСТЬ ---
@@ -548,11 +529,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('pageshow', (event) => {
         const savedTheme = localStorage.getItem('app_theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        htmlElem.classList.remove('force-dark', 'force-light');
+        
         if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-            htmlElem.classList.add('force-dark');
-        } else if (savedTheme === 'light' || (!savedTheme && !systemPrefersDark)) {
-            htmlElem.classList.add('force-light');
+            htmlElem.setAttribute('data-theme', 'dark');
+        } else {
+            htmlElem.setAttribute('data-theme', 'light');
         }
         updateThemeIcon();
 
