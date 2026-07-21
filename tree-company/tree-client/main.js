@@ -1,7 +1,7 @@
-// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v7.0)
+// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v9.0)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=7.0')
+        navigator.serviceWorker.register('./sw.js?v=9.0')
             .then(reg => {
                 reg.update();
             })
@@ -11,10 +11,21 @@ if ('serviceWorker' in navigator) {
 
 document.addEventListener('DOMContentLoaded', () => {
     
+    // --- 0. ОПРЕДЕЛЕНИЕ ОПЕРАЦИОННОЙ СИСТЕМЫ (ANDROID / IOS) ---
+    const ua = window.navigator.userAgent || window.navigator.vendor || window.opera;
+    const htmlElem = document.documentElement;
+    
+    if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+        htmlElem.classList.add('os-ios');
+    } else if (/Android/.test(ua)) {
+        htmlElem.classList.add('os-android');
+    } else {
+        htmlElem.classList.add('os-desktop');
+    }
+
     // --- 1. ТЕМА ---
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
-    const htmlElem = document.documentElement; 
     let rotationDegrees = 0;
 
     const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
@@ -535,7 +546,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 7. СИНХРОНИЗАЦИЯ ПРИ ВОЗВРАТЕ НА СТРАНИЦУ (BFCache FIX) ---
     window.addEventListener('pageshow', (event) => {
-        // Принудительная синхронизация темы (если она была изменена на другой странице)
         const savedTheme = localStorage.getItem('app_theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         htmlElem.classList.remove('force-dark', 'force-light');
@@ -546,7 +556,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         updateThemeIcon();
 
-        // Принудительная синхронизация языка
         currentLang = localStorage.getItem('app_lang') || 'AM';
         applyLanguage();
     });
