@@ -65,13 +65,11 @@ body { font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif; background-c
 .theme-icon { display: inline-block; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .theme-btn svg, .back-btn svg { width: 24px; height: 24px; stroke: currentColor; fill: none; }
 
-/* ИСПРАВЛЕНИЕ ЛОГОТИПА ДЛЯ ТЕМНОЙ ТЕМЫ */
-.header-logo-container { width: 90px; display: flex; justify-content: center; align-items: center; transform: translateZ(0); } 
-.main-logo { width: 100%; height: auto; mix-blend-mode: multiply; filter: contrast(1.1); transition: all 0.6s ease; }
-@media (prefers-color-scheme: dark) { 
-    .main-logo { mix-blend-mode: screen; filter: invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.2)); } 
-}
-html.force-dark .main-logo { mix-blend-mode: screen; filter: invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.2)); }
+/* ЛОГОТИП (ОТКАТ К ИДЕАЛЬНОЙ ПРОЗРАЧНОСТИ ИЗ ВЕРСИИ 6) */
+.header-logo-container { width: 90px; display: flex; justify-content: center; align-items: center; }
+.main-logo { width: 100%; height: auto; mix-blend-mode: multiply; filter: contrast(1.1); transition: filter 0.6s ease; }
+@media (prefers-color-scheme: dark) { .main-logo { filter: drop-shadow(0 0 8px rgba(255,255,255,0.4)) contrast(1.1); mix-blend-mode: normal; } }
+html.force-dark .main-logo { filter: drop-shadow(0 0 8px rgba(255,255,255,0.4)) contrast(1.1); mix-blend-mode: normal; }
 html.force-light .main-logo { mix-blend-mode: multiply; filter: contrast(1.1); }
 
 /* Языки */
