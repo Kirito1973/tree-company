@@ -1,5 +1,5 @@
-// Версия 11 - Строгий data-theme и фикс ядовитых цветов iOS
-const CACHE_NAME = 'tree-company-v11';
+// Версия 11.2 - Окончательный переход на растровые картинки (png) для соцсетей
+const CACHE_NAME = 'tree-company-v11.2';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=11.0',
-  './main.js?v=11.0',
+  './style.css?v=11.2',
+  './main.js?v=11.2',
   './manifest.json',
   './assets/tree.png',
   './assets/icon-192.png',
@@ -20,7 +20,13 @@ const ASSETS = [
   './assets/apple-touch-icon.png',
   './assets/free-icon-armenia-197516.png',
   './assets/free-icon-russia-9994030.png',
-  './assets/united-kingdom.png'
+  './assets/united-kingdom.png',
+  './assets/phone.png',
+  './assets/whatsapp.png',
+  './assets/viber.png',
+  './assets/telegram.png',
+  './assets/list-am.png',
+  './assets/tiktok.png'
 ];
 
 self.addEventListener('install', (event) => {
