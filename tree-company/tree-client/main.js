@@ -1,9 +1,8 @@
-// Регистрация Service Worker для PWA (ДОБАВЛЕНО ПРИНУДИТЕЛЬНОЕ ОБНОВЛЕНИЕ)
+// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
+        navigator.serviceWorker.register('./sw.js?v=6.0')
             .then(reg => {
-                // Заставляем браузер проверить новую версию sw.js
                 reg.update();
             })
             .catch(err => console.error('Ошибка регистрации SW:', err));
@@ -120,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "b2_price": { "AM": "1,000 ֏ / մ", "RU": "1,000 ֏ / м", "EN": "1,000 ֏ / m" },
         "b3_name": { "AM": "Դյուրոպոլիմեր պլինտուսի տեղադրում", "RU": "Установка дюрополимерного плинтуса", "EN": "Duropolymer baseboard installation" },
         "b3_price": { "AM": "2,000 ֏ / մ", "RU": "2,000 ֏ / м", "EN": "2,000 ֏ / m" },
-        "b4_name": { "AM": "Հին պլինտուսի ապամոնտաժում", "RU": "Демонтаж старого плинтуса", "EN": "Old baseboard dismantling" },
+        "b4_name": { "AM": "Հին պլինտուսի ապամոնտաժում", "RU": "Демонтаж ста старого плинтуса", "EN": "Old baseboard dismantling" },
         "b4_price": { "AM": "300 ֏ / մ", "RU": "300 ֏ / м", "EN": "300 ֏ / m" },
         "total_title": { "AM": "Ընդհանուր արժեքը՝", "RU": "Итоговая стоимость:", "EN": "Total Cost:" },
         "total_sub": { "AM": "* մոտավոր գին դետալների ճշգրտումից առաջ", "RU": "* это приблизительная сумма за услуги", "EN": "* this is an approximate cost for services" },
@@ -177,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "reviews_title": { "AM": "Կարծիքներ", "RU": "Отзывы", "EN": "Reviews" },
         "coop_title": { "AM": "Համագործակցություն", "RU": "Сотрудничество", "EN": "Cooperation" },
         "coop_banner_sub": { "AM": "ԲԻԶՆԵՍԻ ՀԱՄԱՐ", "RU": "ДЛЯ БИЗНЕСА", "EN": "FOR BUSINESS" },
-        // ИЗМЕНЕНО: Текст баннера на главной странице
         "coop_banner_title": { "AM": "Դարձեք մեր գործընկերը", "RU": "Стать нашим бизнес-партнером", "EN": "Become our business partner" },
         "coop_name": { "AM": "Ընկերության կամ անձի անուն *", "RU": "Название компании или имя *", "EN": "Company or Person Name *" },
         "coop_desc": { "AM": "Համագործակցության նկարագրություն *", "RU": "Описание сотрудничества *", "EN": "Cooperation description *" },
@@ -240,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ ---
     const currentPath = window.location.pathname;
-    if (currentPath.includes('jobs.html') || currentPath.includes('form.html')) {
+    if (currentPath.includes('jobs.html') || currentPath.includes('form.html') || currentPath.includes('cooperation.html')) {
         document.getElementById('nav-jobs')?.classList.add('active');
     } else if (currentPath.includes('cabinet.html')) {
         document.getElementById('nav-cabinet')?.classList.add('active');
