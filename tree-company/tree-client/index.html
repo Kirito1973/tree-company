@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TREE COMPANY - Գլխավոր</title>
     <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
-    <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TREE COMPANY">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
     <script>
@@ -27,7 +25,7 @@
         })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=12.0">
+    <link rel="stylesheet" href="style.css?v=13.0">
 </head>
 <body>
     <div class="noise-overlay"></div><div class="ambient-glow"></div>
@@ -35,7 +33,6 @@
         
         <header class="app-header">
             <div class="header-left">
-                <!-- Без кнопки "назад" на главной -->
                 <button class="theme-btn" id="theme-btn"><span class="theme-icon" id="theme-icon"></span></button>
             </div>
             <div class="header-logo-container"><img src="assets/tree.png" class="main-logo"></div>
@@ -79,16 +76,39 @@
             <div class="review-text">Պլինտուսների տեղադրումը կատարվեց անթերի: Խորհուրդ եմ տալիս բոլորին օգտվել այս ծառայությունից:</div>
         </div>
 
-        <!-- Блок контактов со сбросом кэша картинок (?v=12) -->
+        <!-- БЛОК КОНТАКТОВ: Иконки вшиты кодом (без картинок) -->
         <div class="contact-section">
             <div class="contact-title" data-i18n="contact_title">Կապվեք մեզ հետ Ձեզ հարմար եղանակով</div>
             <div class="social-icons">
-                <a href="tel:+37495188038" class="social-btn" aria-label="Phone"><img src="assets/phone.png?v=12" alt="Phone"></a>
-                <a href="https://wa.me/37495188038" class="social-btn" target="_blank" aria-label="WhatsApp"><img src="assets/whatsapp.png?v=12" alt="WhatsApp"></a>
-                <a href="viber://chat?number=%2B37495188038" class="social-btn" aria-label="Viber"><img src="assets/viber.png?v=12" alt="Viber"></a>
-                <a href="https://t.me/+37495188038" class="social-btn" target="_blank" aria-label="Telegram"><img src="assets/telegram.png?v=12" alt="Telegram"></a>
-                <a href="https://www.list.am/user/3259524" class="social-btn" target="_blank" aria-label="List.am"><img src="assets/list-am.png?v=12" alt="List.am"></a>
-                <a href="https://www.tiktok.com/@tree__company?_r=1&_t=ZS-98Dlesecx8f" class="social-btn" target="_blank" aria-label="TikTok"><img src="assets/tiktok.png?v=12" alt="TikTok"></a>
+                <!-- Звонок (Черный круг) -->
+                <a href="tel:+37495188038" class="social-btn" aria-label="Phone">
+                    <svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="#121212"/><path fill="#FFF" d="M16 13l-2.2 2.2c-2.4-1.2-4.4-3.2-5.6-5.6L10.4 7.4c.3-.3.4-.8.1-1.1L8.3 3.6c-.3-.3-.8-.3-1.1 0L5.3 5.5C5 5.8 4.9 6.2 5 6.6c.6 3.6 2.5 6.9 5.2 9.6 2.7 2.7 6 4.6 9.6 5.2.4.1.8-.1 1.1-.4l1.9-1.9c.3-.3.3-.8 0-1.1l-2.7-2.2c-.3-.2-.8-.2-1.1.1z"/></svg>
+                </a>
+                
+                <!-- WhatsApp (Зеленый круг) -->
+                <a href="https://wa.me/37495188038" class="social-btn" target="_blank" aria-label="WhatsApp">
+                    <svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="#4CAF50"/><path fill="#FFF" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a5.8 5.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+                </a>
+                
+                <!-- Viber (Фиолетовый круг) -->
+                <a href="viber://chat?number=%2B37495188038" class="social-btn" aria-label="Viber">
+                    <svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="#7360F2"/><path fill="#FFF" d="M17.144 9.515c0 3.794-3.056 6.877-6.83 6.877a6.8 6.8 0 0 1-2.909-.649l-4.436 1.444 1.464-4.321a6.83 6.83 0 0 1-.951-3.351c0-3.796 3.059-6.88 6.83-6.88 3.774 0 6.832 3.084 6.832 6.88zm-5.071-2.617c-.126-.142-.317-.181-.703-.021-.384.161-2.274 1.134-2.628 1.3-.353.167-.607.248-.827-.082-.221-.33-1.026-1.272-1.264-1.57-.236-.299-.474-.374-.858-.214-.383.161-1.01.625-1.244.877-.234.254-.047.747.337 1.258.384.51 1.705 2.766 2.052 3.164.348.398 1.43 1.956 2.457 2.378 1.028.423 1.472.298 1.83.149.356-.149 1.104-.848 1.282-1.423.179-.575.057-1.023-.057-1.155-.114-.132-.35-.213-.734-.403z"/></svg>
+                </a>
+                
+                <!-- Telegram (Голубой круг) -->
+                <a href="https://t.me/+37495188038" class="social-btn" target="_blank" aria-label="Telegram">
+                    <svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="#2EA1DA"/><path fill="#FFF" d="M16.64 8.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.97 1.25-5.56 3.67-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.05-.49-.83-.27-1.49-.42-1.43-.88.03-.24.38-.48 1.06-.74 4.15-1.81 6.92-3 8.3-3.57 3.95-1.63 4.77-1.92 5.3-1.93.12 0 .38.03.53.15.12.1.17.24.19.34.01.07.03.18.02.26z"/></svg>
+                </a>
+                
+                <!-- List.am (Синий круг с логотипом) -->
+                <a href="https://www.list.am/user/3259524" class="social-btn" target="_blank" aria-label="List.am">
+                    <svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="#007BFF"/><path fill="#FFF" d="M12 6.5a2.5 2.5 0 0 0-2.5 2.5c0 1.23.89 2.25 2.07 2.45L12 12l.43-.05c1.18-.2 2.07-1.22 2.07-2.45A2.5 2.5 0 0 0 12 6.5zm-5.5 5.5a2.5 2.5 0 0 0 2.5 2.5c1.23 0 2.25-.89 2.45-2.07L12 12l-.05-.43C11.75 10.39 10.73 9.5 9.5 9.5A2.5 2.5 0 0 0 6.5 12zm11 0a2.5 2.5 0 0 0-2.5-2.5c-1.23 0-2.25.89-2.45 2.07L12 12l.05.43c.2 1.18 1.22 2.07 2.45 2.07A2.5 2.5 0 0 0 17.5 12zM12 17.5a2.5 2.5 0 0 0 2.5-2.5c0-1.23-.89-2.25-2.07-2.45L12 12l-.43.05c-1.18.2-2.07 1.22-2.07 2.45A2.5 2.5 0 0 0 12 17.5z"/></svg>
+                </a>
+                
+                <!-- TikTok (Черный круг с цветной иконкой) -->
+                <a href="https://www.tiktok.com/@tree__company?_r=1&_t=ZS-98Dlesecx8f" class="social-btn" target="_blank" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24" width="52" height="52"><circle cx="12" cy="12" r="12" fill="#000"/><path fill="#25F4EE" d="M16 8.5a4.5 4.5 0 0 1-3.5-3.5H10v9.5a2.5 2.5 0 1 1-2.5-2.5c.3 0 .6.05.9.15V9.5A5.5 5.5 0 1 0 13 15V8.5a7.5 7.5 0 0 0 3 1V6.5c-1.2 0-2.3-.4-3-1v3z"/><path fill="#FE2C55" d="M16 8.3a4.5 4.5 0 0 1-3.3-3.3h-2.5v9.5a2.5 2.5 0 1 1-2.7-2.5c.3 0 .6.05.9.15V9.3A5.5 5.5 0 1 0 13 14.8V8.3a7.5 7.5 0 0 0 3 1V6.3c-1.2 0-2.3-.4-3-1v3z"/><path fill="#FFF" d="M16 8.4a4.5 4.5 0 0 1-3.4-3.4h-2.5v9.5a2.5 2.5 0 1 1-2.6-2.5c.3 0 .6.05.9.15V9.4A5.5 5.5 0 1 0 13 14.9V8.4a7.5 7.5 0 0 0 3 1V6.4c-1.2 0-2.3-.4-3-1v3z"/></svg>
+                </a>
             </div>
         </div>
     </div>
@@ -111,6 +131,6 @@
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
-    <script src="main.js?v=12.0"></script>
+    <script src="main.js?v=13.0"></script>
 </body>
 </html>
