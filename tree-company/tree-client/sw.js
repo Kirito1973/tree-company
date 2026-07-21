@@ -1,5 +1,5 @@
-// Версия 7 - Полностью обновленный кэш (принудительный сброс старых файлов для BFCache и iOS)
-const CACHE_NAME = 'tree-company-v7';
+// Версия 9 - Разделение стилей Android/iOS и фикс логотипа
+const CACHE_NAME = 'tree-company-v9';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=7.0',
-  './main.js?v=7.0',
+  './style.css?v=9.0',
+  './main.js?v=9.0',
   './manifest.json',
   './assets/tree.svg',
   './assets/icon-192.png',
@@ -24,7 +24,6 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  // Заставляем Service Worker активироваться немедленно
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -34,10 +33,8 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  // Получаем контроль над всеми клиентами сразу после активации
   event.waitUntil(clients.claim());
   
-  // Удаляем все старые кэши (включая tree-company-v6)
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
@@ -51,14 +48,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Стратегия "Сначала сеть, потом кэш"
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // Если скачали новый файл из сети, обновляем его в кэше
         const responseClone = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, responseClone);
@@ -66,7 +61,6 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        // Если сети нет, берем из кэша
         return caches.match(event.request);
       })
   );
