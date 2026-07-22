@@ -1,7 +1,8 @@
+// Версия 2.0
 // PWA Setup с автоматическим обновлением «на лету»
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
+        navigator.serviceWorker.register('./sw.js?v=2.0').then(reg => {
             reg.update();
         }).catch(err => console.error('Ошибка SW:', err));
     });
@@ -25,10 +26,8 @@ function getNowString() {
            String(now.getMinutes()).padStart(2, '0');
 }
 
-// ================= НАСТРОЙКИ КОМПАНИИ =================
 const COMPANY_FEE_PERCENT = 0.20; 
 
-// ================= ТЕМА И НАВИГАЦИЯ =================
 function switchEmpTab(screenId, btnElement) {
     document.querySelectorAll('.emp-screen').forEach(scr => scr.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
@@ -134,30 +133,9 @@ function applyLanguage() {
 
 // ================= БАЗА ДАННЫХ (MOCK) =================
 let ordersData = [
-    {
-        id: 'ORD-003', status: 'new', 
-        createdAt: '15.07.2026 10:00', acceptedAt: null, completedAt: null,
-        clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12',
-        worker: 'Արմեն Սարգսյան',
-        services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false, doneAt: null }]
-    },
-    {
-        id: 'ORD-002', status: 'progress', 
-        createdAt: '14.07.2026 15:30', acceptedAt: '14.07.2026 16:00', completedAt: null,
-        clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4',
-        worker: 'Արմեն Սարգսյան',
-        services: [
-            { name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true, doneAt: '15.07.2026 11:30' }, 
-            { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false, doneAt: null }
-        ]
-    },
-    {
-        id: 'ORD-001', status: 'completed', isCommissionPaid: false,
-        createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00',
-        clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1',
-        worker: 'Արմեն Սարգսյան',
-        services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true, doneAt: '11.07.2026 13:50' }]
-    }
+    { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', acceptedAt: null, completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Արմեն Սարգսյան', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false, doneAt: null }] },
+    { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', acceptedAt: '14.07.2026 16:00', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true, doneAt: '15.07.2026 11:30' }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false, doneAt: null }] },
+    { id: 'ORD-001', status: 'completed', isCommissionPaid: false, createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00', clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1', worker: 'Արմեն Սարգսյան', services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true, doneAt: '11.07.2026 13:50' }] }
 ];
 
 let employeesData = [
@@ -165,7 +143,6 @@ let employeesData = [
     { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000' }
 ];
 
-// ================= ЛОГИКА =================
 let loggedInEmpId = null;
 let currentActiveOrderId = null;
 let currentOrderFilter = 'new'; 
@@ -175,7 +152,6 @@ window.updateOrderCounts = function() {
     if (!emp) return;
 
     const myOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name));
-
     const newCount = myOrders.filter(o => o.status === 'new').length;
     const progressCount = myOrders.filter(o => o.status === 'progress').length;
     const completedCount = myOrders.filter(o => o.status === 'completed').length;
@@ -184,36 +160,24 @@ window.updateOrderCounts = function() {
     const elProg = document.getElementById('count-progress');
     const elComp = document.getElementById('count-completed');
 
-    if (elNew) { 
-        elNew.innerText = newCount; 
-        elNew.style.display = newCount > 0 ? 'inline-flex' : 'none'; 
-    }
-    if (elProg) { 
-        elProg.innerText = progressCount; 
-        elProg.style.display = progressCount > 0 ? 'inline-flex' : 'none'; 
-    }
-    if (elComp) { 
-        elComp.innerText = completedCount; 
-        elComp.style.display = completedCount > 0 ? 'inline-flex' : 'none'; 
-    }
+    if (elNew) { elNew.innerText = newCount; elNew.style.display = newCount > 0 ? 'inline-flex' : 'none'; }
+    if (elProg) { elProg.innerText = progressCount; elProg.style.display = progressCount > 0 ? 'inline-flex' : 'none'; }
+    if (elComp) { elComp.innerText = completedCount; elComp.style.display = completedCount > 0 ? 'inline-flex' : 'none'; }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
     
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
-    const body = document.body;
+    const htmlElem = document.documentElement;
     let rotationDegrees = 0;
-    const savedTheme = localStorage.getItem('emp_theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) { body.classList.add('force-dark'); } else { body.classList.add('force-light'); }
 
     const sunIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
     const moonIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 
     function updateThemeIcon() {
         if (!themeIcon) return;
-        themeIcon.innerHTML = body.classList.contains('force-dark') ? sunIcon : moonIcon;
+        themeIcon.innerHTML = htmlElem.getAttribute('data-theme') === 'dark' ? sunIcon : moonIcon;
     }
     updateThemeIcon();
 
@@ -221,11 +185,10 @@ document.addEventListener('DOMContentLoaded', () => {
         themeBtn.addEventListener('click', () => {
             rotationDegrees += 360;
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
-            if (body.classList.contains('force-dark')) {
-                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('emp_theme', 'light');
-            } else {
-                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('emp_theme', 'dark');
-            }
+            let currentTheme = htmlElem.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlElem.setAttribute('data-theme', newTheme);
+            localStorage.setItem('emp_theme', newTheme);
             setTimeout(updateThemeIcon, 150); 
         });
     }
@@ -236,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
     }
     
-    // Закрытие выпадающих меню при клике вне их области
     document.addEventListener('click', (e) => { 
         if(langSwitcher && !langSwitcher.contains(e.target)) {
             langSwitcher.classList.remove('open'); 
@@ -253,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             currentLang = tab.getAttribute('data-lang');
             localStorage.setItem('emp_app_lang', currentLang);
-            
             applyLanguage();
             
             if (loggedInEmpId) {
@@ -276,10 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.showEmployeeDashboard = function(empId) {
         const emp = employeesData.find(e => e.id === empId);
-        if (!emp) {
-            logoutEmployee();
-            return;
-        }
+        if (!emp) { logoutEmployee(); return; }
         
         document.getElementById('screen-login').classList.remove('active');
         document.getElementById('screen-emp-news').classList.add('active');
@@ -292,8 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEmployeeOrders();
         renderEmployeeProfile(emp);
         renderEmployeeFinance();
-        
-        updateOrderCounts(); // Обновление счетчиков при входе
+        updateOrderCounts(); 
     };
 
     window.logoutEmployee = function() {
@@ -312,32 +269,23 @@ document.addEventListener('DOMContentLoaded', () => {
         renderEmployeeOrders();
     };
 
-    // ================= ДИНАМИКА ФИНАНСОВ =================
     window.renderEmployeeFinance = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         const financeSection = document.getElementById('screen-emp-finance');
         if (!emp || !financeSection) return;
 
         const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name));
-
         const now = new Date();
         const currMonthStr = String(now.getMonth() + 1).padStart(2, '0') + '.' + now.getFullYear();
 
-        let totalAllTime = 0;
-        let currentMonthTotal = 0;
-        let uncompletedTotal = 0;
-        let companyDebt = 0;
+        let totalAllTime = 0, currentMonthTotal = 0, uncompletedTotal = 0, companyDebt = 0;
         const monthlyData = {};
 
         empOrders.forEach(order => {
             let orderTotal = 0;
-            
             order.services.forEach(s => {
-                if (order.status === 'completed') {
-                    if (s.done) orderTotal += (s.price * s.qty);
-                } else if (order.status === 'progress') {
-                    orderTotal += (s.price * s.qty);
-                }
+                if (order.status === 'completed' && s.done) orderTotal += (s.price * s.qty);
+                else if (order.status === 'progress') orderTotal += (s.price * s.qty);
             });
 
             let companyFee = orderTotal * COMPANY_FEE_PERCENT;
@@ -345,10 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (order.status === 'completed') {
                 totalAllTime += masterNet;
-
-                if (!order.isCommissionPaid) {
-                    companyDebt += companyFee;
-                }
+                if (!order.isCommissionPaid) companyDebt += companyFee;
 
                 const targetDate = order.completedAt || order.createdAt;
                 if (targetDate) {
@@ -357,10 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const monthYear = `${dateParts[1]}.${dateParts[2]}`;
                         if (!monthlyData[monthYear]) monthlyData[monthYear] = 0;
                         monthlyData[monthYear] += masterNet;
-                        
-                        if (monthYear === currMonthStr) {
-                            currentMonthTotal += masterNet;
-                        }
+                        if (monthYear === currMonthStr) currentMonthTotal += masterNet;
                     }
                 }
             } else if (order.status === 'progress') {
@@ -410,39 +352,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 const [mm, yyyy] = mKey.split('.');
                 const lastDay = new Date(yyyy, mm, 0).getDate();
                 const periodStr = `01.${mm}.${yyyy} - ${lastDay}.${mm}.${yyyy}`;
-                
                 listContainer.innerHTML += `
                     <div class="detail-block" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(255,255,255,0.4);">
                         <span style="font-size: 11px; font-weight: 700; color: var(--text-sec);">${periodStr}</span>
                         <span style="font-size: 14px; font-weight: 900; color: var(--text);">${monthlyData[mKey].toLocaleString()} ֏</span>
-                    </div>
-                `;
+                    </div>`;
             });
         }
-
         applyLanguage();
     };
 
     window.toggleMonthlyFinance = function() {
         const list = document.getElementById('monthly-finance-list');
-        if (list.style.display === 'none') {
-            list.style.display = 'flex';
-        } else {
-            list.style.display = 'none';
-        }
+        list.style.display = list.style.display === 'none' ? 'flex' : 'none';
         if (navigator.vibrate) navigator.vibrate(10);
     };
 
-    // ================= РЕНДЕР ЗАКАЗОВ =================
     window.renderEmployeeOrders = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         const list = document.getElementById('emp-personal-orders-list');
         if (!list || !emp) return;
         list.innerHTML = '';
         
-        const empOrders = ordersData.filter(o => 
-            o.worker && o.worker.includes(emp.name) && o.status === currentOrderFilter
-        );
+        const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name) && o.status === currentOrderFilter);
         
         if (empOrders.length === 0) {
             list.innerHTML = `<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--text-sec);" data-i18n="no_orders">Այս պահին պատվերներ չկան</div>`;
@@ -465,14 +397,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span>
                     </div>
                     <div class="entity-title" style="margin-top: 4px; color: var(--tree-light);">${mainTitle}</div>
-                    
                     <div class="detail-block" style="background: rgba(255,255,255,0.4); margin-top: 10px; padding: 10px;">
                         <div style="font-size:10px; color:var(--text-sec); font-weight:800; margin-bottom:4px;" data-i18n="card_client">Հաճախորդ:</div>
                         <div style="font-size:12px; font-weight:700;">${order.clientName}</div>
                         <div style="font-size:11px; margin-top:8px;"><span data-i18n="card_address"><b>Հասցե:</b></span> ${order.address}</div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
         applyLanguage();
     };
@@ -496,39 +426,18 @@ document.addEventListener('DOMContentLoaded', () => {
             timelineBlock.className = 'detail-block';
             timelineBlock.style.background = 'rgba(0, 200, 255, 0.05)';
             timelineBlock.style.borderColor = 'rgba(0, 200, 255, 0.2)';
-            
             const clientTitle = document.querySelector('[data-i18n="modal_client_title"]');
             clientTitle.parentNode.insertBefore(timelineBlock, clientTitle);
         }
 
-        let timelineHtml = `
-            <div class="detail-row">
-                <span class="detail-label" data-i18n="date_created">Создан:</span>
-                <span class="detail-value" style="color: var(--text-sec); font-weight: 600;">${order.createdAt || '---'}</span>
-            </div>
-        `;
-        if (order.acceptedAt) {
-            timelineHtml += `
-                <div class="detail-row">
-                    <span class="detail-label" data-i18n="date_accepted">Принят:</span>
-                    <span class="detail-value" style="color: #FFB347;">${order.acceptedAt}</span>
-                </div>
-            `;
-        }
-        if (order.completedAt) {
-            timelineHtml += `
-                <div class="detail-row">
-                    <span class="detail-label" data-i18n="date_completed">Завершен:</span>
-                    <span class="detail-value" style="color: var(--tree-light);">${order.completedAt}</span>
-                </div>
-            `;
-        }
+        let timelineHtml = `<div class="detail-row"><span class="detail-label" data-i18n="date_created">Создан:</span><span class="detail-value" style="color: var(--text-sec); font-weight: 600;">${order.createdAt || '---'}</span></div>`;
+        if (order.acceptedAt) timelineHtml += `<div class="detail-row"><span class="detail-label" data-i18n="date_accepted">Принят:</span><span class="detail-value" style="color: #FFB347;">${order.acceptedAt}</span></div>`;
+        if (order.completedAt) timelineHtml += `<div class="detail-row"><span class="detail-label" data-i18n="date_completed">Завершен:</span><span class="detail-value" style="color: var(--tree-light);">${order.completedAt}</span></div>`;
         timelineBlock.innerHTML = timelineHtml;
 
         document.getElementById('modal-client-name').innerText = order.clientName || '---';
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
-        
         document.getElementById('modal-client-address-text').innerText = order.address || '---';
         const mapLink = document.getElementById('modal-client-map-link');
         
@@ -536,9 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mapLink.style.display = 'flex';
             mapLink.onclick = (e) => {
                 e.preventDefault();
-                const addressEncoded = encodeURIComponent(order.address);
-                const yandexUrl = `https://yandex.ru/maps/?text=${addressEncoded}`;
-                window.open(yandexUrl, '_blank');
+                window.open(`https://yandex.ru/maps/?text=${encodeURIComponent(order.address)}`, '_blank');
             };
         } else {
             mapLink.style.display = 'none';
@@ -553,10 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isLocked = (order.status !== 'progress') ? 'disabled' : '';
             const checkedAttr = s.done ? 'checked' : '';
             const doneClass = s.done ? 'done' : '';
-            
-            const timeDisplayHtml = s.done && s.doneAt 
-                ? `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: flex; align-items: center; gap: 4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${s.doneAt}</div>` 
-                : `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: none; align-items: center; gap: 4px;"></div>`;
+            const timeDisplayHtml = s.done && s.doneAt ? `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: flex; align-items: center; gap: 4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ${s.doneAt}</div>` : `<div class="serv-time-static" style="font-size: 9px; color: var(--tree-light); font-weight: 800; margin-top: 6px; display: none; align-items: center; gap: 4px;"></div>`;
 
             servList.innerHTML += `
                 <label class="service-item-static ${doneClass}" style="flex-direction: column; align-items: flex-start;">
@@ -568,8 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="serv-qty-static">${s.qty} հատ</span>
                     </div>
                     ${timeDisplayHtml}
-                </label>
-            `;
+                </label>`;
         });
 
         let companyFee = totalPrice * COMPANY_FEE_PERCENT;
@@ -583,25 +486,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnContainer.innerHTML = ''; 
 
         if (order.status === 'new') {
-            btnContainer.innerHTML = `
-                <button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')" data-i18n="btn_accept_order">
-                    Ընդունել պատվերը
-                </button>
-            `;
+            btnContainer.innerHTML = `<button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')" data-i18n="btn_accept_order">Ընդունել պատվերը</button>`;
         } else if (order.status === 'progress') {
-            btnContainer.innerHTML = `
-                <button type="button" id="btn-finish-order" class="submit-btn" style="width: 100%; border-radius: 16px;" onclick="finishOrder('${order.id}')" data-i18n="btn_finish_order">
-                    Ավարտել պատվերը
-                </button>
-            `;
+            btnContainer.innerHTML = `<button type="button" id="btn-finish-order" class="submit-btn" style="width: 100%; border-radius: 16px;" onclick="finishOrder('${order.id}')" data-i18n="btn_finish_order">Ավարտել պատվերը</button>`;
             checkIfOrderCanBeFinished(order.id); 
         }
 
-        btnContainer.innerHTML += `
-            <button type="button" class="submit-btn" style="width: 100%; border-radius: 16px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderModal()" data-i18n="btn_close">
-                Փակել
-            </button>
-        `;
+        btnContainer.innerHTML += `<button type="button" class="submit-btn" style="width: 100%; border-radius: 16px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderModal()" data-i18n="btn_close">Փակել</button>`;
 
         applyLanguage();
         document.getElementById('order-modal').classList.add('active');
@@ -614,10 +505,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.toggleServiceStatus = function(orderId, serviceIndex, checkboxElem) {
         const order = ordersData.find(o => o.id === orderId);
         if (order && order.services[serviceIndex] && order.status === 'progress') {
-            
             const isDone = checkboxElem.checked;
             order.services[serviceIndex].done = isDone;
-            
             order.services[serviceIndex].doneAt = isDone ? getNowString() : null;
 
             const label = checkboxElem.closest('.service-item-static');
@@ -636,7 +525,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     timeSpan.style.display = 'none';
                 }
             }
-            
             if (navigator.vibrate) navigator.vibrate(10);
             checkIfOrderCanBeFinished(orderId);
         }
@@ -664,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
             order.acceptedAt = getNowString(); 
             if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeOrderModal();
-            updateOrderCounts(); // Обновление счетчиков при принятии
+            updateOrderCounts();
             filterEmpOrders('progress', document.getElementById('tab-progress')); 
         }
     };
@@ -677,7 +565,7 @@ document.addEventListener('DOMContentLoaded', () => {
             order.isCommissionPaid = false; 
             if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
             closeOrderModal();
-            updateOrderCounts(); // Обновление счетчиков при завершении
+            updateOrderCounts();
             filterEmpOrders('completed', document.getElementById('tab-completed')); 
             renderEmployeeFinance(); 
         }
@@ -685,14 +573,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.renderEmployeeProfile = function(emp) {
         document.getElementById('profile-name').innerText = emp.name;
-        
         let pType = emp.typeLabel.split(' / ');
-        if(currentLang === 'AM') {
-            document.getElementById('profile-type').innerText = pType[0];
-        } else {
-            document.getElementById('profile-type').innerText = pType[1] || pType[0];
-        }
-
+        document.getElementById('profile-type').innerText = currentLang === 'AM' ? pType[0] : (pType[1] || pType[0]);
         document.getElementById('profile-birth').innerText = emp.birthDate || '---';
         document.getElementById('profile-phone').innerText = emp.phone;
         document.getElementById('profile-address').innerText = emp.address || '---';
@@ -716,18 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if(!emp) return;
-
         emp.name = document.getElementById('self-edit-name').value;
         emp.phone = document.getElementById('self-edit-phone').value;
         emp.birthDate = document.getElementById('self-edit-birth').value;
         emp.address = document.getElementById('self-edit-address').value;
-
         closeEmpSelfEdit();
         renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
     };
     
-    // ОТКРЫТИЕ И ЗАКРЫТИЕ ВЕРТИКАЛЬНОГО МЕНЮ ОБРАТНОЙ СВЯЗИ
     window.toggleContactMenu = function() {
         const wrapper = document.getElementById('contact-fab-wrapper');
         if (wrapper) {
@@ -766,9 +645,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (loggedInEmpId) {
-        showEmployeeDashboard(loggedInEmpId);
-    }
+    if (loggedInEmpId) showEmployeeDashboard(loggedInEmpId);
 
     applyLanguage();
 });
