@@ -1,4 +1,4 @@
-// Версия 13.0 - Обновление иконок соцсетей (PNG)
+// Версия 13.0 - Принудительный сброс кэша для иконок соцсетей
 const CACHE_NAME = 'tree-company-v13.0';
 const ASSETS = [
   './',
@@ -21,12 +21,12 @@ const ASSETS = [
   './assets/free-icon-armenia-197516.png',
   './assets/free-icon-russia-9994030.png',
   './assets/united-kingdom.png',
-  './assets/phone.png',
-  './assets/whatsapp.png',
-  './assets/viber.png',
-  './assets/telegram.png',
-  './assets/list-am.png',
-  './assets/tiktok.png'
+  './assets/phone.png?v=13.0',
+  './assets/whatsapp.png?v=13.0',
+  './assets/viber.png?v=13.0',
+  './assets/telegram.png?v=13.0',
+  './assets/list-am.png?v=13.0',
+  './assets/tiktok.png?v=13.0'
 ];
 
 self.addEventListener('install', (event) => {
