@@ -101,11 +101,7 @@ const translations = {
 
     "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
     "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
-    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" },
-    
-    // Новые строки для меню связи
-    "contact_admin": { "AM": "Կապ ադմինիստրատորի հետ", "RU": "Связь с администратором", "EN": "Contact Admin" },
-    "contact_call": { "AM": "Զանգահարել", "RU": "Позвонить", "EN": "Call" }
+    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -239,7 +235,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentLangBtn && langSwitcher) {
         currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
     }
-    document.addEventListener('click', () => { if(langSwitcher) langSwitcher.classList.remove('open'); });
+    
+    // Закрытие выпадающих меню при клике вне их области
+    document.addEventListener('click', (e) => { 
+        if(langSwitcher && !langSwitcher.contains(e.target)) {
+            langSwitcher.classList.remove('open'); 
+        }
+        
+        const fabWrapper = document.getElementById('contact-fab-wrapper');
+        if (fabWrapper && fabWrapper.classList.contains('active') && !fabWrapper.contains(e.target)) {
+            fabWrapper.classList.remove('active');
+        }
+    });
     
     document.querySelectorAll('.lang-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
@@ -720,16 +727,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(50);
     };
     
-    // ОТКРЫТИЕ И ЗАКРЫТИЕ МЕНЮ ОБРАТНОЙ СВЯЗИ
+    // ОТКРЫТИЕ И ЗАКРЫТИЕ ВЕРТИКАЛЬНОГО МЕНЮ ОБРАТНОЙ СВЯЗИ
     window.toggleContactMenu = function() {
-        const overlay = document.getElementById('contact-menu-overlay');
-        if (overlay) {
-            if (overlay.classList.contains('active')) {
-                overlay.classList.remove('active');
-            } else {
-                overlay.classList.add('active');
-                if (navigator.vibrate) navigator.vibrate(15);
-            }
+        const wrapper = document.getElementById('contact-fab-wrapper');
+        if (wrapper) {
+            wrapper.classList.toggle('active');
+            if (navigator.vibrate) navigator.vibrate(15);
         }
     };
 
