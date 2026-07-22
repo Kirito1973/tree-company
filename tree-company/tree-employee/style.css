@@ -219,6 +219,16 @@ html[data-theme="dark"] .detail-block { background: rgba(0, 0, 0, 0.15); }
 .submit-btn:disabled, .submit-btn.disabled { opacity: 0.4; cursor: not-allowed; background: rgba(128, 128, 128, 0.3); color: var(--text-sec); box-shadow: none; transform: none !important; }
 
 /* ========================================================================= */
+/* СТИЛИ ОТЗЫВОВ И РЕЙТИНГА */
+/* ========================================================================= */
+.review-card { background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid var(--card-border); padding: 16px; border-radius: 20px; box-shadow: 0 4px 15px var(--shadow); width: 100%; text-align: left; }
+html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
+.review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.review-author { font-size: 12px; font-weight: 900; color: var(--text); }
+.review-date { font-size: 9px; font-weight: 700; color: var(--text-sec); }
+.review-text { font-size: 11px; font-weight: 600; line-height: 1.5; color: var(--text); }
+
+/* ========================================================================= */
 /* СТИЛИ ДЛЯ КНОПКИ ОБРАТНОЙ СВЯЗИ (ВЕРТИКАЛЬНОЕ МЕНЮ EXPANDABLE FAB) */
 /* ========================================================================= */
 
@@ -251,7 +261,6 @@ html[data-theme="dark"] .detail-block { background: rgba(0, 0, 0, 0.15); }
     pointer-events: auto;
 }
 
-/* Строго круглые кнопки с жестким обрезанием и БЕЗ фона */
 .contact-fab-item {
     width: 48px;
     height: 48px;
