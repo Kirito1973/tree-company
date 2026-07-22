@@ -1,14 +1,16 @@
-// Версия 2.1 - Принудительный сброс кэша и Network-First стратегия
-const CACHE_NAME = 'tree-employee-v2.1';
+// Версия 3.0 - Стратегия Network-First (как у клиентов)
+const CACHE_NAME = 'tree-employee-v3.0';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=2.1',
-    './employee.js?v=2.1',
+    './style.css?v=3.0',
+    './employee.js?v=3.0',
     './manifest.json',
-    './assets/tree.svg',
+    './assets/tree.png',
+    './assets/apple-touch-icon.png',
     './assets/icon-192.png',
     './assets/icon-512.png',
+    './assets/icon-512-maskable.png',
     './assets/free-icon-armenia-197516.png',
     './assets/free-icon-russia-9994030.png',
     './assets/united-kingdom.png',
