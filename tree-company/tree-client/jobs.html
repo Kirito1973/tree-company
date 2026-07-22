@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TREE COMPANY - Համագործակցություն</title>
+    <title>TREE COMPANY - Աշխատանք</title>
     <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
     <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -27,12 +27,11 @@
         })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=12.0">
+    <link rel="stylesheet" href="style.css?v=15.0">
 </head>
 <body>
     <div class="noise-overlay"></div><div class="ambient-glow"></div>
     <div class="app-container">
-        
         <header class="app-header">
             <div class="header-left">
                 <button class="back-btn" onclick="window.history.back()" aria-label="Հետ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
@@ -51,22 +50,56 @@
             </div>
         </header>
 
-        <h1 class="page-title" data-i18n="coop_title">Համագործակցություն</h1>
+        <h1 class="page-title" data-i18n="btn_become_employee" style="margin-bottom: 12px;">Դառնալ աշխատակից</h1>
+        <p style="text-align: center; color: var(--text-sec); font-size: 11px; font-weight: 800; margin-bottom: 24px; padding: 0 20px; text-transform: uppercase;" data-i18n="desc_employee">Լրացրեք հայտը մեր թիմին միանալու համար</p>
 
-        <form id="coop-form" class="form-card" action="#">
+        <form id="apply-form" class="form-card" action="#">
             <div class="input-group">
-                <label class="input-label" for="coop_name" data-i18n="coop_name">Ընկերության կամ անձի անուն *</label>
-                <input type="text" id="coop_name" class="glass-input" required>
+                <label class="input-label" for="name" data-i18n="lbl_name">Անուն Ազգանուն *</label>
+                <input type="text" id="name" class="glass-input" data-i18n-placeholder="pl_name" required>
             </div>
+            
+            <div class="input-row">
+                <div class="input-group" style="flex: 1;">
+                    <label class="input-label" for="birth_year" data-i18n="lbl_year">Ծննդյան տարեթիվ *</label>
+                    <input type="number" id="birth_year" class="glass-input" data-i18n-placeholder="pl_year" min="1940" max="2010" required>
+                </div>
+                <div class="input-group" style="flex: 1.5;">
+                    <label class="input-label" for="phone" data-i18n="lbl_phone">Հեռախոսահամար *</label>
+                    <input type="tel" id="phone" class="glass-input" value="+374 " inputmode="tel" required>
+                </div>
+            </div>
+            
             <div class="input-group">
-                <label class="input-label" for="phone" data-i18n="lbl_phone">Հեռախոսահամար *</label>
-                <input type="tel" id="phone" class="glass-input" value="+374 " inputmode="tel" required>
+                <label class="input-label" for="profession" data-i18n="lbl_prof">Ի՞նչ մասնագետ եք *</label>
+                <select id="profession" class="glass-input" required>
+                    <option value="" disabled selected data-i18n="opt_1">Ընտրեք տարբերակը...</option>
+                    <option value="door_master" data-i18n="door_master">Դռան վարպետ</option>
+                    <option value="baseboard_master" data-i18n="baseboard_master">Պլինտուսի վարպետ</option>
+                    <option value="universal_master" data-i18n="universal_master">Ունիվերսալ վարպետ</option>
+                    <option value="assistant" data-i18n="assistant">Վարպետի օգնական</option>
+                    <option value="other" data-i18n="opt_prof_other">Այլ (նշել)</option>
+                </select>
+                <!-- Это поле появится, если работник выберет "Другое" -->
+                <input type="text" id="custom_profession" class="glass-input" data-i18n-placeholder="pl_custom_prof" style="display: none; margin-top: 8px;">
             </div>
+
             <div class="input-group">
-                <label class="input-label" for="message" data-i18n="coop_desc">Համագործակցության նկարագրություն *</label>
-                <textarea id="message" class="glass-input" required style="min-height: 120px;"></textarea>
+                <label class="input-label" for="price" data-i18n="lbl_price">Ծառայությունների արժեքը *</label>
+                <input type="text" id="price" class="glass-input" data-i18n-placeholder="pl_price" required>
             </div>
-            <button type="submit" class="submit-btn" data-i18n="submit">Ուղարկել հայտը</button>
+            
+            <div class="input-group">
+                <label class="input-label" for="schedule" data-i18n="lbl_schedule">Աշխատանքային գրաֆիկ *</label>
+                <input type="text" id="schedule" class="glass-input" data-i18n-placeholder="pl_schedule" required>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label" for="message" data-i18n="lbl_msg">Այլ լրացուցիչ տեղեկություններ</label>
+                <textarea id="message" class="glass-input" data-i18n-placeholder="pl_msg"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" data-i18n="submit">Ուղարկել</button>
         </form>
     </div>
 
@@ -88,6 +121,6 @@
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
-    <script src="main.js?v=12.0"></script>
+    <script src="main.js?v=15.0"></script>
 </body>
 </html>
