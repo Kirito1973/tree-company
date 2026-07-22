@@ -101,7 +101,11 @@ const translations = {
 
     "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
     "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
-    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" }
+    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" },
+    
+    // Новые строки для меню связи
+    "contact_admin": { "AM": "Կապ ադմինիստրատորի հետ", "RU": "Связь с администратором", "EN": "Contact Admin" },
+    "contact_call": { "AM": "Զանգահարել", "RU": "Позвонить", "EN": "Call" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -222,9 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
             rotationDegrees += 360;
             themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
             if (body.classList.contains('force-dark')) {
-                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('emp_theme', 'dark');
+                body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('emp_theme', 'light');
             } else {
-                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('emp_theme', 'light');
+                body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('emp_theme', 'dark');
             }
             setTimeout(updateThemeIcon, 150); 
         });
@@ -714,6 +718,19 @@ document.addEventListener('DOMContentLoaded', () => {
         closeEmpSelfEdit();
         renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
+    };
+    
+    // ОТКРЫТИЕ И ЗАКРЫТИЕ МЕНЮ ОБРАТНОЙ СВЯЗИ
+    window.toggleContactMenu = function() {
+        const overlay = document.getElementById('contact-menu-overlay');
+        if (overlay) {
+            if (overlay.classList.contains('active')) {
+                overlay.classList.remove('active');
+            } else {
+                overlay.classList.add('active');
+                if (navigator.vibrate) navigator.vibrate(15);
+            }
+        }
     };
 
     loggedInEmpId = localStorage.getItem('loggedInEmpId');
