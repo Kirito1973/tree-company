@@ -24,7 +24,6 @@ if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Убрали временную метку, теперь обновление срабатывает ТОЛЬКО при смене APP_VERSION
         const swUrl = './sw.js?v=' + APP_VERSION;
         navigator.serviceWorker.register(swUrl).then(reg => {
             reg.update();
@@ -124,8 +123,7 @@ const translations = {
 
     "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
     "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
-    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" },
-    "contact_admin": { "AM": "Կապ ադմինիստրատորի հետ", "RU": "Связь с администратором", "EN": "Contact Admin" }
+    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -631,6 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
+    // ФУНКЦИЯ ДЛЯ ВЕРТИКАЛЬНОЙ КНОПКИ СВЯЗИ
     window.toggleContactMenu = function() {
         const wrapper = document.getElementById('contact-fab-wrapper');
         if (wrapper) {
