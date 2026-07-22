@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.2)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.3)
 // =========================================================
-const APP_VERSION = '6.2';
+const APP_VERSION = '6.3';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -24,7 +24,6 @@ if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // МЕТКА ВРЕМЕНИ УДАЛЕНА. Теперь только строгая версия APP_VERSION.
         const swUrl = './sw.js?v=' + APP_VERSION;
         navigator.serviceWorker.register(swUrl).then(reg => {
             reg.update();
@@ -63,6 +62,7 @@ function switchEmpTab(screenId, btnElement) {
     if (navigator.vibrate) navigator.vibrate(20); 
 }
 
+// ================= СЛОВАРЬ (TREE COMPANY И НОВЫЕ ПОЛЯ) =================
 const translations = {
     "tab_emp_news": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
     "tab_emp_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
@@ -75,7 +75,7 @@ const translations = {
     "login_title": { "AM": "Մուտք", "RU": "Вход", "EN": "Login" },
     "login_desc": { "AM": "Մուտքագրեք 6-նիշանոց PIN կոդը", "RU": "Введите 6-значный ключ доступа", "EN": "Enter 6-digit PIN code" },
     
-    "welcome_title": { "AM": "Բարի գալուստ TREE!", "RU": "Добро пожаловать в TREE!", "EN": "Welcome to TREE!" },
+    "welcome_title": { "AM": "Բարի գալուստ TREE COMPANY!", "RU": "Добро пожаловать в TREE COMPANY!", "EN": "Welcome to TREE COMPANY!" },
     "welcome_desc": { "AM": "Այստեղ կհայտնվեն կարևոր ծանուցումները և նորությունները։", "RU": "Здесь будут появляться важные уведомления и новости.", "EN": "Important notifications and news will appear here." },
     
     "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
@@ -124,7 +124,14 @@ const translations = {
 
     "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
     "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
-    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" }
+    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" },
+    "contact_admin": { "AM": "Կապ ադմինիստրատորի հետ", "RU": "Связь с администратором", "EN": "Contact Admin" },
+    
+    // Новые строки для рейтинга и отзывов
+    "your_rating": { "AM": "Ձեր վարկանիշը", "RU": "Ваш рейтинг", "EN": "Your Rating" },
+    "based_on_reviews": { "AM": "հիմնված է հաճախորդների կարծիքների վրա", "RU": "основано на отзывах клиентов", "EN": "based on client reviews" },
+    "client_reviews": { "AM": "Հաճախորդների կարծիքները", "RU": "Отзывы клиентов", "EN": "Client Reviews" },
+    "no_reviews": { "AM": "Դեռ կարծիքներ չկան", "RU": "Пока нет отзывов", "EN": "No reviews yet" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -155,6 +162,7 @@ function applyLanguage() {
     }
 }
 
+// ================= БАЗА ДАННЫХ (MOCK) =================
 let ordersData = [
     { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', acceptedAt: null, completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Արմեն Սարգսյան', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false, doneAt: null }] },
     { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', acceptedAt: '14.07.2026 16:00', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true, doneAt: '15.07.2026 11:30' }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false, doneAt: null }] },
@@ -164,6 +172,12 @@ let ordersData = [
 let employeesData = [
     { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456' },
     { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000' }
+];
+
+let reviewsData = [
+    { id: 1, empId: 'EMP-001', clientName: 'Մարիամ Պողոսյան', date: '11.07.2026', rating: 5, text: 'Շատ շնորհակալ եմ Արամին հիանալի աշխատանքի համար: Դռները տեղադրվեցին շատ արագ և որակով:' },
+    { id: 2, empId: 'EMP-001', clientName: 'Աննա Հովհաննիսյան', date: '05.07.2026', rating: 4, text: 'Ամեն ինչ լավ էր, բայց մի փոքր ուշացումով մոտեցավ:' },
+    { id: 3, empId: 'EMP-004', clientName: 'Դավիթ Սարգսյան', date: '12.07.2026', rating: 5, text: 'Պլինտուսների տեղադրումը կատարվեց անթերի: Խորհուրդ եմ տալիս:' }
 ];
 
 let loggedInEmpId = null;
@@ -222,7 +236,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
     }
     
-    // Закрытие выпадающих меню при клике по экрану
     document.addEventListener('click', (e) => { 
         if(langSwitcher && !langSwitcher.contains(e.target)) {
             langSwitcher.classList.remove('open'); 
@@ -239,9 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             currentLang = tab.getAttribute('data-lang');
             localStorage.setItem('emp_app_lang', currentLang);
-            applyLanguage();
             
             if (loggedInEmpId) {
+                renderEmployeeNews();
                 renderEmployeeOrders();
                 renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
                 renderEmployeeFinance();
@@ -254,10 +267,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (document.getElementById('order-modal').classList.contains('active') && currentActiveOrderId) {
                     openOrderModal(currentActiveOrderId);
                 }
+            } else {
+                applyLanguage();
             }
             langSwitcher.classList.remove('open');
         });
     });
+
+    // ================= РЕНДЕР ГЛАВНОЙ СТРАНИЦЫ (НОВОСТИ, РЕЙТИНГ И ОТЗЫВЫ) =================
+    window.renderEmployeeNews = function() {
+        const emp = employeesData.find(e => e.id === loggedInEmpId);
+        const newsSection = document.getElementById('screen-emp-news');
+        if (!emp || !newsSection) return;
+
+        const empReviews = reviewsData.filter(r => r.empId === emp.id);
+        
+        let reviewsHtml = '';
+        if (empReviews.length === 0) {
+            reviewsHtml = `<div style="text-align:center; padding: 20px; font-size: 11px; color: var(--text-sec);" data-i18n="no_reviews">Դեռ կարծիքներ չկան</div>`;
+        } else {
+            empReviews.forEach(r => {
+                let stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                reviewsHtml += `
+                    <div class="review-card">
+                        <div class="review-header">
+                            <div class="review-author">${r.clientName}</div>
+                            <div class="review-date">${r.date}</div>
+                        </div>
+                        <div class="review-stars">${stars}</div>
+                        <div class="review-text">${r.text}</div>
+                    </div>
+                `;
+            });
+        }
+
+        newsSection.innerHTML = `
+            <h2 class="screen-title" data-i18n="title_emp_news">Տեղեկատվություն</h2>
+            
+            <div class="glass-panel" style="margin-top: 10px;">
+                <div class="entity-card" style="cursor: default;">
+                    <div class="entity-title" style="color: var(--tree-light); margin-bottom: 6px;" data-i18n="welcome_title">Բարի գալուստ TREE COMPANY!</div>
+                    <div class="entity-meta" style="font-size: 11px; line-height: 1.4;" data-i18n="welcome_desc">
+                        Այստեղ կհայտնվեն կարևոր ծանուցումները և նորությունները։
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="margin-top: 16px; text-align: center; padding: 16px;">
+                <div style="font-size: 11px; font-weight: 800; color: var(--text-sec); text-transform: uppercase; margin-bottom: 8px;" data-i18n="your_rating">Ձեր վարկանիշը</div>
+                <div style="font-size: 38px; font-weight: 900; color: var(--tree-light); line-height: 1;">${emp.rating.toFixed(1)}</div>
+                <div style="font-size: 20px; color: #FFB347; margin: 4px 0; letter-spacing: 2px;">★★★★★</div>
+                <div style="font-size: 9px; color: var(--text-sec); text-transform: uppercase;" data-i18n="based_on_reviews">հիմնված է հաճախորդների կարծիքների վրա</div>
+            </div>
+
+            <h3 class="screen-title" style="margin-top: 24px; font-size: 14px; text-align: left; padding-left: 8px;" data-i18n="client_reviews">Հաճախորդների կարծիքները</h3>
+            <div id="emp-reviews-list" style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                ${reviewsHtml}
+            </div>
+        `;
+
+        applyLanguage();
+    };
 
     window.showEmployeeDashboard = function(empId) {
         const emp = employeesData.find(e => e.id === empId);
@@ -271,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const greetings = { "AM": "Բարև", "RU": "Привет", "EN": "Hello" };
         document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `${greetings[currentLang]}, <b>${firstName}</b>!`);
         
+        renderEmployeeNews();
         renderEmployeeOrders();
         renderEmployeeProfile(emp);
         renderEmployeeFinance();
@@ -631,7 +702,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
-    // ФУНКЦИЯ ДЛЯ ВЕРТИКАЛЬНОЙ КНОПКИ СВЯЗИ
     window.toggleContactMenu = function() {
         const wrapper = document.getElementById('contact-fab-wrapper');
         if (wrapper) {
