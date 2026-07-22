@@ -1,5 +1,5 @@
-// Версия 13.1 - Строгий сброс кэша и защита от 404
-const CACHE_NAME = 'tree-company-v13.1';
+// Версия 14.0 - Полный обход кэша через переименование файлов
+const CACHE_NAME = 'tree-company-v14.0';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=13.1',
-  './main.js?v=13.1',
+  './style.css?v=14.0',
+  './main.js?v=14.0',
   './manifest.json',
   './assets/tree.png',
   './assets/icon-192.png',
@@ -21,12 +21,12 @@ const ASSETS = [
   './assets/free-icon-armenia-197516.png',
   './assets/free-icon-russia-9994030.png',
   './assets/united-kingdom.png',
-  './assets/phone.png?v=13.1',
-  './assets/whatsapp.png?v=13.1',
-  './assets/viber.png?v=13.1',
-  './assets/telegram.png?v=13.1',
-  './assets/list-am.png?v=13.1',
-  './assets/tiktok.png?v=13.1'
+  './assets/phone.png',
+  './assets/wa-icon.png',
+  './assets/viber.png',
+  './assets/telegram.png',
+  './assets/list-icon.png',
+  './assets/tt-icon.png'
 ];
 
 self.addEventListener('install', (event) => {
