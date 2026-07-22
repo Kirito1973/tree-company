@@ -1,7 +1,7 @@
 // Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=15.0')
+        navigator.serviceWorker.register('./sw.js?v=16.0')
             .then(reg => {
                 reg.update();
             })
@@ -12,7 +12,7 @@ if ('serviceWorker' in navigator) {
 document.addEventListener('DOMContentLoaded', () => {
     const htmlElem = document.documentElement;
     
-    // --- 1. СТРОГАЯ ЛОГИКА ТЕМЫ (Атрибут data-theme) ---
+    // --- 1. СТРОГАЯ ЛОГИКА ТЕМЫ ---
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
     let rotationDegrees = 0;
@@ -158,10 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
         "auth_btn": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
         "auth_err": { "AM": "Սխալ ID", "RU": "Неверный ID", "EN": "Invalid ID" },
         "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" },
+        
         "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
         "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
-        "nav_jobs": { "AM": "Համագործ.", "RU": "Сотрудн-во", "EN": "Cooperate" },
         "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" },
+
         "rating_title": { "AM": "Մեր վարկանիշը", "RU": "Наш рейтинг", "EN": "Our Rating" },
         "rating_sub": { "AM": "հիմնված 124 կարծիքի վրա", "RU": "на основе 124 отзывов", "EN": "based on 124 reviews" },
         "reviews_title": { "AM": "Կարծիքներ", "RU": "Отзывы", "EN": "Reviews" },
@@ -226,15 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyLanguage();
 
-    // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ ---
+    // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ (ОБНОВЛЕНО 3 КНОПКИ) ---
     const currentPath = window.location.pathname;
-    if (currentPath.includes('jobs.html') || currentPath.includes('form.html') || currentPath.includes('cooperation.html')) {
-        document.getElementById('nav-jobs')?.classList.add('active');
-    } else if (currentPath.includes('cabinet.html')) {
+    if (currentPath.includes('cabinet.html')) {
         document.getElementById('nav-cabinet')?.classList.add('active');
     } else if (currentPath.includes('orders.html') || currentPath.includes('order-')) {
         document.getElementById('nav-orders')?.classList.add('active');
-    } else {
+    } else if (currentPath.includes('index.html') || currentPath === '/' || currentPath === '') {
         document.getElementById('nav-home')?.classList.add('active');
     }
 
