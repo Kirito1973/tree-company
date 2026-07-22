@@ -1,5 +1,5 @@
-// Версия 13.0 - Принудительный сброс кэша для иконок соцсетей
-const CACHE_NAME = 'tree-company-v13.0';
+// Версия 13.1 - Строгий сброс кэша и защита от 404
+const CACHE_NAME = 'tree-company-v13.1';
 const ASSETS = [
   './',
   './index.html',
@@ -10,8 +10,8 @@ const ASSETS = [
   './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=13.0',
-  './main.js?v=13.0',
+  './style.css?v=13.1',
+  './main.js?v=13.1',
   './manifest.json',
   './assets/tree.png',
   './assets/icon-192.png',
@@ -21,12 +21,12 @@ const ASSETS = [
   './assets/free-icon-armenia-197516.png',
   './assets/free-icon-russia-9994030.png',
   './assets/united-kingdom.png',
-  './assets/phone.png?v=13.0',
-  './assets/whatsapp.png?v=13.0',
-  './assets/viber.png?v=13.0',
-  './assets/telegram.png?v=13.0',
-  './assets/list-am.png?v=13.0',
-  './assets/tiktok.png?v=13.0'
+  './assets/phone.png?v=13.1',
+  './assets/whatsapp.png?v=13.1',
+  './assets/viber.png?v=13.1',
+  './assets/telegram.png?v=13.1',
+  './assets/list-am.png?v=13.1',
+  './assets/tiktok.png?v=13.1'
 ];
 
 self.addEventListener('install', (event) => {
@@ -60,14 +60,17 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        const responseClone = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
+        // ВАЖНО: Кэшируем только успешные ответы сервера (200 OK)
+        if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+        }
         return networkResponse;
       })
       .catch(() => {
-        return caches.match(event.request);
+        return caches.match(event.request, { ignoreSearch: true });
       })
   );
 });
