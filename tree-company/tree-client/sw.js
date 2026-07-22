@@ -1,5 +1,5 @@
-// Версия 18.0 - Обновление кэша для симулятора скидок
-const CACHE_NAME = 'tree-company-v18.0';
+// Версия 18.1 - Принудительный сброс кэша
+const CACHE_NAME = 'tree-company-v18.1';
 const ASSETS = [
   './',
   './index.html',
@@ -9,8 +9,8 @@ const ASSETS = [
   './jobs.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=18.0',
-  './main.js?v=18.0',
+  './style.css?v=18.1',
+  './main.js?v=18.1',
   './manifest.json',
   './assets/tree.png',
   './assets/icon-192.png',
