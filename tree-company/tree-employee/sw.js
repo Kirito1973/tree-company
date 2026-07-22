@@ -1,10 +1,10 @@
-// Версия 2.0 - Принудительный сброс кэша и Network-First стратегия
-const CACHE_NAME = 'tree-employee-v2.0';
+// Версия 2.1 - Принудительный сброс кэша и Network-First стратегия
+const CACHE_NAME = 'tree-employee-v2.1';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=2.0',
-    './employee.js?v=2.0',
+    './style.css?v=2.1',
+    './employee.js?v=2.1',
     './manifest.json',
     './assets/tree.svg',
     './assets/icon-192.png',
@@ -46,7 +46,6 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
-    // Стратегия Network-First (как в клиентском приложении)
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
