@@ -14,8 +14,23 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
 
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('emp_theme');
+                var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <!-- Добавлен параметр версии для обхода кэша -->
+    <link rel="stylesheet" href="style.css?v=2.0">
 </head>
 <body>
 
@@ -99,18 +114,7 @@
 
         <section class="emp-screen" id="screen-emp-finance">
             <h2 class="screen-title" data-i18n="title_emp_finance">Իմ <span>Ֆինանսները</span></h2>
-            <div class="glass-panel">
-                <div class="stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-value">0 ֏</div>
-                        <div class="stat-label" data-i18n="stats_week">Այս շաբաթ</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-value">0 ֏</div>
-                        <div class="stat-label" data-i18n="stats_month">Այս ամիս</div>
-                    </div>
-                </div>
-            </div>
+            <!-- Контент генерируется через JS -->
         </section>
 
         <section class="emp-screen" id="screen-emp-profile">
@@ -257,7 +261,7 @@
                 <img src="assets/wa-icon.png" alt="WhatsApp">
             </a>
             <a href="tel:+37495188038" class="contact-fab-item" aria-label="Phone">
-                <img src="assets/phone.jpg" alt="Phone">
+                <img src="assets/phone.png" alt="Phone">
             </a>
         </div>
         <button class="fab-contact-btn" onclick="toggleContactMenu()" id="contact-fab-btn">
@@ -292,6 +296,7 @@
         </button>
     </nav>
 
-    <script src="employee.js"></script>
+    <!-- Версия файла также обновлена -->
+    <script src="employee.js?v=2.0"></script>
 </body>
 </html>
