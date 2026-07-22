@@ -30,7 +30,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=6.3">
+    <link rel="stylesheet" href="style.css?v=6.4">
 </head>
 <body>
 
@@ -76,7 +76,7 @@
             </div>
         </section>
 
-        <!-- Контент генерируется через JS (новости, рейтинг, отзывы) -->
+        <!-- Пустой контейнер, куда JS вставит приветствие, рейтинг и отзывы -->
         <section class="emp-screen" id="screen-emp-news"></section>
 
         <section class="emp-screen" id="screen-emp-orders">
@@ -104,7 +104,6 @@
 
         <section class="emp-screen" id="screen-emp-finance">
             <h2 class="screen-title" data-i18n="title_emp_finance">Իմ <span>Ֆինանսները</span></h2>
-            <!-- Контент генерируется через JS -->
         </section>
 
         <section class="emp-screen" id="screen-emp-profile">
@@ -201,12 +200,10 @@
                 </div>
 
                 <div id="modal-action-buttons" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px; width: 100%;">
-                    <!-- Кнопки вставляются через JS -->
                 </div>
             </div>
         </div>
 
-        <!-- Модальное окно редактирования профиля -->
         <div class="modal-overlay" id="emp-self-edit-modal" onclick="closeEmpSelfEdit()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                 <h3 class="screen-title" style="margin-bottom: 16px;" data-i18n="edit_profile_title">Խմբագրել պրոֆիլը</h3>
@@ -284,6 +281,6 @@
         </button>
     </nav>
 
-    <script src="employee.js?v=6.3"></script>
+    <script src="employee.js?v=6.4"></script>
 </body>
 </html>
