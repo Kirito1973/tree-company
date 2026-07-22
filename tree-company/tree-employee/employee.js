@@ -1,34 +1,32 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 3.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.0)
 // =========================================================
-const APP_VERSION = '3.0';
+const APP_VERSION = '4.0';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
     
-    // Удаляем все старые кэши файлов
     if ('caches' in window) {
         caches.keys().then((names) => {
             names.forEach(name => caches.delete(name));
         });
     }
     
-    // Убиваем старые Service Worker'ы
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then((registrations) => {
             registrations.forEach(registration => registration.unregister());
         });
     }
     
-    // Запоминаем новую версию и перезагружаем страницу чисто
     localStorage.setItem('tree_emp_version', APP_VERSION);
     window.location.reload(true);
 }
 
-// Регистрация нового Service Worker с параметром версии
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION).then(reg => {
+        // Метка времени обходит глухой кэш Windows/Chrome навсегда!
+        const swUrl = './sw.js?v=' + APP_VERSION + '&t=' + new Date().getTime();
+        navigator.serviceWorker.register(swUrl).then(reg => {
             reg.update();
         }).catch(err => console.error('Ошибка SW:', err));
     });
@@ -158,7 +156,6 @@ function applyLanguage() {
     }
 }
 
-// ================= БАЗА ДАННЫХ (MOCK) =================
 let ordersData = [
     { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', acceptedAt: null, completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Արմեն Սարգսյան', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false, doneAt: null }] },
     { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', acceptedAt: '14.07.2026 16:00', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true, doneAt: '15.07.2026 11:30' }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false, doneAt: null }] },
