@@ -1,10 +1,10 @@
-// Версия 4.0 - Безопасное кэширование и Network-First
-const CACHE_NAME = 'tree-employee-v4.0';
+// Версия 5.0 - Безопасное кэширование и Network-First
+const CACHE_NAME = 'tree-employee-v5.0';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=4.0',
-    './employee.js?v=4.0',
+    './style.css?v=5.0',
+    './employee.js?v=5.0',
     './manifest.json',
     './assets/tree.png',
     './assets/apple-touch-icon.png',
@@ -24,7 +24,6 @@ self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            // Безопасное добавление: не прерывает установку, если 1 файл не найден
             return Promise.allSettled(
                 ASSETS.map(asset => cache.add(asset).catch(err => console.warn('Кэш пропущен для:', asset)))
             );
