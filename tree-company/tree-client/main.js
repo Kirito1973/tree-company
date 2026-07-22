@@ -1,7 +1,7 @@
-// Регистрация Service Worker для PWA
+// Регистрация Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=18.0')
+        navigator.serviceWorker.register('./sw.js?v=18.1')
             .then(reg => {
                 reg.update();
             })
@@ -140,17 +140,14 @@ document.addEventListener('DOMContentLoaded', () => {
         "lbl_msg": { "AM": "Այլ լրացուցիչ տեղեկություններ", "RU": "Дополнительная информация", "EN": "Additional info" },
         "pl_msg": { "AM": "...", "RU": "...", "EN": "..." },
         "submit": { "AM": "Ուղարկել", "RU": "Отправить", "EN": "Submit" },
-        "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
         "auth_title": { "AM": "Մուտքագրեք Ձեր ID-ն", "RU": "Введите ваш ID", "EN": "Enter your ID" },
         "auth_placeholder": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
         "auth_btn": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
         "auth_err": { "AM": "Սխալ ID", "RU": "Неверный ID", "EN": "Invalid ID" },
         "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" },
-        
         "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
         "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
         "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" },
-
         "rating_title": { "AM": "Մեր վարկանիշը", "RU": "Наш рейтинг", "EN": "Our Rating" },
         "rating_sub": { "AM": "հիմնված 124 կարծիքի վրա", "RU": "на основе 124 отзывов", "EN": "based on 124 reviews" },
         "reviews_title": { "AM": "Կարծիքներ", "RU": "Отзывы", "EN": "Reviews" },
@@ -218,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyLanguage();
 
-    // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ (СИМУЛЯТОР VIP) ---
+    // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ ---
     const currentPath = window.location.pathname;
     if (currentPath.includes('cabinet.html')) {
         document.getElementById('nav-cabinet')?.classList.add('active');
@@ -260,16 +257,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('auth-submit-btn').addEventListener('click', () => {
             const val = document.getElementById('auth-id-input').value.trim().toUpperCase();
-            if(val.length > 0) { // Разрешаем логин даже с одной цифрой (например, '9')
+            if(val.length > 0) { 
                 localStorage.setItem('tree_client_id', val);
                 
                 // === СИМУЛЯТОР СКИДОК ДЛЯ ТЕСТА С ТЕЛЕФОНА ===
                 if (val === '9' || val === 'TR-9' || val === 'VIP') {
-                    localStorage.setItem('tree_client_discount', '15'); // Даем скидку 15%
-                    localStorage.setItem('tree_client_name', 'VIP Հաճախորդ'); // VIP Имя
+                    localStorage.setItem('tree_client_discount', '15'); 
+                    localStorage.setItem('tree_client_name', 'VIP Հաճախորդ'); 
                 } else {
-                    localStorage.removeItem('tree_client_discount'); // Удаляем скидку
-                    localStorage.setItem('tree_client_name', 'Սովորական Հաճախորդ'); // Обычное имя
+                    localStorage.removeItem('tree_client_discount'); 
+                    localStorage.setItem('tree_client_name', 'Սովորական Հաճախորդ'); 
                 }
                 // ===========================================
 
@@ -365,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. ФОРМЫ И КАЛЬКУЛЯТОР ---
+    // --- 5. ФОРМЫ ---
     if(localStorage.getItem('tree_client_id')) {
         const nameInput = document.getElementById('client_name');
         const phoneInput = document.getElementById('phone');
@@ -566,7 +563,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 7. СИНХРОНИЗАЦИЯ ПРИ ВОЗВРАТЕ НА СТРАНИЦУ ---
     window.addEventListener('pageshow', (event) => {
         const savedTheme = localStorage.getItem('app_theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
