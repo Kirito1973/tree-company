@@ -1,8 +1,34 @@
-// Версия 2.1
-// PWA Setup с автоматическим обновлением «на лету»
+// =========================================================
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 3.0)
+// =========================================================
+const APP_VERSION = '3.0';
+
+if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
+    console.log('Обнаружена новая версия! Очистка старого кэша...');
+    
+    // Удаляем все старые кэши файлов
+    if ('caches' in window) {
+        caches.keys().then((names) => {
+            names.forEach(name => caches.delete(name));
+        });
+    }
+    
+    // Убиваем старые Service Worker'ы
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+            registrations.forEach(registration => registration.unregister());
+        });
+    }
+    
+    // Запоминаем новую версию и перезагружаем страницу чисто
+    localStorage.setItem('tree_emp_version', APP_VERSION);
+    window.location.reload(true);
+}
+
+// Регистрация нового Service Worker с параметром версии
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=2.1').then(reg => {
+        navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION).then(reg => {
             reg.update();
         }).catch(err => console.error('Ошибка SW:', err));
     });
