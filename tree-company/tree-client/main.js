@@ -1,7 +1,7 @@
-// Регистрация Service Worker для PWA (УСИЛЕННОЕ ОБНОВЛЕНИЕ v12.0)
+// Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=12.0')
+        navigator.serviceWorker.register('./sw.js?v=15.0')
             .then(reg => {
                 reg.update();
             })
@@ -68,6 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
         "contact_title": { "AM": "Կապվեք մեզ հետ Ձեզ հարմար եղանակով", "RU": "Свяжитесь с нами удобным способом", "EN": "Contact us conveniently" },
         "promo_sub": { "AM": "ՄԵՆՔ ԳՆԱՀԱՏՈՒՄ ԵՆՔ ՁԵԶ", "RU": "МЫ ЦЕНИМ ВАС", "EN": "WE VALUE YOU" },
         "promo_title": { "AM": "Պատվիրեք հավելվածով և ստացեք <span class=\"promo-highlight\">10% զեղչ</span> հենց հիմա", "RU": "Закажите в приложении и получите <span class=\"promo-highlight\">скидку 10%</span>", "EN": "Order in the app and get a <span class=\"promo-highlight\">10% discount</span> now" },
+        "news_title": { "AM": "Նորություններ և Ակցիաներ", "RU": "Новости и акции", "EN": "News and Promotions" },
+        "join_us_title": { "AM": "Միացեք մեզ", "RU": "Присоединяйтесь к нам", "EN": "Join us" },
+        "partners_title": { "AM": "Մեր գործընկերները", "RU": "Наши партнеры", "EN": "Our partners" },
+        "your_logo_here": { "AM": "Ձեր լոգոն", "RU": "Ваш логотип", "EN": "Your logo" },
         "title_services": { "AM": "Ծառայություններ", "RU": "Услуги", "EN": "Services" },
         "door_install": { "AM": "Դռների<br>տեղադրում", "RU": "Установка<br>дверей", "EN": "Door<br>Installation" },
         "baseboard_install": { "AM": "Պլինտուսների<br>տեղադրում", "RU": "Установка<br>плинтусов", "EN": "Baseboard<br>Installation" },
@@ -128,16 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
         "pl_exp": { "AM": "Օր.՝ 3", "RU": "Напр.: 3", "EN": "Ex: 3" },
         "lbl_phone": { "AM": "Հեռախոսահամար *", "RU": "Номер телефона *", "EN": "Phone Number *" },
         "pl_phone": { "AM": "+374 00 000 000", "RU": "+374 00 000 000", "EN": "+374 00 000 000" },
-        
         "lbl_prof": { "AM": "Ի՞նչ մասնագետ եք *", "RU": "Какой вы специалист? *", "EN": "What specialist are you? *" },
         "opt_prof_other": { "AM": "Այլ (նշել)", "RU": "Другое (указать)", "EN": "Other (specify)" },
         "pl_custom_prof": { "AM": "Նշեք մասնագիտությունը...", "RU": "Напишите вашу профессию...", "EN": "Specify your profession..." },
         "page_jobs_title": { "AM": "Համագործակցություն", "RU": "Сотрудничество", "EN": "Cooperation" },
         "btn_become_employee": { "AM": "Դառնալ աշխատակից", "RU": "Стать сотрудником", "EN": "Become an employee" },
         "desc_employee": { "AM": "Լրացրեք հայտը մեր թիմին միանալու համար", "RU": "Заполните анкету для присоединения к команде", "EN": "Fill out the form to join our team" },
-        "btn_become_partner": { "AM": "Սկսել համագործակցություն", "RU": "Сотрудничать с нами", "EN": "Cooperate with us" },
+        "btn_become_partner": { "AM": "Համագործակցություն", "RU": "Сотрудничество", "EN": "Cooperate with us" },
         "desc_partner": { "AM": "Բիզնես առաջարկներ և B2B համագործակցություն", "RU": "Бизнес-предложения и B2B сотрудничество", "EN": "Business offers and B2B cooperation" },
-
         "lbl_price": { "AM": "Ծառայությունների արժեքը (գներ) *", "RU": "Стоимость услуг (цены) *", "EN": "Service costs (prices) *" },
         "pl_price": { "AM": "Օրինակ՝ 5000-15000֏...", "RU": "Например: 5000-15000 драм...", "EN": "Example: 5000-15000 AMD..." },
         "lbl_schedule": { "AM": "Աշխատանքային գրաֆիկ *", "RU": "График работы *", "EN": "Work Schedule *" },
@@ -151,18 +153,15 @@ document.addEventListener('DOMContentLoaded', () => {
         "pl_msg": { "AM": "...", "RU": "...", "EN": "..." },
         "submit": { "AM": "Ուղարկել", "RU": "Отправить", "EN": "Submit" },
         "alert_success": { "AM": "Շնորհակալություն: Ձեր հայտը հաջողությամբ ուղարկվեց:", "RU": "Спасибо! Ваша заявка успешно отправлена.", "EN": "Thank you! Your application was sent successfully." },
-        
         "auth_title": { "AM": "Մուտքագրեք Ձեր ID-ն", "RU": "Введите ваш ID", "EN": "Enter your ID" },
         "auth_placeholder": { "AM": "Օր.՝ TR-1234", "RU": "Напр.: TR-1234", "EN": "Ex: TR-1234" },
         "auth_btn": { "AM": "Մուտք", "RU": "Войти", "EN": "Login" },
         "auth_err": { "AM": "Սխալ ID", "RU": "Неверный ID", "EN": "Invalid ID" },
         "order_success_id": { "AM": "Ձեր մուտքանունը (ID)՝ պահպանեք այն", "RU": "Ваш ключ входа (ID): сохраните его", "EN": "Your login key (ID): save it" },
-
         "nav_home": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
         "nav_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
         "nav_jobs": { "AM": "Համագործ.", "RU": "Сотрудн-во", "EN": "Cooperate" },
         "nav_cabinet": { "AM": "Անձն. էջ", "RU": "Кабинет", "EN": "Cabinet" },
-
         "rating_title": { "AM": "Մեր վարկանիշը", "RU": "Наш рейтинг", "EN": "Our Rating" },
         "rating_sub": { "AM": "հիմնված 124 կարծիքի վրա", "RU": "на основе 124 отзывов", "EN": "based on 124 reviews" },
         "reviews_title": { "AM": "Կարծիքներ", "RU": "Отзывы", "EN": "Reviews" },
@@ -171,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "coop_banner_title": { "AM": "Դարձեք մեր գործընկերը", "RU": "Стать нашим бизнес-партнером", "EN": "Become our business partner" },
         "coop_name": { "AM": "Ընկերության կամ անձի անուն *", "RU": "Название компании или имя *", "EN": "Company or Person Name *" },
         "coop_desc": { "AM": "Համագործակցության նկարագրություն *", "RU": "Описание сотрудничества *", "EN": "Cooperation description *" },
-
         "cab_title": { "AM": "Անձնական<br><span>Էջ</span>", "RU": "Личный<br><span>Кабинет</span>", "EN": "Personal<br><span>Dashboard</span>" },
         "cab_greeting": { "AM": "Բարև,", "RU": "Здравствуйте,", "EN": "Hello," },
         "cab_id": { "AM": "Ձեր բանալին (ID)՝", "RU": "Ваш ключ входа (ID):", "EN": "Your login key (ID):" },
@@ -525,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 7. СИНХРОНИЗАЦИЯ ПРИ ВОЗВРАТЕ НА СТРАНИЦУ (BFCache FIX) ---
+    // --- 7. СИНХРОНИЗАЦИЯ ПРИ ВОЗВРАТЕ НА СТРАНИЦУ ---
     window.addEventListener('pageshow', (event) => {
         const savedTheme = localStorage.getItem('app_theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
