@@ -25,7 +25,7 @@
         })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=16.0">
+    <link rel="stylesheet" href="style.css?v=17.0">
 </head>
 <body>
     <div class="noise-overlay"></div>
@@ -58,6 +58,12 @@
         <div class="form-card" style="text-align: center; margin-bottom: 24px; padding: 20px;">
             <div style="font-size: 11px; font-weight: 800; color: var(--text-sec); text-transform: uppercase;" data-i18n="cab_id">Ձեր բանալին (ID)՝</div>
             <div class="modal-id-highlight" id="client-id-display" style="font-size: 28px; margin-top: 10px; border: none; background: rgba(35, 169, 91, 0.15);">...</div>
+            
+            <!-- БЛОК ЛИЧНОЙ СКИДКИ (СКРЫТ ПО УМОЛЧАНИЮ) -->
+            <div id="personal-discount-box" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px dashed rgba(128,128,128,0.2); justify-content: space-between; align-items: center;">
+                <span style="font-size: 11px; font-weight: 800; color: var(--text-sec); text-transform: uppercase;" data-i18n="cab_personal_discount">Ձեր անձնական զեղչը՝</span>
+                <span id="personal-discount-val" style="font-size: 20px; font-weight: 900; color: #FFB347; background: rgba(255, 179, 71, 0.1); padding: 4px 12px; border-radius: 12px; box-shadow: 0 4px 10px rgba(255, 179, 71, 0.2);">0%</span>
+            </div>
         </div>
 
         <a href="orders.html" class="submit-btn" style="text-align:center; display:block; text-decoration:none; margin-bottom: 32px;" data-i18n="cab_new_order">Նոր պատվեր ստեղծել</a>
@@ -136,6 +142,6 @@
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
-    <script src="main.js?v=16.0"></script>
+    <script src="main.js?v=17.0"></script>
 </body>
 </html>
