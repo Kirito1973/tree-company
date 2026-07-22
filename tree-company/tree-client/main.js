@@ -1,7 +1,7 @@
 // Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=16.0')
+        navigator.serviceWorker.register('./sw.js?v=17.0')
             .then(reg => {
                 reg.update();
             })
@@ -78,18 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "order_master": { "AM": "→ Պատվիրել վարպետ", "RU": "→ Вызвать мастера", "EN": "→ Order master" },
         "coming_soon": { "AM": "Շուտով<br>մեր էջում", "RU": "Скоро<br>на странице", "EN": "Coming<br>soon" },
         "wait": { "AM": "Սպասեք", "RU": "Ожидайте", "EN": "Wait" },
-        "title_why": { "AM": "Ինչու՞ ընտրել մեզ", "RU": "Почему выбирают нас?", "EN": "Why choose us?" },
-        "salary": { "AM": "Բարձր<br>վարձատրություն", "RU": "Высокая<br>оплата", "EN": "High<br>salary" },
-        "schedule": { "AM": "Ճկուն<br>գրաֆիկ", "RU": "Гибкий<br>график", "EN": "Flexible<br>schedule" },
-        "orders": { "AM": "Կայուն<br>պատվերներ", "RU": "Стабильные<br>заказы", "EN": "Stable<br>orders" },
-        "title_vacancies": { "AM": "Թափուր հաստիքներ", "RU": "Вакансии", "EN": "Vacancies" },
-        "your_prof": { "AM": "Ձեր<br>մասնագիտությունը", "RU": "Ваша<br>профессия", "EN": "Your<br>Profession" },
-        "your_offer": { "AM": "Ձեր<br>առաջարկը", "RU": "Ваше<br>предложение", "EN": "Your<br>Offer" },
-        "apply": { "AM": "→ Դիմել", "RU": "→ Подать заявку", "EN": "→ Apply" },
-        "door_master": { "AM": "Դռան վարպետ", "RU": "Мастер по дверям", "EN": "Door Master" },
-        "baseboard_master": { "AM": "Պլինտուսի վարպետ", "RU": "Мастер по плинтусам", "EN": "Baseboard Master" },
-        "universal_master": { "AM": "Ունիվերսալ վարպետ", "RU": "Универсальный мастер", "EN": "Universal Master" },
-        "assistant": { "AM": "Վարպետի օգնական", "RU": "Помощник мастера", "EN": "Master's Assistant" },
         "page_title": { "AM": "Պատվերի<br><span>ձևակերպում</span>", "RU": "Оформление<br><span>Заказа</span>", "EN": "Order<br><span>Placement</span>" },
         "lbl_service": { "AM": "Ընտրեք ծառայությունները՝", "RU": "Выберите услуги:", "EN": "Select services:" },
         "s1_name": { "AM": "Միջսենյակային դռների տեղադրում", "RU": "Установка межкомнатных дверей", "EN": "Interior door installation" },
@@ -191,7 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
         "cab_review_pl": { "AM": "Թողեք Ձեր կարծիքը...", "RU": "Оставьте ваш отзыв...", "EN": "Leave your review..." },
         "cab_review_btn": { "AM": "Ուղարկել կարծիքը", "RU": "Отправить отзыв", "EN": "Submit review" },
         "review_thanks": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за вашу оценку!", "EN": "Thank you for your rating!" },
-        "fallback_name": { "AM": "Հարգելի հաճախորդ", "RU": "Уважаемый клиент", "EN": "Dear customer" }
+        "fallback_name": { "AM": "Հարգելի հաճախորդ", "RU": "Уважаемый клиент", "EN": "Dear customer" },
+        
+        // НОВЫЕ ПЕРЕВОДЫ ДЛЯ СИСТЕМЫ ЛИЧНОЙ СКИДКИ
+        "cab_personal_discount": { "AM": "Ձեր անձնական զեղչը՝", "RU": "Ваша персональная скидка:", "EN": "Your personal discount:" },
+        "calc_discount_applied": { "AM": "Կիրառված է զեղչ", "RU": "Применена скидка", "EN": "Discount applied" }
     };
     
     function applyLanguage() {
@@ -221,6 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
             currentLang = tab.getAttribute('data-lang');
             localStorage.setItem('app_lang', currentLang);
             applyLanguage();
+            // Обновляем калькулятор при смене языка, чтобы бейдж скидки тоже перевелся
+            if (typeof calculateGrandTotal === 'function') calculateGrandTotal();
             if(langSwitcher) langSwitcher.classList.remove('open');
         });
     });
@@ -279,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 4. ЛОГИКА КАБИНЕТА (ОЦЕНКА И ПРИНЯТИЕ РАБОТЫ) ---
+    // --- 4. ЛОГИКА КАБИНЕТА ---
     if (window.location.pathname.includes('cabinet.html')) {
         const savedId = localStorage.getItem('tree_client_id');
         if (!savedId) { window.location.replace('index.html'); } 
@@ -291,6 +285,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const savedName = localStorage.getItem('tree_client_name');
                 displayName.textContent = savedName ? savedName : translations['fallback_name'][currentLang];
             }
+
+            // ЛОГИКА ОТОБРАЖЕНИЯ ПЕРСОНАЛЬНОЙ СКИДКИ
+            const discountStr = localStorage.getItem('tree_client_discount');
+            const discountBox = document.getElementById('personal-discount-box');
+            const discountVal = document.getElementById('personal-discount-val');
+            
+            if (discountStr && parseInt(discountStr) > 0) {
+                if (discountBox) discountBox.style.display = 'flex';
+                if (discountVal) discountVal.textContent = discountStr + '%';
+            } else {
+                if (discountBox) discountBox.style.display = 'none';
+            }
         }
 
         const logoutBtn = document.getElementById('logout-btn');
@@ -300,6 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.removeItem('tree_client_name');
                 localStorage.removeItem('tree_client_phone');
                 localStorage.removeItem('tree_client_address');
+                localStorage.removeItem('tree_client_discount');
                 window.location.replace('index.html');     
             });
         }
@@ -351,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. ФОРМЫ (ПРЕДЗАПОЛНЕНИЕ, КАЛЬКУЛЯТОР, ОТПРАВКА) ---
+    // --- 5. ФОРМЫ (ПРЕДЗАПОЛНЕНИЕ, КАЛЬКУЛЯТОР СО СКИДКАМИ, ОТПРАВКА) ---
     if(localStorage.getItem('tree_client_id')) {
         const nameInput = document.getElementById('client_name');
         const phoneInput = document.getElementById('phone');
@@ -396,29 +403,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const orderForm = document.getElementById('order-form');
-    if (orderForm) {
-        function formatNumber(num) { return num.toLocaleString('en-US') + ' ֏'; }
+    // Делаем функцию глобальной, чтобы пересчитывать при смене языка
+    window.calculateGrandTotal = function() {
+        let grandTotal = 0;
+        document.querySelectorAll('.calc-item').forEach(item => {
+            const checkbox = item.querySelector('.service-check');
+            const subtotalEl = item.querySelector('.calc-subtotal');
+            if (checkbox.checked) {
+                let price = parseInt(item.getAttribute('data-price'));
+                const qtyInput = item.querySelector('.qty-input');
+                const qty = qtyInput ? (qtyInput.value === '' ? 0 : parseInt(qtyInput.value)) : 1;
+                const subtotal = price * qty;
+                if (subtotalEl) subtotalEl.textContent = numToFormat(subtotal);
+                grandTotal += subtotal;
+            } else {
+                if (subtotalEl) subtotalEl.textContent = '0 ֏';
+            }
+        });
 
-        function calculateGrandTotal() {
-            let grandTotal = 0;
-            document.querySelectorAll('.calc-item').forEach(item => {
-                const checkbox = item.querySelector('.service-check');
-                const subtotalEl = item.querySelector('.calc-subtotal');
-                if (checkbox.checked) {
-                    let price = parseInt(item.getAttribute('data-price'));
-                    const qtyInput = item.querySelector('.qty-input');
-                    const qty = qtyInput ? (qtyInput.value === '' ? 0 : parseInt(qtyInput.value)) : 1;
-                    const subtotal = price * qty;
-                    if (subtotalEl) subtotalEl.textContent = formatNumber(subtotal);
-                    grandTotal += subtotal;
-                } else {
-                    if (subtotalEl) subtotalEl.textContent = '0 ֏';
-                }
-            });
-            const gtEl = document.getElementById('grandTotal');
-            if(gtEl) gtEl.textContent = formatNumber(grandTotal);
+        // ПРИМЕНЕНИЕ ЛИЧНОЙ СКИДКИ
+        const discountStr = localStorage.getItem('tree_client_discount');
+        let discount = discountStr ? parseInt(discountStr) : 0;
+        const gtEl = document.getElementById('grandTotal');
+        const totalBox = document.querySelector('.total-box');
+
+        if (discount > 0 && grandTotal > 0) {
+            const discountAmount = grandTotal * (discount / 100);
+            const finalTotal = grandTotal - discountAmount;
+
+            if(gtEl) {
+                gtEl.innerHTML = `<span style="text-decoration: line-through; color: var(--text-sec); font-size: 12px; margin-right: 8px;">${numToFormat(grandTotal)}</span><br>${numToFormat(finalTotal)}`;
+            }
+
+            let badge = document.getElementById('discount-badge');
+            let badgeText = (translations['calc_discount_applied'] ? translations['calc_discount_applied'][currentLang] : 'Discount') + ' ' + discount + '%';
+            
+            if (!badge && totalBox) {
+                badge = document.createElement('div');
+                badge.id = 'discount-badge';
+                badge.style.cssText = 'background: #FFB347; color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; position: absolute; top: -10px; right: 20px; box-shadow: 0 4px 10px rgba(255, 179, 71, 0.3);';
+                badge.textContent = badgeText;
+                totalBox.style.position = 'relative';
+                totalBox.appendChild(badge);
+            } else if (badge) {
+                badge.textContent = badgeText;
+            }
+
+        } else {
+            if(gtEl) gtEl.textContent = numToFormat(grandTotal);
+            const badge = document.getElementById('discount-badge');
+            if (badge) badge.remove();
         }
+    }
 
+    function numToFormat(num) { return num.toLocaleString('en-US') + ' ֏'; }
+
+    if (orderForm) {
         document.querySelectorAll('.calc-item').forEach(item => {
             const checkbox = item.querySelector('.service-check');
             const qtyInput = item.querySelector('.qty-input');
@@ -429,12 +469,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     item.classList.remove('active');
                 }
-                calculateGrandTotal();
+                window.calculateGrandTotal();
             });
             if (qtyInput) {
                 qtyInput.addEventListener('input', () => {
                     if(qtyInput.value !== '' && qtyInput.value < 1) qtyInput.value = 1;
-                    calculateGrandTotal();
+                    window.calculateGrandTotal();
                 });
             }
         });
@@ -459,7 +499,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const checkedServices = document.querySelectorAll('.service-check:checked');
             if(checkedServices.length === 0) { alert(translations['alert_error'][currentLang]); return; }
 
-            const grandTotal = document.getElementById('grandTotal') ? document.getElementById('grandTotal').textContent : '0 ֏';
             let savedClientId = localStorage.getItem('tree_client_id');
             const clientNameVal = document.getElementById('client_name') ? document.getElementById('client_name').value : '';
             const phoneVal = document.getElementById('phone') ? document.getElementById('phone').value : '';
@@ -488,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (document.getElementById('phone')) document.getElementById('phone').value = localStorage.getItem('tree_client_phone');
                 if (document.getElementById('address')) document.getElementById('address').value = localStorage.getItem('tree_client_address');
             }
-            calculateGrandTotal();
+            window.calculateGrandTotal();
             
             if(closeModalBtn) closeModalBtn.onclick = () => { modal.classList.remove('open'); };
         });
