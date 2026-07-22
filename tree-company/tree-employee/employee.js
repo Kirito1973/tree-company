@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.1)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.2)
 // =========================================================
-const APP_VERSION = '6.1';
+const APP_VERSION = '6.2';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -24,6 +24,7 @@ if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+        // МЕТКА ВРЕМЕНИ УДАЛЕНА. Теперь только строгая версия APP_VERSION.
         const swUrl = './sw.js?v=' + APP_VERSION;
         navigator.serviceWorker.register(swUrl).then(reg => {
             reg.update();
@@ -221,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
     }
     
+    // Закрытие выпадающих меню при клике по экрану
     document.addEventListener('click', (e) => { 
         if(langSwitcher && !langSwitcher.contains(e.target)) {
             langSwitcher.classList.remove('open'); 
