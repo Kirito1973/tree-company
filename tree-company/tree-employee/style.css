@@ -251,7 +251,6 @@ html[data-theme="dark"] .detail-block { background: rgba(0, 0, 0, 0.15); }
     pointer-events: auto;
 }
 
-/* Строго круглые кнопки с жестким обрезанием и БЕЗ фона */
 .contact-fab-item {
     width: 48px;
     height: 48px;
