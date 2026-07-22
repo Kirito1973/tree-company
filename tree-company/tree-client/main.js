@@ -1,7 +1,7 @@
 // Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=17.0')
+        navigator.serviceWorker.register('./sw.js?v=18.0')
             .then(reg => {
                 reg.update();
             })
@@ -180,8 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "cab_review_btn": { "AM": "Ուղարկել կարծիքը", "RU": "Отправить отзыв", "EN": "Submit review" },
         "review_thanks": { "AM": "Շնորհակալություն գնահատականի համար:", "RU": "Спасибо за вашу оценку!", "EN": "Thank you for your rating!" },
         "fallback_name": { "AM": "Հարգելի հաճախորդ", "RU": "Уважаемый клиент", "EN": "Dear customer" },
-        
-        // НОВЫЕ ПЕРЕВОДЫ ДЛЯ СИСТЕМЫ ЛИЧНОЙ СКИДКИ
         "cab_personal_discount": { "AM": "Ձեր անձնական զեղչը՝", "RU": "Ваша персональная скидка:", "EN": "Your personal discount:" },
         "calc_discount_applied": { "AM": "Կիրառված է զեղչ", "RU": "Применена скидка", "EN": "Discount applied" }
     };
@@ -213,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
             currentLang = tab.getAttribute('data-lang');
             localStorage.setItem('app_lang', currentLang);
             applyLanguage();
-            // Обновляем калькулятор при смене языка, чтобы бейдж скидки тоже перевелся
             if (typeof calculateGrandTotal === 'function') calculateGrandTotal();
             if(langSwitcher) langSwitcher.classList.remove('open');
         });
@@ -221,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyLanguage();
 
-    // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ (ОБНОВЛЕНО 3 КНОПКИ) ---
+    // --- 3. НИЖНЕЕ МЕНЮ И ЛОГИКА АВТОРИЗАЦИИ (СИМУЛЯТОР VIP) ---
     const currentPath = window.location.pathname;
     if (currentPath.includes('cabinet.html')) {
         document.getElementById('nav-cabinet')?.classList.add('active');
@@ -263,8 +260,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('auth-submit-btn').addEventListener('click', () => {
             const val = document.getElementById('auth-id-input').value.trim().toUpperCase();
-            if(val.length > 3) {
+            if(val.length > 0) { // Разрешаем логин даже с одной цифрой (например, '9')
                 localStorage.setItem('tree_client_id', val);
+                
+                // === СИМУЛЯТОР СКИДОК ДЛЯ ТЕСТА С ТЕЛЕФОНА ===
+                if (val === '9' || val === 'TR-9' || val === 'VIP') {
+                    localStorage.setItem('tree_client_discount', '15'); // Даем скидку 15%
+                    localStorage.setItem('tree_client_name', 'VIP Հաճախորդ'); // VIP Имя
+                } else {
+                    localStorage.removeItem('tree_client_discount'); // Удаляем скидку
+                    localStorage.setItem('tree_client_name', 'Սովորական Հաճախորդ'); // Обычное имя
+                }
+                // ===========================================
+
                 document.getElementById('auth-modal').classList.remove('open');
                 window.location.href = 'cabinet.html';
             } else {
@@ -286,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayName.textContent = savedName ? savedName : translations['fallback_name'][currentLang];
             }
 
-            // ЛОГИКА ОТОБРАЖЕНИЯ ПЕРСОНАЛЬНОЙ СКИДКИ
             const discountStr = localStorage.getItem('tree_client_discount');
             const discountBox = document.getElementById('personal-discount-box');
             const discountVal = document.getElementById('personal-discount-val');
@@ -358,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- 5. ФОРМЫ (ПРЕДЗАПОЛНЕНИЕ, КАЛЬКУЛЯТОР СО СКИДКАМИ, ОТПРАВКА) ---
+    // --- 5. ФОРМЫ И КАЛЬКУЛЯТОР ---
     if(localStorage.getItem('tree_client_id')) {
         const nameInput = document.getElementById('client_name');
         const phoneInput = document.getElementById('phone');
@@ -403,7 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const orderForm = document.getElementById('order-form');
-    // Делаем функцию глобальной, чтобы пересчитывать при смене языка
     window.calculateGrandTotal = function() {
         let grandTotal = 0;
         document.querySelectorAll('.calc-item').forEach(item => {
@@ -421,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // ПРИМЕНЕНИЕ ЛИЧНОЙ СКИДКИ
         const discountStr = localStorage.getItem('tree_client_discount');
         let discount = discountStr ? parseInt(discountStr) : 0;
         const gtEl = document.getElementById('grandTotal');
