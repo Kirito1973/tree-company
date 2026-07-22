@@ -1,10 +1,10 @@
-// Версия 6.2 - Network-First, без бесконечной перезагрузки
-const CACHE_NAME = 'tree-employee-v6.2';
+// Версия 6.3 - Network-First
+const CACHE_NAME = 'tree-employee-v6.3';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=6.1',
-    './employee.js?v=6.2',
+    './style.css?v=6.3',
+    './employee.js?v=6.3',
     './manifest.json',
     './assets/tree.png',
     './assets/apple-touch-icon.png',
