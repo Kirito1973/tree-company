@@ -1,10 +1,10 @@
-// Версия 3.0 - Стратегия Network-First (как у клиентов)
-const CACHE_NAME = 'tree-employee-v3.0';
+// Версия 4.0 - Безопасное кэширование и Network-First
+const CACHE_NAME = 'tree-employee-v4.0';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=3.0',
-    './employee.js?v=3.0',
+    './style.css?v=4.0',
+    './employee.js?v=4.0',
     './manifest.json',
     './assets/tree.png',
     './assets/apple-touch-icon.png',
@@ -24,21 +24,21 @@ self.addEventListener('install', (event) => {
     self.skipWaiting();
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(ASSETS);
+            // Безопасное добавление: не прерывает установку, если 1 файл не найден
+            return Promise.allSettled(
+                ASSETS.map(asset => cache.add(asset).catch(err => console.warn('Кэш пропущен для:', asset)))
+            );
         })
     );
 });
 
 self.addEventListener('activate', (event) => {
     event.waitUntil(clients.claim());
-    
     event.waitUntil(
         caches.keys().then((keys) => {
             return Promise.all(
                 keys.map((key) => {
-                    if (key !== CACHE_NAME) {
-                        return caches.delete(key);
-                    }
+                    if (key !== CACHE_NAME) return caches.delete(key);
                 })
             );
         })
@@ -47,15 +47,12 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
-
     event.respondWith(
         fetch(event.request)
             .then((networkResponse) => {
                 if (networkResponse && networkResponse.status === 200) {
                     const responseClone = networkResponse.clone();
-                    caches.open(CACHE_NAME).then((cache) => {
-                        cache.put(event.request, responseClone);
-                    });
+                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
                 }
                 return networkResponse;
             })
