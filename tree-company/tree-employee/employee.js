@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 5.0)
 // =========================================================
-const APP_VERSION = '4.0';
+const APP_VERSION = '5.0';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -24,7 +24,6 @@ if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Метка времени обходит глухой кэш Windows/Chrome навсегда!
         const swUrl = './sw.js?v=' + APP_VERSION + '&t=' + new Date().getTime();
         navigator.serviceWorker.register(swUrl).then(reg => {
             reg.update();
@@ -124,8 +123,7 @@ const translations = {
 
     "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
     "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
-    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" },
-    "contact_admin": { "AM": "Կապ ադմինիստրատորի հետ", "RU": "Связь с администратором", "EN": "Contact Admin" }
+    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -223,9 +221,15 @@ document.addEventListener('DOMContentLoaded', () => {
         currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
     }
     
+    // Закрытие выпадающих меню при клике по экрану
     document.addEventListener('click', (e) => { 
         if(langSwitcher && !langSwitcher.contains(e.target)) {
             langSwitcher.classList.remove('open'); 
+        }
+        
+        const fabWrapper = document.getElementById('contact-fab-wrapper');
+        if (fabWrapper && fabWrapper.classList.contains('active') && !fabWrapper.contains(e.target)) {
+            fabWrapper.classList.remove('active');
         }
     });
     
@@ -624,6 +628,15 @@ document.addEventListener('DOMContentLoaded', () => {
         closeEmpSelfEdit();
         renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
+    };
+
+    // ФУНКЦИЯ ДЛЯ ВЕРТИКАЛЬНОЙ КНОПКИ СВЯЗИ
+    window.toggleContactMenu = function() {
+        const wrapper = document.getElementById('contact-fab-wrapper');
+        if (wrapper) {
+            wrapper.classList.toggle('active');
+            if (navigator.vibrate) navigator.vibrate(15);
+        }
     };
 
     loggedInEmpId = localStorage.getItem('loggedInEmpId');
