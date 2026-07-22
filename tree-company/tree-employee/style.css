@@ -219,61 +219,89 @@ html[data-theme="dark"] .detail-block { background: rgba(0, 0, 0, 0.15); }
 .submit-btn:disabled, .submit-btn.disabled { opacity: 0.4; cursor: not-allowed; background: rgba(128, 128, 128, 0.3); color: var(--text-sec); box-shadow: none; transform: none !important; }
 
 /* ========================================================================= */
-/* СТАТИЧЕСКИЙ БЛОК КОНТАКТОВ (ИЗ КЛИЕНТСКОГО ПРИЛОЖЕНИЯ) */
+/* СТИЛИ ДЛЯ КНОПКИ ОБРАТНОЙ СВЯЗИ (ВЕРТИКАЛЬНОЕ МЕНЮ EXPANDABLE FAB) */
 /* ========================================================================= */
 
-.contact-section { 
-    width: 100%; 
-    margin-top: auto; 
-    text-align: center; 
-    padding-top: 28px; 
-    padding-bottom: 20px;
-    border-top: 1px solid rgba(128, 128, 128, 0.15); 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
+.contact-fab-wrapper {
+    position: fixed;
+    bottom: 96px;
+    right: 20px;
+    z-index: 1500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
-.contact-title { 
-    font-size: 11.5px; 
-    font-weight: 800; 
-    color: var(--text-sec); 
-    margin-bottom: 20px; 
-    text-transform: uppercase; 
-    letter-spacing: 0.5px; 
-    max-width: 90%; 
-    line-height: 1.5; 
+
+.contact-fab-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
 }
-.social-icons { 
-    display: flex; 
-    justify-content: center; 
-    flex-wrap: wrap; 
-    gap: 16px; 
-    width: 100%; 
+
+.contact-fab-wrapper.active .contact-fab-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
-.social-btn { 
-    width: 52px; 
-    height: 52px; 
-    border-radius: 50%; 
-    background: transparent !important;
-    border: none !important;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    text-decoration: none; 
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+
+/* Строго круглые кнопки с жестким обрезанием */
+.contact-fab-item {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px var(--shadow), var(--glass-rim);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
     overflow: hidden; 
+    border: 1px solid var(--card-border);
 }
-.social-btn:active { 
-    transform: scale(0.85); 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
+html[data-theme="dark"] .contact-fab-item {
+    background: rgba(255, 255, 255, 0.1);
 }
-.social-btn img { 
-    width: 100%; 
-    height: 100%; 
+
+.contact-fab-item:active { transform: scale(0.9); }
+
+.contact-fab-item img {
+    width: 100%;
+    height: 100%;
     object-fit: cover; 
-    display: block; 
+    border-radius: 50%;
+    display: block;
 }
+
+.fab-contact-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #23A95B, #1F9651);
+    color: white;
+    border: none;
+    box-shadow: 0 8px 24px rgba(31, 150, 81, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, background 0.3s ease;
+}
+.fab-contact-btn:active { transform: scale(0.9); box-shadow: 0 4px 12px rgba(31, 150, 81, 0.3); }
+
+.fab-contact-btn svg { width: 26px; height: 26px; stroke: white; fill: none; transition: all 0.3s ease; }
+.contact-fab-wrapper.active .fab-icon-main { display: none; }
+.contact-fab-wrapper.active .fab-icon-close { display: block; }
+.contact-fab-wrapper.active .fab-contact-btn { background: rgba(255, 50, 50, 0.9); box-shadow: 0 8px 24px rgba(255, 50, 50, 0.4); }
 
 /* ========================================================================= */
 /* АДАПТИВНОСТЬ ДЛЯ ПК И ПЛАНШЕТОВ (ИДЕНТИЧНО КЛИЕНТСКОМУ ПРИЛОЖЕНИЮ) */
@@ -303,4 +331,6 @@ html[data-theme="dark"] .detail-block { background: rgba(0, 0, 0, 0.15); }
     .filter-tabs { justify-content: center; }
     
     .modal-content { max-width: 450px; padding: 45px 30px; }
+    
+    .contact-fab-wrapper { bottom: 40px; right: 40px; }
 }
