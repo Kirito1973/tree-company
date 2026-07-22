@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.3)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.4)
 // =========================================================
-const APP_VERSION = '6.3';
+const APP_VERSION = '6.4';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -62,7 +62,6 @@ function switchEmpTab(screenId, btnElement) {
     if (navigator.vibrate) navigator.vibrate(20); 
 }
 
-// ================= СЛОВАРЬ (TREE COMPANY И НОВЫЕ ПОЛЯ) =================
 const translations = {
     "tab_emp_news": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
     "tab_emp_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
@@ -127,7 +126,6 @@ const translations = {
     "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" },
     "contact_admin": { "AM": "Կապ ադմինիստրատորի հետ", "RU": "Связь с администратором", "EN": "Contact Admin" },
     
-    // Новые строки для рейтинга и отзывов
     "your_rating": { "AM": "Ձեր վարկանիշը", "RU": "Ваш рейтинг", "EN": "Your Rating" },
     "based_on_reviews": { "AM": "հիմնված է հաճախորդների կարծիքների վրա", "RU": "основано на отзывах клиентов", "EN": "based on client reviews" },
     "client_reviews": { "AM": "Հաճախորդների կարծիքները", "RU": "Отзывы клиентов", "EN": "Client Reviews" },
@@ -254,10 +252,10 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('emp_app_lang', currentLang);
             
             if (loggedInEmpId) {
-                renderEmployeeNews();
-                renderEmployeeOrders();
-                renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
-                renderEmployeeFinance();
+                window.renderEmployeeNews();
+                window.renderEmployeeOrders();
+                window.renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
+                window.renderEmployeeFinance();
                 
                 const emp = employeesData.find(emp => emp.id === loggedInEmpId);
                 const firstName = emp.name.split(' ')[0];
@@ -265,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `${greetings[currentLang]}, <b>${firstName}</b>!`);
 
                 if (document.getElementById('order-modal').classList.contains('active') && currentActiveOrderId) {
-                    openOrderModal(currentActiveOrderId);
+                    window.openOrderModal(currentActiveOrderId);
                 }
             } else {
                 applyLanguage();
@@ -274,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ================= РЕНДЕР ГЛАВНОЙ СТРАНИЦЫ (НОВОСТИ, РЕЙТИНГ И ОТЗЫВЫ) =================
     window.renderEmployeeNews = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         const newsSection = document.getElementById('screen-emp-news');
@@ -341,11 +338,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const greetings = { "AM": "Բարև", "RU": "Привет", "EN": "Hello" };
         document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `${greetings[currentLang]}, <b>${firstName}</b>!`);
         
-        renderEmployeeNews();
-        renderEmployeeOrders();
-        renderEmployeeProfile(emp);
-        renderEmployeeFinance();
-        updateOrderCounts(); 
+        window.renderEmployeeNews();
+        window.renderEmployeeOrders();
+        window.renderEmployeeProfile(emp);
+        window.renderEmployeeFinance();
+        window.updateOrderCounts(); 
     };
 
     window.logoutEmployee = function() {
@@ -361,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
         if (navigator.vibrate) navigator.vibrate(15);
-        renderEmployeeOrders();
+        window.renderEmployeeOrders();
     };
 
     window.renderEmployeeFinance = function() {
@@ -584,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnContainer.innerHTML = `<button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')" data-i18n="btn_accept_order">Ընդունել պատվերը</button>`;
         } else if (order.status === 'progress') {
             btnContainer.innerHTML = `<button type="button" id="btn-finish-order" class="submit-btn" style="width: 100%; border-radius: 16px;" onclick="finishOrder('${order.id}')" data-i18n="btn_finish_order">Ավարտել պատվերը</button>`;
-            checkIfOrderCanBeFinished(order.id); 
+            window.checkIfOrderCanBeFinished(order.id); 
         }
 
         btnContainer.innerHTML += `<button type="button" class="submit-btn" style="width: 100%; border-radius: 16px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderModal()" data-i18n="btn_close">Փակել</button>`;
@@ -621,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             if (navigator.vibrate) navigator.vibrate(10);
-            checkIfOrderCanBeFinished(orderId);
+            window.checkIfOrderCanBeFinished(orderId);
         }
     };
 
@@ -647,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
             order.acceptedAt = getNowString(); 
             if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
             closeOrderModal();
-            updateOrderCounts();
+            window.updateOrderCounts();
             filterEmpOrders('progress', document.getElementById('tab-progress')); 
         }
     };
@@ -660,9 +657,9 @@ document.addEventListener('DOMContentLoaded', () => {
             order.isCommissionPaid = false; 
             if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
             closeOrderModal();
-            updateOrderCounts();
+            window.updateOrderCounts();
             filterEmpOrders('completed', document.getElementById('tab-completed')); 
-            renderEmployeeFinance(); 
+            window.renderEmployeeFinance(); 
         }
     };
 
@@ -698,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
         emp.birthDate = document.getElementById('self-edit-birth').value;
         emp.address = document.getElementById('self-edit-address').value;
         closeEmpSelfEdit();
-        renderEmployeeProfile(emp);
+        window.renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
@@ -726,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     loggedInEmpId = emp.id;
                     e.target.value = '';
                     if (navigator.vibrate) navigator.vibrate(50);
-                    showEmployeeDashboard(emp.id);
+                    window.showEmployeeDashboard(emp.id);
                 } else {
                     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
                     e.target.classList.add('error-shake');
@@ -740,7 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (loggedInEmpId) showEmployeeDashboard(loggedInEmpId);
+    if (loggedInEmpId) window.showEmployeeDashboard(loggedInEmpId);
 
     applyLanguage();
 });
