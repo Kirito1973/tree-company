@@ -1,6 +1,6 @@
 {
-  "name": "TREE - Мастер",
-  "short_name": "TREE",
+  "name": "TREE - Աշխատակիցներ",
+  "short_name": "Աշխատակիցներ",
   "description": "Приложение для мастеров компании TREE",
   "start_url": "./index.html",
   "display": "standalone",
