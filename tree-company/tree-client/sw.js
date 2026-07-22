@@ -1,5 +1,5 @@
-// Версия 14.0 - Полный обход кэша через переименование файлов
-const CACHE_NAME = 'tree-company-v17.0';
+// Версия 18.0 - Обновление кэша для симулятора скидок
+const CACHE_NAME = 'tree-company-v18.0';
 const ASSETS = [
   './',
   './index.html',
@@ -7,11 +7,10 @@ const ASSETS = [
   './cabinet.html',
   './cooperation.html',
   './jobs.html',
-  './form.html',
   './order-doors.html',
   './order-baseboards.html',
-  './style.css?v=14.0',
-  './main.js?v=14.0',
+  './style.css?v=18.0',
+  './main.js?v=18.0',
   './manifest.json',
   './assets/tree.png',
   './assets/icon-192.png',
@@ -60,7 +59,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // ВАЖНО: Кэшируем только успешные ответы сервера (200 OK)
         if (networkResponse && networkResponse.status === 200) {
             const responseClone = networkResponse.clone();
             caches.open(CACHE_NAME).then((cache) => {
