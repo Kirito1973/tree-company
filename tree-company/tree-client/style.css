@@ -68,7 +68,7 @@ html[data-theme="dark"] .main-logo { mix-blend-mode: normal; filter: drop-shadow
 .lang-flag { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; pointer-events: none; }
 
 /* Баннеры и сетки */
-.promo-banner { width: 100%; background: linear-gradient(135deg, rgba(92, 53, 31, 0.95), rgba(43, 23, 12, 0.98)); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 26px 20px; border-radius: 26px; text-align: center; margin-bottom: 32px; position: relative; overflow: hidden; border: 1px solid rgba(255, 223, 115, 0.25); text-decoration: none; display: block; box-shadow: 0 16px 35px rgba(0, 0, 0, 0.25), 0 0 20px rgba(255, 223, 115, 0.15); animation: banner-pulse 3s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
+.promo-banner { width: 100%; background: linear-gradient(135deg, rgba(92, 53, 31, 0.95), rgba(43, 23, 12, 0.98)); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 26px 20px; border-radius: 26px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden; border: 1px solid rgba(255, 223, 115, 0.25); text-decoration: none; display: block; box-shadow: 0 16px 35px rgba(0, 0, 0, 0.25), 0 0 20px rgba(255, 223, 115, 0.15); animation: banner-pulse 3s infinite alternate cubic-bezier(0.4, 0, 0.2, 1); }
 .promo-banner::after { content: ''; position: absolute; top: 0; left: -150%; width: 150%; height: 100%; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 20%, rgba(255,255,255,0.6) 35%, transparent 40%, rgba(255,255,255,0.8) 45%, rgba(255,255,255,0) 50%); transform: skewX(-25deg); animation: double-shimmer 4s infinite; }
 .promo-subtitle { display: block; font-size: 11px; font-weight: 900; letter-spacing: 2.5px; color: #E6C594; text-transform: uppercase; position: relative; z-index: 2; margin-bottom: 10px; text-shadow: 0 2px 8px rgba(0,0,0,0.8); }
 .promo-title { display: block; font-size: 15.5px; font-weight: 700; line-height: 1.45; color: #FFFFFF; position: relative; z-index: 2; }
@@ -78,7 +78,7 @@ html[data-theme="dark"] .main-logo { mix-blend-mode: normal; filter: drop-shadow
 
 .page-title { text-align: center; font-size: 24px; font-weight: 900; margin-bottom: 24px; color: var(--text); position: relative; width: 100%; }
 .page-title span { color: var(--tree-light); }
-.grid-title { align-self: center; text-align: center; font-size: 20px; font-weight: 900; margin-bottom: 28px; margin-top: 10px; letter-spacing: 0.5px; color: var(--text); position: relative; display: inline-block; }
+.grid-title { align-self: center; text-align: center; font-size: 20px; font-weight: 900; margin-bottom: 24px; margin-top: 10px; letter-spacing: 0.5px; color: var(--text); position: relative; display: inline-block; }
 .grid-title::after { content: ''; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 45px; height: 4px; background: var(--tree-light); border-radius: 4px; }
 
 .services-grid, .benefits-grid, .jobs-grid { display: grid; width: 100%; gap: 14px; }
@@ -99,6 +99,15 @@ html[data-theme="dark"] .main-logo { mix-blend-mode: normal; filter: drop-shadow
 
 html[data-theme="dark"] .service-phone-badge { background: rgba(255, 255, 255, 0.1); }
 html[data-theme="dark"] .service-card.coming-soon .service-phone-badge { background: rgba(255, 255, 255, 0.05); }
+
+/* ПАРТНЕРЫ (Слайдер) */
+.partners-wrapper { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 10px; width: 100%; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
+.partners-wrapper::-webkit-scrollbar { display: none; }
+.partner-placeholder { flex: 0 0 130px; height: 130px; scroll-snap-align: center; background: var(--card-bg); border: 2px dashed rgba(128, 128, 128, 0.4); border-radius: 24px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; color: var(--text-sec); font-size: 11px; font-weight: 800; text-transform: uppercase; text-decoration: none; transition: all 0.3s ease; }
+.partner-placeholder svg { width: 32px; height: 32px; opacity: 0.5; }
+.partner-placeholder:active { transform: scale(0.95); background: rgba(35, 169, 91, 0.05); border-color: var(--tree-light); color: var(--tree-light); }
+.partner-placeholder:active svg { opacity: 1; stroke: var(--tree-light); }
+html[data-theme="dark"] .partner-placeholder { border-color: rgba(255, 255, 255, 0.2); }
 
 /* Формы */
 .form-card { width: 100%; background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 28px; padding: 24px 20px; box-shadow: 0 10px 30px var(--shadow), var(--glass-rim); display: flex; flex-direction: column; gap: 16px; }
@@ -142,13 +151,7 @@ select.glass-input { appearance: none; -webkit-appearance: none; background-imag
     transform: scale(0.85); 
     box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
 }
-
-.social-btn img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover;
-    display: block;
-}
+.social-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* Калькулятор услуг */
 .calc-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
