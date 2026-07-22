@@ -1,5 +1,5 @@
 // Версия 14.0 - Полный обход кэша через переименование файлов
-const CACHE_NAME = 'tree-company-v14.0';
+const CACHE_NAME = 'tree-company-v17.0';
 const ASSETS = [
   './',
   './index.html',
