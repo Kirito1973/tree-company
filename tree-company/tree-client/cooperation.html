@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TREE COMPANY - Համագործակցություն</title>
     <meta name="theme-color" content="#EBF1EC" id="themeColorMeta">
-    <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="TREE COMPANY">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
     <script>
@@ -27,7 +25,7 @@
         })();
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=11.0">
+    <link rel="stylesheet" href="style.css?v=16.0">
 </head>
 <body>
     <div class="noise-overlay"></div><div class="ambient-glow"></div>
@@ -51,7 +49,8 @@
             </div>
         </header>
 
-        <h1 class="page-title" data-i18n="coop_title">Համագործակցություն</h1>
+        <h1 class="page-title" data-i18n="coop_title" style="margin-bottom: 12px;">Համագործակցություն</h1>
+        <p style="text-align: center; color: var(--text-sec); font-size: 11px; font-weight: 800; margin-bottom: 24px; padding: 0 20px; text-transform: uppercase;" data-i18n="desc_partner">Բիզնես առաջարկներ և B2B համագործակցություն</p>
 
         <form id="coop-form" class="form-card" action="#">
             <div class="input-group">
@@ -70,6 +69,7 @@
         </form>
     </div>
 
+    <!-- ТОЛЬКО 3 КНОПКИ ВНИЗУ -->
     <nav class="bottom-nav">
         <a href="index.html" class="nav-item" id="nav-home">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -79,15 +79,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
             <span data-i18n="nav_orders">Պատվերներ</span>
         </a>
-        <a href="jobs.html" class="nav-item" id="nav-jobs">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-            <span data-i18n="nav_jobs">Աշխատանք</span>
-        </a>
         <a href="#" class="nav-item" id="nav-cabinet">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             <span data-i18n="nav_cabinet">Անձն. էջ</span>
         </a>
     </nav>
-    <script src="main.js?v=11.0"></script>
+    <script src="main.js?v=16.0"></script>
 </body>
 </html>
