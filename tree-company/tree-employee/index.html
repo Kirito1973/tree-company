@@ -76,7 +76,6 @@
             </div>
         </section>
 
-        <!-- Пустой контейнер, куда JS вставит приветствие, рейтинг и отзывы -->
         <section class="emp-screen" id="screen-emp-news"></section>
 
         <section class="emp-screen" id="screen-emp-orders">
@@ -136,16 +135,23 @@
                         <span class="detail-label" data-i18n="prof_address">Հասցե:</span>
                         <span class="detail-value" id="profile-address"></span>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="prof_days_off">Выходные дни:</span>
-                        <span class="detail-value" id="profile-days-off" style="color: #ff4444;"></span>
-                    </div>
                 </div>
                 
                 <button type="button" class="submit-btn" style="margin-top: 16px;" onclick="openEmpSelfEdit()" data-i18n="prof_edit_btn">
                     <span>Խմբագրել</span>
                 </button>
             </div>
+
+            <!-- НОВЫЙ БЛОК: ПАНЕЛЬ ГРАФИКА НА НЕДЕЛЮ -->
+            <div class="glass-panel" style="margin-top: 10px; background: rgba(35, 169, 91, 0.05);">
+                <h3 class="input-label" style="margin-bottom: 12px; color: var(--tree-light);" data-i18n="prof_schedule_title">График работы (Текущая неделя)</h3>
+                
+                <!-- Контейнер для кнопок-дат, генерируется через JS -->
+                <div id="weekly-schedule-container" class="schedule-selector"></div>
+                
+                <button class="submit-btn" id="btn-save-schedule" style="margin-top: 16px; padding: 14px; font-size: 10px; border-radius: 14px;" onclick="saveWeeklySchedule()" data-i18n="btn_save_schedule">Сохранить график</button>
+            </div>
+
         </section>
 
         <!-- Модальное окно заказа -->
@@ -227,19 +233,6 @@
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="edit_address_label">Հասցե</label>
                         <input type="text" id="self-edit-address" class="glass-input">
-                    </div>
-                    
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="edit_days_off_label">Выходные дни</label>
-                        <div class="days-off-selector">
-                            <label class="day-chip"><input type="checkbox" name="day_off" value="1"><span data-i18n="day_1">Пн</span></label>
-                            <label class="day-chip"><input type="checkbox" name="day_off" value="2"><span data-i18n="day_2">Вт</span></label>
-                            <label class="day-chip"><input type="checkbox" name="day_off" value="3"><span data-i18n="day_3">Ср</span></label>
-                            <label class="day-chip"><input type="checkbox" name="day_off" value="4"><span data-i18n="day_4">Чт</span></label>
-                            <label class="day-chip"><input type="checkbox" name="day_off" value="5"><span data-i18n="day_5">Пт</span></label>
-                            <label class="day-chip"><input type="checkbox" name="day_off" value="6"><span data-i18n="day_6">Сб</span></label>
-                            <label class="day-chip"><input type="checkbox" name="day_off" value="7"><span data-i18n="day_7">Вс</span></label>
-                        </div>
                     </div>
                     
                     <div class="input-group" style="gap: 10px; margin-top: 20px;">
