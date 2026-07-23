@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.2)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.3)
 // =========================================================
-const APP_VERSION = '7.2';
+const APP_VERSION = '7.3';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -218,9 +218,10 @@ let ordersData = [
     { id: 'ORD-001', status: 'completed', isCommissionPaid: false, createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00', clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1', worker: 'Արմեն Սարգսյան', services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true, doneAt: '11.07.2026 13:50' }] }
 ];
 
+// Добавлено photo для аватарок
 let employeesData = [
-    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', workingDates: ['20.07.2026', '23.07.2026', '24.07.2026', '25.07.2026'] },
-    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', workingDates: [] }
+    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', workingDates: ['20.07.2026', '23.07.2026', '24.07.2026', '25.07.2026'], photo: '' },
+    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', workingDates: [], photo: '' }
 ];
 
 let reviewsData = [
@@ -720,6 +721,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.renderEmployeeProfile = function(emp) {
+        // Установка фото профиля
+        const photoEl = document.getElementById('profile-photo-display');
+        if(photoEl) {
+            photoEl.src = (emp.photo && emp.photo.trim() !== '') ? emp.photo : 'assets/tree.png';
+        }
+
         document.getElementById('profile-name').innerText = emp.name;
         let pType = emp.typeLabel.split(' / ');
         document.getElementById('profile-type').innerText = currentLang === 'AM' ? pType[0] : (pType[1] || pType[0]);
@@ -728,16 +735,38 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile-address').innerText = emp.address || '---';
     };
 
-    // --- ЛОГИКА ГРАФИКА НА НЕДЕЛЮ ---
+    // --- НАСТОЯЩИЙ JAVASCRIPT-ТУМБЛЕР (Идеально для мобилок) ---
+    window.toggleWorkDate = function(elem, dateStr) {
+        if (elem.classList.contains('locked')) return; // Блокировка прошлых дней
+
+        const cb = elem.querySelector('input[type="checkbox"]');
+        const btn = elem.querySelector('.switch-btn');
+        
+        cb.checked = !cb.checked; // Инвертируем скрытый чекбокс
+        
+        // Меняем класс у визуального тумблера
+        if (cb.checked) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+        
+        if (navigator.vibrate) navigator.vibrate(15);
+    };
+
+    // --- ЛОГИКА ВЫПАДАЮЩЕГО СПИСКА ГРАФИКА И КАЛЕНДАРЯ ---
     window.toggleScheduleDropdown = function() {
         const content = document.getElementById('schedule-dropdown-content');
         const chevron = document.getElementById('schedule-chevron');
         if (content.classList.contains('open')) {
             content.classList.remove('open');
             chevron.style.transform = 'rotate(0deg)';
+            if (navigator.vibrate) navigator.vibrate(10);
         } else {
             content.classList.add('open');
             chevron.style.transform = 'rotate(180deg)';
+            if (navigator.vibrate) navigator.vibrate(15);
+            renderCalendar();
         }
     };
 
@@ -749,35 +778,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const weekDates = getCurrentWeekDates();
         const workingDates = emp.workingDates || [];
         
-        // Получаем начало сегодняшнего дня для проверки прошлых дат
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
         container.innerHTML = '';
         weekDates.forEach(wd => {
-            const isChecked = workingDates.includes(wd.dateStr) ? 'checked' : '';
+            const isChecked = workingDates.includes(wd.dateStr);
             const dayNameFull = translations[`day_${wd.dayIndex}_full`]?.[currentLang] || translations[`day_${wd.dayIndex}`][currentLang];
             
-            // Проверка, прошел ли уже этот день
             const [d, m, y] = wd.dateStr.split('.');
             const rowDate = new Date(y, m - 1, d);
             const isPast = rowDate < today;
             
             const lockClass = isPast ? 'locked' : '';
-            const disabledAttr = isPast ? 'disabled' : '';
+            const activeClass = isChecked ? 'active' : '';
 
-            // Строка не нажимается. Нажимается ТОЛЬКО label.switch
+            // Теперь вся строка кликабельна и управляется через JS. Это пуленепробиваемый вариант.
             container.innerHTML += `
-                <div class="schedule-list-item ${lockClass}">
+                <div class="schedule-list-item ${lockClass}" onclick="toggleWorkDate(this, '${wd.dateStr}')">
                     <div class="schedule-day-info">
                         <span class="schedule-day-name">${dayNameFull}</span>
                         <span class="schedule-day-date">${wd.dateStr}</span>
                     </div>
                     
-                    <label class="switch">
-                        <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked} ${disabledAttr} onchange="if(navigator.vibrate) navigator.vibrate(15)">
-                        <span class="slider"></span>
-                    </label>
+                    <div class="switch-btn ${activeClass}">
+                        <div class="knob"></div>
+                    </div>
+                    
+                    <input type="checkbox" style="display:none;" name="work_date" value="${wd.dateStr}" ${isChecked ? 'checked' : ''}>
                 </div>
             `;
         });
@@ -788,23 +816,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if (!emp) return;
 
-        // Собираем то, что отмечено и неотмечено на экране СЕЙЧАС
         const selectedThisWeek = Array.from(document.querySelectorAll('input[name="work_date"]:checked')).map(cb => cb.value);
         const unselectedThisWeek = Array.from(document.querySelectorAll('input[name="work_date"]:not(:checked)')).map(cb => cb.value);
         
         let newWorkingDates = [...(emp.workingDates || [])];
         
-        // Убираем из массива те даты, с которых сейчас СНЯЛИ галочку (в том числе заблокированные пустые)
         newWorkingDates = newWorkingDates.filter(d => !unselectedThisWeek.includes(d));
         
-        // Добавляем те даты, на которые сейчас ПОСТАВИЛИ галочку (и заблокированные заполненные)
         selectedThisWeek.forEach(d => {
             if (!newWorkingDates.includes(d)) {
                 newWorkingDates.push(d);
             }
         });
         
-        // Сохраняем в профиль
         emp.workingDates = newWorkingDates; 
 
         if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
@@ -843,7 +867,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         grid.innerHTML = '';
         
-        // Определяем первый день месяца (сдвигаем для ПН)
         let firstDay = new Date(year, month, 1).getDay();
         let startDay = firstDay === 0 ? 6 : firstDay - 1;
         
@@ -876,9 +899,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- ПРЕДПРОСМОТР И ЗАГРУЗКА ФОТО ---
+    window.previewProfilePhoto = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                document.getElementById('edit-photo-preview').src = evt.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    };
+
     window.openEmpSelfEdit = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if(!emp) return;
+        
+        // Подтягиваем старое фото в модалку
+        const editPhotoEl = document.getElementById('edit-photo-preview');
+        if(editPhotoEl) {
+            editPhotoEl.src = (emp.photo && emp.photo.trim() !== '') ? emp.photo : 'assets/tree.png';
+        }
+
         document.getElementById('self-edit-name').value = emp.name;
         document.getElementById('self-edit-phone').value = emp.phone;
         document.getElementById('self-edit-birth').value = emp.birthDate || '';
@@ -894,6 +936,13 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if(!emp) return;
+        
+        // Сохраняем фото (в base64)
+        const newPhotoSrc = document.getElementById('edit-photo-preview').src;
+        if (newPhotoSrc && newPhotoSrc.startsWith('data:image')) {
+            emp.photo = newPhotoSrc;
+        }
+
         emp.name = document.getElementById('self-edit-name').value;
         emp.phone = document.getElementById('self-edit-phone').value;
         emp.birthDate = document.getElementById('self-edit-birth').value;
