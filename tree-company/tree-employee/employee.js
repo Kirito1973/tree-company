@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.8)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.9)
 // =========================================================
-const APP_VERSION = '6.8';
+const APP_VERSION = '6.9';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -731,21 +731,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const isChecked = workingDates.includes(wd.dateStr) ? 'checked' : '';
             const dayNameFull = translations[`day_${wd.dayIndex}_full`]?.[currentLang] || translations[`day_${wd.dayIndex}`][currentLang];
             
-            // Абсолютно пуленепробиваемая верстка для мобилок:
-            // 1. Невидимый нативный чекбокс лежит ПОВЕРХ всего блока.
-            // 2. Куда бы вы ни нажали - вы всегда нажимаете прямо на него.
+            // Строка теперь div, а кликабельной является ТОЛЬКО правая часть (label.switch)
             container.innerHTML += `
                 <div class="schedule-list-item">
-                    <input type="checkbox" name="work_date" value="${wd.dateStr}" class="row-checkbox-overlay" ${isChecked} onchange="if(navigator.vibrate) navigator.vibrate(15)">
-                    
                     <div class="schedule-day-info">
                         <span class="schedule-day-name">${dayNameFull}</span>
                         <span class="schedule-day-date">${wd.dateStr}</span>
                     </div>
-                    
-                    <div class="fake-switch">
-                        <div class="fake-slider"></div>
-                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked} onchange="if(navigator.vibrate) navigator.vibrate(15)">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             `;
         });
