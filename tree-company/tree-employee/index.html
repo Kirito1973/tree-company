@@ -30,7 +30,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=7.6">
+    <link rel="stylesheet" href="style.css?v=7.7">
 </head>
 <body>
 
@@ -303,41 +303,43 @@
             </div>
         </div>
 
-        <!-- НОВОЕ: Окно Распределения Прибыли -->
+        <!-- НОВОЕ: Окно Распределения Прибыли (Тут добавлена форма для Enter) -->
         <div class="modal-overlay" id="split-profit-modal" onclick="closeSplitProfitModal()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                 <h3 class="screen-title" style="margin-bottom: 16px;" data-i18n="modal_split_title">Распределение прибыли</h3>
                 
-                <div class="detail-block" style="background: rgba(35, 169, 91, 0.1); border-color: rgba(35, 169, 91, 0.3);">
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="modal_fin_total">Общая сумма:</span>
-                        <span class="detail-value" id="split-total-amount">0 ֏</span>
+                <form id="split-profit-form" onsubmit="event.preventDefault(); const btn = document.getElementById('btn-confirm-split'); if(!btn.disabled) confirmSplitAndFinish();">
+                    <div class="detail-block" style="background: rgba(35, 169, 91, 0.1); border-color: rgba(35, 169, 91, 0.3);">
+                        <div class="detail-row">
+                            <span class="detail-label" data-i18n="modal_fin_total">Общая сумма:</span>
+                            <span class="detail-value" id="split-total-amount">0 ֏</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label" data-i18n="modal_fin_company">Комиссия (20%):</span>
+                            <span class="detail-value" style="color: #ff4444;" id="split-company-fee">- 0 ֏</span>
+                        </div>
+                        <div class="detail-row" style="border-top: 1px solid rgba(31, 150, 81, 0.3); padding-top: 8px; margin-top: 4px;">
+                            <span class="detail-label" style="color: var(--text); font-weight: 800;" data-i18n="split_net_total">Остаток бригады:</span>
+                            <span class="detail-value" id="split-net-total" style="color: var(--tree-light); font-size: 14px;">0 ֏</span>
+                        </div>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="modal_fin_company">Комиссия (20%):</span>
-                        <span class="detail-value" style="color: #ff4444;" id="split-company-fee">- 0 ֏</span>
-                    </div>
-                    <div class="detail-row" style="border-top: 1px solid rgba(31, 150, 81, 0.3); padding-top: 8px; margin-top: 4px;">
-                        <span class="detail-label" style="color: var(--text); font-weight: 800;" data-i18n="split_net_total">Остаток бригады:</span>
-                        <span class="detail-value" id="split-net-total" style="color: var(--tree-light); font-size: 14px;">0 ֏</span>
-                    </div>
-                </div>
 
-                <div id="split-assistants-container" style="margin-top: 16px;">
-                    <!-- Помощники появятся здесь -->
-                </div>
-
-                <div class="detail-block" style="margin-top: 16px; background: rgba(0, 200, 255, 0.1); border-color: rgba(0, 200, 255, 0.3);">
-                    <div class="detail-row" style="border: none;">
-                        <span class="detail-label" style="color: var(--text); font-weight: 800; width: 50%;" data-i18n="split_your_share">Ваш остаток:</span>
-                        <span class="detail-value" id="split-lead-share" style="color: #00A3FF; font-size: 18px; font-weight: 900;">0 ֏</span>
+                    <div id="split-assistants-container" style="margin-top: 16px;">
+                        <!-- Помощники появятся здесь -->
                     </div>
-                </div>
 
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="button" class="submit-btn success" id="btn-confirm-split" onclick="confirmSplitAndFinish()" style="flex: 1; padding: 14px;" data-i18n="btn_confirm_split">Подтвердить</button>
-                    <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 14px; width: auto;" onclick="closeSplitProfitModal()" data-i18n="btn_cancel">Отмена</button>
-                </div>
+                    <div class="detail-block" style="margin-top: 16px; background: rgba(0, 200, 255, 0.1); border-color: rgba(0, 200, 255, 0.3);">
+                        <div class="detail-row" style="border: none;">
+                            <span class="detail-label" style="color: var(--text); font-weight: 800; width: 50%;" data-i18n="split_your_share">Ваш остаток:</span>
+                            <span class="detail-value" id="split-lead-share" style="color: #00A3FF; font-size: 18px; font-weight: 900;">0 ֏</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="submit" class="submit-btn success" id="btn-confirm-split" style="flex: 1; padding: 14px;" data-i18n="btn_confirm_split">Подтвердить</button>
+                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 14px; width: auto;" onclick="closeSplitProfitModal()" data-i18n="btn_cancel">Отмена</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -368,6 +370,6 @@
         <button class="tab-item" onclick="switchEmpTab('screen-emp-profile', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span data-i18n="tab_emp_profile">Իմ էջը</span></button>
     </nav>
 
-    <script src="employee.js?v=7.6"></script>
+    <script src="employee.js?v=7.7"></script>
 </body>
 </html>
