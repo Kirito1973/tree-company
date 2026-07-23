@@ -142,14 +142,14 @@
                 </button>
             </div>
 
-            <!-- НОВЫЙ БЛОК: ВЫПАДАЮЩИЙ СПИСОК ГРАФИКА (АККОРДЕОН) -->
+            <!-- БЛОК ГРАФИКА (С исправленными перехватами кликов для мобильных) -->
             <div class="glass-panel" style="margin-top: 10px; padding: 0; overflow: hidden; background: rgba(35, 169, 91, 0.05); border-color: rgba(35, 169, 91, 0.2);">
                 <div class="schedule-accordion-header" onclick="toggleScheduleDropdown()" id="schedule-dropdown-header">
-                    <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px; pointer-events: none;">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--tree-light)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                         <span style="font-size: 13px; font-weight: 800; color: var(--text);" data-i18n="prof_schedule_title">График (Эта неделя)</span>
                     </div>
-                    <svg id="schedule-chevron" viewBox="0 0 24 24" width="20" height="20" stroke="var(--text-sec)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <svg id="schedule-chevron" viewBox="0 0 24 24" width="20" height="20" stroke="var(--text-sec)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s; pointer-events: none;"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
                 
                 <div id="schedule-dropdown-content" class="schedule-dropdown-content">
