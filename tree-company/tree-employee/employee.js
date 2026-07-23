@@ -198,7 +198,7 @@ let reviewsData = [
 
 let loggedInEmpId = null;
 let currentActiveOrderId = null;
-let currentOrderFilter = 'progress'; 
+let currentOrderFilter = 'new'; 
 let calendarDate = new Date();
 
 window.updateOrderCounts = function() {
@@ -777,7 +777,7 @@ document.addEventListener('DOMContentLoaded', () => {
             astContainer.innerHTML += `
                 <div class="input-group" style="margin-bottom:12px;">
                     <label class="input-label">${labelBase}: ${astName} <span style="color:var(--tree-light); font-weight:900;">${hintText}</span></label>
-                    <input type="number" class="glass-input ast-share-input" data-name="${astName}" value="${val}" min="0" oninput="calcSplit()" ${isReadonly} style="font-size: 18px; text-align: center; color: ${colorStyle}; ${opacityStyle}">
+                    <input type="number" class="glass-input ast-share-input" data-name="${astName}" value="${val}" min="0" oninput="calcSplit()" onfocus="if(this.value==='0') this.value=''; else this.select();" onblur="if(this.value==='') { this.value='0'; calcSplit(); }" ${isReadonly} style="font-size: 18px; text-align: center; color: ${colorStyle}; ${opacityStyle}">
                 </div>
             `;
         });
