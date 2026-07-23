@@ -30,7 +30,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=7.2">
+    <link rel="stylesheet" href="style.css?v=7.3">
 </head>
 <body>
 
@@ -112,6 +112,12 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed rgba(128,128,128,0.2); padding-bottom: 10px;">
                     <div id="emp-greeting" style="font-weight: 900; font-size: 16px; color: var(--tree-light);">Բարև!</div>
                     <button class="submit-btn" onclick="logoutEmployee()" style="margin: 0; width: auto; padding: 6px 12px; font-size: 9px; background: rgba(255,50,50,0.1); color: #ff4444; border-radius: 12px;" data-i18n="logout_btn">Ելք</button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 16px;">
+                    <div class="avatar-wrapper">
+                        <img id="profile-photo-display" src="assets/tree.png" alt="Avatar">
+                    </div>
                 </div>
 
                 <div class="detail-block" style="margin-top: 0;">
@@ -252,6 +258,17 @@
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                 <h3 class="screen-title" style="margin-bottom: 16px;" data-i18n="edit_profile_title">Խմբագրել պրոֆիլը</h3>
                 <form id="emp-self-edit-form" onsubmit="saveEmpSelfEdit(event)">
+                    
+                    <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+                        <div class="avatar-edit-wrapper" onclick="document.getElementById('edit-photo-input').click()">
+                            <img id="edit-photo-preview" src="assets/tree.png" alt="Edit Avatar">
+                            <div class="avatar-edit-overlay">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                            </div>
+                        </div>
+                        <input type="file" id="edit-photo-input" accept="image/*" style="display: none;" onchange="previewProfilePhoto(event)">
+                    </div>
+
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="edit_name_label">Անուն Ազգանուն</label>
                         <input type="text" id="self-edit-name" class="glass-input" required>
@@ -324,6 +341,6 @@
         </button>
     </nav>
 
-    <script src="employee.js?v=7.2"></script>
+    <script src="employee.js?v=7.3"></script>
 </body>
 </html>
