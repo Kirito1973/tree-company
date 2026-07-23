@@ -369,9 +369,18 @@ html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
     gap: 8px;
 }
 
-/* --- НЕУБИВАЕМЫЙ ПЕРЕКЛЮЧАТЕЛЬ ДЛЯ МОБИЛЬНЫХ --- */
+/* Блокировка прошедших дней */
+.schedule-list-item.locked {
+    opacity: 0.5;
+    pointer-events: none; /* Полностью блокируем клики на прошедших днях */
+    background: rgba(128,128,128,0.05);
+}
+.schedule-list-item.locked .fake-switch {
+    background-color: rgba(128,128,128,0.1);
+}
+
 .schedule-list-item {
-    position: relative; /* Обязательно для абсолютного инпута */
+    position: relative; 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -386,14 +395,12 @@ html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
 }
 html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
 
-/* Эффект нажатия на всю строку, когда мы давим на невидимый чекбокс */
-.schedule-list-item:has(input:active) {
+.schedule-list-item:has(.row-checkbox-overlay:active) {
     transform: scale(0.97);
     background: rgba(128,128,128,0.1);
 }
 
-/* Настоящий, но невидимый чекбокс, который накрывает собой ВСЮ строку */
-.schedule-list-item input {
+.row-checkbox-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -411,8 +418,7 @@ html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
 .schedule-day-name { font-size: 13px; font-weight: 800; color: var(--text); pointer-events: none; }
 .schedule-day-date { font-size: 10px; font-weight: 600; color: var(--text-sec); pointer-events: none; }
 
-/* Визуальный "тумблер", на который нельзя нажать (нажатие идет в невидимый чекбокс) */
-.switch { 
+.fake-switch { 
     position: relative; 
     display: inline-block; 
     width: 44px; 
@@ -422,9 +428,9 @@ html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
     border-radius: 24px; 
     transition: .4s;
     z-index: 1;
-    pointer-events: none; /* Пропускаем клик насквозь */
+    pointer-events: none; 
 }
-.slider { 
+.fake-slider { 
     position: absolute; 
     height: 18px; 
     width: 18px; 
@@ -436,11 +442,83 @@ html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
     transition: .4s; 
 }
 
-/* Логика: если невидимый чекбокс отмечен, меняем дизайн тумблера под ним */
-.schedule-list-item input:checked ~ .switch { 
+.row-checkbox-overlay:checked ~ .fake-switch { 
     background-color: var(--tree-light); 
     box-shadow: 0 0 8px rgba(35, 169, 91, 0.4); 
 }
-.schedule-list-item input:checked ~ .switch .slider { 
+.row-checkbox-overlay:checked ~ .fake-switch .fake-slider { 
     transform: translateX(20px); 
+}
+
+/* ========================================================================= */
+/* СТИЛИ МИНИ-КАЛЕНДАРЯ НА МЕСЯЦ */
+/* ========================================================================= */
+.calendar-container {
+    padding: 16px;
+    border-top: 1px dashed rgba(128,128,128,0.2);
+    background: rgba(0,0,0,0.02);
+}
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.calendar-header button {
+    background: rgba(128,128,128,0.1);
+    border: none;
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s;
+}
+.calendar-header button:active { transform: scale(0.9); }
+.calendar-month-year {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+    text-transform: uppercase;
+}
+.calendar-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sec);
+    margin-bottom: 8px;
+}
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+.cal-day {
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 50%;
+    background: rgba(128,128,128,0.05);
+    color: var(--text);
+    transition: all 0.3s;
+}
+.cal-day.empty {
+    background: transparent;
+}
+.cal-day.working {
+    background: rgba(35, 169, 91, 0.2);
+    color: var(--tree-light);
+    border: 1px solid rgba(35, 169, 91, 0.4);
+}
+.cal-day.today {
+    border: 2px solid var(--text);
+    font-weight: 900;
 }
