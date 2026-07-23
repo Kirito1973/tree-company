@@ -101,6 +101,7 @@ const translations = {
     "prof_birth": { "AM": "Ծննդյան օր:", "RU": "Дата рожд.:", "EN": "Birth Date:" },
     "prof_phone": { "AM": "Հեռախոս:", "RU": "Телефон:", "EN": "Phone:" },
     "prof_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
+    "prof_days_off": { "AM": "Հանգստյան օրեր:", "RU": "Выходные дни:", "EN": "Days Off:" },
     "prof_edit_btn": { "AM": "<span>Խմբագրել</span>", "RU": "<span>Редактировать</span>", "EN": "<span>Edit</span>" },
 
     "modal_client_title": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
@@ -118,18 +119,27 @@ const translations = {
     "edit_phone_label": { "AM": "Հեռախոս", "RU": "Телефон", "EN": "Phone" },
     "edit_birth_label": { "AM": "Ծննդյան օր", "RU": "Дата рождения", "EN": "Birth Date" },
     "edit_address_label": { "AM": "Հասցե", "RU": "Адрес", "EN": "Address" },
+    "edit_days_off_label": { "AM": "Ընտրեք հանգստյան օրերը", "RU": "Выберите выходные дни", "EN": "Select days off" },
     "btn_save": { "AM": "<span>Պահպանել</span>", "RU": "<span>Сохранить</span>", "EN": "<span>Save</span>" },
     "btn_cancel": { "AM": "Չեղարկել", "RU": "Отмена", "EN": "Cancel" },
 
     "date_created": { "AM": "Ստեղծվել է:", "RU": "Создан:", "EN": "Created:" },
     "date_accepted": { "AM": "Ընդունվել է:", "RU": "Принят:", "EN": "Accepted:" },
-    "date_completed": { "AM": "Ավարտվել է:", "RU": "Завершен:", "EN": "Completed:" },
+    "date_completed": { "AM": "Ավարտվել է:", "RU": "Ավարտվել է:", "EN": "Completed:" },
     "contact_admin": { "AM": "Կապ ադմինիստրատորի հետ", "RU": "Связь с администратором", "EN": "Contact Admin" },
     
     "your_rating": { "AM": "Ձեր վարկանիշը", "RU": "Ваш рейтинг", "EN": "Your Rating" },
     "based_on_reviews": { "AM": "հիմնված է հաճախորդների կարծիքների վրա", "RU": "основано на отзывах клиентов", "EN": "based on client reviews" },
     "client_reviews": { "AM": "Հաճախորդների կարծիքները", "RU": "Отзывы клиентов", "EN": "Client Reviews" },
-    "no_reviews": { "AM": "Դեռ կարծիքներ չկան", "RU": "Пока нет отзывов", "EN": "No reviews yet" }
+    "no_reviews": { "AM": "Դեռ կարծիքներ չկան", "RU": "Пока нет отзывов", "EN": "No reviews yet" },
+
+    "day_1": { "AM": "Երկ", "RU": "Пн", "EN": "Mon" },
+    "day_2": { "AM": "Երք", "RU": "Вт", "EN": "Tue" },
+    "day_3": { "AM": "Չրք", "RU": "Ср", "EN": "Wed" },
+    "day_4": { "AM": "Հնգ", "RU": "Чт", "EN": "Thu" },
+    "day_5": { "AM": "Ուրբ", "RU": "Пт", "EN": "Fri" },
+    "day_6": { "AM": "Շբթ", "RU": "Сб", "EN": "Sat" },
+    "day_7": { "AM": "Կիր", "RU": "Вс", "EN": "Sun" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -168,8 +178,8 @@ let ordersData = [
 ];
 
 let employeesData = [
-    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456' },
-    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000' }
+    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', daysOff: ['7'] },
+    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', daysOff: [] }
 ];
 
 let reviewsData = [
@@ -670,6 +680,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile-birth').innerText = emp.birthDate || '---';
         document.getElementById('profile-phone').innerText = emp.phone;
         document.getElementById('profile-address').innerText = emp.address || '---';
+        
+        let daysOffStr = '---';
+        if (emp.daysOff && emp.daysOff.length > 0) {
+            const sortedDays = [...emp.daysOff].sort((a, b) => parseInt(a) - parseInt(b));
+            daysOffStr = sortedDays.map(d => translations[`day_${d}`][currentLang]).join(', ');
+        }
+        document.getElementById('profile-days-off').innerText = daysOffStr;
     };
 
     window.openEmpSelfEdit = function() {
@@ -679,6 +696,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('self-edit-phone').value = emp.phone;
         document.getElementById('self-edit-birth').value = emp.birthDate || '';
         document.getElementById('self-edit-address').value = emp.address || '';
+        
+        const daysOffArray = emp.daysOff || [];
+        document.querySelectorAll('input[name="day_off"]').forEach(cb => {
+            cb.checked = daysOffArray.includes(cb.value);
+        });
+
         document.getElementById('emp-self-edit-modal').classList.add('active');
     };
 
@@ -694,6 +717,10 @@ document.addEventListener('DOMContentLoaded', () => {
         emp.phone = document.getElementById('self-edit-phone').value;
         emp.birthDate = document.getElementById('self-edit-birth').value;
         emp.address = document.getElementById('self-edit-address').value;
+        
+        const selectedDays = Array.from(document.querySelectorAll('input[name="day_off"]:checked')).map(cb => cb.value);
+        emp.daysOff = selectedDays;
+
         closeEmpSelfEdit();
         window.renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
