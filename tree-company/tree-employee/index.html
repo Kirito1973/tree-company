@@ -30,7 +30,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=7.5">
+    <link rel="stylesheet" href="style.css?v=7.6">
 </head>
 <body>
 
@@ -280,19 +280,19 @@
 
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="edit_name_label">Անուն Ազգանուն</label>
-                        <input type="text" id="self-edit-name" class="glass-input" required>
+                        <input type="text" id="self-edit-name" class="glass-input" enterkeyhint="next" required>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="edit_phone_label">Հեռախոս</label>
-                        <input type="text" id="self-edit-phone" class="glass-input" required>
+                        <input type="text" id="self-edit-phone" class="glass-input" enterkeyhint="next" required>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="edit_birth_label">Ծննդյան օր</label>
-                        <input type="text" id="self-edit-birth" class="glass-input" placeholder="ՕՕ.ԱԱ.ՏՏՏՏ">
+                        <input type="text" id="self-edit-birth" class="glass-input" enterkeyhint="next" placeholder="ՕՕ.ԱԱ.ՏՏՏՏ">
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="edit_address_label">Հասցե</label>
-                        <input type="text" id="self-edit-address" class="glass-input">
+                        <input type="text" id="self-edit-address" class="glass-input" enterkeyhint="done">
                     </div>
                     
                     <div class="input-group" style="gap: 10px; margin-top: 20px;">
@@ -368,6 +368,6 @@
         <button class="tab-item" onclick="switchEmpTab('screen-emp-profile', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span data-i18n="tab_emp_profile">Իմ էջը</span></button>
     </nav>
 
-    <script src="employee.js?v=7.5"></script>
+    <script src="employee.js?v=7.6"></script>
 </body>
 </html>
