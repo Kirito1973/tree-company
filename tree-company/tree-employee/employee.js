@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.4.2)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.5.0)
 // =========================================================
-const APP_VERSION = '7.4.2';
+const APP_VERSION = '7.5.0';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -45,6 +45,9 @@ function switchEmpTab(screenId, btnElement) {
 }
 
 const translations = {
+    "login_welcome": { "AM": "Բարի գալուստ!", "RU": "С возвращением!", "EN": "Welcome back!" },
+    "login_sub_welcome": { "AM": "Աշխատանքային տարածք մուտք գործելու համար մուտքագրեք Ձեր անձնական PIN կոդը", "RU": "Введите ваш личный PIN-код для доступа к рабочему пространству", "EN": "Enter your personal PIN code to access the workspace" },
+    
     "tab_emp_news": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Home" },
     "tab_emp_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
     "tab_emp_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
@@ -112,14 +115,14 @@ const translations = {
     
     "card_assistant": { "AM": "<b>Օգնական:</b>", "RU": "<b>Помощник:</b>", "EN": "<b>Assistant:</b>" },
     "split_ast_share": { "AM": "Օգնականի բաժինը", "RU": "Доля помощника", "EN": "Assistant Share" },
+    "pay_salary": { "AM": "Աշխատավարձ:", "RU": "Зарплата:", "EN": "Salary:" },
     "pay_fixed": { "AM": "Ֆիքսված", "RU": "Фиксированно", "EN": "Fixed" },
     "pay_admin": { "AM": "Նշանակված է ադմինի կողմից", "RU": "Назначено админом", "EN": "Set by Admin" },
     
-    // НОВЫЕ СТРОКИ: Блок Команды
     "modal_team_title": { "AM": "Թիմ / Բրիգադ", "RU": "Команда / Бригада", "EN": "Team / Crew" },
     "role_assistant": { "AM": "Օգնական:", "RU": "Помощник:", "EN": "Assistant:" },
     "role_lead": { "AM": "Գլխավոր մաստեր:", "RU": "Главный мастер:", "EN": "Lead Worker:" },
-    "pay_you_decide": { "AM": "(Դուք եք որոշելու)", "RU": "(Оплату назначаете вы)", "EN": "(You set the pay)" },
+    "pay_you_decide": { "AM": "Դուք եք որոշելու", "RU": "будете решать вы", "EN": "you decide" },
     "no_assistant": { "AM": "Աշխատում եք մենակ (առանց օգնականի)", "RU": "Работаете один (без помощника)", "EN": "Working alone (no assistant)" },
 
     "day_1": { "AM": "Երկ", "RU": "Пн", "EN": "Mo" }, "day_2": { "AM": "Երք", "RU": "Вт", "EN": "Tu" }, "day_3": { "AM": "Չրք", "RU": "Ср", "EN": "We" }, "day_4": { "AM": "Հնգ", "RU": "Чт", "EN": "Th" }, "day_5": { "AM": "Ուրբ", "RU": "Пт", "EN": "Fr" }, "day_6": { "AM": "Շբթ", "RU": "Сб", "EN": "Sa" }, "day_7": { "AM": "Կիր", "RU": "Вс", "EN": "Su" },
@@ -548,10 +551,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     let astPhoneLink = astPhone !== '---' ? `tel:${astPhone.replace(/[^\d+]/g, '')}` : '#';
                     
                     let payInfo = order.assistantPay && order.assistantPay[astName] ? order.assistantPay[astName] : { type: 'lead' };
+                    let payLabel = translations['pay_salary'] ? translations['pay_salary'][currentLang] : "Зарплата:";
                     let payText = '';
-                    if (payInfo.type === 'fixed') payText = `${translations['pay_fixed'][currentLang] || 'Fixed'}: ${payInfo.amount} ֏`;
-                    else if (payInfo.type === 'admin') payText = `${translations['pay_admin'][currentLang] || 'Admin'}: ${payInfo.amount} ֏`;
-                    else payText = translations['pay_you_decide'][currentLang] || 'Вы решаете';
+                    
+                    if (payInfo.type === 'fixed') {
+                        payText = `${payLabel} <span style="color:var(--tree-light); font-weight:800;">${payInfo.amount} ֏</span> <span style="opacity:0.7;">(${translations['pay_fixed'][currentLang]})</span>`;
+                    } else if (payInfo.type === 'admin') {
+                        payText = `${payLabel} <span style="color:var(--tree-light); font-weight:800;">${payInfo.amount} ֏</span> <span style="opacity:0.7;">(${translations['pay_admin'][currentLang]})</span>`;
+                    } else {
+                        payText = `${payLabel} <span style="color:#FFB347; font-weight:800;">${translations['pay_you_decide'][currentLang]}</span>`;
+                    }
 
                     teamInfoHtml += `
                         <div class="detail-row" style="align-items: flex-start;">
