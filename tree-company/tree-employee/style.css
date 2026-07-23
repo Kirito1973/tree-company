@@ -387,9 +387,10 @@ html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
     transform: scale(0.97);
     background: rgba(128,128,128,0.1);
 }
-.schedule-day-info { display: flex; flex-direction: column; gap: 4px; pointer-events: none; }
-.schedule-day-name { font-size: 13px; font-weight: 800; color: var(--text); }
-.schedule-day-date { font-size: 10px; font-weight: 600; color: var(--text-sec); }
+/* Разрешаем клики по тексту, чтобы они уходили на родительский div */
+.schedule-day-info { display: flex; flex-direction: column; gap: 4px; }
+.schedule-day-name { font-size: 13px; font-weight: 800; color: var(--text); pointer-events: none; }
+.schedule-day-date { font-size: 10px; font-weight: 600; color: var(--text-sec); pointer-events: none; }
 
 /* Стили мобильного тумблера (iOS style) */
 .switch { 
@@ -398,7 +399,7 @@ html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
     width: 44px; 
     height: 24px; 
     flex-shrink: 0;
-    pointer-events: none; /* Пропускаем клик на label, чтобы тумблер нажимался четко из любой точки */
+    /* УБРАЛИ pointer-events: none; ТЕПЕРЬ ОН КЛИКАБЕЛЕН */
 }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { 
