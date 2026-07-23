@@ -136,6 +136,10 @@
                         <span class="detail-label" data-i18n="prof_address">Հասցե:</span>
                         <span class="detail-value" id="profile-address"></span>
                     </div>
+                    <div class="detail-row">
+                        <span class="detail-label" data-i18n="prof_days_off">Выходные дни:</span>
+                        <span class="detail-value" id="profile-days-off" style="color: #ff4444;"></span>
+                    </div>
                 </div>
                 
                 <button type="button" class="submit-btn" style="margin-top: 16px;" onclick="openEmpSelfEdit()" data-i18n="prof_edit_btn">
@@ -223,6 +227,19 @@
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="edit_address_label">Հասցե</label>
                         <input type="text" id="self-edit-address" class="glass-input">
+                    </div>
+                    
+                    <div class="input-group" style="margin-bottom: 12px;">
+                        <label class="input-label" data-i18n="edit_days_off_label">Выходные дни</label>
+                        <div class="days-off-selector">
+                            <label class="day-chip"><input type="checkbox" name="day_off" value="1"><span data-i18n="day_1">Пн</span></label>
+                            <label class="day-chip"><input type="checkbox" name="day_off" value="2"><span data-i18n="day_2">Вт</span></label>
+                            <label class="day-chip"><input type="checkbox" name="day_off" value="3"><span data-i18n="day_3">Ср</span></label>
+                            <label class="day-chip"><input type="checkbox" name="day_off" value="4"><span data-i18n="day_4">Чт</span></label>
+                            <label class="day-chip"><input type="checkbox" name="day_off" value="5"><span data-i18n="day_5">Пт</span></label>
+                            <label class="day-chip"><input type="checkbox" name="day_off" value="6"><span data-i18n="day_6">Сб</span></label>
+                            <label class="day-chip"><input type="checkbox" name="day_off" value="7"><span data-i18n="day_7">Вс</span></label>
+                        </div>
                     </div>
                     
                     <div class="input-group" style="gap: 10px; margin-top: 20px;">
