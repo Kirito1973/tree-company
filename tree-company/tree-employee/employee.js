@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.1)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.2)
 // =========================================================
-const APP_VERSION = '7.1';
+const APP_VERSION = '7.2';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -121,7 +121,8 @@ const translations = {
     "prof_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
     "prof_edit_btn": { "AM": "<span>Խմբագրել</span>", "RU": "<span>Редактировать</span>", "EN": "<span>Edit</span>" },
     
-    "prof_schedule_title": { "AM": "Գրաֆիկ և Օրացույց", "RU": "График и Календарь", "EN": "Schedule & Calendar" },
+    "prof_schedule_title": { "AM": "Գրաֆիկ (Այս շաբաթ)", "RU": "График (Эта неделя)", "EN": "Schedule (This week)" },
+    "prof_calendar_title": { "AM": "Իմ Օրացույցը", "RU": "Мой Календарь", "EN": "My Calendar" },
     "btn_save_schedule": { "AM": "Պահպանել", "RU": "Сохранить", "EN": "Save" },
 
     "modal_client_title": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
@@ -727,20 +728,16 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile-address').innerText = emp.address || '---';
     };
 
-    // --- ЛОГИКА ВЫПАДАЮЩЕГО СПИСКА ГРАФИКА И КАЛЕНДАРЯ ---
+    // --- ЛОГИКА ГРАФИКА НА НЕДЕЛЮ ---
     window.toggleScheduleDropdown = function() {
         const content = document.getElementById('schedule-dropdown-content');
         const chevron = document.getElementById('schedule-chevron');
         if (content.classList.contains('open')) {
             content.classList.remove('open');
             chevron.style.transform = 'rotate(0deg)';
-            if (navigator.vibrate) navigator.vibrate(10);
         } else {
             content.classList.add('open');
             chevron.style.transform = 'rotate(180deg)';
-            if (navigator.vibrate) navigator.vibrate(15);
-            // При открытии рендерим календарь заново, чтобы он точно был свежим
-            renderCalendar();
         }
     };
 
@@ -752,7 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const weekDates = getCurrentWeekDates();
         const workingDates = emp.workingDates || [];
         
-        // Получаем начало сегодняшнего дня (чтобы отсечь прошедшие дни)
+        // Получаем начало сегодняшнего дня для проверки прошлых дат
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
@@ -766,22 +763,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const rowDate = new Date(y, m - 1, d);
             const isPast = rowDate < today;
             
-            // Если день прошел, добавляем классы блокировки
             const lockClass = isPast ? 'locked' : '';
             const disabledAttr = isPast ? 'disabled' : '';
 
+            // Строка не нажимается. Нажимается ТОЛЬКО label.switch
             container.innerHTML += `
                 <div class="schedule-list-item ${lockClass}">
-                    <input type="checkbox" name="work_date" value="${wd.dateStr}" class="row-checkbox-overlay" ${isChecked} ${disabledAttr} onchange="if(navigator.vibrate && !this.disabled) navigator.vibrate(15)">
-                    
                     <div class="schedule-day-info">
                         <span class="schedule-day-name">${dayNameFull}</span>
                         <span class="schedule-day-date">${wd.dateStr}</span>
                     </div>
                     
-                    <div class="fake-switch">
-                        <div class="fake-slider"></div>
-                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked} ${disabledAttr} onchange="if(navigator.vibrate) navigator.vibrate(15)">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             `;
         });
@@ -792,16 +788,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if (!emp) return;
 
-        // Собираем то, что отмечено на экране СЕЙЧАС
+        // Собираем то, что отмечено и неотмечено на экране СЕЙЧАС
         const selectedThisWeek = Array.from(document.querySelectorAll('input[name="work_date"]:checked')).map(cb => cb.value);
         const unselectedThisWeek = Array.from(document.querySelectorAll('input[name="work_date"]:not(:checked)')).map(cb => cb.value);
         
         let newWorkingDates = [...(emp.workingDates || [])];
         
-        // 1. Убираем из массива те даты, с которых сейчас СНЯЛИ галочку
+        // Убираем из массива те даты, с которых сейчас СНЯЛИ галочку (в том числе заблокированные пустые)
         newWorkingDates = newWorkingDates.filter(d => !unselectedThisWeek.includes(d));
         
-        // 2. Добавляем те даты, на которые сейчас ПОСТАВИЛИ галочку (если их там еще нет)
+        // Добавляем те даты, на которые сейчас ПОСТАВИЛИ галочку (и заблокированные заполненные)
         selectedThisWeek.forEach(d => {
             if (!newWorkingDates.includes(d)) {
                 newWorkingDates.push(d);
@@ -818,7 +814,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polyline points="20 6 9 17 4 12"></polyline></svg> OK!`;
         btn.style.background = 'linear-gradient(135deg, #25D366, #128C7E)';
         
-        // Моментально обновляем календарь внизу
         renderCalendar();
 
         setTimeout(() => {
@@ -828,6 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     };
 
+    // --- ЛОГИКА КАЛЕНДАРЯ НА МЕСЯЦ ---
     window.changeMonth = function(dir) {
         calendarDate.setMonth(calendarDate.getMonth() + dir);
         window.renderCalendar();
@@ -843,26 +839,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const year = calendarDate.getFullYear();
         const month = calendarDate.getMonth();
         
-        // Ставим название месяца и год
         monthYearLabel.innerText = `${translations['month_'+month][currentLang]} ${year}`;
         
         grid.innerHTML = '';
         
-        // Определяем первый день месяца (сдвигаем, чтобы неделя начиналась с понедельника)
+        // Определяем первый день месяца (сдвигаем для ПН)
         let firstDay = new Date(year, month, 1).getDay();
         let startDay = firstDay === 0 ? 6 : firstDay - 1;
         
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         
-        // Пустые ячейки для выравнивания первой недели
         for (let i = 0; i < startDay; i++) {
             grid.innerHTML += `<div class="cal-day empty"></div>`;
         }
         
-        const todayStr = getNowString().split(' ')[0];
+        const actualToday = new Date();
+        const todayStr = String(actualToday.getDate()).padStart(2, '0') + '.' +
+                         String(actualToday.getMonth() + 1).padStart(2, '0') + '.' +
+                         actualToday.getFullYear();
+                         
         const workingDates = emp.workingDates || [];
 
-        // Рендерим дни
         for (let i = 1; i <= daysInMonth; i++) {
             const dateStr = String(i).padStart(2, '0') + '.' + 
                             String(month + 1).padStart(2, '0') + '.' + 
