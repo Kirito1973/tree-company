@@ -30,7 +30,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=7.4">
+    <link rel="stylesheet" href="style.css?v=7.5">
 </head>
 <body>
 
@@ -67,7 +67,15 @@
         </header>
 
         <section class="emp-screen active" id="screen-login">
-            <div class="glass-panel" style="text-align: center; margin-top: 40px; padding: 40px 20px;">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 4vh; margin-bottom: 20px; text-align: center; animation: screenFadeIn 0.6s ease;">
+                <div style="width: 72px; height: 72px; background: rgba(35, 169, 91, 0.1); border: 2px solid var(--tree-light); border-radius: 24px; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 25px rgba(35, 169, 91, 0.2); margin-bottom: 16px; transform: rotate(-5deg);">
+                    <svg viewBox="0 0 24 24" width="36" height="36" stroke="var(--tree-light)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(5deg);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <h2 style="font-size: 24px; font-weight: 900; color: var(--text); margin-bottom: 6px;" data-i18n="login_welcome">Բարի գալուստ!</h2>
+                <p style="font-size: 11px; color: var(--text-sec); font-weight: 600; max-width: 280px; line-height: 1.5;" data-i18n="login_sub_welcome">Աշխատանքային տարածք մուտք գործելու համար մուտքագրեք Ձեր անձնական PIN կոդը</p>
+            </div>
+
+            <div class="glass-panel" style="text-align: center; padding: 40px 20px;">
                 <h3 class="screen-title" style="margin-bottom: 10px;" data-i18n="login_title">Մուտք</h3>
                 <p style="font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 30px;" data-i18n="login_desc">
                     Մուտքագրեք 6-նիշանոց PIN կոդը
@@ -360,6 +368,6 @@
         <button class="tab-item" onclick="switchEmpTab('screen-emp-profile', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span data-i18n="tab_emp_profile">Իմ էջը</span></button>
     </nav>
 
-    <script src="employee.js?v=7.4"></script>
+    <script src="employee.js?v=7.5"></script>
 </body>
 </html>
