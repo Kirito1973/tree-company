@@ -63,9 +63,7 @@ function getCurrentWeekDates() {
         const dateStr = String(dateObj.getDate()).padStart(2, '0') + '.' + 
                         String(dateObj.getMonth() + 1).padStart(2, '0') + '.' + 
                         dateObj.getFullYear();
-        const shortStr = String(dateObj.getDate()).padStart(2, '0') + '.' + 
-                         String(dateObj.getMonth() + 1).padStart(2, '0');
-        week.push({ dayIndex: i + 1, dateStr, shortStr });
+        week.push({ dayIndex: i + 1, dateStr });
     }
     return week;
 }
@@ -124,8 +122,8 @@ const translations = {
     "prof_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
     "prof_edit_btn": { "AM": "<span>Խմբագրել</span>", "RU": "<span>Редактировать</span>", "EN": "<span>Edit</span>" },
     
-    "prof_schedule_title": { "AM": "Աշխատանքային գրաֆիկ (Ընթացիկ շաբաթ)", "RU": "График работы (Текущая неделя)", "EN": "Work Schedule (This week)" },
-    "btn_save_schedule": { "AM": "Պահպանել գրաֆիկը", "RU": "Сохранить график", "EN": "Save Schedule" },
+    "prof_schedule_title": { "AM": "Գրաֆիկ (Այս շաբաթ)", "RU": "График работы (Эта неделя)", "EN": "Schedule (This week)" },
+    "btn_save_schedule": { "AM": "Պահպանել", "RU": "Сохранить", "EN": "Save" },
 
     "modal_client_title": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
     "modal_fin_title": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
@@ -155,13 +153,14 @@ const translations = {
     "client_reviews": { "AM": "Հաճախորդների կարծիքները", "RU": "Отзывы клиентов", "EN": "Client Reviews" },
     "no_reviews": { "AM": "Դեռ կարծիքներ չկան", "RU": "Пока нет отзывов", "EN": "No reviews yet" },
 
-    "day_1": { "AM": "Երկ", "RU": "Пн", "EN": "Mon" },
-    "day_2": { "AM": "Երք", "RU": "Вт", "EN": "Tue" },
-    "day_3": { "AM": "Չրք", "RU": "Ср", "EN": "Wed" },
-    "day_4": { "AM": "Հնգ", "RU": "Чт", "EN": "Thu" },
-    "day_5": { "AM": "Ուրբ", "RU": "Пт", "EN": "Fri" },
-    "day_6": { "AM": "Շբթ", "RU": "Сб", "EN": "Sat" },
-    "day_7": { "AM": "Կիր", "RU": "Вс", "EN": "Sun" }
+    // Полные названия дней недели
+    "day_1_full": { "AM": "Երկուշաբթի", "RU": "Понедельник", "EN": "Monday" },
+    "day_2_full": { "AM": "Երեքշաբթի", "RU": "Вторник", "EN": "Tuesday" },
+    "day_3_full": { "AM": "Չորեքշաբթի", "RU": "Среда", "EN": "Wednesday" },
+    "day_4_full": { "AM": "Հինգշաբթի", "RU": "Четверг", "EN": "Thursday" },
+    "day_5_full": { "AM": "Ուրբաթ", "RU": "Пятница", "EN": "Friday" },
+    "day_6_full": { "AM": "Շաբաթ", "RU": "Суббота", "EN": "Saturday" },
+    "day_7_full": { "AM": "Կիրակի", "RU": "Воскресенье", "EN": "Sunday" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -199,7 +198,7 @@ let ordersData = [
     { id: 'ORD-001', status: 'completed', isCommissionPaid: false, createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00', clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1', worker: 'Արմեն Սարգսյան', services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true, doneAt: '11.07.2026 13:50' }] }
 ];
 
-// workingDates: массив дат, в которые мастер готов работать
+// workingDates: массив дат, в которые мастер готов работать (сохраняется точно в формате DD.MM.YYYY)
 let employeesData = [
     { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', workingDates: ['23.07.2026', '24.07.2026', '25.07.2026'] },
     { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', workingDates: [] }
@@ -288,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.renderEmployeeNews();
                 window.renderEmployeeOrders();
                 window.renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
-                window.renderWeeklySchedule(); // Рендерим график с новым языком
+                window.renderWeeklySchedule(); 
                 window.renderEmployeeFinance();
                 
                 const emp = employeesData.find(emp => emp.id === loggedInEmpId);
@@ -375,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.renderEmployeeNews();
         window.renderEmployeeOrders();
         window.renderEmployeeProfile(emp);
-        window.renderWeeklySchedule(); // Рендер панели графика
+        window.renderWeeklySchedule(); // Рендер графика
         window.renderEmployeeFinance();
         window.updateOrderCounts(); 
     };
@@ -707,7 +706,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile-address').innerText = emp.address || '---';
     };
 
-    // --- РЕНДЕР ПАНЕЛИ ГРАФИКА НА НЕДЕЛЮ ---
+    // --- ЛОГИКА ВЫПАДАЮЩЕГО СПИСКА И ГРАФИКА ---
+    window.toggleScheduleDropdown = function() {
+        const content = document.getElementById('schedule-dropdown-content');
+        const chevron = document.getElementById('schedule-chevron');
+        if (content.classList.contains('open')) {
+            content.classList.remove('open');
+            chevron.style.transform = 'rotate(0deg)';
+        } else {
+            content.classList.add('open');
+            chevron.style.transform = 'rotate(180deg)';
+            if (navigator.vibrate) navigator.vibrate(10);
+        }
+    };
+
     window.renderWeeklySchedule = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         const container = document.getElementById('weekly-schedule-container');
@@ -719,31 +731,35 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
         weekDates.forEach(wd => {
             const isChecked = workingDates.includes(wd.dateStr) ? 'checked' : '';
-            const dayName = translations[`day_${wd.dayIndex}`][currentLang] || '';
+            // Получаем полное название дня из переводов
+            const dayNameFull = translations[`day_${wd.dayIndex}_full`]?.[currentLang] || translations[`day_${wd.dayIndex}`][currentLang];
             
             container.innerHTML += `
-                <label class="schedule-chip">
-                    <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked}>
-                    <span>${dayName}<b>${wd.shortStr}</b></span>
+                <label class="schedule-list-item">
+                    <div class="schedule-day-info">
+                        <span class="schedule-day-name">${dayNameFull}</span>
+                        <span class="schedule-day-date">${wd.dateStr}</span>
+                    </div>
+                    <div class="switch">
+                        <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked}>
+                        <span class="slider"></span>
+                    </div>
                 </label>
             `;
         });
         applyLanguage();
     };
 
-    // --- СОХРАНЕНИЕ ГРАФИКА НА НЕДЕЛЮ ---
     window.saveWeeklySchedule = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if (!emp) return;
 
+        // Сохраняем только те даты, где тумблер включен
         const selectedDates = Array.from(document.querySelectorAll('input[name="work_date"]:checked')).map(cb => cb.value);
-        
-        // В реальном проекте здесь будет отправка массива selectedDates на сервер (Vercel API)
         emp.workingDates = selectedDates; 
 
         if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
         
-        // Визуальное подтверждение для пользователя (мигание кнопки)
         const btn = document.getElementById('btn-save-schedule');
         const originalText = btn.innerHTML;
         btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polyline points="20 6 9 17 4 12"></polyline></svg> OK!`;
@@ -751,7 +767,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             btn.innerHTML = originalText;
             btn.style.background = '';
-        }, 1500);
+            // Автоматически закрываем выпадающий список после сохранения
+            toggleScheduleDropdown();
+        }, 1200);
     };
 
     window.openEmpSelfEdit = function() {
