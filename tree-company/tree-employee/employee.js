@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.1)
 // =========================================================
-const APP_VERSION = '7.0';
+const APP_VERSION = '7.1';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -121,7 +121,7 @@ const translations = {
     "prof_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
     "prof_edit_btn": { "AM": "<span>Խմբագրել</span>", "RU": "<span>Редактировать</span>", "EN": "<span>Edit</span>" },
     
-    "prof_schedule_title": { "AM": "Գրաֆիկ (Այս շաբաթ)", "RU": "График работы (Эта неделя)", "EN": "Schedule (This week)" },
+    "prof_schedule_title": { "AM": "Գրաֆիկ և Օրացույց", "RU": "График и Календарь", "EN": "Schedule & Calendar" },
     "btn_save_schedule": { "AM": "Պահպանել", "RU": "Сохранить", "EN": "Save" },
 
     "modal_client_title": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
@@ -152,13 +152,34 @@ const translations = {
     "client_reviews": { "AM": "Հաճախորդների կարծիքները", "RU": "Отзывы клиентов", "EN": "Client Reviews" },
     "no_reviews": { "AM": "Դեռ կարծիքներ չկան", "RU": "Пока нет отзывов", "EN": "No reviews yet" },
 
+    "day_1": { "AM": "Երկ", "RU": "Пн", "EN": "Mo" },
+    "day_2": { "AM": "Երք", "RU": "Вт", "EN": "Tu" },
+    "day_3": { "AM": "Չրք", "RU": "Ср", "EN": "We" },
+    "day_4": { "AM": "Հնգ", "RU": "Чт", "EN": "Th" },
+    "day_5": { "AM": "Ուրբ", "RU": "Пт", "EN": "Fr" },
+    "day_6": { "AM": "Շբթ", "RU": "Сб", "EN": "Sa" },
+    "day_7": { "AM": "Կիր", "RU": "Вс", "EN": "Su" },
+
     "day_1_full": { "AM": "Երկուշաբթի", "RU": "Понедельник", "EN": "Monday" },
     "day_2_full": { "AM": "Երեքշաբթի", "RU": "Вторник", "EN": "Tuesday" },
     "day_3_full": { "AM": "Չորեքշաբթի", "RU": "Среда", "EN": "Wednesday" },
     "day_4_full": { "AM": "Հինգշաբթի", "RU": "Четверг", "EN": "Thursday" },
     "day_5_full": { "AM": "Ուրբաթ", "RU": "Пятница", "EN": "Friday" },
     "day_6_full": { "AM": "Շաբաթ", "RU": "Суббота", "EN": "Saturday" },
-    "day_7_full": { "AM": "Կիրակի", "RU": "Воскресенье", "EN": "Sunday" }
+    "day_7_full": { "AM": "Կիրակի", "RU": "Воскресенье", "EN": "Sunday" },
+
+    "month_0": { "AM": "Հունվար", "RU": "Январь", "EN": "January" },
+    "month_1": { "AM": "Փետրվար", "RU": "Февраль", "EN": "February" },
+    "month_2": { "AM": "Մարտ", "RU": "Март", "EN": "March" },
+    "month_3": { "AM": "Ապրիլ", "RU": "Апрель", "EN": "April" },
+    "month_4": { "AM": "Մայիս", "RU": "Май", "EN": "May" },
+    "month_5": { "AM": "Հունիս", "RU": "Июнь", "EN": "June" },
+    "month_6": { "AM": "Հուլիս", "RU": "Июль", "EN": "July" },
+    "month_7": { "AM": "Օգոստոս", "RU": "Август", "EN": "August" },
+    "month_8": { "AM": "Սեպտեմբեր", "RU": "Сентябрь", "EN": "September" },
+    "month_9": { "AM": "Հոկտեմբեր", "RU": "Октябрь", "EN": "October" },
+    "month_10": { "AM": "Նոյեմբեր", "RU": "Ноябрь", "EN": "November" },
+    "month_11": { "AM": "Դեկտեմբեր", "RU": "Декабрь", "EN": "December" }
 };
 
 let currentLang = localStorage.getItem('emp_app_lang') || 'AM';
@@ -197,7 +218,7 @@ let ordersData = [
 ];
 
 let employeesData = [
-    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', workingDates: ['23.07.2026', '24.07.2026', '25.07.2026'] },
+    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', workingDates: ['20.07.2026', '23.07.2026', '24.07.2026', '25.07.2026'] },
     { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', workingDates: [] }
 ];
 
@@ -210,6 +231,7 @@ let reviewsData = [
 let loggedInEmpId = null;
 let currentActiveOrderId = null;
 let currentOrderFilter = 'new'; 
+let calendarDate = new Date();
 
 window.updateOrderCounts = function() {
     const emp = employeesData.find(e => e.id === loggedInEmpId);
@@ -285,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.renderEmployeeOrders();
                 window.renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
                 window.renderWeeklySchedule(); 
+                window.renderCalendar();
                 window.renderEmployeeFinance();
                 
                 const emp = employeesData.find(emp => emp.id === loggedInEmpId);
@@ -372,6 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.renderEmployeeOrders();
         window.renderEmployeeProfile(emp);
         window.renderWeeklySchedule(); 
+        window.renderCalendar();
         window.renderEmployeeFinance();
         window.updateOrderCounts(); 
     };
@@ -703,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('profile-address').innerText = emp.address || '---';
     };
 
-    // --- ЛОГИКА ВЫПАДАЮЩЕГО СПИСКА И ГРАФИКА ---
+    // --- ЛОГИКА ВЫПАДАЮЩЕГО СПИСКА ГРАФИКА И КАЛЕНДАРЯ ---
     window.toggleScheduleDropdown = function() {
         const content = document.getElementById('schedule-dropdown-content');
         const chevron = document.getElementById('schedule-chevron');
@@ -715,6 +739,8 @@ document.addEventListener('DOMContentLoaded', () => {
             content.classList.add('open');
             chevron.style.transform = 'rotate(180deg)';
             if (navigator.vibrate) navigator.vibrate(15);
+            // При открытии рендерим календарь заново, чтобы он точно был свежим
+            renderCalendar();
         }
     };
 
@@ -726,20 +752,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const weekDates = getCurrentWeekDates();
         const workingDates = emp.workingDates || [];
         
+        // Получаем начало сегодняшнего дня (чтобы отсечь прошедшие дни)
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
         container.innerHTML = '';
         weekDates.forEach(wd => {
             const isChecked = workingDates.includes(wd.dateStr) ? 'checked' : '';
             const dayNameFull = translations[`day_${wd.dayIndex}_full`]?.[currentLang] || translations[`day_${wd.dayIndex}`][currentLang];
             
+            // Проверка, прошел ли уже этот день
+            const [d, m, y] = wd.dateStr.split('.');
+            const rowDate = new Date(y, m - 1, d);
+            const isPast = rowDate < today;
+            
+            // Если день прошел, добавляем классы блокировки
+            const lockClass = isPast ? 'locked' : '';
+            const disabledAttr = isPast ? 'disabled' : '';
+
             container.innerHTML += `
-                <div class="schedule-list-item">
+                <div class="schedule-list-item ${lockClass}">
+                    <input type="checkbox" name="work_date" value="${wd.dateStr}" class="row-checkbox-overlay" ${isChecked} ${disabledAttr} onchange="if(navigator.vibrate && !this.disabled) navigator.vibrate(15)">
+                    
                     <div class="schedule-day-info">
                         <span class="schedule-day-name">${dayNameFull}</span>
                         <span class="schedule-day-date">${wd.dateStr}</span>
                     </div>
-                    <div class="switch">
-                        <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked} onchange="if(navigator.vibrate) navigator.vibrate(15)">
-                        <span class="slider"></span>
+                    
+                    <div class="fake-switch">
+                        <div class="fake-slider"></div>
                     </div>
                 </div>
             `;
@@ -751,8 +792,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if (!emp) return;
 
-        const selectedDates = Array.from(document.querySelectorAll('input[name="work_date"]:checked')).map(cb => cb.value);
-        emp.workingDates = selectedDates; 
+        // Собираем то, что отмечено на экране СЕЙЧАС
+        const selectedThisWeek = Array.from(document.querySelectorAll('input[name="work_date"]:checked')).map(cb => cb.value);
+        const unselectedThisWeek = Array.from(document.querySelectorAll('input[name="work_date"]:not(:checked)')).map(cb => cb.value);
+        
+        let newWorkingDates = [...(emp.workingDates || [])];
+        
+        // 1. Убираем из массива те даты, с которых сейчас СНЯЛИ галочку
+        newWorkingDates = newWorkingDates.filter(d => !unselectedThisWeek.includes(d));
+        
+        // 2. Добавляем те даты, на которые сейчас ПОСТАВИЛИ галочку (если их там еще нет)
+        selectedThisWeek.forEach(d => {
+            if (!newWorkingDates.includes(d)) {
+                newWorkingDates.push(d);
+            }
+        });
+        
+        // Сохраняем в профиль
+        emp.workingDates = newWorkingDates; 
 
         if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
         
@@ -760,11 +817,66 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalText = btn.innerHTML;
         btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><polyline points="20 6 9 17 4 12"></polyline></svg> OK!`;
         btn.style.background = 'linear-gradient(135deg, #25D366, #128C7E)';
+        
+        // Моментально обновляем календарь внизу
+        renderCalendar();
+
         setTimeout(() => {
             btn.innerHTML = originalText;
             btn.style.background = '';
             toggleScheduleDropdown();
         }, 1000);
+    };
+
+    window.changeMonth = function(dir) {
+        calendarDate.setMonth(calendarDate.getMonth() + dir);
+        window.renderCalendar();
+        if (navigator.vibrate) navigator.vibrate(10);
+    };
+
+    window.renderCalendar = function() {
+        const emp = employeesData.find(e => e.id === loggedInEmpId);
+        const grid = document.getElementById('calendar-grid');
+        const monthYearLabel = document.getElementById('calendar-month-year');
+        if (!emp || !grid || !monthYearLabel) return;
+
+        const year = calendarDate.getFullYear();
+        const month = calendarDate.getMonth();
+        
+        // Ставим название месяца и год
+        monthYearLabel.innerText = `${translations['month_'+month][currentLang]} ${year}`;
+        
+        grid.innerHTML = '';
+        
+        // Определяем первый день месяца (сдвигаем, чтобы неделя начиналась с понедельника)
+        let firstDay = new Date(year, month, 1).getDay();
+        let startDay = firstDay === 0 ? 6 : firstDay - 1;
+        
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        
+        // Пустые ячейки для выравнивания первой недели
+        for (let i = 0; i < startDay; i++) {
+            grid.innerHTML += `<div class="cal-day empty"></div>`;
+        }
+        
+        const todayStr = getNowString().split(' ')[0];
+        const workingDates = emp.workingDates || [];
+
+        // Рендерим дни
+        for (let i = 1; i <= daysInMonth; i++) {
+            const dateStr = String(i).padStart(2, '0') + '.' + 
+                            String(month + 1).padStart(2, '0') + '.' + 
+                            year;
+                            
+            const isWorking = workingDates.includes(dateStr);
+            const isToday = dateStr === todayStr;
+            
+            let cls = 'cal-day';
+            if (isWorking) cls += ' working';
+            if (isToday) cls += ' today';
+            
+            grid.innerHTML += `<div class="${cls}">${i}</div>`;
+        }
     };
 
     window.openEmpSelfEdit = function() {
