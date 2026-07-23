@@ -369,8 +369,9 @@ html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
     gap: 8px;
 }
 
-/* Строка теперь не нажимается вся целиком, нет active-эффекта и cursor: pointer */
+/* --- НЕУБИВАЕМЫЙ ПЕРЕКЛЮЧАТЕЛЬ ДЛЯ МОБИЛЬНЫХ --- */
 .schedule-list-item {
+    position: relative; /* Обязательно для абсолютного инпута */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -378,37 +379,68 @@ html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
     padding: 12px 16px;
     border-radius: 16px;
     border: 1px solid rgba(128,128,128,0.15);
+    transition: transform 0.2s, background 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
 
-.schedule-day-info { display: flex; flex-direction: column; gap: 4px; }
-.schedule-day-name { font-size: 13px; font-weight: 800; color: var(--text); }
-.schedule-day-date { font-size: 10px; font-weight: 600; color: var(--text-sec); }
+/* Эффект нажатия на всю строку, когда мы давим на невидимый чекбокс */
+.schedule-list-item:has(input:active) {
+    transform: scale(0.97);
+    background: rgba(128,128,128,0.1);
+}
 
-/* Стили мобильного тумблера (iOS style) */
-/* Теперь ТОЛЬКО этот блок реагирует на нажатие */
+/* Настоящий, но невидимый чекбокс, который накрывает собой ВСЮ строку */
+.schedule-list-item input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+}
+
+.schedule-day-info { display: flex; flex-direction: column; gap: 4px; pointer-events: none; z-index: 1; }
+.schedule-day-name { font-size: 13px; font-weight: 800; color: var(--text); pointer-events: none; }
+.schedule-day-date { font-size: 10px; font-weight: 600; color: var(--text-sec); pointer-events: none; }
+
+/* Визуальный "тумблер", на который нельзя нажать (нажатие идет в невидимый чекбокс) */
 .switch { 
     position: relative; 
     display: inline-block; 
     width: 44px; 
     height: 24px; 
     flex-shrink: 0;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    background-color: rgba(128,128,128,0.3); 
+    border-radius: 24px; 
+    transition: .4s;
+    z-index: 1;
+    pointer-events: none; /* Пропускаем клик насквозь */
 }
-.switch input { opacity: 0; width: 0; height: 0; }
 .slider { 
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
-    background-color: rgba(128,128,128,0.3); transition: .4s; border-radius: 24px; 
+    position: absolute; 
+    height: 18px; 
+    width: 18px; 
+    left: 3px; 
+    bottom: 3px; 
+    background-color: white; 
+    border-radius: 50%; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+    transition: .4s; 
 }
-.slider:before { 
-    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; 
-    background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
-}
-input:checked + .slider { background-color: var(--tree-light); box-shadow: 0 0 8px rgba(35, 169, 91, 0.4); }
-input:checked + .slider:before { transform: translateX(20px); }
 
-/* Легкий эффект нажатия на сам тумблер */
-.switch:active .slider {
-    filter: brightness(0.9);
+/* Логика: если невидимый чекбокс отмечен, меняем дизайн тумблера под ним */
+.schedule-list-item input:checked ~ .switch { 
+    background-color: var(--tree-light); 
+    box-shadow: 0 0 8px rgba(35, 169, 91, 0.4); 
+}
+.schedule-list-item input:checked ~ .switch .slider { 
+    transform: translateX(20px); 
 }
