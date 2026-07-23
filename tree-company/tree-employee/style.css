@@ -206,7 +206,53 @@ html[data-theme="dark"] .detail-block { background: rgba(0, 0, 0, 0.15); }
 
 .service-item-static { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text); padding-bottom: 8px; border-bottom: 1px dashed rgba(128,128,128,0.2); margin-bottom: 8px; cursor: pointer; transition: all 0.3s; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
 .service-item-static:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.service-checkbox { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--tree-light); cursor: pointer; flex-shrink: 0; pointer-events: none; }
+
+/* Превращаем чекбоксы услуг в нативные круглые переключатели */
+.service-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 44px;
+    height: 24px;
+    background-color: rgba(128, 128, 128, 0.3);
+    border-radius: 24px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+    margin-right: 12px;
+    transition: background-color 0.3s ease;
+    pointer-events: none;
+}
+
+.service-checkbox::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.service-checkbox:checked {
+    background-color: var(--tree-light);
+    box-shadow: 0 0 8px rgba(35, 169, 91, 0.4);
+}
+
+.service-checkbox:checked::after {
+    transform: translateX(20px);
+}
+
+html[data-theme="dark"] .service-checkbox {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+html[data-theme="dark"] .service-checkbox:checked {
+    background-color: var(--tree-light);
+}
+
 .serv-name-static { flex: 1; display: flex; align-items: center; transition: all 0.3s; }
 .serv-qty-static { margin: 0 10px; color: var(--text-sec); transition: all 0.3s; }
 .service-item-static.done { opacity: 0.5; }
