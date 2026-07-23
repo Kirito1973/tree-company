@@ -368,7 +368,10 @@ html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
     flex-direction: column;
     gap: 8px;
 }
+
+/* --- НЕУБИВАЕМЫЙ ПЕРЕКЛЮЧАТЕЛЬ ДЛЯ МОБИЛЬНЫХ --- */
 .schedule-list-item {
+    position: relative; /* Обязательно для абсолютного инпута */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -377,37 +380,67 @@ html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
     border-radius: 16px;
     border: 1px solid rgba(128,128,128,0.15);
     transition: transform 0.2s, background 0.2s;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 html[data-theme="dark"] .schedule-list-item { background: rgba(0,0,0,0.2); }
-.schedule-list-item:active {
+
+/* Эффект нажатия на всю строку, когда мы давим на невидимый чекбокс */
+.schedule-list-item:has(.row-checkbox-overlay:active) {
     transform: scale(0.97);
     background: rgba(128,128,128,0.1);
 }
-.schedule-day-info { display: flex; flex-direction: column; gap: 4px; pointer-events: none; }
+
+/* Настоящий, но невидимый чекбокс, который накрывает собой ВСЮ строку */
+.row-checkbox-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    z-index: 10;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+}
+
+.schedule-day-info { display: flex; flex-direction: column; gap: 4px; pointer-events: none; z-index: 1; }
 .schedule-day-name { font-size: 13px; font-weight: 800; color: var(--text); pointer-events: none; }
 .schedule-day-date { font-size: 10px; font-weight: 600; color: var(--text-sec); pointer-events: none; }
 
-/* Стили мобильного тумблера (iOS style) */
-.switch { 
+/* Визуальный "тумблер", на который нельзя нажать (нажатие идет в невидимый чекбокс) */
+.fake-switch { 
     position: relative; 
     display: inline-block; 
     width: 44px; 
     height: 24px; 
     flex-shrink: 0;
-    pointer-events: none; /* ПРОПУСКАЕМ КЛИК СКВОЗЬ ТУМБЛЕР ПРЯМО НА <label> */
+    background-color: rgba(128,128,128,0.3); 
+    border-radius: 24px; 
+    transition: .4s;
+    z-index: 1;
+    pointer-events: none; /* Пропускаем клик насквозь */
 }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { 
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; 
-    background-color: rgba(128,128,128,0.3); transition: .4s; border-radius: 24px; 
+.fake-slider { 
+    position: absolute; 
+    height: 18px; 
+    width: 18px; 
+    left: 3px; 
+    bottom: 3px; 
+    background-color: white; 
+    border-radius: 50%; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+    transition: .4s; 
 }
-.slider:before { 
-    position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; 
-    background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); 
+
+/* Логика: если невидимый чекбокс отмечен, меняем дизайн тумблера под ним */
+.row-checkbox-overlay:checked ~ .fake-switch { 
+    background-color: var(--tree-light); 
+    box-shadow: 0 0 8px rgba(35, 169, 91, 0.4); 
 }
-input:checked + .slider { background-color: var(--tree-light); box-shadow: 0 0 8px rgba(35, 169, 91, 0.4); }
-input:checked + .slider:before { transform: translateX(20px); }
+.row-checkbox-overlay:checked ~ .fake-switch .fake-slider { 
+    transform: translateX(20px); 
+}
