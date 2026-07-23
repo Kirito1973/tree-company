@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.4)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.4.1)
 // =========================================================
-const APP_VERSION = '7.4';
+const APP_VERSION = '7.4.1';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -104,12 +104,17 @@ const translations = {
     "client_reviews": { "AM": "Հաճախորդների կարծիքները", "RU": "Отзывы клиентов", "EN": "Client Reviews" },
     "no_reviews": { "AM": "Դեռ կարծիքներ չկան", "RU": "Пока нет отзывов", "EN": "No reviews yet" },
     
-    // Новые строки для калькулятора (Версия 7.4)
     "msg_assistant_wait": { "AM": "Սպասում է գլխավոր վարպետի ավարտին", "RU": "Ожидание завершения главным мастером", "EN": "Waiting for lead completion" },
     "modal_split_title": { "AM": "Շահույթի բաշխում", "RU": "Распределение прибыли", "EN": "Profit Split" },
     "split_net_total": { "AM": "Բրիգադի մնացորդ:", "RU": "Остаток бригады:", "EN": "Crew Net:" },
     "split_your_share": { "AM": "Ձեր մնացորդը:", "RU": "Ваш остаток:", "EN": "Your Share:" },
     "btn_confirm_split": { "AM": "Հաստատել", "RU": "Подтвердить", "EN": "Confirm" },
+    
+    // НОВЫЕ СТРОКИ ДЛЯ ПОМОЩНИКА
+    "card_assistant": { "AM": "<b>Օգնական:</b>", "RU": "<b>Помощник:</b>", "EN": "<b>Assistant:</b>" },
+    "split_ast_share": { "AM": "Օգնականի բաժինը", "RU": "Доля помощника", "EN": "Assistant Share" },
+    "pay_fixed": { "AM": "(Ֆիքսված)", "RU": "(Фикс)", "EN": "(Fixed)" },
+    "pay_admin": { "AM": "(Ադմինի կողմից)", "RU": "(От админа)", "EN": "(By Admin)" },
 
     "day_1": { "AM": "Երկ", "RU": "Пн", "EN": "Mo" }, "day_2": { "AM": "Երք", "RU": "Вт", "EN": "Tu" }, "day_3": { "AM": "Չրք", "RU": "Ср", "EN": "We" }, "day_4": { "AM": "Հնգ", "RU": "Чт", "EN": "Th" }, "day_5": { "AM": "Ուրբ", "RU": "Пт", "EN": "Fr" }, "day_6": { "AM": "Շբթ", "RU": "Сб", "EN": "Sa" }, "day_7": { "AM": "Կիր", "RU": "Вс", "EN": "Su" },
     "day_1_full": { "AM": "Երկուշաբթի", "RU": "Понедельник", "EN": "Monday" }, "day_2_full": { "AM": "Երեքշաբթի", "RU": "Вторник", "EN": "Tuesday" }, "day_3_full": { "AM": "Չորեքշաբթի", "RU": "Среда", "EN": "Wednesday" }, "day_4_full": { "AM": "Հինգշաբթի", "RU": "Четверг", "EN": "Thursday" }, "day_5_full": { "AM": "Ուրբաթ", "RU": "Пятница", "EN": "Friday" }, "day_6_full": { "AM": "Շաբաթ", "RU": "Суббота", "EN": "Saturday" }, "day_7_full": { "AM": "Կիրակի", "RU": "Воскресенье", "EN": "Sunday" },
@@ -143,28 +148,37 @@ function applyLanguage() {
 }
 
 // ================= БАЗА ДАННЫХ =================
-// Структура сохранена (worker). Добавлено: leadWorker и profitSplit
 let ordersData = [
     { 
+        // Пример 1: Главный мастер сам решает долю помощника (type: 'lead')
         id: 'ORD-003', status: 'progress', createdAt: '15.07.2026 10:00', acceptedAt: '15.07.2026 10:30', completedAt: null, 
         clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', 
-        worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', // ДВА ЧЕЛОВЕКА ЧЕРЕЗ ЗАПЯТУЮ!
-        leadWorker: 'Արմեն Սարգսյան', // Главный
+        worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', 
+        leadWorker: 'Արմեն Սարգսյան',
+        assistantPay: {
+            'Գոռ Վարդանյան': { type: 'lead' } 
+        },
         profitSplit: null,
         services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false, doneAt: null }] 
     },
     { 
-        id: 'ORD-002', status: 'new', createdAt: '14.07.2026 15:30', acceptedAt: null, completedAt: null, 
+        // Пример 2: Доля помощника зафиксирована Админом (type: 'admin', amount: 8000)
+        id: 'ORD-004', status: 'progress', createdAt: '16.07.2026 11:00', acceptedAt: '16.07.2026 11:30', completedAt: null, 
         clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', 
-        worker: 'Արմեն Սարգսյան', 
-        leadWorker: null, profitSplit: null,
-        services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: false, doneAt: null }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false, doneAt: null }] 
+        worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', 
+        leadWorker: 'Արմեն Սարգսյան',
+        assistantPay: {
+            'Գոռ Վարդանյան': { type: 'admin', amount: 8000 } 
+        },
+        profitSplit: null,
+        services: [{ name: 'Լամինատի տեղադրում', qty: 20, price: 1500, done: true, doneAt: '12:30' }] 
     },
     { 
+        // Пример 3: Мастер работает один
         id: 'ORD-001', status: 'completed', isCommissionPaid: false, createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00', 
         clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1', 
         worker: 'Արմեն Սարգսյան', 
-        leadWorker: null, profitSplit: null,
+        leadWorker: null, profitSplit: null, assistantPay: null,
         services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true, doneAt: '11.07.2026 13:50' }] 
     }
 ];
@@ -180,7 +194,7 @@ let reviewsData = [
 
 let loggedInEmpId = null;
 let currentActiveOrderId = null;
-let currentOrderFilter = 'progress'; // Изменил для тестов
+let currentOrderFilter = 'progress'; 
 let calendarDate = new Date();
 
 window.updateOrderCounts = function() {
@@ -423,10 +437,26 @@ document.addEventListener('DOMContentLoaded', () => {
             let statusI18n = order.status === 'new' ? 'status_new' : (order.status === 'progress' ? 'status_pending' : 'status_success');
             let mainTitle = order.services.length > 0 ? order.services[0].name : "Услуга";
 
-            // Метка для помощника
+            // ОТОБРАЖЕНИЕ ПОМОЩНИКОВ И БЕЙДЖА
             let roleBadge = '';
-            if (order.worker.includes(',') && order.leadWorker && order.leadWorker !== emp.name) {
-                roleBadge = `<span style="font-size:9px; background:rgba(0,0,0,0.1); padding:2px 6px; border-radius:4px; margin-left:6px;">Помощник</span>`;
+            let assistantInfoHtml = '';
+
+            if (order.worker.includes(',')) {
+                let workersArr = order.worker.split(',').map(w => w.trim());
+                let assistants = workersArr.filter(w => w !== order.leadWorker);
+
+                if (order.leadWorker && order.leadWorker !== emp.name) {
+                    roleBadge = `<span style="font-size:9px; background:rgba(0,0,0,0.1); padding:2px 6px; border-radius:4px; margin-left:6px;">Помощник</span>`;
+                }
+
+                if (assistants.length > 0) {
+                    let astLabel = translations['card_assistant'][currentLang] || '<b>Помощник:</b>';
+                    assistantInfoHtml = `
+                        <div style="font-size:11px; margin-top:8px; color: var(--text-sec); border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;">
+                            <span>${astLabel}</span> <span style="color:var(--text); font-weight:700;">${assistants.join(', ')}</span>
+                        </div>
+                    `;
+                }
             }
 
             list.innerHTML += `
@@ -440,6 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="font-size:10px; color:var(--text-sec); font-weight:800; margin-bottom:4px;" data-i18n="card_client">Հաճախորդ:</div>
                         <div style="font-size:12px; font-weight:700;">${order.clientName}</div>
                         <div style="font-size:11px; margin-top:8px;"><span data-i18n="card_address"><b>Հասցե:</b></span> ${order.address}</div>
+                        ${assistantInfoHtml}
                     </div>
                 </div>`;
         });
@@ -518,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-fin-total').innerText = `${totalPrice.toLocaleString()} ֏`;
         document.getElementById('modal-fin-company').innerText = `- ${companyFee.toLocaleString()} ֏`;
         
-        // Если заказ завершен и есть доля, показываем ее. Иначе общую цифру
+        // Показываем финансы в карточке в зависимости от роли
         if (order.status === 'completed' && order.profitSplit && order.profitSplit[emp.name] !== undefined) {
             document.getElementById('modal-fin-master').innerText = `${order.profitSplit[emp.name].toLocaleString()} ֏`;
         } else {
@@ -528,7 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnContainer = document.getElementById('modal-action-buttons');
         btnContainer.innerHTML = ''; 
 
-        // Проверка ролей (Главный или Помощник)
         let amILead = !order.leadWorker || order.leadWorker === emp.name;
         let isShared = order.worker && order.worker.includes(',');
 
@@ -536,10 +566,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (amILead) btnContainer.innerHTML = `<button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')" data-i18n="btn_accept_order">Ընդունել պատվերը</button>`;
         } else if (order.status === 'progress') {
             if (isShared && !amILead) {
-                // Если совместный заказ, и я помощник
                 btnContainer.innerHTML = `<div style="text-align:center; font-size:11px; color:var(--text-sec); padding:10px;" data-i18n="msg_assistant_wait">Спասում է ավարտին</div>`;
             } else {
-                // Я главный или единственный
                 btnContainer.innerHTML = `<button type="button" id="btn-finish-order" class="submit-btn" style="width: 100%; border-radius: 16px;" onclick="finishOrder('${order.id}')" data-i18n="btn_finish_order">Ավարտել պատվերը</button>`;
                 window.checkIfOrderCanBeFinished(order.id); 
             }
@@ -612,13 +640,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const order = ordersData.find(o => o.id === orderId);
         if(!order) return;
 
-        // Если в строке worker есть запятая (значит их двое) и указан Главный
         if (order.worker.includes(',') && order.leadWorker) {
-            openSplitProfitModal(order); // Открываем калькулятор
+            openSplitProfitModal(order); 
             return;
         }
 
-        // Если работает один мастер — классическое завершение
         order.status = 'completed';
         order.completedAt = getNowString();
         order.isCommissionPaid = false; 
@@ -638,18 +664,40 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('split-company-fee').innerText = `- ${companyFee.toLocaleString()} ֏`;
         document.getElementById('split-net-total').innerText = `${netToSplit.toLocaleString()} ֏`;
 
-        // Получаем имена всех работников, кроме Главного
         let allWorkers = order.worker.split(',').map(w => w.trim());
         let assistants = allWorkers.filter(w => w !== order.leadWorker);
 
         const astContainer = document.getElementById('split-assistants-container');
         astContainer.innerHTML = '';
         
+        let labelBase = translations['split_ast_share'][currentLang] || "Доля помощника";
+
         assistants.forEach(astName => {
+            // Читаем тип оплаты помощника (fixed, admin или lead)
+            let payInfo = order.assistantPay && order.assistantPay[astName] ? order.assistantPay[astName] : { type: 'lead' };
+            
+            let isReadonly = '';
+            let val = 0;
+            let hintText = '';
+
+            if (payInfo.type === 'fixed') {
+                isReadonly = 'readonly';
+                val = payInfo.amount;
+                hintText = translations['pay_fixed'][currentLang] || "(Фикс)";
+            } else if (payInfo.type === 'admin') {
+                isReadonly = 'readonly';
+                val = payInfo.amount;
+                hintText = translations['pay_admin'][currentLang] || "(От админа)";
+            }
+
+            // Если поле Readonly (Админ или Фикс), мы делаем его прозрачнее
+            let opacityStyle = isReadonly ? 'opacity:0.8; background:rgba(128,128,128,0.1);' : '';
+            let colorStyle = isReadonly ? 'var(--text-sec)' : '#FFB347';
+
             astContainer.innerHTML += `
                 <div class="input-group" style="margin-bottom:12px;">
-                    <label class="input-label">Доля помощника: ${astName}</label>
-                    <input type="number" class="glass-input ast-share-input" data-name="${astName}" value="0" min="0" oninput="calcSplit()" style="font-size: 18px; text-align: center; color: #FFB347;">
+                    <label class="input-label">${labelBase}: ${astName} <span style="color:var(--tree-light); font-weight:900;">${hintText}</span></label>
+                    <input type="number" class="glass-input ast-share-input" data-name="${astName}" value="${val}" min="0" oninput="calcSplit()" ${isReadonly} style="font-size: 18px; text-align: center; color: ${colorStyle}; ${opacityStyle}">
                 </div>
             `;
         });
@@ -691,9 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
             totalAst += share;
         });
         
-        // Записываем долю главного
         orderToSplit.profitSplit[orderToSplit.leadWorker] = netToSplit - totalAst;
-
         orderToSplit.status = 'completed';
         orderToSplit.completedAt = getNowString();
         orderToSplit.isCommissionPaid = false; 
@@ -708,7 +754,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
 
     window.renderEmployeeProfile = function(emp) {
-        // Установка фото (теперь сохраняется!)
         const photoEl = document.getElementById('profile-photo-display');
         if(photoEl) photoEl.src = (emp.photo && emp.photo.trim() !== '') ? emp.photo : 'assets/tree.png';
 
@@ -745,7 +790,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closeEmpSelfEdit = function() { document.getElementById('emp-self-edit-modal').classList.remove('active'); };
 
-    // Сохранение фото и данных (НОВАЯ ЛОГИКА АВАТАРКИ)
     window.saveEmpSelfEdit = function(e) {
         e.preventDefault();
         const emp = employeesData.find(e => e.id === loggedInEmpId);
@@ -766,7 +810,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
-    // --- КАЛЕНДАРЬ, ГРАФИК, FAB (сокращено для компактности, логика 7.3) ---
     window.toggleWorkDate = function(elem, dateStr) {
         if (elem.classList.contains('locked')) return; 
         const cb = elem.querySelector('input[type="checkbox"]');
