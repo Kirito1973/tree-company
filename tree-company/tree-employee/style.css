@@ -1,8 +1,8 @@
-/* Версия 7.4 */
+/* Версия 7.6.0 */
 :root, html[data-theme="light"] {
     --bg-base: #F4F7F5;
-    --blob-1: rgba(35, 169, 91, 0.65);    
-    --blob-2: rgba(0, 200, 255, 0.55);    
+    --blob-1: rgba(35, 169, 91, 0.65);  
+    --blob-2: rgba(0, 200, 255, 0.55);  
     --blob-3: rgba(255, 179, 71, 0.55);   
     --card-bg: rgba(255, 255, 255, 0.45);
     --card-border: rgba(255, 255, 255, 0.8);
