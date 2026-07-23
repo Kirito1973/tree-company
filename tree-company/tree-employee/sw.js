@@ -1,10 +1,10 @@
-// Версия 6.8 - Network-First
-const CACHE_NAME = 'tree-employee-v6.8';
+// Версия 6.9 - Network-First
+const CACHE_NAME = 'tree-employee-v6.9';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=6.8',
-    './employee.js?v=6.8',
+    './style.css?v=6.9',
+    './employee.js?v=6.9',
     './manifest.json',
     './assets/tree.png',
     './assets/apple-touch-icon.png',
