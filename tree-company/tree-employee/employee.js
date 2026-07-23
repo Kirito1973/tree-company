@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.4.1)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.4.2)
 // =========================================================
-const APP_VERSION = '7.4.1';
+const APP_VERSION = '7.4.2';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -110,11 +110,17 @@ const translations = {
     "split_your_share": { "AM": "Ձեր մնացորդը:", "RU": "Ваш остаток:", "EN": "Your Share:" },
     "btn_confirm_split": { "AM": "Հաստատել", "RU": "Подтвердить", "EN": "Confirm" },
     
-    // НОВЫЕ СТРОКИ ДЛЯ ПОМОЩНИКА
     "card_assistant": { "AM": "<b>Օգնական:</b>", "RU": "<b>Помощник:</b>", "EN": "<b>Assistant:</b>" },
     "split_ast_share": { "AM": "Օգնականի բաժինը", "RU": "Доля помощника", "EN": "Assistant Share" },
-    "pay_fixed": { "AM": "(Ֆիքսված)", "RU": "(Фикс)", "EN": "(Fixed)" },
-    "pay_admin": { "AM": "(Ադմինի կողմից)", "RU": "(От админа)", "EN": "(By Admin)" },
+    "pay_fixed": { "AM": "Ֆիքսված", "RU": "Фиксированно", "EN": "Fixed" },
+    "pay_admin": { "AM": "Նշանակված է ադմինի կողմից", "RU": "Назначено админом", "EN": "Set by Admin" },
+    
+    // НОВЫЕ СТРОКИ: Блок Команды
+    "modal_team_title": { "AM": "Թիմ / Բրիգադ", "RU": "Команда / Бригада", "EN": "Team / Crew" },
+    "role_assistant": { "AM": "Օգնական:", "RU": "Помощник:", "EN": "Assistant:" },
+    "role_lead": { "AM": "Գլխավոր մաստեր:", "RU": "Главный мастер:", "EN": "Lead Worker:" },
+    "pay_you_decide": { "AM": "(Դուք եք որոշելու)", "RU": "(Оплату назначаете вы)", "EN": "(You set the pay)" },
+    "no_assistant": { "AM": "Աշխատում եք մենակ (առանց օգնականի)", "RU": "Работаете один (без помощника)", "EN": "Working alone (no assistant)" },
 
     "day_1": { "AM": "Երկ", "RU": "Пн", "EN": "Mo" }, "day_2": { "AM": "Երք", "RU": "Вт", "EN": "Tu" }, "day_3": { "AM": "Չրք", "RU": "Ср", "EN": "We" }, "day_4": { "AM": "Հնգ", "RU": "Чт", "EN": "Th" }, "day_5": { "AM": "Ուրբ", "RU": "Пт", "EN": "Fr" }, "day_6": { "AM": "Շբթ", "RU": "Сб", "EN": "Sa" }, "day_7": { "AM": "Կիր", "RU": "Вс", "EN": "Su" },
     "day_1_full": { "AM": "Երկուշաբթի", "RU": "Понедельник", "EN": "Monday" }, "day_2_full": { "AM": "Երեքշաբթի", "RU": "Вторник", "EN": "Tuesday" }, "day_3_full": { "AM": "Չորեքշաբթի", "RU": "Среда", "EN": "Wednesday" }, "day_4_full": { "AM": "Հինգշաբթի", "RU": "Четверг", "EN": "Thursday" }, "day_5_full": { "AM": "Ուրբաթ", "RU": "Пятница", "EN": "Friday" }, "day_6_full": { "AM": "Շաբաթ", "RU": "Суббота", "EN": "Saturday" }, "day_7_full": { "AM": "Կիրակի", "RU": "Воскресенье", "EN": "Sunday" },
@@ -150,31 +156,28 @@ function applyLanguage() {
 // ================= БАЗА ДАННЫХ =================
 let ordersData = [
     { 
-        // Пример 1: Главный мастер сам решает долю помощника (type: 'lead')
         id: 'ORD-003', status: 'progress', createdAt: '15.07.2026 10:00', acceptedAt: '15.07.2026 10:30', completedAt: null, 
         clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', 
         worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', 
         leadWorker: 'Արմեն Սարգսյան',
         assistantPay: {
-            'Գոռ Վարդանյան': { type: 'lead' } 
+            'Գոռ Վարդանյան': { type: 'lead' } // Главный решает сам
         },
         profitSplit: null,
         services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false, doneAt: null }] 
     },
     { 
-        // Пример 2: Доля помощника зафиксирована Админом (type: 'admin', amount: 8000)
-        id: 'ORD-004', status: 'progress', createdAt: '16.07.2026 11:00', acceptedAt: '16.07.2026 11:30', completedAt: null, 
+        id: 'ORD-004', status: 'new', createdAt: '16.07.2026 11:00', acceptedAt: null, completedAt: null, 
         clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', 
         worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', 
         leadWorker: 'Արմեն Սարգսյան',
         assistantPay: {
-            'Գոռ Վարդանյան': { type: 'admin', amount: 8000 } 
+            'Գոռ Վարդանյան': { type: 'admin', amount: 8000 } // Цена зафиксирована Админом
         },
         profitSplit: null,
-        services: [{ name: 'Լամինատի տեղադրում', qty: 20, price: 1500, done: true, doneAt: '12:30' }] 
+        services: [{ name: 'Լամինատի տեղադրում', qty: 20, price: 1500, done: false, doneAt: null }] 
     },
     { 
-        // Пример 3: Мастер работает один
         id: 'ORD-001', status: 'completed', isCommissionPaid: false, createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00', 
         clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1', 
         worker: 'Արմեն Սարգսյան', 
@@ -183,6 +186,7 @@ let ordersData = [
     }
 ];
 
+// У Гора (Помощника) пин-код 000000. У Армена (Главного) 123456.
 let employeesData = [
     { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', workingDates: ['20.07.2026', '23.07.2026'], photo: '' },
     { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', workingDates: [], photo: '' }
@@ -298,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const emp = employeesData.find(e => e.id === empId);
         if (!emp) { logoutEmployee(); return; }
         document.getElementById('screen-login').classList.remove('active');
-        document.getElementById('screen-emp-orders').classList.add('active'); // Начинаем с заказов
+        document.getElementById('screen-emp-orders').classList.add('active'); 
         document.getElementById('emp-bottom-nav').style.display = 'flex';
         
         const firstName = emp.name.split(' ')[0];
@@ -437,7 +441,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let statusI18n = order.status === 'new' ? 'status_new' : (order.status === 'progress' ? 'status_pending' : 'status_success');
             let mainTitle = order.services.length > 0 ? order.services[0].name : "Услуга";
 
-            // ОТОБРАЖЕНИЕ ПОМОЩНИКОВ И БЕЙДЖА
             let roleBadge = '';
             let assistantInfoHtml = '';
 
@@ -490,6 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('modal-order-id').innerText = order.id;
 
+        // Блок Хронологии
         let timelineBlock = document.getElementById('modal-timeline-block');
         if (!timelineBlock) {
             timelineBlock = document.createElement('div');
@@ -506,6 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (order.completedAt) timelineHtml += `<div class="detail-row"><span class="detail-label" data-i18n="date_completed">Завершен:</span><span class="detail-value" style="color: var(--tree-light);">${order.completedAt}</span></div>`;
         timelineBlock.innerHTML = timelineHtml;
 
+        // Клиент Инфо
         document.getElementById('modal-client-name').innerText = order.clientName || '---';
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         document.getElementById('modal-client-phone-link').href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`;
@@ -518,6 +523,91 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             mapLink.style.display = 'none';
         }
+
+        // =========================================================
+        // НОВЫЙ БЛОК: ИНФОРМАЦИЯ О КОМАНДЕ И ЗВОНКИ КОЛЛЕГАМ
+        // =========================================================
+        let oldTeamBlock = document.getElementById('modal-team-block');
+        if (oldTeamBlock) oldTeamBlock.remove();
+
+        let teamInfoHtml = '';
+        let isShared = order.worker && order.worker.includes(',');
+        let allWorkers = order.worker ? order.worker.split(',').map(w => w.trim()) : [];
+        let amILead = !order.leadWorker || order.leadWorker === emp.name;
+
+        teamInfoHtml += `<div class="detail-block" style="background: rgba(0, 163, 255, 0.05); border-color: rgba(0, 163, 255, 0.2);">`;
+        teamInfoHtml += `<div class="input-label" style="color: #00A3FF; margin-bottom: 6px;" data-i18n="modal_team_title">Команда</div>`;
+
+        if (isShared) {
+            if (amILead) {
+                // Если я Главный - показываю Помощников
+                let assistants = allWorkers.filter(w => w !== order.leadWorker);
+                assistants.forEach(astName => {
+                    let astEmp = employeesData.find(e => e.name === astName);
+                    let astPhone = astEmp ? astEmp.phone : '---';
+                    let astPhoneLink = astPhone !== '---' ? `tel:${astPhone.replace(/[^\d+]/g, '')}` : '#';
+                    
+                    let payInfo = order.assistantPay && order.assistantPay[astName] ? order.assistantPay[astName] : { type: 'lead' };
+                    let payText = '';
+                    if (payInfo.type === 'fixed') payText = `${translations['pay_fixed'][currentLang] || 'Fixed'}: ${payInfo.amount} ֏`;
+                    else if (payInfo.type === 'admin') payText = `${translations['pay_admin'][currentLang] || 'Admin'}: ${payInfo.amount} ֏`;
+                    else payText = translations['pay_you_decide'][currentLang] || 'Вы решаете';
+
+                    teamInfoHtml += `
+                        <div class="detail-row" style="align-items: flex-start;">
+                            <span class="detail-label" data-i18n="role_assistant" style="margin-top: 2px;">Օգնական:</span>
+                            <span class="detail-value" style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+                                <span style="font-size: 13px;">${astName}</span>
+                                <span style="font-size: 9px; color: var(--text-sec); font-weight: 600;">${payText}</span>
+                            </span>
+                        </div>
+                        <div class="detail-row" style="border-bottom:none;">
+                            <span class="detail-label" data-i18n="prof_phone">Հեռախոս:</span>
+                            <span class="detail-value">
+                                <span style="margin-right: 8px;">${astPhone}</span>
+                                <a href="${astPhoneLink}" class="call-btn" style="background:rgba(0,163,255,0.15); color:#00A3FF; width:26px; height:26px;">
+                                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                </a>
+                            </span>
+                        </div>
+                    `;
+                });
+            } else {
+                // Если я Помощник - показываю Главного мастера
+                let leadName = order.leadWorker;
+                let leadEmp = employeesData.find(e => e.name === leadName);
+                let leadPhone = leadEmp ? leadEmp.phone : '---';
+                let leadPhoneLink = leadPhone !== '---' ? `tel:${leadPhone.replace(/[^\d+]/g, '')}` : '#';
+
+                teamInfoHtml += `
+                    <div class="detail-row">
+                        <span class="detail-label" data-i18n="role_lead">Գլխավոր:</span>
+                        <span class="detail-value" style="font-size: 13px;">${leadName}</span>
+                    </div>
+                    <div class="detail-row" style="border-bottom:none;">
+                        <span class="detail-label" data-i18n="prof_phone">Հեռախոս:</span>
+                        <span class="detail-value">
+                            <span style="margin-right: 8px;">${leadPhone}</span>
+                            <a href="${leadPhoneLink}" class="call-btn" style="background:rgba(0,163,255,0.15); color:#00A3FF; width:26px; height:26px;">
+                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                            </a>
+                        </span>
+                    </div>
+                `;
+            }
+        } else {
+            // Если работает один
+            teamInfoHtml += `<div style="font-size:11px; color:var(--text-sec); text-align:center; padding: 10px 0; font-weight: 600;" data-i18n="no_assistant">Работаете один</div>`;
+        }
+        teamInfoHtml += `</div>`;
+
+        let teamBlockWrapper = document.createElement('div');
+        teamBlockWrapper.id = 'modal-team-block';
+        teamBlockWrapper.innerHTML = teamInfoHtml;
+        
+        let financeBlock = document.getElementById('modal-finance-block');
+        financeBlock.parentNode.insertBefore(teamBlockWrapper, financeBlock);
+        // =========================================================
 
         let totalPrice = 0;
         const servList = document.getElementById('modal-services-list');
@@ -549,7 +639,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-fin-total').innerText = `${totalPrice.toLocaleString()} ֏`;
         document.getElementById('modal-fin-company').innerText = `- ${companyFee.toLocaleString()} ֏`;
         
-        // Показываем финансы в карточке в зависимости от роли
         if (order.status === 'completed' && order.profitSplit && order.profitSplit[emp.name] !== undefined) {
             document.getElementById('modal-fin-master').innerText = `${order.profitSplit[emp.name].toLocaleString()} ֏`;
         } else {
@@ -558,9 +647,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const btnContainer = document.getElementById('modal-action-buttons');
         btnContainer.innerHTML = ''; 
-
-        let amILead = !order.leadWorker || order.leadWorker === emp.name;
-        let isShared = order.worker && order.worker.includes(',');
 
         if (order.status === 'new') {
             if (amILead) btnContainer.innerHTML = `<button type="button" class="submit-btn success" style="width: 100%; border-radius: 16px;" onclick="acceptOrder('${order.id}')" data-i18n="btn_accept_order">Ընդունել պատվերը</button>`;
@@ -632,7 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- ЛОГИКА ЗАВЕРШЕНИЯ И КАЛЬКУЛЯТОРА ПРИБЫЛИ ---
     let orderToSplit = null;
     let netToSplit = 0;
 
@@ -673,24 +758,19 @@ document.addEventListener('DOMContentLoaded', () => {
         let labelBase = translations['split_ast_share'][currentLang] || "Доля помощника";
 
         assistants.forEach(astName => {
-            // Читаем тип оплаты помощника (fixed, admin или lead)
             let payInfo = order.assistantPay && order.assistantPay[astName] ? order.assistantPay[astName] : { type: 'lead' };
-            
             let isReadonly = '';
             let val = 0;
             let hintText = '';
 
             if (payInfo.type === 'fixed') {
-                isReadonly = 'readonly';
-                val = payInfo.amount;
-                hintText = translations['pay_fixed'][currentLang] || "(Фикс)";
+                isReadonly = 'readonly'; val = payInfo.amount;
+                hintText = translations['pay_fixed'][currentLang];
             } else if (payInfo.type === 'admin') {
-                isReadonly = 'readonly';
-                val = payInfo.amount;
-                hintText = translations['pay_admin'][currentLang] || "(От админа)";
+                isReadonly = 'readonly'; val = payInfo.amount;
+                hintText = translations['pay_admin'][currentLang];
             }
 
-            // Если поле Readonly (Админ или Фикс), мы делаем его прозрачнее
             let opacityStyle = isReadonly ? 'opacity:0.8; background:rgba(128,128,128,0.1);' : '';
             let colorStyle = isReadonly ? 'var(--text-sec)' : '#FFB347';
 
@@ -751,12 +831,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.renderEmployeeFinance(); 
     };
 
-    // =========================================================================
-
     window.renderEmployeeProfile = function(emp) {
         const photoEl = document.getElementById('profile-photo-display');
         if(photoEl) photoEl.src = (emp.photo && emp.photo.trim() !== '') ? emp.photo : 'assets/tree.png';
-
         document.getElementById('profile-name').innerText = emp.name;
         let pType = emp.typeLabel.split(' / ');
         document.getElementById('profile-type').innerText = currentLang === 'AM' ? pType[0] : (pType[1] || pType[0]);
@@ -777,10 +854,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openEmpSelfEdit = function() {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if(!emp) return;
-        
         const editPhotoEl = document.getElementById('edit-photo-preview');
         if(editPhotoEl) editPhotoEl.src = (emp.photo && emp.photo.trim() !== '') ? emp.photo : 'assets/tree.png';
-
         document.getElementById('self-edit-name').value = emp.name;
         document.getElementById('self-edit-phone').value = emp.phone;
         document.getElementById('self-edit-birth').value = emp.birthDate || '';
@@ -794,19 +869,13 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if(!emp) return;
-        
         const newPhotoSrc = document.getElementById('edit-photo-preview').src;
-        if (newPhotoSrc && newPhotoSrc.startsWith('data:image')) {
-            emp.photo = newPhotoSrc;
-        }
-
+        if (newPhotoSrc && newPhotoSrc.startsWith('data:image')) { emp.photo = newPhotoSrc; }
         emp.name = document.getElementById('self-edit-name').value;
         emp.phone = document.getElementById('self-edit-phone').value;
         emp.birthDate = document.getElementById('self-edit-birth').value;
         emp.address = document.getElementById('self-edit-address').value;
-
-        closeEmpSelfEdit();
-        window.renderEmployeeProfile(emp);
+        closeEmpSelfEdit(); window.renderEmployeeProfile(emp);
         if (navigator.vibrate) navigator.vibrate(50);
     };
 
@@ -900,7 +969,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (wrapper) wrapper.classList.toggle('active');
     };
 
-    // ВХОД В СИСТЕМУ
     loggedInEmpId = localStorage.getItem('loggedInEmpId');
     const pinInput = document.getElementById('emp-pin-input');
     
