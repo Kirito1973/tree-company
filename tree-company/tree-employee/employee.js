@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.6.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 7.7.0)
 // =========================================================
-const APP_VERSION = '7.6.0';
+const APP_VERSION = '7.7.0';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -116,13 +116,11 @@ const translations = {
     "card_assistant": { "AM": "<b>Օգնական:</b>", "RU": "<b>Помощник:</b>", "EN": "<b>Assistant:</b>" },
     "split_ast_share": { "AM": "Օգնականի բաժինը", "RU": "Доля помощника", "EN": "Assistant Share" },
     "pay_salary": { "AM": "Աշխատավարձ:", "RU": "Зарплата:", "EN": "Salary:" },
-    "pay_fixed": { "AM": "Ֆիքսված", "RU": "Фиксированно", "EN": "Fixed" },
-    "pay_admin": { "AM": "Նշանակված է ադմինի կողմից", "RU": "Назначено админом", "EN": "Set by Admin" },
     
     "modal_team_title": { "AM": "Թիմ / Բրիգադ", "RU": "Команда / Бригада", "EN": "Team / Crew" },
     "role_assistant": { "AM": "Օգնական:", "RU": "Помощник:", "EN": "Assistant:" },
     "role_lead": { "AM": "Գլխավոր մաստեր:", "RU": "Главный мастер:", "EN": "Lead Worker:" },
-    "pay_you_decide": { "AM": "Դուք եք որոշելու", "RU": "будете решать вы", "EN": "you decide" },
+    "pay_you_decide": { "AM": "Դուք եք որոշելու", "RU": "решайте вы", "EN": "you decide" },
     "no_assistant": { "AM": "Աշխատում եք մենակ (առանց օգնականի)", "RU": "Работаете один (без помощника)", "EN": "Working alone (no assistant)" },
 
     "day_1": { "AM": "Երկ", "RU": "Пн", "EN": "Mo" }, "day_2": { "AM": "Երք", "RU": "Вт", "EN": "Tu" }, "day_3": { "AM": "Չրք", "RU": "Ср", "EN": "We" }, "day_4": { "AM": "Հնգ", "RU": "Чт", "EN": "Th" }, "day_5": { "AM": "Ուրբ", "RU": "Пт", "EN": "Fr" }, "day_6": { "AM": "Շբթ", "RU": "Сб", "EN": "Sa" }, "day_7": { "AM": "Կիր", "RU": "Вс", "EN": "Su" },
@@ -554,10 +552,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     let payLabel = translations['pay_salary'] ? translations['pay_salary'][currentLang] : "Зарплата:";
                     let payText = '';
                     
-                    if (payInfo.type === 'fixed') {
-                        payText = `${payLabel} <span style="color:var(--tree-light); font-weight:800;">${payInfo.amount} ֏</span> <span style="opacity:0.7;">(${translations['pay_fixed'][currentLang]})</span>`;
-                    } else if (payInfo.type === 'admin') {
-                        payText = `${payLabel} <span style="color:var(--tree-light); font-weight:800;">${payInfo.amount} ֏</span> <span style="opacity:0.7;">(${translations['pay_admin'][currentLang]})</span>`;
+                    // Улучшенное и простое отображение Зарплаты без лишних скобок
+                    if (payInfo.type === 'fixed' || payInfo.type === 'admin') {
+                        payText = `${payLabel} <span style="color:var(--tree-light); font-weight:800;">${payInfo.amount} ֏</span>`;
                     } else {
                         payText = `${payLabel} <span style="color:#FFB347; font-weight:800;">${translations['pay_you_decide'][currentLang]}</span>`;
                     }
@@ -567,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="detail-label" data-i18n="role_assistant" style="margin-top: 2px;">Օգնական:</span>
                             <span class="detail-value" style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
                                 <span style="font-size: 13px;">${astName}</span>
-                                <span style="font-size: 9px; color: var(--text-sec); font-weight: 600;">${payText}</span>
+                                <span style="font-size: 11px; color: var(--text-sec); font-weight: 600;">${payText}</span>
                             </span>
                         </div>
                         <div class="detail-row" style="border-bottom:none;">
@@ -770,14 +767,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let payInfo = order.assistantPay && order.assistantPay[astName] ? order.assistantPay[astName] : { type: 'lead' };
             let isReadonly = '';
             let val = 0;
-            let hintText = '';
 
-            if (payInfo.type === 'fixed') {
+            if (payInfo.type === 'fixed' || payInfo.type === 'admin') {
                 isReadonly = 'readonly'; val = payInfo.amount;
-                hintText = translations['pay_fixed'][currentLang];
-            } else if (payInfo.type === 'admin') {
-                isReadonly = 'readonly'; val = payInfo.amount;
-                hintText = translations['pay_admin'][currentLang];
             }
 
             let opacityStyle = isReadonly ? 'opacity:0.8; background:rgba(128,128,128,0.1);' : '';
@@ -785,8 +777,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             astContainer.innerHTML += `
                 <div class="input-group" style="margin-bottom:12px;">
-                    <label class="input-label">${labelBase}: ${astName} <span style="color:var(--tree-light); font-weight:900;">${hintText}</span></label>
-                    <input type="number" class="glass-input ast-share-input" data-name="${astName}" value="${val}" min="0" enterkeyhint="done" oninput="calcSplit()" onfocus="if(this.value==='0') this.value=''; else this.select();" onblur="if(this.value==='') { this.value='0'; calcSplit(); }" onkeydown="if(event.key === 'Enter') { this.blur(); const btn = document.getElementById('btn-confirm-split'); if(!btn.disabled) btn.click(); }" ${isReadonly} style="font-size: 18px; text-align: center; color: ${colorStyle}; ${opacityStyle}">
+                    <label class="input-label">${labelBase}: ${astName}</label>
+                    <input type="number" class="glass-input ast-share-input" data-name="${astName}" value="${val}" min="0" oninput="calcSplit()" onfocus="if(this.value==='0') this.value=''; else this.select();" onblur="if(this.value==='') { this.value='0'; calcSplit(); }" ${isReadonly} style="font-size: 18px; text-align: center; color: ${colorStyle}; ${opacityStyle}">
                 </div>
             `;
         });
