@@ -153,7 +153,6 @@ const translations = {
     "client_reviews": { "AM": "Հաճախորդների կարծիքները", "RU": "Отзывы клиентов", "EN": "Client Reviews" },
     "no_reviews": { "AM": "Դեռ կարծիքներ չկան", "RU": "Пока нет отзывов", "EN": "No reviews yet" },
 
-    // Полные названия дней недели
     "day_1_full": { "AM": "Երկուշաբթի", "RU": "Понедельник", "EN": "Monday" },
     "day_2_full": { "AM": "Երեքշաբթի", "RU": "Вторник", "EN": "Tuesday" },
     "day_3_full": { "AM": "Չորեքշաբթի", "RU": "Среда", "EN": "Wednesday" },
@@ -198,7 +197,6 @@ let ordersData = [
     { id: 'ORD-001', status: 'completed', isCommissionPaid: false, createdAt: '10.07.2026 09:00', acceptedAt: '10.07.2026 09:30', completedAt: '11.07.2026 14:00', clientName: 'Մարիամ Պողոսյան', clientPhone: '+374 77 123 456', address: 'Երևան, Բաղրամյան 1', worker: 'Արմեն Սարգսյան', services: [{ name: 'Փայտե դռան տեղադրում', qty: 1, price: 20000, done: true, doneAt: '11.07.2026 13:50' }] }
 ];
 
-// workingDates: массив дат, в которые мастер готов работать (сохраняется точно в формате DD.MM.YYYY)
 let employeesData = [
     { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', workingDates: ['23.07.2026', '24.07.2026', '25.07.2026'] },
     { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', workingDates: [] }
@@ -374,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.renderEmployeeNews();
         window.renderEmployeeOrders();
         window.renderEmployeeProfile(emp);
-        window.renderWeeklySchedule(); // Рендер графика
+        window.renderWeeklySchedule(); 
         window.renderEmployeeFinance();
         window.updateOrderCounts(); 
     };
@@ -713,10 +711,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (content.classList.contains('open')) {
             content.classList.remove('open');
             chevron.style.transform = 'rotate(0deg)';
+            if (navigator.vibrate) navigator.vibrate(10);
         } else {
             content.classList.add('open');
             chevron.style.transform = 'rotate(180deg)';
-            if (navigator.vibrate) navigator.vibrate(10);
+            if (navigator.vibrate) navigator.vibrate(15);
         }
     };
 
@@ -731,9 +730,9 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
         weekDates.forEach(wd => {
             const isChecked = workingDates.includes(wd.dateStr) ? 'checked' : '';
-            // Получаем полное название дня из переводов
             const dayNameFull = translations[`day_${wd.dayIndex}_full`]?.[currentLang] || translations[`day_${wd.dayIndex}`][currentLang];
             
+            // Добавили onchange="if(navigator.vibrate) navigator.vibrate(15)" прямо в input для микровибрации
             container.innerHTML += `
                 <label class="schedule-list-item">
                     <div class="schedule-day-info">
@@ -741,7 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="schedule-day-date">${wd.dateStr}</span>
                     </div>
                     <div class="switch">
-                        <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked}>
+                        <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked} onchange="if(navigator.vibrate) navigator.vibrate(15)">
                         <span class="slider"></span>
                     </div>
                 </label>
@@ -754,7 +753,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const emp = employeesData.find(e => e.id === loggedInEmpId);
         if (!emp) return;
 
-        // Сохраняем только те даты, где тумблер включен
         const selectedDates = Array.from(document.querySelectorAll('input[name="work_date"]:checked')).map(cb => cb.value);
         emp.workingDates = selectedDates; 
 
@@ -767,9 +765,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             btn.innerHTML = originalText;
             btn.style.background = '';
-            // Автоматически закрываем выпадающий список после сохранения
             toggleScheduleDropdown();
-        }, 1200);
+        }, 1000);
     };
 
     window.openEmpSelfEdit = function() {
