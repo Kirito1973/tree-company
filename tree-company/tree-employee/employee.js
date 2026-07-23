@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.6)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.7)
 // =========================================================
-const APP_VERSION = '6.6';
+const APP_VERSION = '6.7';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -732,30 +732,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const isChecked = workingDates.includes(wd.dateStr) ? 'checked' : '';
             const dayNameFull = translations[`day_${wd.dayIndex}_full`]?.[currentLang] || translations[`day_${wd.dayIndex}`][currentLang];
             
-            // Используем div для всей строки и отдельный label для тумблера
+            // Вся строка - это единый <label>, так чекбокс срабатывает безупречно на любых смартфонах
             container.innerHTML += `
-                <div class="schedule-list-item" onclick="toggleRowCheckbox(this)">
+                <label class="schedule-list-item">
                     <div class="schedule-day-info">
                         <span class="schedule-day-name">${dayNameFull}</span>
                         <span class="schedule-day-date">${wd.dateStr}</span>
                     </div>
-                    <label class="switch" onclick="event.stopPropagation()">
+                    <div class="switch">
                         <input type="checkbox" name="work_date" value="${wd.dateStr}" ${isChecked} onchange="if(navigator.vibrate) navigator.vibrate(15)">
                         <span class="slider"></span>
-                    </label>
-                </div>
+                    </div>
+                </label>
             `;
         });
         applyLanguage();
-    };
-
-    // Функция для переключения чекбокса при клике на саму строку
-    window.toggleRowCheckbox = function(rowElem) {
-        const cb = rowElem.querySelector('input[type="checkbox"]');
-        if (cb) {
-            cb.checked = !cb.checked;
-            if(navigator.vibrate) navigator.vibrate(15);
-        }
     };
 
     window.saveWeeklySchedule = function() {
