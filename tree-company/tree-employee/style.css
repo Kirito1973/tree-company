@@ -342,36 +342,50 @@ html[data-theme="dark"] .review-card { background: rgba(0, 0, 0, 0.2); }
 }
 
 /* ========================================================================= */
-/* СТИЛИ ДЛЯ ВЫБОРА ВЫХОДНЫХ ДНЕЙ */
+/* СТИЛИ ДЛЯ ВЫБОРА ГРАФИКА РАБОТЫ */
 /* ========================================================================= */
-.days-off-selector {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 4px;
+.schedule-selector { 
+    display: flex; 
+    gap: 8px; 
+    flex-wrap: wrap; 
 }
-.day-chip {
-    cursor: pointer;
-    display: inline-flex;
+.schedule-chip { 
+    cursor: pointer; 
+    display: inline-flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: calc(25% - 6px); 
     user-select: none;
     -webkit-user-select: none;
 }
-.day-chip input {
-    display: none;
+.schedule-chip input { 
+    display: none; 
 }
-.day-chip span {
-    background: rgba(128, 128, 128, 0.1);
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    color: var(--text-sec);
-    padding: 8px 14px;
-    border-radius: 14px;
-    font-size: 11px;
-    font-weight: 700;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.schedule-chip span { 
+    width: 100%; 
+    text-align: center; 
+    background: rgba(128,128,128,0.1); 
+    border: 1px solid rgba(128,128,128,0.2); 
+    color: var(--text-sec); 
+    padding: 10px 4px; 
+    border-radius: 12px; 
+    font-size: 10px; 
+    font-weight: 700; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
 }
-.day-chip input:checked + span {
-    background: rgba(255, 68, 68, 0.15);
-    border-color: rgba(255, 68, 68, 0.5);
-    color: #ff4444;
+.schedule-chip span b { 
+    display: block; 
+    font-size: 13px; 
+    margin-top: 4px; 
+    font-weight: 900; 
+    color: var(--text); 
+}
+.schedule-chip input:checked + span {
+    background: rgba(35, 169, 91, 0.15); 
+    border-color: rgba(35, 169, 91, 0.5); 
+    color: var(--tree-light); 
     transform: scale(1.05);
+}
+.schedule-chip input:checked + span b { 
+    color: var(--tree-light); 
 }
