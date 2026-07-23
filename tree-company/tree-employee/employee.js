@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.4)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 6.5)
 // =========================================================
-const APP_VERSION = '6.4';
+const APP_VERSION = '6.5';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -732,7 +732,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isChecked = workingDates.includes(wd.dateStr) ? 'checked' : '';
             const dayNameFull = translations[`day_${wd.dayIndex}_full`]?.[currentLang] || translations[`day_${wd.dayIndex}`][currentLang];
             
-            // Добавили onchange="if(navigator.vibrate) navigator.vibrate(15)" прямо в input для микровибрации
+            // Вся карточка обернута в <label>, чтобы клик по ней переключал чекбокс внутри
             container.innerHTML += `
                 <label class="schedule-list-item">
                     <div class="schedule-day-info">
