@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.2.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.3.0)
 // =========================================================
-const APP_VERSION = '4.2.0';
+const APP_VERSION = '4.3.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
@@ -28,6 +28,32 @@ function switchTab(screenId, btnElement) {
     if(screenId === 'screen-clients') renderClients();
 }
 
+let dashViewedState = {
+    overview: false,
+    orders: false,
+    masters: false,
+    partners: false
+};
+
+function updateDashDots() {
+    const incOrders = ordersData.filter(o => o.status === 'incoming').length;
+    const incMasters = employeesData.filter(e => e.status === 'pending').length;
+    const incPartners = cooperationRequestsData.filter(c => c.status === 'pending').length;
+    const incReviews = reviewsData.length;
+
+    if (incOrders > 0 && !dashViewedState.orders) document.getElementById('dash-dot-orders').style.display = 'block';
+    else document.getElementById('dash-dot-orders').style.display = 'none';
+
+    if (incMasters > 0 && !dashViewedState.masters) document.getElementById('dash-dot-masters').style.display = 'block';
+    else document.getElementById('dash-dot-masters').style.display = 'none';
+
+    if (incPartners > 0 && !dashViewedState.partners) document.getElementById('dash-dot-partners').style.display = 'block';
+    else document.getElementById('dash-dot-partners').style.display = 'none';
+
+    if (incReviews > 0 && !dashViewedState.overview) document.getElementById('dash-dot-overview').style.display = 'block';
+    else document.getElementById('dash-dot-overview').style.display = 'none';
+}
+
 function switchDashboardView(viewName) {
     document.querySelectorAll('.dash-view-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector(`[data-dash-view="${viewName}"]`).classList.add('active');
@@ -35,10 +61,8 @@ function switchDashboardView(viewName) {
     document.querySelectorAll('.dash-view-content').forEach(el => el.style.display = 'none');
     document.getElementById('dash-' + viewName).style.display = 'block';
 
-    // Убираем красную точку при просмотре
-    if(viewName === 'orders') document.getElementById('dash-dot-orders').style.display = 'none';
-    if(viewName === 'masters') document.getElementById('dash-dot-masters').style.display = 'none';
-    if(viewName === 'partners') document.getElementById('dash-dot-partners').style.display = 'none';
+    dashViewedState[viewName] = true;
+    updateDashDots();
 
     if(viewName === 'overview') renderDashboardOverview();
     if(viewName === 'orders') renderDashboardOrders();
@@ -205,7 +229,7 @@ let partnersData = [
 let reviewsData = [
     { id: 'REV-001', clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով:', date: '22.07.2026' },
     { id: 'REV-002', clientName: 'Դավիթ Պետրոսյան', masterName: 'Գոռ Վարդանյան', rating: 4.5, text: 'Լավ աշխատանք, փոքր-ինչ ուշացան, բայց արդյունքը գերազանց է:', date: '20.07.2026' },
-    { id: 'REV-003', clientName: 'Մարիամ Գրիգորյան', masterName: 'Կարեն Մելքոնյան', rating: 5, text: 'Հոյակապ վարպետ, շատ մաքուր աշխատեց:', date: '18.07.2026' }
+    { id: 'REV-003', clientName: 'Մարիամ Գրիգորյան', masterName: 'Կարեն Մելքոնյան', rating: 5, text: 'Հոյակապ վարպետ, շատ մաքուր աշխատեց: Ուզում եմ նշել նաև, որ աշխատակիցը շատ բարեհամբույր էր և պատասխանում էր իմ բոլոր հարցերին անմիջապես: Վստահաբար խորհուրդ եմ տալիս բոլորին օգտվել այս ընկերության ծառայություններից:', date: '18.07.2026' }
 ];
 
 let cooperationRequestsData = [
@@ -288,13 +312,13 @@ document.addEventListener('DOMContentLoaded', () => {
             reviewsData.slice().reverse().forEach(rev => {
                 const stars = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
                 revList.innerHTML += `
-                    <div class="entity-card" style="cursor:default;">
+                    <div class="entity-card" style="cursor:pointer;" onclick="openReviewModal('${rev.id}')">
                         <div class="entity-header">
                             <span class="entity-id" style="color:var(--text); font-size: 12px;">${rev.clientName}</span>
                             <span style="color:#FFB347; font-size:12px; font-weight:900;">${stars}</span>
                         </div>
                         <div class="entity-meta" style="margin-top:4px;">Варпет: <b style="color:var(--tree-light);">${rev.masterName}</b></div>
-                        <div style="font-size: 11px; font-weight: 600; font-style: italic; color: var(--text-sec); margin-top: 8px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 8px;">
+                        <div class="truncate-text" style="font-size: 11px; font-weight: 600; font-style: italic; color: var(--text-sec); margin-top: 8px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 8px;">
                             "${rev.text}"
                         </div>
                         <div style="font-size: 9px; color: var(--text-sec); text-align: right; margin-top: 6px;">${rev.date}</div>
@@ -306,16 +330,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    window.openReviewModal = function(id) {
+        const rev = reviewsData.find(r => r.id === id);
+        if(!rev) return;
+        document.getElementById('modal-rev-client').innerText = rev.clientName;
+        document.getElementById('modal-rev-stars').innerText = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
+        document.getElementById('modal-rev-text').innerText = rev.text;
+        document.getElementById('modal-rev-date').innerText = rev.date;
+        document.getElementById('review-modal').classList.add('active');
+        if (navigator.vibrate) navigator.vibrate(10);
+    };
+    window.closeReviewModal = function() {
+        document.getElementById('review-modal').classList.remove('active');
+    };
+
     window.renderDashboardOrders = function() {
         const list = document.getElementById('dash-orders-list');
         list.innerHTML = '';
         
-        const incomingCount = ordersData.filter(o => o.status === 'incoming').length;
-        const currentView = document.querySelector('.dash-view-btn.active').getAttribute('data-dash-view');
-        if (incomingCount > 0 && currentView !== 'orders') {
-            document.getElementById('dash-dot-orders').style.display = 'block';
-        }
-
         const searchInput = document.getElementById('dash-order-search');
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
 
@@ -351,10 +383,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const list = document.getElementById('dash-masters-list');
         list.innerHTML = '';
         const pendingMasters = employeesData.filter(e => e.status === 'pending');
-        const currentView = document.querySelector('.dash-view-btn.active').getAttribute('data-dash-view');
-        if (pendingMasters.length > 0 && currentView !== 'masters') {
-            document.getElementById('dash-dot-masters').style.display = 'block';
-        }
 
         if(pendingMasters.length > 0) {
             pendingMasters.forEach(emp => {
@@ -373,10 +401,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const list = document.getElementById('dash-partners-list');
         list.innerHTML = '';
         const pendingPartners = cooperationRequestsData.filter(c => c.status === 'pending');
-        const currentView = document.querySelector('.dash-view-btn.active').getAttribute('data-dash-view');
-        if (pendingPartners.length > 0 && currentView !== 'partners') {
-            document.getElementById('dash-dot-partners').style.display = 'block';
-        }
 
         if(pendingPartners.length > 0) {
             pendingPartners.forEach(coop => {
@@ -419,9 +443,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderDashboardPartners();
             renderAdminPartners();
             closeCoopModal();
+            updateDashDots();
             if(navigator.vibrate) navigator.vibrate(20);
             
-            // Открываем окно редактирования партнера сразу после принятия
             openPartnerForm(newPartnerId);
         }
     };
@@ -431,6 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cooperationRequestsData = cooperationRequestsData.filter(c => c.id !== currentActiveCoopId);
             renderDashboardPartners();
             closeCoopModal();
+            updateDashDots();
         }
     };
 
@@ -692,7 +717,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnAccept = document.getElementById('modal-emp-accept-btn'); const btnReject = document.getElementById('modal-emp-reject-btn'); const btnEdit = document.getElementById('modal-emp-edit-btn');
         if (isPending) { btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; btnEdit.style.display = 'none'; } else { btnAccept.style.display = 'none'; btnReject.style.display = 'none'; btnEdit.style.display = 'flex'; }
         
-        // Скрываем блоки, которые не нужны при рассмотрении анкеты
         document.getElementById('emp-pin-row').style.display = isPending ? 'none' : 'flex';
         document.getElementById('emp-schedule-block').style.display = isPending ? 'none' : 'block';
         document.getElementById('emp-finance-block').style.display = isPending ? 'none' : 'block';
@@ -710,13 +734,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const emp = employeesData.find(e => e.id === currentActiveEmpId); 
         if (emp) { 
             emp.status = 'active';
-            // Генерируем пароль ТОЛЬКО в этот момент
             emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString();
             
             renderDashboardMasters(); 
             renderEmployees(); 
+            updateDashDots();
             
-            // Сразу показываем карточку заново с новыми данными (паролем и т.д.)
             openEmployeeModal(emp.id); 
             if (navigator.vibrate) navigator.vibrate(20); 
         } 
@@ -728,6 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
             employeesData = employeesData.filter(e => e.id !== currentActiveEmpId); 
             renderDashboardMasters(); 
             closeEmployeeModal(); 
+            updateDashDots();
         } 
     };
 
@@ -748,7 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('form-emp-name').value; const phone = document.getElementById('form-emp-phone').value; const address = document.getElementById('form-emp-address').value; const birthDate = document.getElementById('form-emp-birth').value; const type = document.getElementById('form-emp-type').value; const exp = document.getElementById('form-emp-exp').value; const accessKey = document.getElementById('form-emp-access-key').value;
         if (currentEditingEmpId) { const emp = employeesData.find(e => e.id === currentEditingEmpId); if (emp) { emp.name = name; emp.phone = phone; emp.address = address; emp.birthDate = birthDate; emp.type = type; emp.typeLabel = typeLabelsMap[type] || type; emp.exp = exp; emp.accessKey = accessKey; } } 
         else { employeesData.push({ id: generateEmpId(), status: 'active', name: name, type: type, typeLabel: typeLabelsMap[type] || type, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [] }); }
-        renderEmployees(); renderDashboardMasters(); closeEmployeeFormModal(); if (navigator.vibrate) navigator.vibrate(50);
+        renderEmployees(); renderDashboardMasters(); closeEmployeeFormModal(); updateDashDots(); if (navigator.vibrate) navigator.vibrate(50);
     };
 
     window.openOrderModal = function(orderId) {
@@ -777,8 +801,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.closeOrderModal = function() { document.getElementById('order-modal').classList.remove('active'); currentActiveOrderId = null; };
-    window.acceptOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (order && order.status === 'incoming') { order.status = 'new'; renderDashboardOrders(); renderOrders(); closeOrderModal(); setTimeout(() => openOrderForm(order.id), 300); } };
-    window.rejectOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (order && order.status === 'incoming') { if (confirm("Отказать в заявке? (Մերժե՞լ հայտը)")) { order.status = 'cancelled'; renderDashboardOrders(); closeOrderModal(); } } };
+    window.acceptOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (order && order.status === 'incoming') { order.status = 'new'; renderDashboardOrders(); renderOrders(); updateDashDots(); closeOrderModal(); setTimeout(() => openOrderForm(order.id), 300); } };
+    window.rejectOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (order && order.status === 'incoming') { if (confirm("Отказать в заявке? (Մերժե՞լ հայտը)")) { order.status = 'cancelled'; renderDashboardOrders(); updateDashDots(); closeOrderModal(); } } };
     window.cancelOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (confirm("Չեղարկե՞լ այս պատվերը (Отменить этот заказ?)")) { if(order) { order.status = 'cancelled'; renderOrders(); } closeOrderModal(); } };
 
     window.openOrderForm = function(orderId = null) {
@@ -820,12 +844,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const customProfit = parseFloat(document.getElementById('form-profit-sum').value) || 0;
         if (currentEditingOrderId) { const order = ordersData.find(o => o.id === currentEditingOrderId); if (order) { order.clientName = clientName; order.clientPhone = phone; order.address = address; order.worker = finalWorkerString; order.workerPhone = workerPhone; order.services = services; order.profit = customProfit; } } 
         else { ordersData.unshift({ id: generateOrderId(), status: 'new', createdAt: getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit }); }
-        renderOrders(); renderDashboardOrders(); closeOrderFormModal(); if (navigator.vibrate) navigator.vibrate(50);
+        renderOrders(); renderDashboardOrders(); updateDashDots(); closeOrderFormModal(); if (navigator.vibrate) navigator.vibrate(50);
     };
 
     applyAdminLanguage(); 
     renderOrders(); 
     renderEmployees(); 
+    
+    // Инициализация при первой загрузке (чтобы показались точки, если есть непрочитанные данные)
+    updateDashDots();
     switchDashboardView('overview');
 
     // ================= DB & CONTENT =================
