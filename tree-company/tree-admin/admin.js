@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.1.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.2.0)
 // =========================================================
-const APP_VERSION = '4.1.0';
+const APP_VERSION = '4.2.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
@@ -35,11 +35,30 @@ function switchDashboardView(viewName) {
     document.querySelectorAll('.dash-view-content').forEach(el => el.style.display = 'none');
     document.getElementById('dash-' + viewName).style.display = 'block';
 
+    // Убираем красную точку при просмотре
+    if(viewName === 'orders') document.getElementById('dash-dot-orders').style.display = 'none';
+    if(viewName === 'masters') document.getElementById('dash-dot-masters').style.display = 'none';
+    if(viewName === 'partners') document.getElementById('dash-dot-partners').style.display = 'none';
+
     if(viewName === 'overview') renderDashboardOverview();
     if(viewName === 'orders') renderDashboardOrders();
     if(viewName === 'masters') renderDashboardMasters();
     if(viewName === 'partners') renderDashboardPartners();
     if (navigator.vibrate) navigator.vibrate(10);
+}
+
+let currentDashOrdFilter = 'all';
+function setDashOrderFilter(filterValue) {
+    currentDashOrdFilter = filterValue;
+    document.querySelectorAll('#dash-orders .filter-tab').forEach(t => {
+        if (t.getAttribute('data-dash-ord-filter') === filterValue) t.classList.add('active');
+        else t.classList.remove('active');
+    });
+    renderDashboardOrders();
+}
+
+if(document.getElementById('dash-order-search')) {
+    document.getElementById('dash-order-search').addEventListener('input', renderDashboardOrders);
 }
 
 function switchContentTab(tabName, btnElement) {
@@ -56,13 +75,10 @@ function switchContentTab(tabName, btnElement) {
 
 const adminTranslations = {
     "tab_dashboard": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Dashboard" },
-    "sw_overview": { "AM": "Ակնարկ", "RU": "Обзор", "EN": "Overview" },
+    "sw_overview": { "AM": "Ընդհանուր", "RU": "Общее", "EN": "General" },
     "sw_inc_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
-    "sw_inc_masters": { "AM": "Հայտեր", "RU": "Заявки", "EN": "Requests" },
-    "sw_coop": { "AM": "Գործընկերներ", "RU": "Сотрудничество", "EN": "Partners" },
-    "lbl_company_rating": { "AM": "Ընկերության վարկանիշը", "RU": "Рейтинг компании", "EN": "Company Rating" },
-    "lbl_total_orders": { "AM": "Ընդհանուր պատվերներ", "RU": "Всего заказов", "EN": "Total Orders" },
-    "lbl_total_masters": { "AM": "Ընդհանուր վարպետներ", "RU": "Всего мастеров", "EN": "Total Masters" },
+    "sw_inc_masters": { "AM": "Ռեզյումե", "RU": "Резюме", "EN": "Resumes" },
+    "sw_coop": { "AM": "Գործընկերներ", "RU": "Партнеры", "EN": "Partners" },
     "lbl_recent_reviews": { "AM": "Վերջին կարծիքները", "RU": "Последние отзывы", "EN": "Recent Reviews" },
     
     "title_orders": { "AM": "Ակտիվ <span>պատվերներ</span>", "RU": "Активные <span>заказы</span>", "EN": "Active <span>Orders</span>" },
@@ -155,7 +171,7 @@ function applyAdminLanguage() {
     });
 }
 
-// ================= ДАННЫЕ ЗАКАЗОВ, СОТРУДНИКОВ, КЛИЕНТОВ, ОТЗЫВОВ, ПАРТНЕРОВ =================
+// ================= ДАННЫЕ =================
 let ordersData = [
     { id: 'ORD-004', status: 'incoming', createdAt: getCurrentDateString(), completedAt: null, clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50', worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500 },
     { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000 },
@@ -164,7 +180,7 @@ let ordersData = [
 ];
 
 let employeesData = [
-    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 98 000 111', exp: '2 տարի / 2 года', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '654321', companyDebt: 0, workingDates: [] },
+    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 98 000 111', exp: '2 տարի / 2 года', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '', companyDebt: 0, workingDates: [] },
     { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: ['20.07.2026', '23.07.2026', '24.07.2026'] },
     { id: 'EMP-002', status: 'active', name: 'Կարեն Մելքոնյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 55 444 333', exp: '3 տարի / 3 года', rating: 4.5, birthDate: '02.12.1996', address: 'Երևան, Մաշտոցի 12', accessKey: '112233', companyDebt: 4500, workingDates: [] },
     { id: 'EMP-003', status: 'active', name: 'Վարդան Գրիգորյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 99 111 222', exp: '10 տարի / 10 лет', rating: 5.0, birthDate: '24.08.1985', address: 'Երևան, Աբովյան 20', accessKey: '998877', companyDebt: 0, workingDates: [] },
@@ -187,9 +203,9 @@ let partnersData = [
 ];
 
 let reviewsData = [
-    { id: 'REV-001', clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով (Очень довольна работой):', date: '22.07.2026' },
-    { id: 'REV-002', clientName: 'Դավիթ Պետրոսյան', masterName: 'Գոռ Վարդանյան', rating: 4.5, text: 'Լավ աշխատանք, փոքր-ինչ ուշացան, բայց արդյունքը գերազանց է (Хорошая работа, немного опоздали):', date: '20.07.2026' },
-    { id: 'REV-003', clientName: 'Մարիամ Գրիգորյան', masterName: 'Կարեն Մելքոնյան', rating: 5, text: 'Հոյակապ վարպետ, շատ մաքուր աշխատեց (Отличный мастер, работал чисто):', date: '18.07.2026' }
+    { id: 'REV-001', clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով:', date: '22.07.2026' },
+    { id: 'REV-002', clientName: 'Դավիթ Պետրոսյան', masterName: 'Գոռ Վարդանյան', rating: 4.5, text: 'Լավ աշխատանք, փոքր-ինչ ուշացան, բայց արդյունքը գերազանց է:', date: '20.07.2026' },
+    { id: 'REV-003', clientName: 'Մարիամ Գրիգորյան', masterName: 'Կարեն Մելքոնյան', rating: 5, text: 'Հոյակապ վարպետ, շատ մաքուր աշխատեց:', date: '18.07.2026' }
 ];
 
 let cooperationRequestsData = [
@@ -260,18 +276,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ================= DASHBOARD (ГЛАВНАЯ СТРАНИЦА) LOGIC =================
     window.renderDashboardOverview = function() {
-        // Статистика
-        const totalOrders = ordersData.filter(o => o.status !== 'cancelled').length;
-        const totalMasters = employeesData.filter(e => e.status === 'active').length;
         let totalRating = 0;
         reviewsData.forEach(r => totalRating += r.rating);
         const avgRating = reviewsData.length > 0 ? (totalRating / reviewsData.length).toFixed(1) : '0.0';
 
-        document.getElementById('dash-total-orders').innerText = totalOrders;
-        document.getElementById('dash-total-masters').innerText = totalMasters;
-        document.getElementById('dash-avg-rating').innerText = `★ ${avgRating}`;
+        document.getElementById('dash-avg-rating-hero').innerText = `★ ${avgRating}`;
 
-        // Отзывы
         const revList = document.getElementById('dash-reviews-list');
         revList.innerHTML = '';
         if(reviewsData.length > 0) {
@@ -281,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="entity-card" style="cursor:default;">
                         <div class="entity-header">
                             <span class="entity-id" style="color:var(--text); font-size: 12px;">${rev.clientName}</span>
-                            <span style="color:#FFB347; font-size:12px; font-weight:900;">${stars} <span style="font-size:10px; color:var(--text-sec);">(${rev.rating})</span></span>
+                            <span style="color:#FFB347; font-size:12px; font-weight:900;">${stars}</span>
                         </div>
                         <div class="entity-meta" style="margin-top:4px;">Варпет: <b style="color:var(--tree-light);">${rev.masterName}</b></div>
                         <div style="font-size: 11px; font-weight: 600; font-style: italic; color: var(--text-sec); margin-top: 8px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 8px;">
@@ -299,22 +309,41 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderDashboardOrders = function() {
         const list = document.getElementById('dash-orders-list');
         list.innerHTML = '';
-        const incomingOrders = ordersData.filter(o => o.status === 'incoming');
-        document.getElementById('dash-badge-orders').innerText = incomingOrders.length;
-        document.getElementById('dash-badge-orders').style.display = incomingOrders.length > 0 ? 'flex' : 'none';
+        
+        const incomingCount = ordersData.filter(o => o.status === 'incoming').length;
+        const currentView = document.querySelector('.dash-view-btn.active').getAttribute('data-dash-view');
+        if (incomingCount > 0 && currentView !== 'orders') {
+            document.getElementById('dash-dot-orders').style.display = 'block';
+        }
 
-        if(incomingOrders.length > 0) {
-            incomingOrders.forEach(order => {
+        const searchInput = document.getElementById('dash-order-search');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+
+        let filtered = ordersData.filter(o => {
+            const matchesSearch = (o.id + o.clientName + o.clientPhone).toLowerCase().includes(searchTerm);
+            let matchesTab = false;
+            if(currentDashOrdFilter === 'all') matchesTab = true;
+            else if(currentDashOrdFilter === 'incoming') matchesTab = (o.status === 'incoming' || o.status === 'new');
+            else matchesTab = (o.status === currentDashOrdFilter);
+            
+            return matchesSearch && matchesTab && o.status !== 'cancelled';
+        });
+
+        if(filtered.length > 0) {
+            filtered.forEach(order => {
                 let mainTitle = order.services.length > 0 ? order.services[0].name : "Услуга не указана";
                 if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
+                let statusClass = '', statusI18n = '';
+                if (order.status === 'incoming') { statusClass = 'incoming'; statusI18n = 'status_incoming'; } else if (order.status === 'new') { statusClass = 'new'; statusI18n = 'status_new'; } else if (order.status === 'progress') { statusClass = 'pending'; statusI18n = 'status_pending'; } else if (order.status === 'completed') { statusI18n = 'status_success'; }
+                
                 const card = document.createElement('div'); card.className = 'entity-card'; 
                 card.onclick = () => openOrderModal(order.id);
-                card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status incoming" data-i18n="status_incoming">Ожидает</span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">Անուն: ${order.clientName || '---'}</div><div class="entity-meta">Հեռախոս: ${order.clientPhone}</div><div class="entity-meta">Հասցե: ${order.address}</div>`;
+                card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">Անուն: ${order.clientName || '---'}</div><div class="entity-meta">Հեռախոս: ${order.clientPhone}</div><div class="entity-meta">Հասցե: ${order.address}</div>`;
                 list.appendChild(card);
             });
             applyAdminLanguage();
         } else {
-            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Новых заказов нет (Նոր պատվերներ չկան)</div>`;
+            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Заказов нет (Պատվերներ չկան)</div>`;
         }
     };
 
@@ -322,8 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const list = document.getElementById('dash-masters-list');
         list.innerHTML = '';
         const pendingMasters = employeesData.filter(e => e.status === 'pending');
-        document.getElementById('dash-badge-masters').innerText = pendingMasters.length;
-        document.getElementById('dash-badge-masters').style.display = pendingMasters.length > 0 ? 'flex' : 'none';
+        const currentView = document.querySelector('.dash-view-btn.active').getAttribute('data-dash-view');
+        if (pendingMasters.length > 0 && currentView !== 'masters') {
+            document.getElementById('dash-dot-masters').style.display = 'block';
+        }
 
         if(pendingMasters.length > 0) {
             pendingMasters.forEach(emp => {
@@ -334,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             applyAdminLanguage();
         } else {
-            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Новых заявок нет (Նոր հայտեր չկան)</div>`;
+            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Новых анкет нет (Նոր հայտեր չկան)</div>`;
         }
     };
 
@@ -342,8 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const list = document.getElementById('dash-partners-list');
         list.innerHTML = '';
         const pendingPartners = cooperationRequestsData.filter(c => c.status === 'pending');
-        document.getElementById('dash-badge-partners').innerText = pendingPartners.length;
-        document.getElementById('dash-badge-partners').style.display = pendingPartners.length > 0 ? 'flex' : 'none';
+        const currentView = document.querySelector('.dash-view-btn.active').getAttribute('data-dash-view');
+        if (pendingPartners.length > 0 && currentView !== 'partners') {
+            document.getElementById('dash-dot-partners').style.display = 'block';
+        }
 
         if(pendingPartners.length > 0) {
             pendingPartners.forEach(coop => {
@@ -380,10 +413,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const coop = cooperationRequestsData.find(c => c.id === currentActiveCoopId);
         if(coop) {
             coop.status = 'accepted';
-            partnersData.push({ id: 'p_'+Math.random(), name: coop.company, logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>' });
+            const newPartnerId = 'p_'+Math.random();
+            partnersData.push({ id: newPartnerId, name: coop.company, logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>' });
+            cooperationRequestsData = cooperationRequestsData.filter(c => c.id !== currentActiveCoopId);
             renderDashboardPartners();
+            renderAdminPartners();
             closeCoopModal();
             if(navigator.vibrate) navigator.vibrate(20);
+            
+            // Открываем окно редактирования партнера сразу после принятия
+            openPartnerForm(newPartnerId);
         }
     };
     window.rejectCoop = function() {
@@ -404,7 +443,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderOrders = function() {
         const list = document.getElementById('orders-list'); if (!list) return; list.innerHTML = '';
         let counts = { new: 0, progress: 0, completed: 0 };
-        // Исключаем входящие из списка во вкладке Заказы
         const activeOrders = ordersData.filter(o => o.status !== 'incoming');
         
         activeOrders.forEach(order => {
@@ -551,7 +589,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="width: 50px; height: 50px; border-radius: 16px; border: 1px dashed rgba(128,128,128,0.3); display: flex; justify-content: center; align-items: center; overflow: hidden;">${p.logo}</div>
                         <div style="font-size: 14px; font-weight: 800; color: var(--text);">${p.name}</div>
                     </div>
-                    <button class="serv-del-btn" onclick="deletePartner('${p.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                    <div style="display: flex; gap: 4px;">
+                        <button class="serv-del-btn" style="color:var(--text); border-color:var(--text-sec);" onclick="openPartnerForm('${p.id}')"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></button>
+                        <button class="serv-del-btn" onclick="deletePartner('${p.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                    </div>
                 </div>
             `;
         });
@@ -566,11 +607,35 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     window.deleteService = function(id) { if(confirm('Ջնջե՞լ (Удалить?)')) { servicesData = servicesData.filter(s => s.id !== id); renderAdminServices(); } };
 
-    window.openPartnerForm = function() { document.getElementById('form-partner-name').value = ''; document.getElementById('form-partner-logo').value = ''; document.getElementById('partner-form-modal').classList.add('active'); };
+    let currentEditingPartnerId = null;
+    window.openPartnerForm = function(partnerId = null) { 
+        currentEditingPartnerId = partnerId;
+        const titleEl = document.getElementById('partner-form-title');
+        if(partnerId) {
+            titleEl.innerText = 'Редактировать партнера';
+            const p = partnersData.find(x => x.id === partnerId);
+            if(p) {
+                document.getElementById('form-partner-name').value = p.name; 
+                document.getElementById('form-partner-logo').value = p.logo; 
+            }
+        } else {
+            titleEl.innerText = 'Добавить партнера';
+            document.getElementById('form-partner-name').value = ''; 
+            document.getElementById('form-partner-logo').value = ''; 
+        }
+        document.getElementById('partner-form-modal').classList.add('active'); 
+    };
     window.closePartnerForm = function() { document.getElementById('partner-form-modal').classList.remove('active'); };
     window.savePartnerForm = function(e) { 
         e.preventDefault(); 
-        partnersData.push({ id: 'p' + Math.random(), name: document.getElementById('form-partner-name').value, logo: document.getElementById('form-partner-logo').value }); 
+        const name = document.getElementById('form-partner-name').value;
+        const logo = document.getElementById('form-partner-logo').value;
+        if(currentEditingPartnerId) {
+            const p = partnersData.find(x => x.id === currentEditingPartnerId);
+            if(p) { p.name = name; p.logo = logo; }
+        } else {
+            partnersData.push({ id: 'p' + Math.random(), name, logo }); 
+        }
         renderAdminPartners(); closePartnerForm(); if(navigator.vibrate)navigator.vibrate(20);
     };
     window.deletePartner = function(id) { if(confirm('Ջնջե՞լ (Удалить?)')) { partnersData = partnersData.filter(p => p.id !== id); renderAdminPartners(); } };
@@ -593,32 +658,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.openEmployeeModal = function(empId) {
         currentActiveEmpId = empId; const emp = employeesData.find(e => e.id === empId); if (!emp) return;
+        const isPending = (emp.status === 'pending');
+
         document.getElementById('modal-emp-id').innerText = emp.id; document.getElementById('modal-emp-type').innerText = emp.typeLabel.split(' / ')[0]; 
         const typeBadge = document.getElementById('modal-emp-type');
-        if (emp.status === 'pending') { typeBadge.style.background = 'rgba(255, 179, 71, 0.15)'; typeBadge.style.color = '#FFB347'; } else { typeBadge.style.background = 'rgba(31, 150, 81, 0.15)'; typeBadge.style.color = 'var(--tree-light)'; }
-        document.getElementById('modal-emp-name').innerText = emp.name; document.getElementById('modal-emp-access-key').innerText = emp.accessKey || '------'; document.getElementById('modal-emp-birth').innerText = emp.birthDate || '---';
+        if (isPending) { typeBadge.style.background = 'rgba(255, 179, 71, 0.15)'; typeBadge.style.color = '#FFB347'; } else { typeBadge.style.background = 'rgba(31, 150, 81, 0.15)'; typeBadge.style.color = 'var(--tree-light)'; }
+        
+        document.getElementById('modal-emp-name').innerText = emp.name; 
+        document.getElementById('modal-emp-access-key').innerText = emp.accessKey || '------'; 
+        document.getElementById('modal-emp-birth').innerText = emp.birthDate || '---';
+        
         const debtEl = document.getElementById('modal-emp-debt'); if (emp.companyDebt === undefined) emp.companyDebt = 0; debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏'; debtEl.style.color = emp.companyDebt < 0 ? '#1F9651' : '#ff4444';
+        
         const scheduleContainer = document.getElementById('modal-emp-schedule-list');
         if (emp.workingDates && emp.workingDates.length > 0) scheduleContainer.innerHTML = emp.workingDates.map(d => `<span style="display:inline-block; background:rgba(35,169,91,0.1); color:var(--tree-light); border: 1px solid rgba(35,169,91,0.2); padding:4px 8px; border-radius:8px; font-size:10px; font-weight:800; margin-bottom:4px;">${d}</span>`).join('');
         else scheduleContainer.innerHTML = '<span style="font-size:10px; color:var(--text-sec);">Գրաֆիկ չկա (График не указан)</span>';
+        
         const bdayInfo = getBirthdayInfo(emp.birthDate); const bdayRow = document.getElementById('modal-emp-bday-row'); const bdayCountdown = document.getElementById('modal-emp-bday-countdown');
         if (bdayInfo) { bdayRow.style.display = 'flex'; if (bdayInfo.isToday) bdayCountdown.innerHTML = `<span style="color: #FFB347; font-weight: 900; font-size: 14px;">🎉 ԱՅՍՕՐ Է! (СЕГОДНЯ!)</span>`; else bdayCountdown.innerText = `${bdayInfo.daysLeft} օրից (через ${bdayInfo.daysLeft} дн.)`; } else bdayRow.style.display = 'none';
+        
         document.getElementById('modal-emp-phone-text').innerText = emp.phone;
         const phoneLink = document.getElementById('modal-emp-phone-link');
         if (emp.phone) { phoneLink.style.display = 'flex'; phoneLink.href = `tel:${emp.phone.replace(/[^\d+]/g, '')}`; } else phoneLink.style.display = 'none';
-        document.getElementById('modal-emp-address').innerText = emp.address || '---'; document.getElementById('modal-emp-exp').innerText = emp.exp ? emp.exp.split('/')[0].trim() : '0'; document.getElementById('modal-emp-rating').innerText = `★ ${(emp.rating || 0).toFixed(1)}`;
+        
+        document.getElementById('modal-emp-address').innerText = emp.address || '---'; 
+        document.getElementById('modal-emp-exp').innerText = emp.exp ? emp.exp.split('/')[0].trim() : '0'; 
+        document.getElementById('modal-emp-rating').innerText = `★ ${(emp.rating || 0).toFixed(1)}`;
+        
         const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name)); document.getElementById('modal-emp-orders-count').innerText = empOrders.length;
         const ordersListDiv = document.getElementById('modal-emp-orders-list'); ordersListDiv.innerHTML = ''; ordersListDiv.classList.remove('open'); 
         if (empOrders.length > 0) { empOrders.forEach(o => { let statColor = '#9BAA9E'; if(o.status === 'completed') statColor = 'var(--tree-light)'; if(o.status === 'progress') statColor = '#FFB347'; ordersListDiv.innerHTML += `<div class="emp-order-item" onclick="closeEmployeeModal(); openOrderModal('${o.id}');"><span class="emp-order-id">${o.id} - ${o.createdAt.split(' ')[0]}</span><span class="emp-order-stat" style="color: ${statColor}; border: 1px solid ${statColor}40;">${adminTranslations['status_'+(o.status==='progress'?'pending':o.status==='completed'?'success':o.status)][currentAdminLang]}</span></div>`; }); } else ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Պատվերներ չկան (Нет заказов)</div>`;
+        
         const btnAccept = document.getElementById('modal-emp-accept-btn'); const btnReject = document.getElementById('modal-emp-reject-btn'); const btnEdit = document.getElementById('modal-emp-edit-btn');
-        if (emp.status === 'pending') { btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; btnEdit.style.display = 'none'; } else { btnAccept.style.display = 'none'; btnReject.style.display = 'none'; btnEdit.style.display = 'flex'; }
+        if (isPending) { btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; btnEdit.style.display = 'none'; } else { btnAccept.style.display = 'none'; btnReject.style.display = 'none'; btnEdit.style.display = 'flex'; }
+        
+        // Скрываем блоки, которые не нужны при рассмотрении анкеты
+        document.getElementById('emp-pin-row').style.display = isPending ? 'none' : 'flex';
+        document.getElementById('emp-schedule-block').style.display = isPending ? 'none' : 'block';
+        document.getElementById('emp-finance-block').style.display = isPending ? 'none' : 'block';
+        document.getElementById('emp-orders-block').style.display = isPending ? 'none' : 'block';
+        if (isPending) bdayRow.style.display = 'none';
+
         document.getElementById('employee-modal').classList.add('active'); if (navigator.vibrate) navigator.vibrate(15);
     };
 
     window.closeEmployeeModal = function() { document.getElementById('employee-modal').classList.remove('active'); currentActiveEmpId = null; };
     window.toggleEmpOrders = function() { document.getElementById('modal-emp-orders-list').classList.toggle('open'); };
-    window.acceptEmployee = function() { if (!currentActiveEmpId) return; const emp = employeesData.find(e => e.id === currentActiveEmpId); if (emp) { emp.status = 'active'; renderDashboardMasters(); renderEmployees(); closeEmployeeModal(); if (navigator.vibrate) navigator.vibrate(20); } };
-    window.rejectEmployee = function() { if (!currentActiveEmpId) return; if (confirm("Отказать кандидату? (Մերժե՞լ դիմորդին)")) { employeesData = employeesData.filter(e => e.id !== currentActiveEmpId); renderDashboardMasters(); closeEmployeeModal(); } };
+    
+    window.acceptEmployee = function() { 
+        if (!currentActiveEmpId) return; 
+        const emp = employeesData.find(e => e.id === currentActiveEmpId); 
+        if (emp) { 
+            emp.status = 'active';
+            // Генерируем пароль ТОЛЬКО в этот момент
+            emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            renderDashboardMasters(); 
+            renderEmployees(); 
+            
+            // Сразу показываем карточку заново с новыми данными (паролем и т.д.)
+            openEmployeeModal(emp.id); 
+            if (navigator.vibrate) navigator.vibrate(20); 
+        } 
+    };
+    
+    window.rejectEmployee = function() { 
+        if (!currentActiveEmpId) return; 
+        if (confirm("Отказать кандидату? (Մերժե՞լ դիմորդին)")) { 
+            employeesData = employeesData.filter(e => e.id !== currentActiveEmpId); 
+            renderDashboardMasters(); 
+            closeEmployeeModal(); 
+        } 
+    };
 
     window.openEmployeeForm = function(empId = null) {
         currentEditingEmpId = empId; const form = document.getElementById('employee-form'); form.reset();
@@ -661,7 +772,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-total-price').innerText = totalSum.toLocaleString() + ' ֏'; document.getElementById('modal-company-profit').innerText = profit.toLocaleString() + ' ֏';
         
         const btnEdit = document.getElementById('modal-edit-btn'); const btnCancel = document.getElementById('modal-cancel-btn'); const btnAccept = document.getElementById('modal-accept-btn'); const btnReject = document.getElementById('modal-reject-btn');
-        // Входящие заказы админ не может редактировать, только принять или отклонить
         if (order.status === 'incoming') { btnEdit.style.display = 'none'; btnCancel.style.display = 'none'; btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; } else if (order.status === 'new' || order.status === 'progress') { btnEdit.style.display = 'flex'; btnCancel.style.display = 'flex'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; } else { btnEdit.style.display = 'flex'; btnCancel.style.display = 'none'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; }
         applyAdminLanguage(); document.getElementById('order-modal').classList.add('active'); if (navigator.vibrate) navigator.vibrate(15);
     };
