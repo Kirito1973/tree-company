@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.3.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.4.0)
 // =========================================================
-const APP_VERSION = '4.3.0';
+const APP_VERSION = '4.4.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
@@ -39,19 +39,39 @@ function updateDashDots() {
     const incOrders = ordersData.filter(o => o.status === 'incoming').length;
     const incMasters = employeesData.filter(e => e.status === 'pending').length;
     const incPartners = cooperationRequestsData.filter(c => c.status === 'pending').length;
-    const incReviews = reviewsData.length;
+    const incReviews = reviewsData.filter(r => r.isNew).length;
 
-    if (incOrders > 0 && !dashViewedState.orders) document.getElementById('dash-dot-orders').style.display = 'block';
-    else document.getElementById('dash-dot-orders').style.display = 'none';
+    const dotOrders = document.getElementById('dash-dot-orders');
+    if (incOrders > 0 && !dashViewedState.orders) {
+        dotOrders.style.display = 'flex';
+        dotOrders.innerText = incOrders;
+    } else {
+        dotOrders.style.display = 'none';
+    }
 
-    if (incMasters > 0 && !dashViewedState.masters) document.getElementById('dash-dot-masters').style.display = 'block';
-    else document.getElementById('dash-dot-masters').style.display = 'none';
+    const dotMasters = document.getElementById('dash-dot-masters');
+    if (incMasters > 0 && !dashViewedState.masters) {
+        dotMasters.style.display = 'flex';
+        dotMasters.innerText = incMasters;
+    } else {
+        dotMasters.style.display = 'none';
+    }
 
-    if (incPartners > 0 && !dashViewedState.partners) document.getElementById('dash-dot-partners').style.display = 'block';
-    else document.getElementById('dash-dot-partners').style.display = 'none';
+    const dotPartners = document.getElementById('dash-dot-partners');
+    if (incPartners > 0 && !dashViewedState.partners) {
+        dotPartners.style.display = 'flex';
+        dotPartners.innerText = incPartners;
+    } else {
+        dotPartners.style.display = 'none';
+    }
 
-    if (incReviews > 0 && !dashViewedState.overview) document.getElementById('dash-dot-overview').style.display = 'block';
-    else document.getElementById('dash-dot-overview').style.display = 'none';
+    const dotOverview = document.getElementById('dash-dot-overview');
+    if (incReviews > 0) {
+        dotOverview.style.display = 'flex';
+        dotOverview.innerText = incReviews;
+    } else {
+        dotOverview.style.display = 'none';
+    }
 }
 
 function switchDashboardView(viewName) {
@@ -227,9 +247,9 @@ let partnersData = [
 ];
 
 let reviewsData = [
-    { id: 'REV-001', clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով:', date: '22.07.2026' },
-    { id: 'REV-002', clientName: 'Դավիթ Պետրոսյան', masterName: 'Գոռ Վարդանյան', rating: 4.5, text: 'Լավ աշխատանք, փոքր-ինչ ուշացան, բայց արդյունքը գերազանց է:', date: '20.07.2026' },
-    { id: 'REV-003', clientName: 'Մարիամ Գրիգորյան', masterName: 'Կարեն Մելքոնյան', rating: 5, text: 'Հոյակապ վարպետ, շատ մաքուր աշխատեց: Ուզում եմ նշել նաև, որ աշխատակիցը շատ բարեհամբույր էր և պատասխանում էր իմ բոլոր հարցերին անմիջապես: Վստահաբար խորհուրդ եմ տալիս բոլորին օգտվել այս ընկերության ծառայություններից:', date: '18.07.2026' }
+    { id: 'REV-001', isNew: true, clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով: Խորհուրդ կտամ իմ ընկերներին:', date: '22.07.2026' },
+    { id: 'REV-002', isNew: false, clientName: 'Դավիթ Պետրոսյան', masterName: 'Գոռ Վարդանյան', rating: 4.5, text: 'Լավ աշխատանք, փոքր-ինչ ուշացան, բայց արդյունքը գերազանց է:', date: '20.07.2026' },
+    { id: 'REV-003', isNew: false, clientName: 'Մարիամ Գրիգորյան', masterName: 'Կարեն Մելքոնյան', rating: 5, text: 'Հոյակապ վարպետ, շատ մաքուր աշխատեց: Ուզում եմ նշել նաև, որ աշխատակիցը շատ բարեհամբույր էր և պատասխանում էր իմ բոլոր հարցերին անմիջապես: Վստահաբար խորհուրդ եմ տալիս բոլորին օգտվել այս ընկերության ծառայություններից:', date: '18.07.2026' }
 ];
 
 let cooperationRequestsData = [
@@ -311,8 +331,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if(reviewsData.length > 0) {
             reviewsData.slice().reverse().forEach(rev => {
                 const stars = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
+                let newDotHtml = rev.isNew ? `<div class="notif-dot-card"></div>` : '';
                 revList.innerHTML += `
-                    <div class="entity-card" style="cursor:pointer;" onclick="openReviewModal('${rev.id}')">
+                    <div class="entity-card" style="cursor:pointer; position:relative;" onclick="openReviewModal('${rev.id}')">
+                        ${newDotHtml}
                         <div class="entity-header">
                             <span class="entity-id" style="color:var(--text); font-size: 12px;">${rev.clientName}</span>
                             <span style="color:#FFB347; font-size:12px; font-weight:900;">${stars}</span>
@@ -333,6 +355,13 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openReviewModal = function(id) {
         const rev = reviewsData.find(r => r.id === id);
         if(!rev) return;
+        
+        if (rev.isNew) {
+            rev.isNew = false;
+            renderDashboardOverview();
+            updateDashDots();
+        }
+
         document.getElementById('modal-rev-client').innerText = rev.clientName;
         document.getElementById('modal-rev-stars').innerText = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
         document.getElementById('modal-rev-text').innerText = rev.text;
@@ -442,8 +471,8 @@ document.addEventListener('DOMContentLoaded', () => {
             cooperationRequestsData = cooperationRequestsData.filter(c => c.id !== currentActiveCoopId);
             renderDashboardPartners();
             renderAdminPartners();
-            closeCoopModal();
             updateDashDots();
+            closeCoopModal();
             if(navigator.vibrate) navigator.vibrate(20);
             
             openPartnerForm(newPartnerId);
@@ -454,8 +483,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(confirm("Отклонить заявку компании? (Մերժե՞լ)")) {
             cooperationRequestsData = cooperationRequestsData.filter(c => c.id !== currentActiveCoopId);
             renderDashboardPartners();
-            closeCoopModal();
             updateDashDots();
+            closeCoopModal();
         }
     };
 
@@ -851,7 +880,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderOrders(); 
     renderEmployees(); 
     
-    // Инициализация при первой загрузке (чтобы показались точки, если есть непрочитанные данные)
+    // Инициализация точек
     updateDashDots();
     switchDashboardView('overview');
 
