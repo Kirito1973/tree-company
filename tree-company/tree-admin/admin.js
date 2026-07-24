@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.4.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.5.0)
 // =========================================================
-const APP_VERSION = '4.4.0';
+const APP_VERSION = '4.5.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
@@ -16,6 +16,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// ================= ГЛАВНАЯ НАВИГАЦИЯ =================
 function switchTab(screenId, btnElement) {
     document.querySelectorAll('.admin-screen').forEach(scr => scr.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
@@ -25,14 +26,13 @@ function switchTab(screenId, btnElement) {
 
     if(screenId === 'screen-dashboard') switchDashboardView('overview');
     if(screenId === 'screen-orders') filterOrders();
+    if(screenId === 'screen-employees') renderEmployees();
+    if(screenId === 'screen-partners') renderAdminPartners();
     if(screenId === 'screen-clients') renderClients();
 }
 
-let dashViewedState = {
-    orders: 0,
-    masters: 0,
-    partners: 0
-};
+// Навигация внутри Дашборда (Отзывы, Входящие, B2B)
+let dashViewedState = { orders: 0, masters: 0, partners: 0 };
 
 function updateDashDots() {
     const incOrders = ordersData.filter(o => o.status === 'incoming').length;
@@ -40,17 +40,10 @@ function updateDashDots() {
     const incPartners = cooperationRequestsData.filter(c => c.status === 'pending').length;
     const incReviews = reviewsData.filter(r => r.isNew).length;
 
-    const dotOrders = document.getElementById('dash-dot-orders');
-    dotOrders.style.display = (incOrders > dashViewedState.orders) ? 'block' : 'none';
-
-    const dotMasters = document.getElementById('dash-dot-masters');
-    dotMasters.style.display = (incMasters > dashViewedState.masters) ? 'block' : 'none';
-
-    const dotPartners = document.getElementById('dash-dot-partners');
-    dotPartners.style.display = (incPartners > dashViewedState.partners) ? 'block' : 'none';
-
-    const dotOverview = document.getElementById('dash-dot-overview');
-    dotOverview.style.display = (incReviews > 0) ? 'block' : 'none';
+    document.getElementById('dash-dot-orders').style.display = (incOrders > dashViewedState.orders) ? 'block' : 'none';
+    document.getElementById('dash-dot-masters').style.display = (incMasters > dashViewedState.masters) ? 'block' : 'none';
+    document.getElementById('dash-dot-partners').style.display = (incPartners > dashViewedState.partners) ? 'block' : 'none';
+    document.getElementById('dash-dot-overview').style.display = (incReviews > 0) ? 'block' : 'none';
 }
 
 function switchDashboardView(viewName) {
@@ -69,64 +62,66 @@ function switchDashboardView(viewName) {
     if(viewName === 'overview') renderDashboardOverview();
     if(viewName === 'orders') renderDashboardOrders();
     if(viewName === 'masters') renderDashboardMasters();
-    if(viewName === 'partners') renderDashboardPartners();
+    if(viewName === 'partners') renderDashboardPartnerRequests();
     if (navigator.vibrate) navigator.vibrate(10);
 }
 
-let currentDashOrdFilter = 'all';
-function setDashOrderFilter(filterValue) {
-    currentDashOrdFilter = filterValue;
-    document.querySelectorAll('#dash-orders .filter-tab').forEach(t => {
-        if (t.getAttribute('data-dash-ord-filter') === filterValue) t.classList.add('active');
-        else t.classList.remove('active');
-    });
-    renderDashboardOrders();
-}
-
-if(document.getElementById('dash-order-search')) {
-    document.getElementById('dash-order-search').addEventListener('input', renderDashboardOrders);
-}
-
-function switchContentTab(tabName, btnElement) {
-    document.querySelectorAll('#screen-content > div[id^="content-view-"]').forEach(el => el.style.display = 'none');
-    document.getElementById('content-view-' + tabName).style.display = 'block';
+// Навигация внутри раздела Управление
+function switchManagementTab(tabName, btnElement) {
+    document.querySelectorAll('#screen-management > div[id^="mng-view-"]').forEach(el => el.style.display = 'none');
+    document.getElementById('mng-view-' + tabName).style.display = 'block';
     
-    document.querySelectorAll('.view-switch-btn:not(.dash-view-btn)').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('#screen-management .view-switch-btn').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
 
     if(tabName === 'services') renderAdminServices();
-    if(tabName === 'partners') renderAdminPartners();
     if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// ОЧИЩЕННЫЙ СЛОВАРЬ (Без двойных текстов)
+// Фильтр во вкладке "Заказы"
+let currentDashOrdFilter = 'all';
+function setOrderFilter(filterValue) {
+    currentDashOrdFilter = filterValue;
+    document.querySelectorAll('#screen-orders .filter-tab').forEach(t => {
+        if (t.getAttribute('data-filter') === filterValue) t.classList.add('active');
+        else t.classList.remove('active');
+    });
+    filterOrders();
+}
+
+if(document.getElementById('order-search')) {
+    document.getElementById('order-search').addEventListener('input', filterOrders);
+}
+
+// ================= ЛОКАЛИЗАЦИЯ И СЛОВАРЬ =================
 const adminTranslations = {
     "tab_dashboard": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Dashboard" },
-    "sw_overview": { "AM": "Ընդհանուր", "RU": "Общее", "EN": "General" },
-    "sw_inc_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
-    "sw_inc_masters": { "AM": "Ռեզյումե", "RU": "Резюме", "EN": "Resumes" },
-    "sw_coop": { "AM": "Գործընկերներ", "RU": "Партнеры", "EN": "Partners" },
-    "lbl_recent_reviews": { "AM": "Վերջին կարծիքները", "RU": "Последние отзывы", "EN": "Recent Reviews" },
+    "tab_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
+    "tab_employees": { "AM": "Աշխատակիցներ", "RU": "Работники", "EN": "Staff" },
+    "tab_partners": { "AM": "Գործընկերներ", "RU": "Сотрудничество", "EN": "Partners" },
+    "tab_clients": { "AM": "Հաճախորդներ", "RU": "Клиенты", "EN": "Clients" },
+    "tab_management": { "AM": "Կառավարում", "RU": "Управление", "EN": "Management" },
     
+    "lbl_new_requests": { "AM": "Նոր հայտեր", "RU": "Входящие запросы", "EN": "New Requests" },
+    "sw_inc_masters": { "AM": "Նոր աշխատակիցներ", "RU": "Новые работники", "EN": "New Staff" },
+    "lbl_new_partners": { "AM": "Նոր գործընկերներ", "RU": "Новые партнеры", "EN": "New Partners" },
+    "lbl_active_partners": { "AM": "Ակտիվ ընկերություններ", "RU": "Активные компании", "EN": "Active Partners" },
+
+    "lbl_recent_reviews": { "AM": "Վերջին կարծիքները", "RU": "Последние отзывы", "EN": "Recent Reviews" },
     "title_orders": { "AM": "Ակտիվ <span>պատվերներ</span>", "RU": "Активные <span>заказы</span>", "EN": "Active <span>Orders</span>" },
     "btn_accept_order": { "AM": "Ընդունել", "RU": "Принять", "EN": "Accept" },
     "btn_reject_order": { "AM": "Մերժել", "RU": "Отказать", "EN": "Reject" },
-    "lbl_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
-    "lbl_completed": { "AM": "Ավարտված", "RU": "Завершено", "EN": "Completed" },
-    "lbl_active_orders": { "AM": "Պատվերների ցանկ", "RU": "Список заказов", "EN": "Orders list" },
-    "pl_search_order": { "AM": "Որոնել ID-ով...", "RU": "Поиск по ID, телефону...", "EN": "Search by ID, phone..." },
     "filter_all": { "AM": "Բոլորը", "RU": "Все", "EN": "All" },
-    "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
+    "filter_new": { "AM": "Նոր (Առանց վարպետի)", "RU": "Новые (Без мастера)", "EN": "New (No master)" },
     "filter_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
     "filter_completed": { "AM": "Ավարտված", "RU": "Завершенные", "EN": "Completed" },
     "status_incoming": { "AM": "Սպասում է", "RU": "Ожидает", "EN": "Pending" },
     "status_new": { "AM": "Նոր", "RU": "Новый", "EN": "New" },
-    "status_pending": { "AM": "Ընթացքի մեջ է", "RU": "В обработке", "EN": "Pending" },
+    "status_pending": { "AM": "Ընթացքի մեջ", "RU": "В обработке", "EN": "Pending" },
     "status_success": { "AM": "Ավարտված է", "RU": "Успешно", "EN": "Success" },
     "status_cancelled": { "AM": "Չեղարկված է", "RU": "Отменен", "EN": "Cancelled" },
     "btn_edit_order": { "AM": "Խմբագրել", "RU": "Изменить", "EN": "Edit" },
     "btn_cancel_order": { "AM": "Չեղարկել", "RU": "Отменить", "EN": "Cancel" },
-    "btn_add_order": { "AM": "+ Նոր պատվեր", "RU": "+ Новый заказ", "EN": "+ New Order" },
     "lbl_client_details": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
     "lbl_worker_details": { "AM": "Աշխատող", "RU": "Сотрудник", "EN": "Worker" },
     "lbl_client_name": { "AM": "Անուն Ազգանուն", "RU": "Имя Фамилия", "EN": "Full Name" },
@@ -135,7 +130,7 @@ const adminTranslations = {
     "lbl_profit": { "AM": "Շահույթ", "RU": "Прибыль", "EN": "Profit" },
     "lbl_date_created": { "AM": "Ստեղծման ամսաթիվ", "RU": "Оформлен", "EN": "Created At" },
     "lbl_date_completed": { "AM": "Ավարտման ամսաթիվ", "RU": "Завершен", "EN": "Completed At" },
-    "title_employees": { "AM": "Աշխատակիցներ", "RU": "Сотрудники", "EN": "Staff" },
+    
     "lbl_active_emps": { "AM": "Ակտիվ աշխատողներ", "RU": "Активные сотрудники", "EN": "Active Employees" },
     "cat_all": { "AM": "Բոլորը", "RU": "Все", "EN": "All" },
     "cat_doors": { "AM": "Դռներ", "RU": "Двери", "EN": "Doors" },
@@ -143,13 +138,13 @@ const adminTranslations = {
     "cat_universal": { "AM": "Ունիվերսալ", "RU": "Универсалы", "EN": "Universal" },
     "cat_cleaning": { "AM": "Մաքրում", "RU": "Уборка", "EN": "Cleaning" },
     "status_check": { "AM": "Ստուգում", "RU": "Проверка", "EN": "Checking" },
-    "title_finance": { "AM": "Ֆինանսական <span>վերլուծություն</span>", "RU": "Аналитика <span>финансов</span>", "EN": "Financial <span>Analytics</span>" },
+    
     "lbl_turnover": { "AM": "Շրջանառություն (Ամիս)", "RU": "Оборот (Мес)", "EN": "Turnover (Mo)" },
     "lbl_income": { "AM": "Եկամուտ (15%)", "RU": "Доход (15%)", "EN": "Income (15%)" },
     "lbl_history": { "AM": "Վճարումների պատմություն", "RU": "История начислений", "EN": "Payment History" },
     "com_1": { "AM": "Միջնորդավճար #ORD-003", "RU": "Комиссия по #ORD-003", "EN": "Commission #ORD-003" },
-    "com_2": { "AM": "Միջնորդավճար #ORD-002", "RU": "Комиссия по #ORD-002", "EN": "Commission #ORD-002" },
     "com_paid_1": { "AM": "Վճարված է կատարողի կողմից • Այսօր 14:12", "RU": "Оплачено исполнителем • Сегодня 14:12", "EN": "Paid by contractor • Today 14:12" },
+    
     "lbl_manage_promo": { "AM": "Զեղչի առաջարկի կառավարում", "RU": "Управление скидочным предложением", "EN": "Manage discount offer" },
     "lbl_discount_pct": { "AM": "Զեղչի տոկոս (%)", "RU": "Процент скидки (%)", "EN": "Discount percentage (%)" },
     "lbl_banner_am": { "AM": "Տեքստ բանների համար (Հայերեն)", "RU": "Текст баннера (Армянский)", "EN": "Banner text (Armenian)" },
@@ -159,16 +154,11 @@ const adminTranslations = {
     "lbl_localization": { "AM": "Հավելվածի լոկալիզացիա", "RU": "Локализация приложения", "EN": "App localization" },
     "lbl_loading": { "AM": "Բազայի բեռնում...", "RU": "Загрузка базы...", "EN": "Loading database..." },
     "btn_save_trans": { "AM": "Պահպանել թարգմանությունները", "RU": "Сохранить переводы", "EN": "Save translations" },
-    "tab_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
-    "tab_employees": { "AM": "Կադրեր", "RU": "Кадры", "EN": "Staff" },
-    "tab_clients": { "AM": "Հաճախորդ", "RU": "Клиенты", "EN": "Clients" },
+    
     "tab_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
     "tab_promo": { "AM": "Ակցիաներ", "RU": "Акции", "EN": "Promo" },
-    "tab_content": { "AM": "Բազա", "RU": "База", "EN": "Data" },
     "admin_key_title": { "AM": "Բանալի:", "RU": "Ключ:", "EN": "Key:" },
-    "title_clients": { "AM": "Բազա <span>Հաճախորդներ</span>", "RU": "База <span>Клиентов</span>", "EN": "Client <span>Database</span>" },
     "lbl_all_clients": { "AM": "Բոլոր հաճախորդները", "RU": "Все клиенты", "EN": "All clients" },
-    "title_content": { "AM": "Կոնտենտ և <span>Կարգավորումներ</span>", "RU": "Контент и <span>Настройки</span>", "EN": "Content & <span>Settings</span>" },
     "lbl_name": { "AM": "Անուն:", "RU": "Имя:", "EN": "Name:" },
     "lbl_phone": { "AM": "Հեռ.:", "RU": "Тел.:", "EN": "Phone:" },
     "lbl_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
@@ -193,17 +183,17 @@ const adminTranslations = {
     "lbl_status": { "AM": "Կարգավիճակ", "RU": "Статус", "EN": "Status" },
     "btn_add": { "AM": "+ Ավելացնել", "RU": "+ Добавить", "EN": "+ Add" },
     "lbl_add_partner": { "AM": "Ավելացնել գործընկեր", "RU": "Добавить партнера", "EN": "Add Partner" },
-    "lbl_logo": { "AM": "Լոգո (URL կամ SVG)", "RU": "Лого (URL или SVG)", "EN": "Logo (URL or SVG)" },
+    "lbl_logo": { "AM": "Լոգո (URL կամ SVG)", "RU": "Лого (URL/SVG)", "EN": "Logo (URL/SVG)" },
     "lbl_offer": { "AM": "Առաջարկ:", "RU": "Предложение:", "EN": "Offer:" },
     "btn_add_emp": { "AM": "+ Նոր աշխատակից", "RU": "+ Новый сотрудник", "EN": "+ New Employee" },
     "pl_search_emp": { "AM": "Որոնել...", "RU": "Поиск мастера...", "EN": "Search..." },
     "lbl_emp_news": { "AM": "Նորություններ աշխատակիցների համար", "RU": "Новости для сотрудников", "EN": "News for employees" },
-    "pl_amount": { "AM": "Գումար (֏)", "RU": "Сумма (֏)", "EN": "Amount (֏)" }
+    "pl_amount": { "AM": "Գումար (֏)", "RU": "Сумма (֏)", "EN": "Amount (֏)" },
+    "pl_search_order": { "AM": "Որոնել ID-ով...", "RU": "Поиск по ID, телефону...", "EN": "Search by ID, phone..." }
 };
 
 let currentAdminLang = localStorage.getItem('admin_app_lang') || 'AM';
 
-// ================= ФУНКЦИИ ДЛЯ КНОПОК ТЕМЫ И ЯЗЫКА =================
 let rotationDegrees = 0;
 window.toggleTheme = function(e) {
     e.stopPropagation();
@@ -213,13 +203,9 @@ window.toggleTheme = function(e) {
     const body = document.body;
     
     if (body.classList.contains('force-dark')) { 
-        body.classList.remove('force-dark'); 
-        body.classList.add('force-light'); 
-        localStorage.setItem('admin_theme', 'light'); 
+        body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('admin_theme', 'light'); 
     } else { 
-        body.classList.remove('force-light'); 
-        body.classList.add('force-dark'); 
-        localStorage.setItem('admin_theme', 'dark'); 
+        body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('admin_theme', 'dark'); 
     }
     setTimeout(updateThemeIcon, 150); 
 };
@@ -243,10 +229,10 @@ window.setAdminLang = function(lang, e) {
     if(activeTab) document.getElementById('current-lang-btn').innerHTML = activeTab.innerHTML;
 
     applyAdminLanguage(); 
+    renderDashboardOrders();
     renderOrders(); 
     renderEmployees(); 
     renderClients(); 
-    switchDashboardView('overview');
     document.getElementById('lang-switcher').classList.remove('open');
 };
 
@@ -288,7 +274,7 @@ function applyAdminLanguage() {
 let ordersData = [
     { id: 'ORD-004', status: 'incoming', createdAt: getCurrentDateString(), completedAt: null, clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50', worker: 'Չկա', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500 },
     { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Չկա', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000 },
-    { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', workerPhone: '+374 77 999 888', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }], profit: 2900 },
+    { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան', workerPhone: '+374 77 999 888', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }], profit: 2900 },
     { id: 'ORD-001', status: 'completed', createdAt: '10.07.2026 09:15', completedAt: '11.07.2026 18:20', clientName: 'Դավիթ Պետրոսյան', clientPhone: '+374 99 123 456', address: 'Երևան, Կոմիտաս 20', worker: 'Գոռ Վարդանյան', workerPhone: '+374 77 111 555', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 3, price: 15000, done: true }], profit: 4500 }
 ];
 
@@ -316,14 +302,12 @@ let partnersData = [
 ];
 
 let reviewsData = [
-    { id: 'REV-001', isNew: true, clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով: Խորհուրդ կտամ իմ ընկերներին:', date: '22.07.2026' },
-    { id: 'REV-002', isNew: false, clientName: 'Դավիթ Պետրոսյան', masterName: 'Գոռ Վարդանյան', rating: 4.5, text: 'Լավ աշխատանք, փոքր-ինչ ուշացան, բայց արդյունքը գերազանց է:', date: '20.07.2026' },
-    { id: 'REV-003', isNew: false, clientName: 'Մարիամ Գրիգորյան', masterName: 'Կարեն Մելքոնյան', rating: 5, text: 'Հոյակապ վարպետ, շատ մաքուր աշխատեց: Ուզում եմ նշել նաև, որ աշխատակիցը շատ բարեհամբույր էր և պատասխանում էր իմ բոլոր հարցերին անմիջապես: Վստահաբար խորհուրդ եմ տալիս բոլորին օգտվել այս ընկերության ծառայություններից:', date: '18.07.2026' }
+    { id: 'REV-001', isNew: true, clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով:', date: '22.07.2026' },
+    { id: 'REV-002', isNew: false, clientName: 'Դավիթ Պետրոսյան', masterName: 'Գոռ Վարդանյան', rating: 4.5, text: 'Լավ աշխատանք, փոքր-ինչ ուշացան, բայց արդյունքը գերազանց է:', date: '20.07.2026' }
 ];
 
 let cooperationRequestsData = [
-    { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով մեր ընկերության կողմից:', date: '24.07.2026', status: 'pending' },
-    { id: 'COOP-REQ-02', company: 'Doors Yerevan', contact: 'Սուրեն', phone: '+374 77 000 111', text: 'Ցանկանում ենք համագործակցել որպես դռների արտադրող:', date: '23.07.2026', status: 'pending' }
+    { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով:', date: '24.07.2026', status: 'pending' }
 ];
 
 function generateOrderId() { let max = 0; ordersData.forEach(o => { let n = parseInt(o.id.replace('ORD-','')); if(n>max)max=n; }); return 'ORD-'+(max+1).toString().padStart(3,'0'); }
@@ -363,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('close-ios-prompt').addEventListener('click', () => { document.getElementById('ios-pwa-prompt').style.display = 'none'; localStorage.setItem('ios_admin_pwa_prompt_closed', 'true'); });
     }
 
-    // ================= DASHBOARD (ГЛАВНАЯ СТРАНИЦА) LOGIC =================
+    // ================= ГЛАВНАЯ СТРАНИЦА (Только входящие) =================
     window.renderDashboardOverview = function() {
         let totalRating = 0;
         reviewsData.forEach(r => totalRating += r.rating);
@@ -420,32 +404,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const list = document.getElementById('dash-orders-list');
         list.innerHTML = '';
         
-        const searchInput = document.getElementById('dash-order-search');
-        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-
-        let filtered = ordersData.filter(o => {
-            const matchesSearch = (o.id + o.clientName + o.clientPhone).toLowerCase().includes(searchTerm);
-            let matchesTab = false;
-            if(currentDashOrdFilter === 'all') matchesTab = true;
-            else if(currentDashOrdFilter === 'incoming') matchesTab = (o.status === 'incoming' || o.status === 'new');
-            else matchesTab = (o.status === currentDashOrdFilter);
-            
-            return matchesSearch && matchesTab && o.status !== 'cancelled';
-        });
+        let filtered = ordersData.filter(o => o.status === 'incoming');
 
         if(filtered.length > 0) {
             filtered.forEach(order => {
                 let mainTitle = order.services.length > 0 ? order.services[0].name : "---";
                 if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
-                let statusClass = '', statusI18n = '';
-                if (order.status === 'incoming') { statusClass = 'incoming'; statusI18n = 'status_incoming'; } else if (order.status === 'new') { statusClass = 'new'; statusI18n = 'status_new'; } else if (order.status === 'progress') { statusClass = 'pending'; statusI18n = 'status_pending'; } else if (order.status === 'completed') { statusI18n = 'status_success'; }
                 
                 const card = document.createElement('div'); card.className = 'entity-card'; 
                 card.onclick = () => openOrderModal(order.id);
-                card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${adminTranslations['lbl_name'][currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${adminTranslations['lbl_address'][currentAdminLang]} ${order.address}</div>`;
+                card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status incoming" data-i18n="status_incoming"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${adminTranslations['lbl_name'][currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${adminTranslations['lbl_address'][currentAdminLang]} ${order.address}</div>`;
                 list.appendChild(card);
             });
             applyAdminLanguage();
+        } else {
+            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
         }
     };
 
@@ -462,11 +435,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 list.appendChild(card);
             });
             applyAdminLanguage();
+        } else {
+            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
         }
     };
 
-    window.renderDashboardPartners = function() {
-        const list = document.getElementById('dash-partners-list');
+    window.renderDashboardPartnerRequests = function() {
+        const list = document.getElementById('dash-partners-requests-list');
         list.innerHTML = '';
         const pendingPartners = cooperationRequestsData.filter(c => c.status === 'pending');
 
@@ -477,6 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.innerHTML = `<div class="entity-header"><span class="entity-id">${coop.company}</span><span class="entity-status new">B2B</span></div><div class="entity-title">${coop.contact}</div><div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} ${coop.phone}</div><div class="entity-meta">${coop.date}</div>`;
                 list.appendChild(card);
             });
+        } else {
+            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
         }
     };
 
@@ -506,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newPartnerId = 'p_'+Math.random();
             partnersData.push({ id: newPartnerId, name: coop.company, logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>' });
             cooperationRequestsData = cooperationRequestsData.filter(c => c.id !== currentActiveCoopId);
-            renderDashboardPartners();
+            renderDashboardPartnerRequests();
             renderAdminPartners();
             updateDashDots();
             closeCoopModal();
@@ -519,21 +496,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!currentActiveCoopId) return;
         if(confirm("Отклонить заявку компании?")) {
             cooperationRequestsData = cooperationRequestsData.filter(c => c.id !== currentActiveCoopId);
-            renderDashboardPartners();
+            renderDashboardPartnerRequests();
             updateDashDots();
             closeCoopModal();
         }
     };
 
-    // ================= ORDERS LOGIC (ACTIVE/COMPLETED) =================
-    window.setOrderFilter = function(filterValue) {
-        document.querySelectorAll('#screen-orders .filter-tab').forEach(t => { if (t.getAttribute('data-filter') === filterValue) { t.classList.add('active'); t.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } else t.classList.remove('active'); });
-        filterOrders();
-    };
-    
+    // ================= ORDERS LOGIC (ВКЛАДКА ЗАКАЗЫ) =================
+    window.filterOrders = function() {
+        const searchInput = document.getElementById('order-search');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const activeTab = document.querySelector('#screen-orders .filter-tab.active');
+        const activeFilter = activeTab ? activeTab.getAttribute('data-filter') : 'all';
+        
+        document.querySelectorAll('#orders-list .entity-card').forEach(card => {
+            const text = card.innerText.toLowerCase(); const status = card.getAttribute('data-status');
+            const matchesSearch = text.includes(searchTerm); const matchesFilter = activeFilter === 'all' || status === activeFilter;
+            if (status === 'cancelled' && activeFilter !== 'all' && searchTerm === '') card.style.display = 'none'; else card.style.display = (matchesSearch && matchesFilter) ? 'flex' : 'none';
+        });
+    }
+
     window.renderOrders = function() {
         const list = document.getElementById('orders-list'); if (!list) return; list.innerHTML = '';
         let counts = { new: 0, progress: 0, completed: 0 };
+        // Здесь только принятые заказы
         const activeOrders = ordersData.filter(o => o.status !== 'incoming');
         
         activeOrders.forEach(order => {
@@ -549,20 +535,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('count-new').innerText = counts.new; document.getElementById('count-progress').innerText = counts.progress; document.getElementById('count-completed').innerText = counts.completed;
         applyAdminLanguage(); filterOrders();
     };
-
-    const searchInput = document.getElementById('order-search');
-    window.filterOrders = function() {
-        if(!searchInput) return;
-        const searchTerm = searchInput.value.toLowerCase();
-        const activeTab = document.querySelector('#screen-orders .filter-tab.active'); if (!activeTab) return;
-        const activeFilter = activeTab.getAttribute('data-filter');
-        document.querySelectorAll('#orders-list .entity-card').forEach(card => {
-            const text = card.innerText.toLowerCase(); const status = card.getAttribute('data-status');
-            const matchesSearch = text.includes(searchTerm); const matchesFilter = activeFilter === 'all' || status === activeFilter;
-            if (status === 'cancelled' && activeFilter !== 'all' && searchTerm === '') card.style.display = 'none'; else card.style.display = (matchesSearch && matchesFilter) ? 'flex' : 'none';
-        });
-    }
-    if (searchInput) searchInput.addEventListener('input', filterOrders);
     
     window.toggleServiceStatus = function(orderId, serviceIndex, checkboxElem) {
         const order = ordersData.find(o => o.id === orderId);
@@ -651,26 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-    // ================= CONTENT (CMS) LOGIC =================
-    window.renderAdminServices = function() {
-        const list = document.getElementById('admin-services-list'); if (!list) return; list.innerHTML = '';
-        servicesData.forEach(s => {
-            list.innerHTML += `
-                <div class="entity-card" style="flex-direction: row; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(31,150,81,0.1); color: var(--tree-light); display: flex; justify-content: center; align-items: center;">${s.icon}</div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 800; color: var(--text);">${s.name}</div>
-                            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.price} ֏</div>
-                        </div>
-                    </div>
-                    <button class="serv-del-btn" onclick="deleteService('${s.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
-                </div>
-            `;
-        });
-    };
-
+    // ================= ПАРТНЕРЫ =================
     window.renderAdminPartners = function() {
         const list = document.getElementById('admin-partners-list'); if (!list) return; list.innerHTML = '';
         partnersData.forEach(p => {
@@ -688,15 +641,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         });
     };
-
-    window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-price').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
-    window.closeServiceForm = function() { document.getElementById('service-form-modal').classList.remove('active'); };
-    window.saveServiceForm = function(e) { 
-        e.preventDefault(); 
-        servicesData.push({ id: 's' + Math.random(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }); 
-        renderAdminServices(); closeServiceForm(); if(navigator.vibrate)navigator.vibrate(20);
-    };
-    window.deleteService = function(id) { if(confirm('Delete?')) { servicesData = servicesData.filter(s => s.id !== id); renderAdminServices(); } };
 
     let currentEditingPartnerId = null;
     window.openPartnerForm = function(partnerId = null) { 
@@ -727,6 +671,34 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAdminPartners(); closePartnerForm(); if(navigator.vibrate)navigator.vibrate(20);
     };
     window.deletePartner = function(id) { if(confirm('Delete?')) { partnersData = partnersData.filter(p => p.id !== id); renderAdminPartners(); } };
+
+    // ================= MANAGEMENT (УПРАВЛЕНИЕ) LOGIC =================
+    window.renderAdminServices = function() {
+        const list = document.getElementById('admin-services-list'); if (!list) return; list.innerHTML = '';
+        servicesData.forEach(s => {
+            list.innerHTML += `
+                <div class="entity-card" style="flex-direction: row; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(31,150,81,0.1); color: var(--tree-light); display: flex; justify-content: center; align-items: center;">${s.icon}</div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: var(--text);">${s.name}</div>
+                            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.price} ֏</div>
+                        </div>
+                    </div>
+                    <button class="serv-del-btn" onclick="deleteService('${s.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                </div>
+            `;
+        });
+    };
+
+    window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-price').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
+    window.closeServiceForm = function() { document.getElementById('service-form-modal').classList.remove('active'); };
+    window.saveServiceForm = function(e) { 
+        e.preventDefault(); 
+        servicesData.push({ id: 's' + Math.random(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }); 
+        renderAdminServices(); closeServiceForm(); if(navigator.vibrate)navigator.vibrate(20);
+    };
+    window.deleteService = function(id) { if(confirm('Delete?')) { servicesData = servicesData.filter(s => s.id !== id); renderAdminServices(); } };
 
     // ================= MODALS AND FORMS (ORDERS/EMPLOYEES) =================
     window.adjustEmpDebt = function(action) {
