@@ -29,7 +29,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=4.2.0">
+    <link rel="stylesheet" href="style.css?v=4.3.0">
 </head>
 <body>
 
@@ -65,30 +65,27 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
 
-            <!-- Новые красивые иконки-вкладки -->
+            <!-- Новые красивые иконки-вкладки БЕЗ НАДПИСЕЙ И БЕЗ РАМОК -->
             <div class="dash-switcher">
                 <button class="dash-tab dash-view-btn active" data-dash-view="overview" onclick="switchDashboardView('overview')">
+                    <div class="notif-dot" id="dash-dot-overview" style="display:none;"></div>
                     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-                    <span data-i18n="sw_overview">Общее</span>
                 </button>
                 <button class="dash-tab dash-view-btn" data-dash-view="orders" onclick="switchDashboardView('orders')">
                     <div class="notif-dot" id="dash-dot-orders" style="display:none;"></div>
                     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                    <span data-i18n="sw_inc_orders">Заказы</span>
                 </button>
                 <button class="dash-tab dash-view-btn" data-dash-view="masters" onclick="switchDashboardView('masters')">
                     <div class="notif-dot" id="dash-dot-masters" style="display:none;"></div>
                     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    <span data-i18n="sw_inc_masters">Резюме</span>
                 </button>
                 <button class="dash-tab dash-view-btn" data-dash-view="partners" onclick="switchDashboardView('partners')">
                     <div class="notif-dot" id="dash-dot-partners" style="display:none;"></div>
                     <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                    <span data-i18n="sw_coop">Партнеры</span>
                 </button>
             </div>
 
-            <!-- Dashboard: ОБЗОР -->
+            <!-- Dashboard: ОБЗОР (РЕЙТИНГ И ОТЗЫВЫ) -->
             <div id="dash-overview" class="dash-view-content">
                 <div id="dash-avg-rating-hero" class="rating-hero">★ 0.0</div>
 
@@ -355,6 +352,21 @@
 
         <!-- ================= МОДАЛЬНЫЕ ОКНА ================= -->
 
+        <!-- Модальное окно ЧТЕНИЯ ОТЗЫВА -->
+        <div class="modal-overlay" id="review-modal" onclick="closeReviewModal()">
+            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
+                <div class="entity-header" style="margin-bottom: 12px;">
+                    <h3 class="screen-title" id="modal-rev-client" style="margin:0; text-transform:none;">Client</h3>
+                    <span id="modal-rev-stars" style="color:#FFB347; font-size:16px; font-weight:900;"></span>
+                </div>
+                <div class="detail-block" style="border: none; background: rgba(0,0,0,0.05); border-radius: 12px; padding: 16px;">
+                    <div style="font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text);" id="modal-rev-text"></div>
+                </div>
+                <div style="text-align: right; margin-top: 10px; font-size: 10px; font-weight: bold; color: var(--text-sec);" id="modal-rev-date"></div>
+                <button type="button" class="submit-btn" style="margin-top: 20px; border-radius: 30px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeReviewModal()">Закрыть</button>
+            </div>
+        </div>
+
         <!-- Модальное окно просмотра ЗАКАЗА -->
         <div class="modal-overlay" id="order-modal" onclick="closeOrderModal()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
@@ -515,7 +527,7 @@
             </div>
         </div>
 
-        <!-- Модальное окно просмотра СОТРУДНИКА -->
+        <!-- Модальное окно просмотра СОТРУДНИКА (Без лишнего если на проверке) -->
         <div class="modal-overlay" id="employee-modal" onclick="closeEmployeeModal()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                 <div class="entity-header">
@@ -781,6 +793,6 @@
         </button>
     </nav>
 
-    <script src="admin.js?v=4.2.0"></script>
+    <script src="admin.js?v=4.3.0"></script>
 </body>
 </html>
