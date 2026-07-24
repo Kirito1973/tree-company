@@ -46,7 +46,6 @@ body {
 .ambient-glow { position: fixed; top: -50vh; left: -20vw; width: 140vw; height: 200vh; background: linear-gradient(180deg, var(--blob-1) 0%, transparent 25%, var(--blob-2) 50%, transparent 75%, var(--blob-3) 100%); filter: blur(90px); z-index: -2; opacity: 0.85; pointer-events: none; animation: vertical-glow 14s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; }
 @keyframes vertical-glow { 0% { transform: translateY(30%); } 100% { transform: translateY(-30%); } }
 
-/* ВАЖНО: z-index для хедера, чтобы кнопка темы работала */
 .app-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 0 10px 0; margin-bottom: 20px; position: relative; z-index: 100; pointer-events: auto; }
 .theme-btn, .lang-btn-main { background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); box-shadow: 0 8px 24px var(--btn-shadow), var(--glass-rim); color: var(--text); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border-radius: 50%; width: 48px; height: 48px; display: flex; justify-content: center; align-items: center; padding: 0; }
 .theme-btn:active, .lang-btn-main:active { transform: scale(0.85); box-shadow: 0 4px 12px var(--shadow); }
@@ -73,7 +72,6 @@ body.force-dark .main-logo { filter: drop-shadow(0 0 8px rgba(255,255,255,0.4)) 
 .admin-screen.active { display: flex; flex-direction: column; gap: 16px; }
 @keyframes screenFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Дашборд Вкладки Сверху - ЧИСТЫЕ КРУГЛЫЕ ИКОНКИ БЕЗ ТЕКСТА */
 .dash-switcher { display: flex; justify-content: center; gap: 20px; padding: 10px 0 20px 0; overflow-x: visible; position: relative; z-index: 10; pointer-events: auto; }
 .dash-tab { position: relative; flex: 0 0 60px; height: 60px; border-radius: 50%; border: none; background: rgba(128, 128, 128, 0.15); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 body.force-dark .dash-tab { background: rgba(255, 255, 255, 0.08); }
@@ -81,7 +79,6 @@ body.force-dark .dash-tab { background: rgba(255, 255, 255, 0.08); }
 .dash-tab.active { background: var(--tree-light); box-shadow: 0 8px 20px rgba(31, 150, 81, 0.4); transform: translateY(-4px); }
 .dash-tab.active svg { stroke: white; }
 
-/* Красная точка уведомлений БЕЗ ЦИФР на вкладках */
 .notif-dot { 
     position: absolute; 
     top: 4px; 
@@ -93,17 +90,14 @@ body.force-dark .dash-tab { background: rgba(255, 255, 255, 0.08); }
     box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); 
     border: 2px solid var(--bg-base); 
     z-index: 2; 
-    pointer-events: none; 
+    pointer-events: none;
 }
 
-/* Мигающая красная точка (БЕЗ ЦИФР) для карточки отзыва */
 .notif-dot-card { position: absolute; top: 12px; right: 12px; width: 10px; height: 10px; background-color: #ff4444; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); animation: pulse-dot 1.5s infinite; pointer-events: none; }
 @keyframes pulse-dot { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); } }
 
-/* Рейтинг (Голая цифра на главной) */
 .rating-hero { font-size: 56px; font-weight: 900; color: #FFB347; display: flex; justify-content: center; align-items: center; text-shadow: 0 8px 25px rgba(255, 179, 71, 0.35); margin: 10px 0 30px 0; letter-spacing: -1px; background: none; border: none; box-shadow: none; pointer-events: none; }
 
-/* Для усечения текста отзыва */
 .truncate-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
 
 .view-switcher { display: flex; background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 20px; padding: 6px; box-shadow: 0 4px 15px var(--shadow), var(--glass-rim); margin-bottom: 8px; overflow-x: auto; scrollbar-width: none; }
@@ -164,7 +158,6 @@ body.force-dark .entity-card { background: rgba(0, 0, 0, 0.2); }
 .spinner { width: 32px; height: 32px; border: 3px solid rgba(31, 150, 81, 0.2); border-top-color: var(--tree-light); border-radius: 50%; animation: spin 1s infinite linear; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* СТРОКИ ПОИСКА И ФИЛЬТРЫ */
 .search-container { position: relative; width: 100%; }
 .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sec); opacity: 0.7; }
 .search-input { padding-left: 42px !important; border-radius: 20px !important; }
@@ -176,7 +169,6 @@ body.force-dark .filter-tab { background: rgba(0, 0, 0, 0.2); }
 .filter-tab:active { transform: scale(0.95); }
 .filter-tab.active { background: var(--tree-light); color: white; border-color: var(--tree-light); box-shadow: 0 6px 15px rgba(31,150,81,0.3); }
 
-/* МОДАЛЬНЫЕ ОКНА И ДЕТАЛИ */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.3s ease; }
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .modal-content { width: 92%; max-width: 400px; max-height: 85vh; transform: translateY(20px); transition: all 0.3s ease; }
@@ -222,13 +214,11 @@ body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
 .emp-order-id { font-weight: 800; font-size: 11px; color: var(--text); }
 .emp-order-stat { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 3px 6px; border-radius: 6px; }
 
-/* ПЛАВАЮЩАЯ КНОПКА (FAB) */
 .fab-btn { position: fixed; bottom: 96px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #23A95B, #1F9651); color: white; border: none; box-shadow: 0 8px 24px rgba(31, 150, 81, 0.4); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: transform 0.3s, box-shadow 0.3s; }
 .fab-btn:active { transform: scale(0.9); box-shadow: 0 4px 12px rgba(31, 150, 81, 0.3); }
 .fab-btn svg { width: 28px; height: 28px; stroke: white; }
 .admin-screen:not(.active) .fab-btn { display: none; }
 
-/* АДАПТИВНОСТЬ ДЛЯ ПК И ПЛАНШЕТОВ */
 @media (min-width: 768px) {
     .app-container { max-width: 720px; padding-bottom: 60px; }
     .stats-grid { gap: 16px; }
