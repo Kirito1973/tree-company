@@ -1,18 +1,18 @@
-// PWA Setup с автоматическим обновлением «на лету»
+// =========================================================
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 2.0.0)
+// =========================================================
+const APP_VERSION = '2.0.0';
+
+if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
+    if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
+    if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    localStorage.setItem('tree_admin_version', APP_VERSION);
+    window.location.reload(true);
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-            reg.update(); // Принудительная проверка обновлений на сервере
-        }).catch(err => console.error('Ошибка SW:', err));
-    });
-
-    // Слушатель для мгновенной перезагрузки страницы при получении новых файлов
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-            refreshing = true;
-            window.location.reload();
-        }
+        navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION).then(reg => reg.update());
     });
 }
 
@@ -184,7 +184,7 @@ let ordersData = [
         clientName: 'Աննա Հովհաննիսյան',
         clientPhone: '+374 91 555 444',
         address: 'Երևան, Մաշտոցի 4',
-        worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', // Демонстрация нескольких
+        worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան',
         workerPhone: '+374 77 999 888',
         services: [
             { name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, 
@@ -293,7 +293,6 @@ let currentEditingEmpId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Настройка темы
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = document.getElementById('theme-icon');
     const body = document.body;
@@ -343,6 +342,34 @@ document.addEventListener('DOMContentLoaded', () => {
             langSwitcher.classList.remove('open');
         });
     });
+
+    // --- IOS PWA ПОДСКАЗКА ---
+    const isIos = () => {
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        return /iphone|ipad|ipod/.test(userAgent);
+    };
+    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+    if (isIos() && !isInStandaloneMode()) {
+        if (!localStorage.getItem('ios_admin_pwa_prompt_closed')) {
+            const iosPromptHTML = `
+            <div id="ios-pwa-prompt" style="position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: flex; align-items: center; gap: 12px; color: #000;">
+                <div style="font-size: 24px;">📲</div>
+                <div style="flex: 1; font-size: 11px; font-weight: 700; line-height: 1.4;">
+                    Տեղադրեք հավելվածը (Установите приложение):<br>
+                    Սեղմեք <b style="font-size: 14px;">«Поделиться»</b> ներքևում, ապա ընտրեք <b style="font-size: 12px;">«На экран "Домой"» ➕</b>
+                </div>
+                <button id="close-ios-prompt" style="background: none; border: none; font-size: 20px; color: #999; padding: 0 5px; cursor: pointer;">&times;</button>
+            </div>`;
+            
+            document.body.insertAdjacentHTML('beforeend', iosPromptHTML);
+            
+            document.getElementById('close-ios-prompt').addEventListener('click', () => {
+                document.getElementById('ios-pwa-prompt').style.display = 'none';
+                localStorage.setItem('ios_admin_pwa_prompt_closed', 'true');
+            });
+        }
+    }
 
     // --- Централизованная функция переключения фильтров ЗАКАЗОВ ---
     window.setOrderFilter = function(filterValue) {
@@ -531,7 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const actives = employeesData.filter(e => e.status === 'active');
         
-        // Массив тех, у кого сегодня ДР для баннера
         const bdayEmployees = [];
 
         actives.forEach(emp => {
@@ -581,7 +607,6 @@ document.addEventListener('DOMContentLoaded', () => {
             list.appendChild(card);
         });
 
-        // Управление Баннером Дня Рождения
         const bannerContainer = document.getElementById('bday-banner-container');
         if (bannerContainer) {
             if (bdayEmployees.length > 0) {
@@ -616,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (action === 'add') {
             emp.companyDebt += val;
         } else if (action === 'bonus') {
-            emp.companyDebt -= val; // Бонус уменьшает долг перед компанией
+            emp.companyDebt -= val; 
         } else if (action === 'reset') {
             emp.companyDebt = 0;
         }
@@ -630,7 +655,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (navigator.vibrate) navigator.vibrate(20);
     };
 
-    // --- Модальное окно просмотра СОТРУДНИКА ---
     window.openEmployeeModal = function(empId) {
         currentActiveEmpId = empId;
         const emp = employeesData.find(e => e.id === empId);
@@ -666,7 +690,6 @@ document.addEventListener('DOMContentLoaded', () => {
             scheduleContainer.innerHTML = '<span style="font-size:10px; color:var(--text-sec);">Գրաֆիկ չկա (График не указан)</span>';
         }
 
-        // Отрисовка Обратного отсчета до ДР
         const bdayInfo = getBirthdayInfo(emp.birthDate);
         const bdayRow = document.getElementById('modal-emp-bday-row');
         const bdayCountdown = document.getElementById('modal-emp-bday-countdown');
@@ -695,7 +718,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-emp-exp').innerText = emp.exp ? emp.exp.split('/')[0].trim() : '0';
         document.getElementById('modal-emp-rating').innerText = `★ ${(emp.rating || 0).toFixed(1)}`;
 
-        // Логика Заказов сотрудника
         const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name));
         document.getElementById('modal-emp-orders-count').innerText = empOrders.length;
         
@@ -722,7 +744,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Պատվերներ չկան (Нет заказов)</div>`;
         }
 
-        // Кнопки действий
         const btnAccept = document.getElementById('modal-emp-accept-btn');
         const btnReject = document.getElementById('modal-emp-reject-btn');
         const btnEdit = document.getElementById('modal-emp-edit-btn');
@@ -750,7 +771,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-emp-orders-list').classList.toggle('open');
     };
 
-    // Принять заявку сотрудника
     window.acceptEmployee = function() {
         if (!currentActiveEmpId) return;
         const emp = employeesData.find(e => e.id === currentActiveEmpId);
@@ -763,7 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Отказать сотруднику
     window.rejectEmployee = function() {
         if (!currentActiveEmpId) return;
         if (confirm("Отказать кандидату? (Մերժե՞լ դիմորդին)")) {
@@ -773,7 +792,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Форма редактирования/добавления СОТРУДНИКА ---
     window.openEmployeeForm = function(empId = null) {
         currentEditingEmpId = empId;
         const form = document.getElementById('employee-form');
@@ -854,7 +872,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // --- Модальное окно просмотра деталей ЗАКАЗА ---
     window.openOrderModal = function(orderId) {
         currentActiveOrderId = orderId;
         const order = ordersData.find(o => o.id === orderId);
@@ -870,7 +887,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (order.status === 'completed') { statusEl.setAttribute('data-i18n', 'status_success'); }
         else if (order.status === 'cancelled') { statusEl.classList.add('cancelled'); statusEl.setAttribute('data-i18n', 'status_cancelled'); }
 
-        // Даты
         document.getElementById('modal-date-created').innerText = order.createdAt || '---';
         const completedWrapper = document.getElementById('modal-date-completed-wrapper');
         if (order.status === 'completed' && order.completedAt) {
@@ -880,7 +896,6 @@ document.addEventListener('DOMContentLoaded', () => {
             completedWrapper.style.display = 'none';
         }
 
-        // --- БЛОК КЛИЕНТА ---
         document.getElementById('modal-client-name').innerText = order.clientName || '---';
         document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
         
@@ -894,7 +909,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         document.getElementById('modal-client-address').innerText = order.address || '---';
         
-        // --- БЛОК СОТРУДНИКА ---
         let wName = order.worker || 'Չկա (Нет)';
         let wType = '---';
         
@@ -919,7 +933,6 @@ document.addEventListener('DOMContentLoaded', () => {
             workerCallBtn.style.display = 'none';
         }
 
-        // --- Услуги (с чекбоксами) ---
         const servList = document.getElementById('modal-services-list');
         servList.innerHTML = '';
         let totalSum = 0;
@@ -947,7 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-total-price').innerText = totalSum.toLocaleString() + ' ֏';
         document.getElementById('modal-company-profit').innerText = profit.toLocaleString() + ' ֏';
 
-        // --- ЛОГИКА ОТОБРАЖЕНИЯ КНОПОК ---
         const btnEdit = document.getElementById('modal-edit-btn');
         const btnCancel = document.getElementById('modal-cancel-btn');
         const btnAccept = document.getElementById('modal-accept-btn');
@@ -959,13 +971,11 @@ document.addEventListener('DOMContentLoaded', () => {
             btnAccept.style.display = 'flex';
             btnReject.style.display = 'flex';
         } else if (order.status === 'new' || order.status === 'progress') {
-            // Теперь админ может редактировать и отменять заказ даже в процессе
             btnEdit.style.display = 'flex';
             btnCancel.style.display = 'flex'; 
             btnAccept.style.display = 'none';
             btnReject.style.display = 'none';
         } else {
-            // Completed, Cancelled
             btnEdit.style.display = 'flex';
             btnCancel.style.display = 'none';
             btnAccept.style.display = 'none';
@@ -982,7 +992,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentActiveOrderId = null;
     };
 
-    // Принятие заказа из Входящих
     window.acceptOrder = function() {
         if (!currentActiveOrderId) return;
         const order = ordersData.find(o => o.id === currentActiveOrderId);
@@ -994,7 +1003,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Отказ от входящей заявки
     window.rejectOrder = function() {
         if (!currentActiveOrderId) return;
         const order = ordersData.find(o => o.id === currentActiveOrderId);
@@ -1007,7 +1015,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Отмена уже принятого (нового или в процессе) заказа
     window.cancelOrder = function() {
         if (!currentActiveOrderId) return;
         const order = ordersData.find(o => o.id === currentActiveOrderId);
@@ -1021,18 +1028,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Универсальная форма ЗАКАЗА (Создание и Редактирование с помощником) ---
     window.openOrderForm = function(orderId = null) {
         currentEditingOrderId = orderId;
         const form = document.getElementById('order-form');
         form.reset();
         document.getElementById('form-services-container').innerHTML = '';
         
-        // Перезаполняем список Главных мастеров
         const workerSelect = document.getElementById('form-worker');
         workerSelect.innerHTML = '<option value="" data-phone="">Չկա (Не назначен)</option>';
         
-        // Перезаполняем список Помощников
         const assistantSelect = document.getElementById('form-assistant');
         assistantSelect.innerHTML = '<option value="" data-phone="">Առանց օգնականի (Без помощника)</option>';
 
@@ -1043,7 +1047,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (orderId) {
-            // Режим редактирования
             document.getElementById('order-form-title').innerText = adminTranslations['btn_edit_order'][currentAdminLang] || 'Редактировать заказ';
             const order = ordersData.find(o => o.id === orderId);
             
@@ -1052,12 +1055,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('form-phone').value = order.clientPhone;
                 document.getElementById('form-address').value = order.address;
 
-                // Разделяем worker на главного и помощников если они есть
                 let workersArr = (order.worker && order.worker !== 'Չկա (Не назначен)') ? order.worker.split(',').map(w => w.trim()) : [];
                 if (workersArr.length > 0) {
-                    workerSelect.value = workersArr[0]; // Первый - Главный
+                    workerSelect.value = workersArr[0]; 
                     if (workersArr.length > 1) {
-                        assistantSelect.value = workersArr[1]; // Второй - Помощник
+                        assistantSelect.value = workersArr[1]; 
                     }
                 }
                 
@@ -1071,7 +1073,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             closeOrderModal(); 
         } else {
-            // Режим добавления
             document.getElementById('order-form-title').innerText = adminTranslations['btn_add_order'][currentAdminLang] || '+ Новый заказ';
             document.getElementById('form-total-price').innerText = '0 ֏';
             document.getElementById('form-profit-pct').value = '10';
