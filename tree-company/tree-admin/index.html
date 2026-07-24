@@ -39,7 +39,7 @@
     <div class="app-container">
         
         <header class="app-header">
-            <button class="theme-btn" id="theme-btn" aria-label="Theme">
+            <button class="theme-btn" id="theme-btn" aria-label="Theme" onclick="toggleTheme(event)">
                 <span class="theme-icon" id="theme-icon"></span>
             </button>
 
@@ -48,22 +48,21 @@
             </div>
 
             <div class="lang-switcher" id="lang-switcher">
-                <button class="lang-btn-main" id="current-lang-btn" type="button">
+                <button class="lang-btn-main" id="current-lang-btn" type="button" onclick="toggleLangMenu(event)">
                     <img src="assets/free-icon-armenia-197516.png" class="lang-flag">
                 </button>
                 <div class="lang-dropdown-content">
-                    <button type="button" class="lang-tab active" data-lang="AM"><img src="assets/free-icon-armenia-197516.png" class="lang-flag"></button>
-                    <button type="button" class="lang-tab" data-lang="RU"><img src="assets/free-icon-russia-9994030.png" class="lang-flag"></button>
-                    <button type="button" class="lang-tab" data-lang="EN"><img src="assets/united-kingdom.png" class="lang-flag"></button>
+                    <button type="button" class="lang-tab active" data-lang="AM" onclick="setAdminLang('AM', event)"><img src="assets/free-icon-armenia-197516.png" class="lang-flag"></button>
+                    <button type="button" class="lang-tab" data-lang="RU" onclick="setAdminLang('RU', event)"><img src="assets/free-icon-russia-9994030.png" class="lang-flag"></button>
+                    <button type="button" class="lang-tab" data-lang="EN" onclick="setAdminLang('EN', event)"><img src="assets/united-kingdom.png" class="lang-flag"></button>
                 </div>
             </div>
         </header>
 
         <!-- 1. ДАШБОРД (ГЛАВНАЯ СТРАНИЦА) -->
         <section class="admin-screen active" id="screen-dashboard">
-            <h2 class="screen-title" data-i18n="tab_dashboard">Գլխավոր <span>էջ</span></h2>
+            <h2 class="screen-title" data-i18n="tab_dashboard">Գլխավոր</h2>
 
-            <!-- Круглые иконки без надписей -->
             <div class="dash-switcher">
                 <button class="dash-tab dash-view-btn active" data-dash-view="overview" onclick="switchDashboardView('overview')">
                     <div class="notif-dot" id="dash-dot-overview" style="display:none;"></div>
@@ -83,29 +82,29 @@
                 </button>
             </div>
 
-            <!-- Dashboard: ОБЗОР (РЕЙТИНГ И ОТЗЫВЫ) -->
+            <!-- Dashboard: ОБЗОР -->
             <div id="dash-overview" class="dash-view-content">
                 <div id="dash-avg-rating-hero" class="rating-hero">★ 0.0</div>
 
                 <div class="glass-panel">
-                    <h3 class="input-label" data-i18n="lbl_recent_reviews">Последние отзывы клиентов</h3>
+                    <h3 class="input-label" data-i18n="lbl_recent_reviews">Վերջին կարծիքները</h3>
                     <div class="entity-list" id="dash-reviews-list"></div>
                 </div>
             </div>
 
-            <!-- Dashboard: ЗАКАЗЫ (ОЖИДАЮТ/В ПРОЦЕССЕ/ЗАВЕРШЕНЫ + ПОИСК) -->
+            <!-- Dashboard: ЗАКАЗЫ -->
             <div id="dash-orders" class="dash-view-content" style="display:none;">
                 <div class="glass-panel">
                     <div class="search-container mb-2">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
-                        <input type="text" id="dash-order-search" class="glass-input search-input" placeholder="Որոնել ID-ով, հեռախոսով...">
+                        <input type="text" id="dash-order-search" class="glass-input search-input" data-i18n-placeholder="pl_search_order" placeholder="Որոնել ID-ով, հեռախոսով...">
                     </div>
                     
                     <div class="filter-tabs" style="margin: 8px 0;">
-                        <button class="filter-tab active" data-dash-ord-filter="all" onclick="setDashOrderFilter('all')">Բոլորը (Все)</button>
-                        <button class="filter-tab" data-dash-ord-filter="incoming" onclick="setDashOrderFilter('incoming')">Սպասում է (Ожидают)</button>
-                        <button class="filter-tab" data-dash-ord-filter="progress" onclick="setDashOrderFilter('progress')">Ընթացքում (В процессе)</button>
-                        <button class="filter-tab" data-dash-ord-filter="completed" onclick="setDashOrderFilter('completed')">Ավարտված (Завершены)</button>
+                        <button class="filter-tab active" data-dash-ord-filter="all" data-i18n="filter_all" onclick="setDashOrderFilter('all')">Բոլորը</button>
+                        <button class="filter-tab" data-dash-ord-filter="incoming" data-i18n="status_incoming" onclick="setDashOrderFilter('incoming')">Սպասում է</button>
+                        <button class="filter-tab" data-dash-ord-filter="progress" data-i18n="filter_progress" onclick="setDashOrderFilter('progress')">Ընթացքի մեջ</button>
+                        <button class="filter-tab" data-dash-ord-filter="completed" data-i18n="filter_completed" onclick="setDashOrderFilter('completed')">Ավարտված</button>
                     </div>
 
                     <div class="entity-list" id="dash-orders-list" style="margin-top: 10px;"></div>
@@ -115,23 +114,22 @@
             <!-- Dashboard: ЗАЯВКИ МАСТЕРОВ -->
             <div id="dash-masters" class="dash-view-content" style="display:none;">
                 <div class="glass-panel">
-                    <h3 class="input-label">Անկետաներ (Анкеты соискателей)</h3>
+                    <h3 class="input-label" data-i18n="sw_inc_masters">Ռեզյումե</h3>
                     <div class="entity-list" id="dash-masters-list"></div>
                 </div>
             </div>
 
-            <!-- Dashboard: СОТРУДНИЧЕСТВО (ПАРТНЕРЫ) -->
+            <!-- Dashboard: СОТРУДНИЧЕСТВО -->
             <div id="dash-partners" class="dash-view-content" style="display:none;">
                 <div class="glass-panel">
-                    <h3 class="input-label">B2B Հայտեր (Запросы на сотрудничество)</h3>
+                    <h3 class="input-label" data-i18n="sw_coop">Գործընկերներ</h3>
                     <div class="entity-list" id="dash-partners-list"></div>
                 </div>
             </div>
         </section>
 
-        <!-- 2. ПАНЕЛЬ ЗАКАЗОВ (ГЛУБОКИЙ РАЗДЕЛ) -->
+        <!-- 2. ПАНЕЛЬ ЗАКАЗОВ -->
         <section class="admin-screen" id="screen-orders">
-            <!-- КНОПКА ДОБАВИТЬ ЗАКАЗ ТЕПЕРЬ ТУТ -->
             <button class="fab-btn" onclick="openOrderForm()" aria-label="Add Order">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
@@ -149,24 +147,24 @@
                 <div class="stats-grid">
                     <div class="stat-box" onclick="setOrderFilter('new')" style="cursor: pointer;">
                         <div class="stat-value" id="count-new">0</div>
-                        <div class="stat-label" data-i18n="filter_new">Новые</div>
+                        <div class="stat-label" data-i18n="filter_new">Նոր</div>
                     </div>
                     <div class="stat-box" onclick="setOrderFilter('progress')" style="cursor: pointer;">
                         <div class="stat-value" id="count-progress">0</div>
-                        <div class="stat-label" data-i18n="filter_progress">В процессе</div>
+                        <div class="stat-label" data-i18n="filter_progress">Ընթացքի մեջ</div>
                     </div>
                     <div class="stat-box" onclick="setOrderFilter('completed')" style="cursor: pointer; grid-column: span 2; border-color: var(--tree-light);">
                         <div class="stat-value" id="count-completed" style="color: var(--tree-light);">0</div>
-                        <div class="stat-label" data-i18n="filter_completed">Завершено</div>
+                        <div class="stat-label" data-i18n="filter_completed">Ավարտված</div>
                     </div>
                 </div>
             </div>
 
             <div class="filter-tabs">
                 <button class="filter-tab active" data-filter="all" data-i18n="filter_all">Բոլորը</button>
-                <button class="filter-tab" data-filter="new" data-i18n="filter_new">Новые</button>
-                <button class="filter-tab" data-filter="progress" data-i18n="filter_progress">В процессе</button>
-                <button class="filter-tab" data-filter="completed" data-i18n="filter_completed">Завершено</button>
+                <button class="filter-tab" data-filter="new" data-i18n="filter_new">Նոր</button>
+                <button class="filter-tab" data-filter="progress" data-i18n="filter_progress">Ընթացքի մեջ</button>
+                <button class="filter-tab" data-filter="completed" data-i18n="filter_completed">Ավարտված</button>
             </div>
 
             <div class="glass-panel">
@@ -177,30 +175,30 @@
             </div>
         </section>
 
-        <!-- 3. ПАНЕЛЬ СОТРУДНИКОВ (ГЛУБОКИЙ РАЗДЕЛ) -->
+        <!-- 3. ПАНЕЛЬ СОТРУДНИКОВ -->
         <section class="admin-screen" id="screen-employees">
-            <h2 class="screen-title" data-i18n="title_employees">Աշխատակիցներ (Сотрудники)</h2>
+            <h2 class="screen-title" data-i18n="title_employees">Աշխատակիցներ</h2>
 
             <div id="view-employees">
                 <div id="bday-banner-container" style="display: none; animation: screenFadeIn 0.5s ease;"></div>
 
                 <div class="glass-panel" style="padding: 14px 20px; margin-bottom: 8px;">
-                    <button class="submit-btn" onclick="openEmployeeForm()" style="margin: 0 0 16px 0; background: linear-gradient(135deg, #00C8FF, #00A3FF); box-shadow: 0 8px 20px rgba(0, 163, 255, 0.3);">+ Նոր աշխատակից (Новый сотрудник)</button>
+                    <button class="submit-btn" onclick="openEmployeeForm()" style="margin: 0 0 16px 0; background: linear-gradient(135deg, #00C8FF, #00A3FF); box-shadow: 0 8px 20px rgba(0, 163, 255, 0.3);" data-i18n="btn_add_emp">+ Նոր աշխատակից</button>
                     <div class="search-container">
                         <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
-                        <input type="text" class="glass-input search-input" id="employee-search" placeholder="Որոնել... (Поиск мастера)">
+                        <input type="text" class="glass-input search-input" id="employee-search" data-i18n-placeholder="pl_search_emp" placeholder="Որոնել...">
                     </div>
                 </div>
 
                 <div class="filter-tabs" style="margin-bottom: 8px;">
-                    <button class="filter-tab active" data-emp-filter="all" data-i18n="cat_all" onclick="setEmpFilter('all')">Բոլորը (Все)</button>
-                    <button class="filter-tab" data-emp-filter="doors" data-i18n="cat_doors" onclick="setEmpFilter('doors')">Դռներ (Двери)</button>
+                    <button class="filter-tab active" data-emp-filter="all" data-i18n="cat_all" onclick="setEmpFilter('all')">Բոլորը</button>
+                    <button class="filter-tab" data-emp-filter="doors" data-i18n="cat_doors" onclick="setEmpFilter('doors')">Դռներ</button>
                     <button class="filter-tab" data-emp-filter="electro" data-i18n="cat_electro" onclick="setEmpFilter('electro')">Էլեկտրիկներ</button>
                     <button class="filter-tab" data-emp-filter="universal" data-i18n="cat_universal" onclick="setEmpFilter('universal')">Ունիվերսալ</button>
                 </div>
 
                 <div class="glass-panel">
-                    <h3 class="input-label" data-i18n="lbl_active_emps">Активные сотрудники</h3>
+                    <h3 class="input-label" data-i18n="lbl_active_emps">Ակտիվ աշխատողներ</h3>
                     <div class="entity-list" id="employees-list"></div>
                 </div>
             </div>
@@ -208,18 +206,18 @@
 
         <!-- 4. ПАНЕЛЬ КЛИЕНТОВ (CRM) -->
         <section class="admin-screen" id="screen-clients">
-            <h2 class="screen-title">Բազա <span>Հաճախորդներ</span><br><span style="font-size: 12px; color: var(--text-sec);">(Клиенты / CRM)</span></h2>
+            <h2 class="screen-title" data-i18n="title_clients">Բազա <span>Հաճախորդներ</span></h2>
             
             <div class="glass-panel" style="padding: 14px 20px;">
                 <div class="search-container">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
-                    <input type="text" class="glass-input search-input" id="client-search" placeholder="Որոնել ID-ով, հեռախոսով... (Поиск)">
+                    <input type="text" class="glass-input search-input" id="client-search" data-i18n-placeholder="pl_search_order" placeholder="Որոնել ID-ով, հեռախոսով...">
                 </div>
             </div>
 
             <div class="glass-panel">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 class="input-label">Բոլոր հաճախորդները (Все клиенты)</h3>
+                    <h3 class="input-label" data-i18n="lbl_all_clients">Բոլոր հաճախորդները</h3>
                     <div class="stat-value" id="clients-total-count" style="font-size: 14px;">0</div>
                 </div>
                 <div class="entity-list" id="clients-list"></div>
@@ -258,19 +256,19 @@
 
         <!-- 6. ПАНЕЛЬ КОНТЕНТА (CMS) -->
         <section class="admin-screen" id="screen-content">
-            <h2 class="screen-title">Կոնտենտ և <span>Կարգավորումներ</span><br><span style="font-size: 12px; color: var(--text-sec);">(Контент и Настройки)</span></h2>
+            <h2 class="screen-title" data-i18n="title_content">Կոնտենտ և <span>Կարգավորումներ</span></h2>
             
             <div class="view-switcher" style="overflow-x: auto; white-space: nowrap; justify-content: flex-start; padding: 6px; gap: 8px;">
-                <button class="view-switch-btn active" onclick="switchContentTab('promo', this)" style="flex: 0 0 auto; padding: 10px 16px;">Ակցիաներ (Акции)</button>
-                <button class="view-switch-btn" onclick="switchContentTab('services', this)" style="flex: 0 0 auto; padding: 10px 16px;">Ծառայություններ (Услуги)</button>
-                <button class="view-switch-btn" onclick="switchContentTab('partners', this)" style="flex: 0 0 auto; padding: 10px 16px;">Գործընկերներ (Партнеры)</button>
-                <button class="view-switch-btn" onclick="switchContentTab('translations', this)" style="flex: 0 0 auto; padding: 10px 16px;">Լեզուներ (Переводы)</button>
+                <button class="view-switch-btn active" onclick="switchContentTab('promo', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="tab_promo">Ակցիաներ</button>
+                <button class="view-switch-btn" onclick="switchContentTab('services', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="lbl_services">Ծառայություններ</button>
+                <button class="view-switch-btn" onclick="switchContentTab('partners', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="sw_coop">Գործընկերներ</button>
+                <button class="view-switch-btn" onclick="switchContentTab('translations', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="lbl_localization">Լեզուներ</button>
             </div>
 
             <!-- Подвкладка: АКЦИИ И НОВОСТИ -->
             <div id="content-view-promo">
                 <form class="glass-panel" id="promo-banner-form" onsubmit="savePromo(event)">
-                    <h3 class="input-label" data-i18n="lbl_manage_promo">Զեղչի առաջարկի կառավարում (Клиенты)</h3>
+                    <h3 class="input-label" data-i18n="lbl_manage_promo">Զեղչի առաջարկի կառավարում</h3>
                     
                     <div class="input-group">
                         <label class="input-label" data-i18n="lbl_discount_pct">Զեղչի տոկոս (%)</label>
@@ -293,9 +291,9 @@
                     </div>
 
                     <div class="input-group" style="margin-top: 16px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 16px;">
-                        <h3 class="input-label">Նորություններ աշխատակիցների համար (Новости для сотрудников)</h3>
+                        <h3 class="input-label" data-i18n="lbl_emp_news">Նորություններ աշխատակիցների համար</h3>
                         <label class="input-label" style="margin-top:8px;">Հայերեն (AM)</label>
-                        <textarea class="glass-input" id="emp-news-am" style="resize:none; height:60px;" placeholder="Впишите важные обновления для мастеров..."></textarea>
+                        <textarea class="glass-input" id="emp-news-am" style="resize:none; height:60px;"></textarea>
                         
                         <label class="input-label" style="margin-top:8px;">Русский (RU)</label>
                         <textarea class="glass-input" id="emp-news-ru" style="resize:none; height:60px;"></textarea>
@@ -306,7 +304,7 @@
 
                     <button type="submit" class="submit-btn success" id="promo-submit-btn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>
-                        <span data-i18n="btn_save_promo">Պահպանել (Сохранить)</span>
+                        <span data-i18n="btn_save_promo">Պահպանել</span>
                     </button>
                 </form>
             </div>
@@ -315,8 +313,8 @@
             <div id="content-view-services" style="display: none;">
                 <div class="glass-panel">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 class="input-label">Ծառայությունների ցանկ (Услуги клиентов)</h3>
-                        <button class="add-serv-btn" onclick="openServiceForm()">+ Ավելացնել</button>
+                        <h3 class="input-label" data-i18n="lbl_services">Ծառայություններ</h3>
+                        <button class="add-serv-btn" onclick="openServiceForm()" data-i18n="btn_add">+ Ավելացնել</button>
                     </div>
                     <div class="entity-list" id="admin-services-list"></div>
                 </div>
@@ -326,8 +324,8 @@
             <div id="content-view-partners" style="display: none;">
                 <div class="glass-panel">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 class="input-label">Գործընկերներ (Логотипы партнеров B2B)</h3>
-                        <button class="add-serv-btn" onclick="openPartnerForm()">+ Ավելացնել</button>
+                        <h3 class="input-label" data-i18n="sw_coop">Գործընկերներ</h3>
+                        <button class="add-serv-btn" onclick="openPartnerForm()" data-i18n="btn_add">+ Ավելացնել</button>
                     </div>
                     <div class="entity-list" id="admin-partners-list"></div>
                 </div>
@@ -336,18 +334,17 @@
             <!-- Подвкладка: ПЕРЕВОДЫ -->
             <div id="content-view-translations" style="display: none; padding-bottom: 80px;">
                 <div class="glass-panel" style="border-radius: 24px 24px 0 0;">
-                    <h3 class="input-label" data-i18n="lbl_localization">Հավելվածի լոկալիզացիա (Переводы)</h3>
+                    <h3 class="input-label" data-i18n="lbl_localization">Հավելվածի լոկալիզացիա</h3>
                     <div id="loader-wrap" class="loader-wrap">
                         <div class="spinner"></div>
                         <span style="font-size:11px; font-weight:800; color:var(--text-sec);" data-i18n="lbl_loading">Բազայի բեռնում...</span>
                     </div>
                     <div id="translations-list" style="display:flex; flex-direction:column; gap:14px;"></div>
                 </div>
-                <!-- Плавающая кнопка сохранения базы -->
                 <div style="position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; padding: 0 16px; z-index: 1500;">
                     <button class="submit-btn success" onclick="saveTranslations()" id="trans-save-btn" style="box-shadow: 0 10px 30px rgba(35, 169, 91, 0.4);">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>
-                        <span data-i18n="btn_save_trans">Պահպանել Բոլորը (Сохранить БД)</span>
+                        <span data-i18n="btn_save_trans">Պահպանել թարգմանությունները</span>
                     </button>
                 </div>
             </div>
@@ -366,7 +363,7 @@
                     <div style="font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text);" id="modal-rev-text"></div>
                 </div>
                 <div style="text-align: right; margin-top: 10px; font-size: 10px; font-weight: bold; color: var(--text-sec);" id="modal-rev-date"></div>
-                <button type="button" class="submit-btn" style="margin-top: 20px; border-radius: 30px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeReviewModal()">Закрыть (Փակել)</button>
+                <button type="button" class="submit-btn" style="margin-top: 20px; border-radius: 30px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeReviewModal()" data-i18n="btn_close">Փակել</button>
             </div>
         </div>
 
@@ -380,23 +377,23 @@
 
                 <div class="detail-block" style="display:flex; flex-direction:column; gap:6px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="input-label" data-i18n="lbl_date_created">Оформлен</span>
+                        <span class="input-label" data-i18n="lbl_date_created">Ստեղծման ամսաթիվ</span>
                         <span class="entity-meta" id="modal-date-created" style="font-size:11px; font-weight:700;"></span>
                     </div>
                     <div style="display:none; justify-content:space-between; align-items:center;" id="modal-date-completed-wrapper">
-                        <span class="input-label" data-i18n="lbl_date_completed">Завершен</span>
+                        <span class="input-label" data-i18n="lbl_date_completed">Ավարտման ամսաթիվ</span>
                         <span class="entity-meta" id="modal-date-completed" style="font-size:11px; font-weight:700; color:var(--tree-light);"></span>
                     </div>
                 </div>
                 
                 <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_client_details">Հաճախորդ / Клиент</div>
+                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_client_details">Հաճախորդ</div>
                     <div class="detail-row">
-                        <span class="detail-label">Անուն / Имя:</span>
+                        <span class="detail-label" data-i18n="lbl_name">Անուն:</span>
                         <span class="detail-value" id="modal-client-name"></span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Հեռ. / Тел:</span>
+                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
                         <span class="detail-value">
                             <span id="modal-client-phone-text"></span>
                             <a href="#" class="call-btn" id="modal-client-phone-link" aria-label="Call" style="border-radius: 50%;">
@@ -405,19 +402,19 @@
                         </span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Հասցե / Адрес:</span>
+                        <span class="detail-label" data-i18n="lbl_address">Հասցե:</span>
                         <span class="detail-value" id="modal-client-address" style="text-align: right;"></span>
                     </div>
                 </div>
 
                 <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_worker_details">Աշխատողներ / Сотрудники</div>
+                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_worker_details">Աշխատողներ</div>
                     <div class="detail-row">
-                        <span class="detail-label">Գլխավոր / Мастер:</span>
+                        <span class="detail-label" data-i18n="lbl_master">Գլխավոր:</span>
                         <span class="detail-value" id="modal-worker-name"></span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Հեռ. / Тел:</span>
+                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
                         <span class="detail-value">
                             <span id="modal-worker-phone-text"></span>
                             <a href="#" class="call-btn" id="modal-worker-phone-link" aria-label="Call" style="display:none; border-radius: 50%;">
@@ -428,34 +425,34 @@
                 </div>
 
                 <div class="detail-block">
-                    <div class="input-label" data-i18n="lbl_services">Ծառայություններ / Услуги</div>
+                    <div class="input-label" data-i18n="lbl_services">Ծառայություններ</div>
                     <div id="modal-services-list" style="margin-top: 8px; display:flex; flex-direction:column;"></div>
                 </div>
 
                 <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top: 8px;">
                     <div class="stat-box">
                         <div class="stat-value" id="modal-total-price">0 ֏</div>
-                        <div class="stat-label" data-i18n="lbl_total">Ընդհանուր / Итого</div>
+                        <div class="stat-label" data-i18n="lbl_total">Ընդհանուր</div>
                     </div>
                     <div class="stat-box" style="border-color: var(--tree-light);">
                         <div class="stat-value" id="modal-company-profit" style="color:var(--tree-light);">0 ֏</div>
-                        <div class="stat-label" data-i18n="lbl_profit">Շահույթ / Прибыль</div>
+                        <div class="stat-label" data-i18n="lbl_profit">Շահույթ</div>
                     </div>
                 </div>
 
                 <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; width: 100%;">
                     <button type="button" id="modal-accept-btn" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0 10px; height: 44px; margin: 0; display: none; justify-content: center; align-items: center; font-size: 11px;" onclick="acceptOrder()">
-                        <span data-i18n="btn_accept_order">Принять</span>
+                        <span data-i18n="btn_accept_order">Ընդունել</span>
                     </button>
                     <button type="button" id="modal-reject-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0 10px; height: 44px; margin: 0; display: none; justify-content: center; align-items: center; font-size: 11px;" onclick="rejectOrder()">
-                        <span data-i18n="btn_reject_order">Отказать</span>
+                        <span data-i18n="btn_reject_order">Մերժել</span>
                     </button>
                     
                     <button type="button" id="modal-edit-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(35, 169, 91, 0.9); padding: 0 10px; height: 44px; margin: 0; display: flex; justify-content: center; align-items: center; font-size: 11px;" onclick="openOrderForm(currentActiveOrderId)">
-                        <span data-i18n="btn_edit_order">Изменить</span>
+                        <span data-i18n="btn_edit_order">Խմբագրել</span>
                     </button>
                     <button type="button" id="modal-cancel-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0 10px; height: 44px; margin: 0; display: flex; justify-content: center; align-items: center; font-size: 11px;" onclick="cancelOrder()">
-                        <span data-i18n="btn_cancel_order">Отменить</span>
+                        <span data-i18n="btn_cancel_order">Չեղարկել</span>
                     </button>
                     
                     <button type="button" class="submit-btn" style="flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 0; margin: 0; display: flex; justify-content: center; align-items: center;" onclick="closeOrderModal()">
@@ -472,43 +469,43 @@
                 
                 <form id="order-form" onsubmit="saveOrderForm(event)">
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_client_name">Անուն Ազգանուն / Имя Фамилия</label>
-                        <input type="text" id="form-client-name" class="glass-input" required placeholder="Ор. Արամ Արամյան">
+                        <label class="input-label" data-i18n="lbl_client_name">Անուն Ազգանուն</label>
+                        <input type="text" id="form-client-name" class="glass-input" required>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Հեռախոս / Телефон</label>
-                        <input type="text" id="form-phone" class="glass-input" required placeholder="+374 XX XXX XXX">
+                        <label class="input-label" data-i18n="lbl_phone">Հեռախոս</label>
+                        <input type="text" id="form-phone" class="glass-input" required>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Հասցե / Адрес</label>
-                        <input type="text" id="form-address" class="glass-input" required placeholder="Ереван, ул. ...">
+                        <label class="input-label" data-i18n="lbl_address">Հասցե</label>
+                        <input type="text" id="form-address" class="glass-input" required>
                     </div>
 
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Աշխատող (Главный Мастер)</label>
+                        <label class="input-label" data-i18n="lbl_master">Աշխատող (Գլխավոր)</label>
                         <select id="form-worker" class="glass-input"></select>
                     </div>
 
                     <div class="input-group" style="margin-bottom: 16px;">
-                        <label class="input-label">Օգնական (Помощник)</label>
+                        <label class="input-label" data-i18n="lbl_assistant">Օգնական</label>
                         <select id="form-assistant" class="glass-input"></select>
                     </div>
 
                     <div class="detail-block" style="margin-bottom: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <label class="input-label" data-i18n="lbl_services">Ծառայություններ / Услуги</label>
-                            <button type="button" class="add-serv-btn" onclick="addFormServiceRow()">+ Ավելացնել</button>
+                            <label class="input-label" data-i18n="lbl_services">Ծառայություններ</label>
+                            <button type="button" class="add-serv-btn" onclick="addFormServiceRow()" data-i18n="btn_add">+ Ավելացնել</button>
                         </div>
                         <div id="form-services-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
                     </div>
                     
                     <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 16px;">
                         <div class="stat-box">
-                            <div class="stat-label">Ընդհանուր / Итого</div>
+                            <div class="stat-label" data-i18n="lbl_total">Ընդհանուր</div>
                             <div class="stat-value" id="form-total-price" style="font-size: 14px; margin-top: 4px;">0 ֏</div>
                         </div>
                         <div class="stat-box" style="border-color: var(--tree-light); background: rgba(31,150,81,0.05); padding: 10px;">
-                            <div class="stat-label">Շահույթ / Прибыль</div>
+                            <div class="stat-label" data-i18n="lbl_profit">Շահույթ</div>
                             <div style="display: flex; gap: 4px; margin-top: 6px; align-items: center;">
                                 <input type="number" id="form-profit-pct" class="glass-input" step="any" style="padding: 6px; font-size: 12px; text-align: center; width: 45%;" value="10" placeholder="%" oninput="updateFormProfitFromPct()">
                                 <span style="font-size: 12px; font-weight: bold; color: var(--text-sec);">%</span>
@@ -520,17 +517,17 @@
                     <div class="input-group" style="gap: 10px; margin-top: 20px;">
                         <button type="submit" class="submit-btn success">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>
-                            <span>Պահպանել (Сохранить)</span>
+                            <span data-i18n="btn_save">Պահպանել</span>
                         </button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderFormModal()">
-                            Չեղարկել (Отмена)
+                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderFormModal()" data-i18n="btn_cancel">
+                            Չեղարկել
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Модальное окно просмотра СОТРУДНИКА (Без лишнего если на проверке) -->
+        <!-- Модальное окно просмотра СОТРУДНИКА -->
         <div class="modal-overlay" id="employee-modal" onclick="closeEmployeeModal()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                 <div class="entity-header">
@@ -539,24 +536,24 @@
                 </div>
 
                 <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;">Տվյալներ / Данные мастера</div>
+                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_worker_details">Տվյալներ</div>
                     <div class="detail-row">
-                        <span class="detail-label">Անուն / Имя:</span>
+                        <span class="detail-label" data-i18n="lbl_name">Անուն:</span>
                         <span class="detail-value" id="modal-emp-name"></span>
                     </div>
                     <div class="detail-row" id="emp-pin-row">
-                        <span class="detail-label">PIN կոդ / Ключ:</span>
+                        <span class="detail-label" data-i18n="lbl_pin">PIN կոդ:</span>
                         <span class="detail-value" id="modal-emp-access-key" style="font-family: monospace; font-size: 14px; letter-spacing: 2px; color: var(--tree-light);"></span>
                     </div>
                     <div class="detail-row" id="modal-emp-bday-row">
-                        <span class="detail-label">Ծննդ. / Дата рожд.:</span>
+                        <span class="detail-label" data-i18n="lbl_bday">Ծննդ.:</span>
                         <span class="detail-value">
                             <span id="modal-emp-birth" style="margin-right: 6px;"></span>
                             <span id="modal-emp-bday-countdown" style="font-size: 9px; color: var(--text-sec);"></span>
                         </span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Հեռ. / Тел:</span>
+                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
                         <span class="detail-value">
                             <span id="modal-emp-phone-text"></span>
                             <a href="#" class="call-btn" id="modal-emp-phone-link" aria-label="Call" style="border-radius: 50%;">
@@ -565,56 +562,56 @@
                         </span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Հասցե / Адрес:</span>
+                        <span class="detail-label" data-i18n="lbl_address">Հասցե:</span>
                         <span class="detail-value" id="modal-emp-address" style="text-align: right;"></span>
                     </div>
                 </div>
 
                 <div class="detail-block" id="emp-schedule-block">
-                    <div class="input-label" style="margin-bottom:6px;">Աշխատանքային գրաֆիկ / График работы</div>
+                    <div class="input-label" style="margin-bottom:6px;" data-i18n="lbl_schedule">Աշխատանքային գրաֆիկ</div>
                     <div id="modal-emp-schedule-list" style="display: flex; flex-wrap: wrap; gap: 4px;"></div>
                 </div>
 
                 <div class="detail-block" id="emp-finance-block" style="background: rgba(255, 50, 50, 0.05); border-color: rgba(255, 50, 50, 0.2);">
-                    <div class="input-label" style="margin-bottom:6px; color: #ff4444;">Ֆինանսներ (Баланс мастера)</div>
+                    <div class="input-label" style="margin-bottom:6px; color: #ff4444;" data-i18n="tab_finance">Ֆինանսներ</div>
                     <div class="detail-row" style="border: none;">
-                        <span class="detail-label">Պարտք / Долг компании:</span>
+                        <span class="detail-label" data-i18n="lbl_debt">Պարտք:</span>
                         <span class="detail-value" id="modal-emp-debt" style="color: #ff4444; font-size: 16px;">0 ֏</span>
                     </div>
                     <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <input type="number" id="emp-finance-input" class="glass-input" placeholder="Գումար / Сумма (֏)" style="padding: 10px;">
+                        <input type="number" id="emp-finance-input" class="glass-input" data-i18n-placeholder="pl_amount" placeholder="Գումար (֏)" style="padding: 10px;">
                     </div>
                     <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button class="submit-btn" style="padding: 10px; margin: 0; font-size: 11px; background: rgba(255, 50, 50, 0.8);" onclick="adjustEmpDebt('add')">+ Долг</button>
-                        <button class="submit-btn success" style="padding: 10px; margin: 0; font-size: 11px;" onclick="adjustEmpDebt('bonus')">- Бонус</button>
-                        <button class="submit-btn" style="padding: 10px; margin: 0; font-size: 11px; background: transparent; color: var(--text); border: 1px solid var(--text-sec);" onclick="adjustEmpDebt('reset')">Сброс</button>
+                        <button class="submit-btn" style="padding: 10px; margin: 0; font-size: 11px; background: rgba(255, 50, 50, 0.8);" onclick="adjustEmpDebt('add')" data-i18n="btn_add_debt">+ Պարտք</button>
+                        <button class="submit-btn success" style="padding: 10px; margin: 0; font-size: 11px;" onclick="adjustEmpDebt('bonus')" data-i18n="btn_add_bonus">- Բոնուս</button>
+                        <button class="submit-btn" style="padding: 10px; margin: 0; font-size: 11px; background: transparent; color: var(--text); border: 1px solid var(--text-sec);" onclick="adjustEmpDebt('reset')" data-i18n="btn_reset">Զրոյացնել</button>
                     </div>
                 </div>
 
                 <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top: 8px;">
                     <div class="stat-box">
                         <div class="stat-value" id="modal-emp-exp" style="font-size: 16px;">0</div>
-                        <div class="stat-label">Փորձ / Опыт</div>
+                        <div class="stat-label" data-i18n="lbl_exp">Փորձ</div>
                     </div>
                     <div class="stat-box" style="border-color: #FFB347; background: rgba(255, 179, 71, 0.05);">
                         <div class="stat-value" id="modal-emp-rating" style="color:#FFB347; font-size: 16px;">★ 0.0</div>
-                        <div class="stat-label">Վարկանիշ / Рейтинг</div>
+                        <div class="stat-label" data-i18n="lbl_rating">Վարկանիշ</div>
                     </div>
                 </div>
 
                 <div class="stat-box" id="emp-orders-block" onclick="toggleEmpOrders()" style="cursor: pointer; border-color: var(--tree-light); background: rgba(31,150,81,0.05); margin-top: 10px; width: 100%; padding: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="stat-label" style="margin: 0;">Պատվերներ (Заказы) <span style="text-transform:none; font-size:8px;">[нажать]</span></span>
+                        <span class="stat-label" style="margin: 0;" data-i18n="tab_orders">Պատվերներ</span>
                         <div class="stat-value" id="modal-emp-orders-count" style="color: var(--tree-light); font-size: 16px;">0</div>
                     </div>
                     <div id="modal-emp-orders-list" class="emp-orders-list" onclick="event.stopPropagation()"></div>
                 </div>
 
                 <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin-top: 16px; width: 100%; gap: 8px;">
-                    <button type="button" id="modal-emp-accept-btn" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="acceptEmployee()">Принять</button>
-                    <button type="button" id="modal-emp-reject-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="rejectEmployee()">Отказ</button>
+                    <button type="button" id="modal-emp-accept-btn" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="acceptEmployee()" data-i18n="btn_accept_order">Ընդունել</button>
+                    <button type="button" id="modal-emp-reject-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="rejectEmployee()" data-i18n="btn_reject_order">Մերժել</button>
                     
-                    <button type="button" id="modal-emp-edit-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(35, 169, 91, 0.9); padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="openEmployeeForm(currentActiveEmpId)">Редактировать</button>
+                    <button type="button" id="modal-emp-edit-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(35, 169, 91, 0.9); padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="openEmployeeForm(currentActiveEmpId)" data-i18n="btn_edit_order">Խմբագրել</button>
                     <button type="button" class="submit-btn" style="flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 0; display: flex; justify-content: center; align-items: center;" onclick="closeEmployeeModal()"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
             </div>
@@ -623,54 +620,54 @@
         <!-- Окно редактирования СОТРУДНИКА -->
         <div class="modal-overlay" id="employee-form-modal" onclick="closeEmployeeFormModal()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <h3 class="screen-title" style="margin-bottom: 16px;" id="emp-form-title">Редактировать</h3>
+                <h3 class="screen-title" style="margin-bottom: 16px;" id="emp-form-title">Խմբագրել</h3>
                 
                 <form id="employee-form" onsubmit="saveEmployeeForm(event)">
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Անուն Ազգանուն / Имя Фамилия</label>
+                        <label class="input-label" data-i18n="lbl_client_name">Անուն Ազգանուն</label>
                         <input type="text" id="form-emp-name" class="glass-input" required>
                     </div>
                     
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">PIN կոդ / Ключ (6 цифр)</label>
+                        <label class="input-label" data-i18n="lbl_pin">PIN կոդ (6 նիշ)</label>
                         <div style="display: flex; gap: 8px;">
-                            <input type="text" id="form-emp-access-key" class="glass-input" required pattern="\d{6}" maxlength="6" style="letter-spacing: 2px; font-weight: 800; font-family: monospace;" placeholder="Ор. 123456" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            <input type="text" id="form-emp-access-key" class="glass-input" required pattern="\d{6}" maxlength="6" style="letter-spacing: 2px; font-weight: 800; font-family: monospace;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <button type="button" class="submit-btn" style="flex: 0 0 50px; margin: 0; background: rgba(0, 163, 255, 0.15); color: #00A3FF; box-shadow: none; border-radius: 16px;" onclick="document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000); if(navigator.vibrate)navigator.vibrate(10);">⟳</button>
                         </div>
                     </div>
 
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Հեռախոս / Телефон</label>
+                        <label class="input-label" data-i18n="lbl_phone">Հեռախոս</label>
                         <input type="text" id="form-emp-phone" class="glass-input" required>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Ծննդյան օր / Дата рожд.</label>
-                        <input type="text" id="form-emp-birth" class="glass-input" placeholder="ДД.ММ.ГГГГ">
+                        <label class="input-label" data-i18n="lbl_bday">Ծննդյան օր</label>
+                        <input type="text" id="form-emp-birth" class="glass-input">
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Հասցե / Адрес</label>
+                        <label class="input-label" data-i18n="lbl_address">Հասցե</label>
                         <input type="text" id="form-emp-address" class="glass-input">
                     </div>
                     
                     <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 16px;">
                         <div class="input-group">
-                            <label class="input-label">Մասն. / Тип</label>
+                            <label class="input-label" data-i18n="lbl_type">Մասնագիտություն</label>
                             <select id="form-emp-type" class="glass-input" style="padding: 10px;">
-                                <option value="doors">Դռներ (Двери)</option>
-                                <option value="electro">Էլեկտրիկ (Электрик)</option>
-                                <option value="universal">Ունիվերսալ (Универсал)</option>
-                                <option value="cleaning">Մաքրում (Уборка)</option>
+                                <option value="doors">Դռներ</option>
+                                <option value="electro">Էլեկտրիկ</option>
+                                <option value="universal">Ունիվերսալ</option>
+                                <option value="cleaning">Մաքրում</option>
                             </select>
                         </div>
                         <div class="input-group">
-                            <label class="input-label">Փորձ / Опыт</label>
-                            <input type="text" id="form-emp-exp" class="glass-input" style="padding: 10px;" placeholder="Օր. 5 տարի">
+                            <label class="input-label" data-i18n="lbl_exp">Փորձ</label>
+                            <input type="text" id="form-emp-exp" class="glass-input" style="padding: 10px;">
                         </div>
                     </div>
 
                     <div class="input-group" style="gap: 10px; margin-top: 20px;">
-                        <button type="submit" class="submit-btn success"><span>Պահպանել (Сохранить)</span></button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeEmployeeFormModal()">Չեղարկել (Отмена)</button>
+                        <button type="submit" class="submit-btn success"><span data-i18n="btn_save">Պահպանել</span></button>
+                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeEmployeeFormModal()" data-i18n="btn_cancel">Չեղարկել</button>
                     </div>
                 </form>
             </div>
@@ -685,13 +682,13 @@
                 </div>
 
                 <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;">Данные компании</div>
+                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="sw_coop">Գործընկերներ</div>
                     <div class="detail-row">
-                        <span class="detail-label">Представитель:</span>
+                        <span class="detail-label" data-i18n="lbl_name">Անուն:</span>
                         <span class="detail-value" id="modal-coop-contact"></span>
                     </div>
                     <div class="detail-row">
-                        <span class="detail-label">Հեռ. / Тел:</span>
+                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
                         <span class="detail-value">
                             <span id="modal-coop-phone"></span>
                             <a href="#" class="call-btn" id="modal-coop-phone-link" aria-label="Call" style="border-radius: 50%;">
@@ -700,14 +697,14 @@
                         </span>
                     </div>
                     <div class="detail-row" style="flex-direction: column; align-items: flex-start; border: none;">
-                        <span class="detail-label" style="margin-bottom: 6px;">Предложение:</span>
+                        <span class="detail-label" style="margin-bottom: 6px;" data-i18n="lbl_offer">Առաջարկ:</span>
                         <div class="detail-value" id="modal-coop-text" style="text-align: left; font-weight: 600; color: var(--text-sec); font-style: italic; width: 100%;"></div>
                     </div>
                 </div>
 
                 <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin-top: 16px; width: 100%; gap: 8px;">
-                    <button type="button" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="acceptCoop()">Принять</button>
-                    <button type="button" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="rejectCoop()">Отклонить</button>
+                    <button type="button" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="acceptCoop()" data-i18n="btn_accept_order">Ընդունել</button>
+                    <button type="button" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="rejectCoop()" data-i18n="btn_reject_order">Մերժել</button>
                     <button type="button" class="submit-btn" style="flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 0; display: flex; justify-content: center; align-items: center;" onclick="closeCoopModal()"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
                 </div>
             </div>
@@ -716,30 +713,30 @@
         <!-- МОДАЛКИ КОНТЕНТА: УСЛУГА -->
         <div class="modal-overlay" id="service-form-modal" onclick="closeServiceForm()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <h3 class="screen-title" style="margin-bottom: 16px;" id="serv-form-title">Добавить услугу</h3>
+                <h3 class="screen-title" style="margin-bottom: 16px;" id="serv-form-title" data-i18n="lbl_add_service">Ավելացնել ծառայություն</h3>
                 <form onsubmit="saveServiceForm(event)">
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Անվանում / Название</label>
-                        <input type="text" id="form-cat-name" class="glass-input" required placeholder="Օր. Դռների տեղադրում">
+                        <label class="input-label" data-i18n="lbl_name">Անվանում</label>
+                        <input type="text" id="form-cat-name" class="glass-input" required>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Գինը / Базовая цена (֏)</label>
-                        <input type="number" id="form-cat-price" class="glass-input" placeholder="Օր. 15000">
+                        <label class="input-label" data-i18n="lbl_price_base">Գինը (֏)</label>
+                        <input type="number" id="form-cat-price" class="glass-input">
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">SVG Պատկեր / Иконка (код)</label>
+                        <label class="input-label" data-i18n="lbl_icon">SVG Պատկեր</label>
                         <textarea id="form-cat-icon" class="glass-input" style="height: 60px; font-family: monospace;" placeholder="<svg>...</svg>"></textarea>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Կարգավիճակ / Статус</label>
+                        <label class="input-label" data-i18n="lbl_status">Կարգավիճակ</label>
                         <select id="form-cat-status" class="glass-input" style="padding: 10px;">
-                            <option value="active">Ակտիվ (Активно)</option>
-                            <option value="soon">Շուտով (Скоро)</option>
+                            <option value="active">Ակտիվ</option>
+                            <option value="soon">Շուտով</option>
                         </select>
                     </div>
                     <div class="input-group" style="gap: 10px; margin-top: 20px;">
-                        <button type="submit" class="submit-btn success"><span>Պահպանել (Сохранить)</span></button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeServiceForm()">Չեղարկել (Отмена)</button>
+                        <button type="submit" class="submit-btn success"><span data-i18n="btn_save">Պահպանել</span></button>
+                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeServiceForm()" data-i18n="btn_cancel">Չեղարկել</button>
                     </div>
                 </form>
             </div>
@@ -748,19 +745,19 @@
         <!-- МОДАЛКИ КОНТЕНТА: ПАРТНЕР -->
         <div class="modal-overlay" id="partner-form-modal" onclick="closePartnerForm()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <h3 class="screen-title" style="margin-bottom: 16px;" id="partner-form-title">Добавить партнера</h3>
+                <h3 class="screen-title" style="margin-bottom: 16px;" id="partner-form-title" data-i18n="lbl_add_partner">Ավելացնել գործընկեր</h3>
                 <form onsubmit="savePartnerForm(event)">
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Անվանում / Название</label>
-                        <input type="text" id="form-partner-name" class="glass-input" required placeholder="Օր. MegaBuilder">
+                        <label class="input-label" data-i18n="lbl_name">Անվանում</label>
+                        <input type="text" id="form-partner-name" class="glass-input" required>
                     </div>
                     <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label">Լոգո (URL կամ SVG) / Лого</label>
+                        <label class="input-label" data-i18n="lbl_logo">Լոգո (URL կամ SVG)</label>
                         <textarea id="form-partner-logo" class="glass-input" style="height: 80px;" placeholder="https://... или <svg>..."></textarea>
                     </div>
                     <div class="input-group" style="gap: 10px; margin-top: 20px;">
-                        <button type="submit" class="submit-btn success"><span>Պահպանել (Сохранить)</span></button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closePartnerForm()">Չեղարկել (Отмена)</button>
+                        <button type="submit" class="submit-btn success"><span data-i18n="btn_save">Պահպանել</span></button>
+                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closePartnerForm()" data-i18n="btn_cancel">Չեղարկել</button>
                     </div>
                 </form>
             </div>
@@ -784,7 +781,7 @@
         </button>
         <button class="tab-item" onclick="switchTab('screen-clients', this)">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span>Հաճախորդ</span>
+            <span data-i18n="tab_clients">Հաճախորդ</span>
         </button>
         <button class="tab-item" onclick="switchTab('screen-finance', this)">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
