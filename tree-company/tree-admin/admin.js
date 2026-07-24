@@ -29,10 +29,9 @@ function switchTab(screenId, btnElement) {
 }
 
 let dashViewedState = {
-    overview: false,
-    orders: false,
-    masters: false,
-    partners: false
+    orders: 0,
+    masters: 0,
+    partners: 0
 };
 
 function updateDashDots() {
@@ -42,36 +41,16 @@ function updateDashDots() {
     const incReviews = reviewsData.filter(r => r.isNew).length;
 
     const dotOrders = document.getElementById('dash-dot-orders');
-    if (incOrders > 0 && !dashViewedState.orders) {
-        dotOrders.style.display = 'flex';
-        dotOrders.innerText = incOrders;
-    } else {
-        dotOrders.style.display = 'none';
-    }
+    dotOrders.style.display = (incOrders > dashViewedState.orders) ? 'block' : 'none';
 
     const dotMasters = document.getElementById('dash-dot-masters');
-    if (incMasters > 0 && !dashViewedState.masters) {
-        dotMasters.style.display = 'flex';
-        dotMasters.innerText = incMasters;
-    } else {
-        dotMasters.style.display = 'none';
-    }
+    dotMasters.style.display = (incMasters > dashViewedState.masters) ? 'block' : 'none';
 
     const dotPartners = document.getElementById('dash-dot-partners');
-    if (incPartners > 0 && !dashViewedState.partners) {
-        dotPartners.style.display = 'flex';
-        dotPartners.innerText = incPartners;
-    } else {
-        dotPartners.style.display = 'none';
-    }
+    dotPartners.style.display = (incPartners > dashViewedState.partners) ? 'block' : 'none';
 
     const dotOverview = document.getElementById('dash-dot-overview');
-    if (incReviews > 0) {
-        dotOverview.style.display = 'flex';
-        dotOverview.innerText = incReviews;
-    } else {
-        dotOverview.style.display = 'none';
-    }
+    dotOverview.style.display = (incReviews > 0) ? 'block' : 'none';
 }
 
 function switchDashboardView(viewName) {
@@ -81,7 +60,10 @@ function switchDashboardView(viewName) {
     document.querySelectorAll('.dash-view-content').forEach(el => el.style.display = 'none');
     document.getElementById('dash-' + viewName).style.display = 'block';
 
-    dashViewedState[viewName] = true;
+    if (viewName === 'orders') dashViewedState.orders = ordersData.filter(o => o.status === 'incoming').length;
+    if (viewName === 'masters') dashViewedState.masters = employeesData.filter(e => e.status === 'pending').length;
+    if (viewName === 'partners') dashViewedState.partners = cooperationRequestsData.filter(c => c.status === 'pending').length;
+
     updateDashDots();
 
     if(viewName === 'overview') renderDashboardOverview();
