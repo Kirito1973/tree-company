@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.5.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.6.0)
 // =========================================================
-const APP_VERSION = '4.5.0';
+const APP_VERSION = '4.6.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
@@ -26,6 +26,7 @@ function switchTab(screenId, btnElement) {
 
     if(screenId === 'screen-dashboard') switchDashboardView('overview');
     if(screenId === 'screen-orders') filterOrders();
+    // Финансы - статика, обновлять особо не нужно при клике, но если надо - здесь
     if(screenId === 'screen-employees') renderEmployees();
     if(screenId === 'screen-partners') renderAdminPartners();
     if(screenId === 'screen-clients') renderClients();
@@ -97,10 +98,11 @@ if(document.getElementById('order-search')) {
 const adminTranslations = {
     "tab_dashboard": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Dashboard" },
     "tab_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
+    "tab_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
     "tab_employees": { "AM": "Աշխատակիցներ", "RU": "Работники", "EN": "Staff" },
-    "tab_partners": { "AM": "Գործընկերներ", "RU": "Сотрудничество", "EN": "Partners" },
-    "tab_clients": { "AM": "Հաճախորդներ", "RU": "Клиенты", "EN": "Clients" },
-    "tab_management": { "AM": "Կառավարում", "RU": "Управление", "EN": "Management" },
+    "tab_partners": { "AM": "Գործընկ.", "RU": "Партнеры", "EN": "Partners" },
+    "tab_clients": { "AM": "Հաճախորդ", "RU": "Клиенты", "EN": "Clients" },
+    "tab_management": { "AM": "Կառավար.", "RU": "Управл.", "EN": "Manage" },
     
     "lbl_new_requests": { "AM": "Նոր հայտեր", "RU": "Входящие запросы", "EN": "New Requests" },
     "sw_inc_masters": { "AM": "Նոր աշխատակիցներ", "RU": "Новые работники", "EN": "New Staff" },
@@ -155,7 +157,6 @@ const adminTranslations = {
     "lbl_loading": { "AM": "Բազայի բեռնում...", "RU": "Загрузка базы...", "EN": "Loading database..." },
     "btn_save_trans": { "AM": "Պահպանել թարգմանությունները", "RU": "Сохранить переводы", "EN": "Save translations" },
     
-    "tab_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
     "tab_promo": { "AM": "Ակցիաներ", "RU": "Акции", "EN": "Promo" },
     "admin_key_title": { "AM": "Բանալի:", "RU": "Ключ:", "EN": "Key:" },
     "lbl_all_clients": { "AM": "Բոլոր հաճախորդները", "RU": "Все клиенты", "EN": "All clients" },
@@ -403,14 +404,12 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderDashboardOrders = function() {
         const list = document.getElementById('dash-orders-list');
         list.innerHTML = '';
-        
         let filtered = ordersData.filter(o => o.status === 'incoming');
 
         if(filtered.length > 0) {
             filtered.forEach(order => {
                 let mainTitle = order.services.length > 0 ? order.services[0].name : "---";
                 if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
-                
                 const card = document.createElement('div'); card.className = 'entity-card'; 
                 card.onclick = () => openOrderModal(order.id);
                 card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status incoming" data-i18n="status_incoming"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${adminTranslations['lbl_name'][currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${adminTranslations['lbl_address'][currentAdminLang]} ${order.address}</div>`;
@@ -471,10 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-coop-text').innerText = coop.text;
         document.getElementById('coop-modal').classList.add('active');
     };
-    window.closeCoopModal = function() {
-        document.getElementById('coop-modal').classList.remove('active');
-        currentActiveCoopId = null;
-    };
+    window.closeCoopModal = function() { document.getElementById('coop-modal').classList.remove('active'); currentActiveCoopId = null; };
     window.acceptCoop = function() {
         if(!currentActiveCoopId) return;
         const coop = cooperationRequestsData.find(c => c.id === currentActiveCoopId);
@@ -488,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDashDots();
             closeCoopModal();
             if(navigator.vibrate) navigator.vibrate(20);
-            
             openPartnerForm(newPartnerId);
         }
     };
@@ -502,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ================= ORDERS LOGIC (ВКЛАДКА ЗАКАЗЫ) =================
+    // ================= ORDERS LOGIC =================
     window.filterOrders = function() {
         const searchInput = document.getElementById('order-search');
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
@@ -519,7 +514,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderOrders = function() {
         const list = document.getElementById('orders-list'); if (!list) return; list.innerHTML = '';
         let counts = { new: 0, progress: 0, completed: 0 };
-        // Здесь только принятые заказы
         const activeOrders = ordersData.filter(o => o.status !== 'incoming');
         
         activeOrders.forEach(order => {
@@ -814,6 +808,18 @@ document.addEventListener('DOMContentLoaded', () => {
         currentActiveOrderId = orderId; const order = ordersData.find(o => o.id === orderId); if (!order) return;
         document.getElementById('modal-order-id').innerText = order.id; const statusEl = document.getElementById('modal-order-status'); statusEl.className = 'entity-status';
         if (order.status === 'incoming') { statusEl.classList.add('incoming'); statusEl.setAttribute('data-i18n', 'status_incoming'); } else if (order.status === 'new') { statusEl.classList.add('new'); statusEl.setAttribute('data-i18n', 'status_new'); } else if (order.status === 'progress') { statusEl.classList.add('pending'); statusEl.setAttribute('data-i18n', 'status_pending'); } else if (order.status === 'completed') { statusEl.setAttribute('data-i18n', 'status_success'); } else if (order.status === 'cancelled') { statusEl.classList.add('cancelled'); statusEl.setAttribute('data-i18n', 'status_cancelled'); }
+        
+        // Prevent editing order status if it's already in progress or completed
+        const btnEdit = document.getElementById('modal-edit-btn');
+        const btnCancel = document.getElementById('modal-cancel-btn');
+        const btnAccept = document.getElementById('modal-accept-btn');
+        const btnReject = document.getElementById('modal-reject-btn');
+
+        if (order.status === 'incoming') { btnEdit.style.display = 'none'; btnCancel.style.display = 'none'; btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; } 
+        else if (order.status === 'new') { btnEdit.style.display = 'flex'; btnCancel.style.display = 'flex'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; } 
+        else if (order.status === 'progress') { btnEdit.style.display = 'flex'; btnCancel.style.display = 'flex'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; } 
+        else { btnEdit.style.display = 'flex'; btnCancel.style.display = 'none'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; }
+        
         document.getElementById('modal-date-created').innerText = order.createdAt || '---'; const completedWrapper = document.getElementById('modal-date-completed-wrapper');
         if (order.status === 'completed' && order.completedAt) { completedWrapper.style.display = 'flex'; document.getElementById('modal-date-completed').innerText = order.completedAt; } else completedWrapper.style.display = 'none';
         document.getElementById('modal-client-name').innerText = order.clientName || '---'; document.getElementById('modal-client-phone-text').innerText = order.clientPhone || '---';
@@ -830,8 +836,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const profit = order.profit !== undefined ? order.profit : (totalSum * 0.10);
         document.getElementById('modal-total-price').innerText = totalSum.toLocaleString() + ' ֏'; document.getElementById('modal-company-profit').innerText = profit.toLocaleString() + ' ֏';
         
-        const btnEdit = document.getElementById('modal-edit-btn'); const btnCancel = document.getElementById('modal-cancel-btn'); const btnAccept = document.getElementById('modal-accept-btn'); const btnReject = document.getElementById('modal-reject-btn');
-        if (order.status === 'incoming') { btnEdit.style.display = 'none'; btnCancel.style.display = 'none'; btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; } else if (order.status === 'new' || order.status === 'progress') { btnEdit.style.display = 'flex'; btnCancel.style.display = 'flex'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; } else { btnEdit.style.display = 'flex'; btnCancel.style.display = 'none'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; }
         applyAdminLanguage(); document.getElementById('order-modal').classList.add('active'); if (navigator.vibrate) navigator.vibrate(15);
     };
 
