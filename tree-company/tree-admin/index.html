@@ -29,7 +29,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=4.3.0">
+    <link rel="stylesheet" href="style.css?v=4.4.0">
 </head>
 <body>
 
@@ -61,11 +61,9 @@
 
         <!-- 1. ДАШБОРД (ГЛАВНАЯ СТРАНИЦА) -->
         <section class="admin-screen active" id="screen-dashboard">
-            <button class="fab-btn" onclick="openOrderForm()" aria-label="Add Order">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            </button>
+            <h2 class="screen-title" data-i18n="tab_dashboard">Գլխավոր <span>էջ</span></h2>
 
-            <!-- Новые красивые иконки-вкладки БЕЗ НАДПИСЕЙ И БЕЗ РАМОК -->
+            <!-- Круглые иконки без надписей -->
             <div class="dash-switcher">
                 <button class="dash-tab dash-view-btn active" data-dash-view="overview" onclick="switchDashboardView('overview')">
                     <div class="notif-dot" id="dash-dot-overview" style="display:none;"></div>
@@ -133,6 +131,11 @@
 
         <!-- 2. ПАНЕЛЬ ЗАКАЗОВ (ГЛУБОКИЙ РАЗДЕЛ) -->
         <section class="admin-screen" id="screen-orders">
+            <!-- КНОПКА ДОБАВИТЬ ЗАКАЗ ТЕПЕРЬ ТУТ -->
+            <button class="fab-btn" onclick="openOrderForm()" aria-label="Add Order">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </button>
+
             <h2 class="screen-title" data-i18n="title_orders">Ակտիվ <span>պատվերներ</span></h2>
             
             <div class="glass-panel" style="padding: 14px 20px;">
@@ -363,7 +366,7 @@
                     <div style="font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text);" id="modal-rev-text"></div>
                 </div>
                 <div style="text-align: right; margin-top: 10px; font-size: 10px; font-weight: bold; color: var(--text-sec);" id="modal-rev-date"></div>
-                <button type="button" class="submit-btn" style="margin-top: 20px; border-radius: 30px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeReviewModal()">Закрыть</button>
+                <button type="button" class="submit-btn" style="margin-top: 20px; border-radius: 30px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeReviewModal()">Закрыть (Փակել)</button>
             </div>
         </div>
 
@@ -793,6 +796,6 @@
         </button>
     </nav>
 
-    <script src="admin.js?v=4.3.0"></script>
+    <script src="admin.js?v=4.4.0"></script>
 </body>
 </html>
