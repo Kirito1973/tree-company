@@ -29,7 +29,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=4.5.0">
+    <link rel="stylesheet" href="style.css?v=4.6.0">
 </head>
 <body>
 
@@ -82,7 +82,6 @@
                 </button>
             </div>
 
-            <!-- Dashboard: Обзор (Отзывы) -->
             <div id="dash-overview" class="dash-view-content">
                 <div id="dash-avg-rating-hero" class="rating-hero">★ 0.0</div>
                 <div class="glass-panel">
@@ -91,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- Dashboard: ТОЛЬКО НОВЫЕ ВХОДЯЩИЕ ЗАКАЗЫ (Ожидают принятия) -->
             <div id="dash-orders" class="dash-view-content" style="display:none;">
                 <div class="glass-panel">
                     <h3 class="input-label" data-i18n="lbl_new_requests">Նոր հայտեր</h3>
@@ -99,7 +97,6 @@
                 </div>
             </div>
 
-            <!-- Dashboard: ЗАЯВКИ НОВЫХ МАСТЕРОВ -->
             <div id="dash-masters" class="dash-view-content" style="display:none;">
                 <div class="glass-panel">
                     <h3 class="input-label" data-i18n="sw_inc_masters">Նոր աշխատակիցներ</h3>
@@ -107,7 +104,6 @@
                 </div>
             </div>
 
-            <!-- Dashboard: ЗАЯВКИ НА СОТРУДНИЧЕСТВО -->
             <div id="dash-partners" class="dash-view-content" style="display:none;">
                 <div class="glass-panel">
                     <h3 class="input-label" data-i18n="lbl_new_partners">Նոր գործընկերներ</h3>
@@ -116,7 +112,7 @@
             </div>
         </section>
 
-        <!-- 2. ЗАКАЗЫ (Принятые, В процессе, Завершенные) -->
+        <!-- 2. ЗАКАЗЫ -->
         <section class="admin-screen" id="screen-orders">
             <button class="fab-btn" onclick="openOrderForm()" aria-label="Add Order">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -160,7 +156,38 @@
             </div>
         </section>
 
-        <!-- 3. РАБОТНИКИ -->
+        <!-- 3. ФИНАНСЫ -->
+        <section class="admin-screen" id="screen-finance">
+            <h2 class="screen-title" data-i18n="tab_finance">Ֆինանսներ</h2>
+            
+            <div class="glass-panel">
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value">624k ֏</div>
+                        <div class="stat-label" data-i18n="lbl_turnover">Շրջանառություն (Ամիս)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">93.6k ֏</div>
+                        <div class="stat-label" data-i18n="lbl_income">Եկամուտ (15%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h3 class="input-label" data-i18n="lbl_history">Վճարումների պատմություն</h3>
+                <div class="entity-list">
+                    <div class="entity-card" style="border-left: 4px solid var(--tree-light);">
+                        <div class="entity-header">
+                            <span class="entity-id" data-i18n="com_1">Միջնորդավճար #ORD-003</span>
+                            <span class="stat-value" style="font-size:12px;">+18,000 ֏</span>
+                        </div>
+                        <div class="entity-meta" data-i18n="com_paid_1">Վճարված է կատարողի կողմից • Այսօր 14:12</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. РАБОТНИКИ -->
         <section class="admin-screen" id="screen-employees">
             <h2 class="screen-title" data-i18n="tab_employees">Աշխատակիցներ</h2>
 
@@ -186,7 +213,7 @@
             </div>
         </section>
 
-        <!-- 4. СОТРУДНИЧЕСТВО (Действующие партнеры) -->
+        <!-- 5. СОТРУДНИЧЕСТВО -->
         <section class="admin-screen" id="screen-partners">
             <h2 class="screen-title" data-i18n="tab_partners">Գործընկերներ</h2>
             
@@ -200,7 +227,7 @@
             </div>
         </section>
 
-        <!-- 5. КЛИЕНТЫ (CRM) -->
+        <!-- 6. КЛИЕНТЫ -->
         <section class="admin-screen" id="screen-clients">
             <h2 class="screen-title" data-i18n="tab_clients">Հաճախորդներ</h2>
             
@@ -220,47 +247,17 @@
             </div>
         </section>
 
-        <!-- 6. УПРАВЛЕНИЕ (Настройки, Финансы, Контент) -->
+        <!-- 7. УПРАВЛЕНИЕ -->
         <section class="admin-screen" id="screen-management">
             <h2 class="screen-title" data-i18n="tab_management">Կառավարում</h2>
             
             <div class="view-switcher" style="overflow-x: auto; white-space: nowrap; justify-content: flex-start; padding: 6px; gap: 8px;">
-                <button class="view-switch-btn active" onclick="switchManagementTab('finance', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="tab_finance">Ֆինանսներ</button>
-                <button class="view-switch-btn" onclick="switchManagementTab('promo', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="tab_promo">Ակցիաներ</button>
+                <button class="view-switch-btn active" onclick="switchManagementTab('promo', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="tab_promo">Ակցիաներ</button>
                 <button class="view-switch-btn" onclick="switchManagementTab('services', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="lbl_services">Ծառայություններ</button>
                 <button class="view-switch-btn" onclick="switchManagementTab('translations', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="lbl_localization">Լեզուներ</button>
             </div>
 
-            <!-- Управление: ФИНАНСЫ -->
-            <div id="mng-view-finance">
-                <div class="glass-panel">
-                    <div class="stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-value">624k ֏</div>
-                            <div class="stat-label" data-i18n="lbl_turnover">Շրջանառություն (Ամիս)</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-value">93.6k ֏</div>
-                            <div class="stat-label" data-i18n="lbl_income">Եկամուտ (15%)</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="glass-panel">
-                    <h3 class="input-label" data-i18n="lbl_history">Վճարումների պատմություն</h3>
-                    <div class="entity-list">
-                        <div class="entity-card" style="border-left: 4px solid var(--tree-light);">
-                            <div class="entity-header">
-                                <span class="entity-id" data-i18n="com_1">Միջնորդավճար #ORD-003</span>
-                                <span class="stat-value" style="font-size:12px;">+18,000 ֏</span>
-                            </div>
-                            <div class="entity-meta" data-i18n="com_paid_1">Վճարված է կատարողի կողմից • Այսօր 14:12</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Управление: АКЦИИ И НОВОСТИ -->
-            <div id="mng-view-promo" style="display:none;">
+            <div id="mng-view-promo">
                 <form class="glass-panel" id="promo-banner-form" onsubmit="savePromo(event)">
                     <h3 class="input-label" data-i18n="lbl_manage_promo">Զեղչի առաջարկի կառավարում</h3>
                     
@@ -303,7 +300,6 @@
                 </form>
             </div>
 
-            <!-- Управление: УСЛУГИ -->
             <div id="mng-view-services" style="display: none;">
                 <div class="glass-panel">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -314,7 +310,6 @@
                 </div>
             </div>
 
-            <!-- Управление: ПЕРЕВОДЫ -->
             <div id="mng-view-translations" style="display: none; padding-bottom: 80px;">
                 <div class="glass-panel" style="border-radius: 24px 24px 0 0;">
                     <h3 class="input-label" data-i18n="lbl_localization">Հավելվածի լոկալիզացիա</h3>
@@ -333,9 +328,7 @@
             </div>
         </section>
 
-        <!-- ================= МОДАЛЬНЫЕ ОКНА ================= -->
-        <!-- (Остаются без изменений в дизайне, модалки не меняли, чтобы не перегружать файл. Они работают корректно.) -->
-
+        <!-- ================= МОДАЛЬНЫЕ ОКНА (БЕЗ ИЗМЕНЕНИЙ) ================= -->
         <!-- Модальное окно ЧТЕНИЯ ОТЗЫВА -->
         <div class="modal-overlay" id="review-modal" onclick="closeReviewModal()">
             <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
@@ -749,7 +742,7 @@
 
     </div>
 
-    <!-- НИЖНЯЯ ПАНЕЛЬ (6 Разделов) -->
+    <!-- НИЖНЯЯ ПАНЕЛЬ (7 Разделов) -->
     <nav class="bottom-nav">
         <!-- 1. Главная -->
         <button class="tab-item active" onclick="switchTab('screen-dashboard', this)">
@@ -761,28 +754,33 @@
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
             <span data-i18n="tab_orders">Պատվերներ</span>
         </button>
-        <!-- 3. Работники -->
+        <!-- 3. Финансы -->
+        <button class="tab-item" onclick="switchTab('screen-finance', this)">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            <span data-i18n="tab_finance">Ֆինանսներ</span>
+        </button>
+        <!-- 4. Работники -->
         <button class="tab-item" onclick="switchTab('screen-employees', this)">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             <span data-i18n="tab_employees">Կադրեր</span>
         </button>
-        <!-- 4. Сотрудничество -->
+        <!-- 5. Сотрудничество -->
         <button class="tab-item" onclick="switchTab('screen-partners', this)">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path></svg>
-            <span data-i18n="tab_partners">Գործընկերներ</span>
+            <span data-i18n="tab_partners">Գործընկ.</span>
         </button>
-        <!-- 5. Клиенты -->
+        <!-- 6. Клиенты -->
         <button class="tab-item" onclick="switchTab('screen-clients', this)">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
             <span data-i18n="tab_clients">Հաճախորդ</span>
         </button>
-        <!-- 6. Управление -->
+        <!-- 7. Управление -->
         <button class="tab-item" onclick="switchTab('screen-management', this)">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span data-i18n="tab_management">Կառավարում</span>
+            <span data-i18n="tab_management">Կառավար.</span>
         </button>
     </nav>
 
-    <script src="admin.js?v=4.5.0"></script>
+    <script src="admin.js?v=4.6.0"></script>
 </body>
 </html>
