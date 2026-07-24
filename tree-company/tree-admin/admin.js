@@ -99,6 +99,7 @@ function switchContentTab(tabName, btnElement) {
     if (navigator.vibrate) navigator.vibrate(10);
 }
 
+// ОЧИЩЕННЫЙ СЛОВАРЬ (Без двойных текстов)
 const adminTranslations = {
     "tab_dashboard": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Dashboard" },
     "sw_overview": { "AM": "Ընդհանուր", "RU": "Общее", "EN": "General" },
@@ -128,7 +129,7 @@ const adminTranslations = {
     "btn_add_order": { "AM": "+ Նոր պատվեր", "RU": "+ Новый заказ", "EN": "+ New Order" },
     "lbl_client_details": { "AM": "Հաճախորդ", "RU": "Клиент", "EN": "Client" },
     "lbl_worker_details": { "AM": "Աշխատող", "RU": "Сотрудник", "EN": "Worker" },
-    "lbl_client_name": { "AM": "Անուն Ազգանուն / Имя Фамилия", "RU": "Имя Фамилия", "EN": "Full Name" },
+    "lbl_client_name": { "AM": "Անուն Ազգանուն", "RU": "Имя Фамилия", "EN": "Full Name" },
     "lbl_services": { "AM": "Ծառայություններ", "RU": "Услуги", "EN": "Services" },
     "lbl_total": { "AM": "Ընդհանուր", "RU": "Итого", "EN": "Total" },
     "lbl_profit": { "AM": "Շահույթ", "RU": "Прибыль", "EN": "Profit" },
@@ -139,7 +140,8 @@ const adminTranslations = {
     "cat_all": { "AM": "Բոլորը", "RU": "Все", "EN": "All" },
     "cat_doors": { "AM": "Դռներ", "RU": "Двери", "EN": "Doors" },
     "cat_electro": { "AM": "Էլեկտրիկներ", "RU": "Электрики", "EN": "Electricians" },
-    "cat_universal": { "AM": "Ունիվերսալ", "RU": "Универсальные", "EN": "Universal" },
+    "cat_universal": { "AM": "Ունիվերսալ", "RU": "Универсалы", "EN": "Universal" },
+    "cat_cleaning": { "AM": "Մաքրում", "RU": "Уборка", "EN": "Cleaning" },
     "status_check": { "AM": "Ստուգում", "RU": "Проверка", "EN": "Checking" },
     "title_finance": { "AM": "Ֆինանսական <span>վերլուծություն</span>", "RU": "Аналитика <span>финансов</span>", "EN": "Financial <span>Analytics</span>" },
     "lbl_turnover": { "AM": "Շրջանառություն (Ամիս)", "RU": "Оборот (Мес)", "EN": "Turnover (Mo)" },
@@ -159,13 +161,107 @@ const adminTranslations = {
     "btn_save_trans": { "AM": "Պահպանել թարգմանությունները", "RU": "Сохранить переводы", "EN": "Save translations" },
     "tab_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
     "tab_employees": { "AM": "Կադրեր", "RU": "Кадры", "EN": "Staff" },
+    "tab_clients": { "AM": "Հաճախորդ", "RU": "Клиенты", "EN": "Clients" },
     "tab_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
     "tab_promo": { "AM": "Ակցիաներ", "RU": "Акции", "EN": "Promo" },
     "tab_content": { "AM": "Բազա", "RU": "База", "EN": "Data" },
-    "admin_key_title": { "AM": "Բանալի:", "RU": "Ключ:", "EN": "Key:" }
+    "admin_key_title": { "AM": "Բանալի:", "RU": "Ключ:", "EN": "Key:" },
+    "title_clients": { "AM": "Բազա <span>Հաճախորդներ</span>", "RU": "База <span>Клиентов</span>", "EN": "Client <span>Database</span>" },
+    "lbl_all_clients": { "AM": "Բոլոր հաճախորդները", "RU": "Все клиенты", "EN": "All clients" },
+    "title_content": { "AM": "Կոնտենտ և <span>Կարգավորումներ</span>", "RU": "Контент и <span>Настройки</span>", "EN": "Content & <span>Settings</span>" },
+    "lbl_name": { "AM": "Անուն:", "RU": "Имя:", "EN": "Name:" },
+    "lbl_phone": { "AM": "Հեռ.:", "RU": "Тел.:", "EN": "Phone:" },
+    "lbl_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
+    "lbl_master": { "AM": "Գլխավոր:", "RU": "Мастер:", "EN": "Master:" },
+    "lbl_assistant": { "AM": "Օգնական:", "RU": "Помощник:", "EN": "Assistant:" },
+    "btn_close": { "AM": "Փակել", "RU": "Закрыть", "EN": "Close" },
+    "btn_save": { "AM": "Պահպանել", "RU": "Сохранить", "EN": "Save" },
+    "btn_cancel": { "AM": "Չեղարկել", "RU": "Отмена", "EN": "Cancel" },
+    "lbl_pin": { "AM": "PIN կոդ:", "RU": "PIN код:", "EN": "PIN code:" },
+    "lbl_bday": { "AM": "Ծննդ.:", "RU": "Дата рожд.:", "EN": "Birth:" },
+    "lbl_schedule": { "AM": "Աշխատանքային գրաֆիկ", "RU": "График работы", "EN": "Work Schedule" },
+    "lbl_debt": { "AM": "Պարտք:", "RU": "Долг:", "EN": "Debt:" },
+    "lbl_exp": { "AM": "Փորձ", "RU": "Опыт", "EN": "Experience" },
+    "lbl_rating": { "AM": "Վարկանիշ", "RU": "Рейтинг", "EN": "Rating" },
+    "btn_add_debt": { "AM": "+ Պարտք", "RU": "+ Долг", "EN": "+ Debt" },
+    "btn_add_bonus": { "AM": "- Բոնուս", "RU": "- Бонус", "EN": "- Bonus" },
+    "btn_reset": { "AM": "Զրոյացնել", "RU": "Сброс", "EN": "Reset" },
+    "lbl_type": { "AM": "Մասնագիտություն", "RU": "Тип", "EN": "Type" },
+    "lbl_add_service": { "AM": "Ավելացնել ծառայություն", "RU": "Добавить услугу", "EN": "Add Service" },
+    "lbl_price_base": { "AM": "Գինը (֏)", "RU": "Базовая цена (֏)", "EN": "Base Price (֏)" },
+    "lbl_icon": { "AM": "SVG Պատկեր", "RU": "SVG Иконка", "EN": "SVG Icon" },
+    "lbl_status": { "AM": "Կարգավիճակ", "RU": "Статус", "EN": "Status" },
+    "btn_add": { "AM": "+ Ավելացնել", "RU": "+ Добавить", "EN": "+ Add" },
+    "lbl_add_partner": { "AM": "Ավելացնել գործընկեր", "RU": "Добавить партнера", "EN": "Add Partner" },
+    "lbl_logo": { "AM": "Լոգո (URL կամ SVG)", "RU": "Лого (URL или SVG)", "EN": "Logo (URL or SVG)" },
+    "lbl_offer": { "AM": "Առաջարկ:", "RU": "Предложение:", "EN": "Offer:" },
+    "btn_add_emp": { "AM": "+ Նոր աշխատակից", "RU": "+ Новый сотрудник", "EN": "+ New Employee" },
+    "pl_search_emp": { "AM": "Որոնել...", "RU": "Поиск мастера...", "EN": "Search..." },
+    "lbl_emp_news": { "AM": "Նորություններ աշխատակիցների համար", "RU": "Новости для сотрудников", "EN": "News for employees" },
+    "pl_amount": { "AM": "Գումար (֏)", "RU": "Сумма (֏)", "EN": "Amount (֏)" }
 };
 
 let currentAdminLang = localStorage.getItem('admin_app_lang') || 'AM';
+
+// ================= ФУНКЦИИ ДЛЯ КНОПОК ТЕМЫ И ЯЗЫКА =================
+let rotationDegrees = 0;
+window.toggleTheme = function(e) {
+    e.stopPropagation();
+    rotationDegrees += 360; 
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
+    const body = document.body;
+    
+    if (body.classList.contains('force-dark')) { 
+        body.classList.remove('force-dark'); 
+        body.classList.add('force-light'); 
+        localStorage.setItem('admin_theme', 'light'); 
+    } else { 
+        body.classList.remove('force-light'); 
+        body.classList.add('force-dark'); 
+        localStorage.setItem('admin_theme', 'dark'); 
+    }
+    setTimeout(updateThemeIcon, 150); 
+};
+
+window.toggleLangMenu = function(e) {
+    e.stopPropagation();
+    document.getElementById('lang-switcher').classList.toggle('open');
+};
+
+window.setAdminLang = function(lang, e) {
+    e.stopPropagation();
+    currentAdminLang = lang; 
+    localStorage.setItem('admin_app_lang', currentAdminLang);
+    
+    document.querySelectorAll('.lang-tab').forEach(tab => {
+        if (tab.getAttribute('data-lang') === lang) tab.classList.add('active');
+        else tab.classList.remove('active');
+    });
+    
+    const activeTab = document.querySelector(`.lang-tab[data-lang="${lang}"]`);
+    if(activeTab) document.getElementById('current-lang-btn').innerHTML = activeTab.innerHTML;
+
+    applyAdminLanguage(); 
+    renderOrders(); 
+    renderEmployees(); 
+    renderClients(); 
+    switchDashboardView('overview');
+    document.getElementById('lang-switcher').classList.remove('open');
+};
+
+document.addEventListener('click', () => { 
+    const switcher = document.getElementById('lang-switcher');
+    if(switcher) switcher.classList.remove('open'); 
+});
+
+window.getEmpTypeLabel = function(type) {
+    const key = 'cat_' + type;
+    if (adminTranslations[key] && adminTranslations[key][currentAdminLang]) {
+        return adminTranslations[key][currentAdminLang];
+    }
+    return type;
+};
 
 function applyAdminLanguage() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -186,31 +282,22 @@ function applyAdminLanguage() {
             el.innerHTML = `${adminTranslations['admin_key_title'][currentAdminLang]} ${keyName}`;
         }
     });
-    document.querySelectorAll('.lang-tab').forEach(tab => {
-        if (tab.getAttribute('data-lang') === currentAdminLang) {
-            tab.classList.add('active');
-            const btnMain = document.getElementById('current-lang-btn');
-            if(btnMain) btnMain.innerHTML = tab.innerHTML;
-        } else {
-            tab.classList.remove('active');
-        }
-    });
 }
 
 // ================= ДАННЫЕ =================
 let ordersData = [
-    { id: 'ORD-004', status: 'incoming', createdAt: getCurrentDateString(), completedAt: null, clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50', worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500 },
-    { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000 },
+    { id: 'ORD-004', status: 'incoming', createdAt: getCurrentDateString(), completedAt: null, clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50', worker: 'Չկա', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500 },
+    { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Չկա', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000 },
     { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', workerPhone: '+374 77 999 888', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }], profit: 2900 },
     { id: 'ORD-001', status: 'completed', createdAt: '10.07.2026 09:15', completedAt: '11.07.2026 18:20', clientName: 'Դավիթ Պետրոսյան', clientPhone: '+374 99 123 456', address: 'Երևան, Կոմիտաս 20', worker: 'Գոռ Վարդանյան', workerPhone: '+374 77 111 555', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 3, price: 15000, done: true }], profit: 4500 }
 ];
 
 let employeesData = [
-    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 98 000 111', exp: '2 տարի / 2 года', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '', companyDebt: 0, workingDates: [] },
-    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: ['20.07.2026', '23.07.2026', '24.07.2026'] },
-    { id: 'EMP-002', status: 'active', name: 'Կարեն Մելքոնյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 55 444 333', exp: '3 տարի / 3 года', rating: 4.5, birthDate: '02.12.1996', address: 'Երևան, Մաշտոցի 12', accessKey: '112233', companyDebt: 4500, workingDates: [] },
-    { id: 'EMP-003', status: 'active', name: 'Վարդան Գրիգորյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 99 111 222', exp: '10 տարի / 10 лет', rating: 5.0, birthDate: '24.08.1985', address: 'Երևան, Աբովյան 20', accessKey: '998877', companyDebt: 0, workingDates: [] },
-    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', companyDebt: 12000, workingDates: [] }
+    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', phone: '+374 98 000 111', exp: '2', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '', companyDebt: 0, workingDates: [] },
+    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', phone: '+374 77 999 888', exp: '6', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: ['20.07.2026', '23.07.2026', '24.07.2026'] },
+    { id: 'EMP-002', status: 'active', name: 'Կարեն Մելքոնյան', type: 'universal', phone: '+374 55 444 333', exp: '3', rating: 4.5, birthDate: '02.12.1996', address: 'Երևան, Մաշտոցի 12', accessKey: '112233', companyDebt: 4500, workingDates: [] },
+    { id: 'EMP-003', status: 'active', name: 'Վարդան Գրիգորյան', type: 'electro', phone: '+374 99 111 222', exp: '10', rating: 5.0, birthDate: '24.08.1985', address: 'Երևան, Աբովյան 20', accessKey: '998877', companyDebt: 0, workingDates: [] },
+    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', phone: '+374 77 111 555', exp: '5', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', companyDebt: 12000, workingDates: [] }
 ];
 
 let clientsData = [
@@ -235,11 +322,9 @@ let reviewsData = [
 ];
 
 let cooperationRequestsData = [
-    { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով մեր ընկերության կողմից: (Предлагаем материалы со скидкой)', date: '24.07.2026', status: 'pending' },
-    { id: 'COOP-REQ-02', company: 'Doors Yerevan', contact: 'Սուրեն', phone: '+374 77 000 111', text: 'Ցանկանում ենք համագործակցել որպես դռների արտադրող: (Хотим сотрудничать как производители)', date: '23.07.2026', status: 'pending' }
+    { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով մեր ընկերության կողմից:', date: '24.07.2026', status: 'pending' },
+    { id: 'COOP-REQ-02', company: 'Doors Yerevan', contact: 'Սուրեն', phone: '+374 77 000 111', text: 'Ցանկանում ենք համագործակցել որպես դռների արտադրող:', date: '23.07.2026', status: 'pending' }
 ];
-
-let typeLabelsMap = { 'doors': 'Դռներ / Двери', 'electro': 'Էլեկտրիկ / Электрик', 'universal': 'Ունիվերսալ / Универсал', 'cleaning': 'Մաքրում / Уборка' };
 
 function generateOrderId() { let max = 0; ordersData.forEach(o => { let n = parseInt(o.id.replace('ORD-','')); if(n>max)max=n; }); return 'ORD-'+(max+1).toString().padStart(3,'0'); }
 function generateEmpId() { let max = 0; employeesData.forEach(o => { let n = parseInt(o.id.replace('EMP-','')); if(n>max)max=n; }); return 'EMP-'+(max+1).toString().padStart(3,'0'); }
@@ -259,34 +344,12 @@ function getBirthdayInfo(dateStr) {
 
 // ================= ИНИЦИАЛИЗАЦИЯ =================
 document.addEventListener('DOMContentLoaded', () => {
-    const themeBtn = document.getElementById('theme-btn');
-    const themeIcon = document.getElementById('theme-icon');
-    const body = document.body;
-    let rotationDegrees = 0;
     
-    function updateThemeIcon() { if (themeIcon) themeIcon.innerHTML = body.classList.contains('force-dark') ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>` : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`; }
-    updateThemeIcon();
-
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            rotationDegrees += 360; themeIcon.style.transform = `rotate(${rotationDegrees}deg)`;
-            if (body.classList.contains('force-dark')) { body.classList.remove('force-dark'); body.classList.add('force-light'); localStorage.setItem('admin_theme', 'light'); } 
-            else { body.classList.remove('force-light'); body.classList.add('force-dark'); localStorage.setItem('admin_theme', 'dark'); }
-            setTimeout(updateThemeIcon, 150); 
-        });
+    function updateThemeIcon() { 
+        const themeIcon = document.getElementById('theme-icon');
+        if (themeIcon) themeIcon.innerHTML = document.body.classList.contains('force-dark') ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>` : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`; 
     }
-
-    const langSwitcher = document.getElementById('lang-switcher');
-    const currentLangBtn = document.getElementById('current-lang-btn');
-    if (currentLangBtn && langSwitcher) currentLangBtn.addEventListener('click', (e) => { e.stopPropagation(); langSwitcher.classList.toggle('open'); });
-    document.addEventListener('click', () => { if(langSwitcher) langSwitcher.classList.remove('open'); });
-    document.querySelectorAll('.lang-tab').forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            e.stopPropagation(); currentAdminLang = tab.getAttribute('data-lang'); localStorage.setItem('admin_app_lang', currentAdminLang);
-            applyAdminLanguage(); renderOrders(); renderEmployees(); renderClients(); switchDashboardView('overview');
-            langSwitcher.classList.remove('open');
-        });
-    });
+    updateThemeIcon();
 
     const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
     const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
@@ -294,7 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.insertAdjacentHTML('beforeend', `
         <div id="ios-pwa-prompt" style="position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: flex; align-items: center; gap: 12px; color: #000;">
             <div style="font-size: 24px;">📲</div>
-            <div style="flex: 1; font-size: 11px; font-weight: 700; line-height: 1.4;">Տեղադրեք հավելվածը (Установите приложение):<br>Սեղմեք <b style="font-size: 14px;">«Поделиться»</b> ներքևում, ապա ընտրեք <b style="font-size: 12px;">«На экран "Домой"» ➕</b></div>
+            <div style="flex: 1; font-size: 11px; font-weight: 700; line-height: 1.4;">Տեղադրեք հավելվածը:<br>Սեղմեք <b style="font-size: 14px;">«Поделиться»</b> ներքևում, ապա ընտրեք <b style="font-size: 12px;">«На экран "Домой"» ➕</b></div>
             <button id="close-ios-prompt" style="background: none; border: none; font-size: 20px; color: #999; padding: 0 5px; cursor: pointer;">&times;</button>
         </div>`);
         document.getElementById('close-ios-prompt').addEventListener('click', () => { document.getElementById('ios-pwa-prompt').style.display = 'none'; localStorage.setItem('ios_admin_pwa_prompt_closed', 'true'); });
@@ -321,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="entity-id" style="color:var(--text); font-size: 12px;">${rev.clientName}</span>
                             <span style="color:#FFB347; font-size:12px; font-weight:900;">${stars}</span>
                         </div>
-                        <div class="entity-meta" style="margin-top:4px;">Варпет: <b style="color:var(--tree-light);">${rev.masterName}</b></div>
+                        <div class="entity-meta" style="margin-top:4px;">${adminTranslations['lbl_master'][currentAdminLang]} <b style="color:var(--tree-light);">${rev.masterName}</b></div>
                         <div class="truncate-text" style="font-size: 11px; font-weight: 600; font-style: italic; color: var(--text-sec); margin-top: 8px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 8px;">
                             "${rev.text}"
                         </div>
@@ -329,8 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             });
-        } else {
-            revList.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Отзывов пока нет (Կարծիքներ չկան)</div>`;
         }
     };
 
@@ -374,19 +435,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if(filtered.length > 0) {
             filtered.forEach(order => {
-                let mainTitle = order.services.length > 0 ? order.services[0].name : "Услуга не указана";
+                let mainTitle = order.services.length > 0 ? order.services[0].name : "---";
                 if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
                 let statusClass = '', statusI18n = '';
                 if (order.status === 'incoming') { statusClass = 'incoming'; statusI18n = 'status_incoming'; } else if (order.status === 'new') { statusClass = 'new'; statusI18n = 'status_new'; } else if (order.status === 'progress') { statusClass = 'pending'; statusI18n = 'status_pending'; } else if (order.status === 'completed') { statusI18n = 'status_success'; }
                 
                 const card = document.createElement('div'); card.className = 'entity-card'; 
                 card.onclick = () => openOrderModal(order.id);
-                card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">Անուն: ${order.clientName || '---'}</div><div class="entity-meta">Հեռախոս: ${order.clientPhone}</div><div class="entity-meta">Հասցե: ${order.address}</div>`;
+                card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${adminTranslations['lbl_name'][currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${adminTranslations['lbl_address'][currentAdminLang]} ${order.address}</div>`;
                 list.appendChild(card);
             });
             applyAdminLanguage();
-        } else {
-            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Заказов нет (Պատվերներ չկան)</div>`;
         }
     };
 
@@ -399,12 +458,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pendingMasters.forEach(emp => {
                 const card = document.createElement('div'); card.className = 'entity-card'; 
                 card.onclick = () => openEmployeeModal(emp.id);
-                card.innerHTML = `<div class="entity-header"><span class="entity-id">${emp.id}</span><span class="entity-status pending" data-i18n="status_check">Ստուգում</span></div><div class="entity-title">${emp.name}</div><div class="entity-meta"><span>Մասն.: ${emp.typeLabel.split(' / ')[0]}</span></div><div class="entity-meta"><span>Փորձ: ${emp.exp.split('/')[0].trim()}</span></div><div class="entity-meta" style="margin-top: 4px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;"><span style="font-size: 11px; font-weight: 700; color: var(--text);">${emp.phone}</span></div>`;
+                card.innerHTML = `<div class="entity-header"><span class="entity-id">${emp.id}</span><span class="entity-status pending" data-i18n="status_check"></span></div><div class="entity-title">${emp.name}</div><div class="entity-meta"><span>${adminTranslations['lbl_type'][currentAdminLang]}: ${getEmpTypeLabel(emp.type)}</span></div><div class="entity-meta"><span>${adminTranslations['lbl_exp'][currentAdminLang]}: ${emp.exp.split('/')[0].trim()}</span></div><div class="entity-meta" style="margin-top: 4px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;"><span style="font-size: 11px; font-weight: 700; color: var(--text);">${emp.phone}</span></div>`;
                 list.appendChild(card);
             });
             applyAdminLanguage();
-        } else {
-            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Новых анкет нет (Նոր հայտեր չկան)</div>`;
         }
     };
 
@@ -417,11 +474,9 @@ document.addEventListener('DOMContentLoaded', () => {
             pendingPartners.forEach(coop => {
                 const card = document.createElement('div'); card.className = 'entity-card';
                 card.onclick = () => openCoopModal(coop.id);
-                card.innerHTML = `<div class="entity-header"><span class="entity-id">${coop.company}</span><span class="entity-status new">B2B</span></div><div class="entity-title">${coop.contact}</div><div class="entity-meta">Հեռախոս: ${coop.phone}</div><div class="entity-meta">Ամսաթիվ: ${coop.date}</div>`;
+                card.innerHTML = `<div class="entity-header"><span class="entity-id">${coop.company}</span><span class="entity-status new">B2B</span></div><div class="entity-title">${coop.contact}</div><div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} ${coop.phone}</div><div class="entity-meta">${coop.date}</div>`;
                 list.appendChild(card);
             });
-        } else {
-            list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Заявок от компаний нет (Հայտեր չկան)</div>`;
         }
     };
 
@@ -462,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     window.rejectCoop = function() {
         if(!currentActiveCoopId) return;
-        if(confirm("Отклонить заявку компании? (Մերժե՞լ)")) {
+        if(confirm("Отклонить заявку компании?")) {
             cooperationRequestsData = cooperationRequestsData.filter(c => c.id !== currentActiveCoopId);
             renderDashboardPartners();
             updateDashDots();
@@ -483,12 +538,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         activeOrders.forEach(order => {
             if (counts[order.status] !== undefined) counts[order.status]++;
-            let mainTitle = order.services.length > 0 ? order.services[0].name : "Услуга не указана";
+            let mainTitle = order.services.length > 0 ? order.services[0].name : "---";
             if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
             let statusClass = '', statusI18n = '';
             if (order.status === 'new') { statusClass = 'new'; statusI18n = 'status_new'; } else if (order.status === 'progress') { statusClass = 'pending'; statusI18n = 'status_pending'; } else if (order.status === 'completed') { statusI18n = 'status_success'; } else if (order.status === 'cancelled') { statusClass = 'cancelled'; statusI18n = 'status_cancelled'; }
             const card = document.createElement('div'); card.className = 'entity-card'; card.setAttribute('data-status', order.status); card.onclick = () => openOrderModal(order.id);
-            card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">Անուն: ${order.clientName || '---'}</div><div class="entity-meta">Հեռախոս: ${order.clientPhone}</div><div class="entity-meta">Հասցե: ${order.address}</div>`;
+            card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${adminTranslations['lbl_name'][currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${adminTranslations['lbl_address'][currentAdminLang]} ${order.address}</div>`;
             list.appendChild(card);
         });
         document.getElementById('count-new').innerText = counts.new; document.getElementById('count-progress').innerText = counts.progress; document.getElementById('count-completed').innerText = counts.completed;
@@ -525,16 +580,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const activeTab = document.querySelector('#screen-employees .filter-tab.active'); const activeFilter = activeTab ? activeTab.getAttribute('data-emp-filter') : 'all'; const empSearchTerm = empSearchInput ? empSearchInput.value.toLowerCase() : '';
         const bdayEmployees = [];
         employeesData.filter(e => e.status === 'active').forEach(emp => {
-            const matchesFilter = activeFilter === 'all' || emp.type === activeFilter; const textToSearch = (emp.name + " " + emp.phone + " " + emp.typeLabel).toLowerCase(); const matchesSearch = textToSearch.includes(empSearchTerm);
+            const matchesFilter = activeFilter === 'all' || emp.type === activeFilter; const textToSearch = (emp.name + " " + emp.phone).toLowerCase(); const matchesSearch = textToSearch.includes(empSearchTerm);
             const bdayInfo = getBirthdayInfo(emp.birthDate); if (bdayInfo && bdayInfo.isToday) bdayEmployees.push(emp.name);
             if (!matchesFilter || !matchesSearch) return;
-            let bdayHtml = ''; if (bdayInfo) { if (bdayInfo.isToday) bdayHtml = `<div style="color: #FFB347; font-weight: 800; font-size: 10px; margin-top: 6px; display: flex; align-items: center; gap: 4px;">🎉 Այսօր ծննդյան օրն է (С Днем Рождения!)</div>`; else bdayHtml = `<div style="color: var(--text-sec); font-weight: 600; font-size: 9px; margin-top: 6px;">🎂 Ծննդ.՝ ${bdayInfo.daysLeft} օրից (ДР через: ${bdayInfo.daysLeft} дн.)</div>`; }
+            let bdayHtml = ''; if (bdayInfo) { if (bdayInfo.isToday) bdayHtml = `<div style="color: #FFB347; font-weight: 800; font-size: 10px; margin-top: 6px; display: flex; align-items: center; gap: 4px;">🎉 Happy Birthday!</div>`; else bdayHtml = `<div style="color: var(--text-sec); font-weight: 600; font-size: 9px; margin-top: 6px;">🎂 ${bdayInfo.daysLeft} days left</div>`; }
             const card = document.createElement('div'); card.className = 'entity-card'; card.onclick = () => openEmployeeModal(emp.id); 
-            card.innerHTML = `<div class="entity-header"><span class="entity-id">${emp.id}</span><div class="rating-badge">★ ${emp.rating.toFixed(1)}</div></div><div class="entity-title">${emp.name}</div><div class="entity-meta"><span>Մասն.: ${emp.typeLabel.split(' / ')[0]}</span></div><div class="entity-meta"><span>Պարտք: <b style="color:${(emp.companyDebt||0) < 0 ? '#1F9651' : '#ff4444'}">${(emp.companyDebt||0).toLocaleString()} ֏</b></span></div>${bdayHtml}<div class="entity-meta" style="margin-top: 4px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;"><span style="font-size: 11px; font-weight: 700; color: var(--text);">${emp.phone}</span><button class="call-btn" style="width: 26px; height: 26px; border-radius: 50%;" onclick="event.stopPropagation(); window.location.href='tel:${emp.phone.replace(/[^\d+]/g, '')}'"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button></div>`;
+            card.innerHTML = `<div class="entity-header"><span class="entity-id">${emp.id}</span><div class="rating-badge">★ ${emp.rating.toFixed(1)}</div></div><div class="entity-title">${emp.name}</div><div class="entity-meta"><span>${adminTranslations['lbl_type'][currentAdminLang]}: ${getEmpTypeLabel(emp.type)}</span></div><div class="entity-meta"><span>${adminTranslations['lbl_debt'][currentAdminLang]} <b style="color:${(emp.companyDebt||0) < 0 ? '#1F9651' : '#ff4444'}">${(emp.companyDebt||0).toLocaleString()} ֏</b></span></div>${bdayHtml}<div class="entity-meta" style="margin-top: 4px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;"><span style="font-size: 11px; font-weight: 700; color: var(--text);">${emp.phone}</span><button class="call-btn" style="width: 26px; height: 26px; border-radius: 50%;" onclick="event.stopPropagation(); window.location.href='tel:${emp.phone.replace(/[^\d+]/g, '')}'"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button></div>`;
             list.appendChild(card);
         });
         const bannerContainer = document.getElementById('bday-banner-container');
-        if (bannerContainer) { if (bdayEmployees.length > 0) { bannerContainer.innerHTML = `<div class="glass-panel" style="background: rgba(255, 179, 71, 0.15); border: 1px solid #FFB347; margin-bottom: 12px; padding: 12px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 28px; line-height: 1;">🎉</span><div><div style="font-weight: 900; font-size: 13px; color: #FFB347; margin-bottom: 2px;">ԾՆՆԴՅԱՆ ՕՐ! (ДЕНЬ РОЖДЕНИЯ!)</div><div style="font-size: 11px; font-weight: 600; color: var(--text);">Այսօր իրենց ծննդյան օրն են նշում՝ <br><b>${bdayEmployees.join(', ')}</b></div></div></div>`; bannerContainer.style.display = 'block'; } else bannerContainer.style.display = 'none'; }
+        if (bannerContainer) { if (bdayEmployees.length > 0) { bannerContainer.innerHTML = `<div class="glass-panel" style="background: rgba(255, 179, 71, 0.15); border: 1px solid #FFB347; margin-bottom: 12px; padding: 12px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 28px; line-height: 1;">🎉</span><div><div style="font-weight: 900; font-size: 13px; color: #FFB347; margin-bottom: 2px;">HAPPY BIRTHDAY!</div><div style="font-size: 11px; font-weight: 600; color: var(--text);"><b>${bdayEmployees.join(', ')}</b></div></div></div>`; bannerContainer.style.display = 'block'; } else bannerContainer.style.display = 'none'; }
         applyAdminLanguage();
     }
 
@@ -555,18 +610,18 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="entity-header">
                     <span class="entity-id" style="font-size: 14px; font-weight: 900; color: var(--tree-light);">${c.id}</span>
-                    <div class="rating-badge" style="background: rgba(0, 163, 255, 0.15); color: #00A3FF;">Զեղչ ${c.discount}%</div>
+                    <div class="rating-badge" style="background: rgba(0, 163, 255, 0.15); color: #00A3FF;">% ${c.discount}</div>
                 </div>
                 <div class="entity-title" style="margin-top: 8px;">${c.name}</div>
-                <div class="entity-meta">Հեռախոս: <span style="font-weight: 700; color: var(--text);">${c.phone}</span></div>
-                <div class="entity-meta">Հասցե: ${c.address}</div>
+                <div class="entity-meta">${adminTranslations['lbl_phone'][currentAdminLang]} <span style="font-weight: 700; color: var(--text);">${c.phone}</span></div>
+                <div class="entity-meta">${adminTranslations['lbl_address'][currentAdminLang]} ${c.address}</div>
                 <div style="display: flex; gap: 6px; margin-top: 12px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 12px; align-items: center;">
                     <div style="display: flex; background: rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden; border: 1px solid rgba(128,128,128,0.2);">
                         <button style="width: 36px; height: 36px; border: none; background: transparent; color: var(--text); font-size: 16px; cursor: pointer; border-right: 1px solid rgba(128,128,128,0.2);" onclick="changeDiscount('${c.id}', -5)">-</button>
                         <input type="number" id="discount-input-${c.id}" value="${c.discount}" style="width: 40px; border: none; background: transparent; text-align: center; color: var(--tree-light); font-weight: 900; outline: none; -moz-appearance: textfield;">
                         <button style="width: 36px; height: 36px; border: none; background: transparent; color: var(--text); font-size: 16px; cursor: pointer; border-left: 1px solid rgba(128,128,128,0.2);" onclick="changeDiscount('${c.id}', 5)">+</button>
                     </div>
-                    <button class="submit-btn success" style="padding: 0; height: 36px; margin: 0; flex: 1; font-size: 10px;" onclick="updateClientDiscount('${c.id}')">Պահպանել (OK)</button>
+                    <button class="submit-btn success" style="padding: 0; height: 36px; margin: 0; flex: 1; font-size: 10px;" onclick="updateClientDiscount('${c.id}')">OK</button>
                     <button class="call-btn" style="width: 36px; height: 36px; border-radius: 50%;" onclick="window.location.href='tel:${c.phone.replace(/[^\d+]/g, '')}'"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
                 </div>
             `;
@@ -607,7 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(31,150,81,0.1); color: var(--tree-light); display: flex; justify-content: center; align-items: center;">${s.icon}</div>
                         <div>
                             <div style="font-size: 13px; font-weight: 800; color: var(--text);">${s.name}</div>
-                            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.status === 'soon' ? 'Շուտով (Скоро)' : `Ակտիվ (Активно) • ${s.price} ֏`}</div>
+                            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.price} ֏</div>
                         </div>
                     </div>
                     <button class="serv-del-btn" onclick="deleteService('${s.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
@@ -641,21 +696,18 @@ document.addEventListener('DOMContentLoaded', () => {
         servicesData.push({ id: 's' + Math.random(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }); 
         renderAdminServices(); closeServiceForm(); if(navigator.vibrate)navigator.vibrate(20);
     };
-    window.deleteService = function(id) { if(confirm('Ջնջե՞լ (Удалить?)')) { servicesData = servicesData.filter(s => s.id !== id); renderAdminServices(); } };
+    window.deleteService = function(id) { if(confirm('Delete?')) { servicesData = servicesData.filter(s => s.id !== id); renderAdminServices(); } };
 
     let currentEditingPartnerId = null;
     window.openPartnerForm = function(partnerId = null) { 
         currentEditingPartnerId = partnerId;
-        const titleEl = document.getElementById('partner-form-title');
         if(partnerId) {
-            titleEl.innerText = 'Редактировать партнера';
             const p = partnersData.find(x => x.id === partnerId);
             if(p) {
                 document.getElementById('form-partner-name').value = p.name; 
                 document.getElementById('form-partner-logo').value = p.logo; 
             }
         } else {
-            titleEl.innerText = 'Добавить партнера';
             document.getElementById('form-partner-name').value = ''; 
             document.getElementById('form-partner-logo').value = ''; 
         }
@@ -674,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         renderAdminPartners(); closePartnerForm(); if(navigator.vibrate)navigator.vibrate(20);
     };
-    window.deletePartner = function(id) { if(confirm('Ջնջե՞լ (Удалить?)')) { partnersData = partnersData.filter(p => p.id !== id); renderAdminPartners(); } };
+    window.deletePartner = function(id) { if(confirm('Delete?')) { partnersData = partnersData.filter(p => p.id !== id); renderAdminPartners(); } };
 
     // ================= MODALS AND FORMS (ORDERS/EMPLOYEES) =================
     window.adjustEmpDebt = function(action) {
@@ -696,7 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentActiveEmpId = empId; const emp = employeesData.find(e => e.id === empId); if (!emp) return;
         const isPending = (emp.status === 'pending');
 
-        document.getElementById('modal-emp-id').innerText = emp.id; document.getElementById('modal-emp-type').innerText = emp.typeLabel.split(' / ')[0]; 
+        document.getElementById('modal-emp-id').innerText = emp.id; document.getElementById('modal-emp-type').innerText = getEmpTypeLabel(emp.type); 
         const typeBadge = document.getElementById('modal-emp-type');
         if (isPending) { typeBadge.style.background = 'rgba(255, 179, 71, 0.15)'; typeBadge.style.color = '#FFB347'; } else { typeBadge.style.background = 'rgba(31, 150, 81, 0.15)'; typeBadge.style.color = 'var(--tree-light)'; }
         
@@ -708,10 +760,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const scheduleContainer = document.getElementById('modal-emp-schedule-list');
         if (emp.workingDates && emp.workingDates.length > 0) scheduleContainer.innerHTML = emp.workingDates.map(d => `<span style="display:inline-block; background:rgba(35,169,91,0.1); color:var(--tree-light); border: 1px solid rgba(35,169,91,0.2); padding:4px 8px; border-radius:8px; font-size:10px; font-weight:800; margin-bottom:4px;">${d}</span>`).join('');
-        else scheduleContainer.innerHTML = '<span style="font-size:10px; color:var(--text-sec);">Գրաֆիկ չկա (График не указан)</span>';
+        else scheduleContainer.innerHTML = '<span style="font-size:10px; color:var(--text-sec);">---</span>';
         
         const bdayInfo = getBirthdayInfo(emp.birthDate); const bdayRow = document.getElementById('modal-emp-bday-row'); const bdayCountdown = document.getElementById('modal-emp-bday-countdown');
-        if (bdayInfo) { bdayRow.style.display = 'flex'; if (bdayInfo.isToday) bdayCountdown.innerHTML = `<span style="color: #FFB347; font-weight: 900; font-size: 14px;">🎉 ԱՅՍՕՐ Է! (СЕГОДНЯ!)</span>`; else bdayCountdown.innerText = `${bdayInfo.daysLeft} օրից (через ${bdayInfo.daysLeft} дн.)`; } else bdayRow.style.display = 'none';
+        if (bdayInfo) { bdayRow.style.display = 'flex'; if (bdayInfo.isToday) bdayCountdown.innerHTML = `<span style="color: #FFB347; font-weight: 900; font-size: 14px;">🎉!</span>`; else bdayCountdown.innerText = `(${bdayInfo.daysLeft} d)`; } else bdayRow.style.display = 'none';
         
         document.getElementById('modal-emp-phone-text').innerText = emp.phone;
         const phoneLink = document.getElementById('modal-emp-phone-link');
@@ -723,7 +775,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name)); document.getElementById('modal-emp-orders-count').innerText = empOrders.length;
         const ordersListDiv = document.getElementById('modal-emp-orders-list'); ordersListDiv.innerHTML = ''; ordersListDiv.classList.remove('open'); 
-        if (empOrders.length > 0) { empOrders.forEach(o => { let statColor = '#9BAA9E'; if(o.status === 'completed') statColor = 'var(--tree-light)'; if(o.status === 'progress') statColor = '#FFB347'; ordersListDiv.innerHTML += `<div class="emp-order-item" onclick="closeEmployeeModal(); openOrderModal('${o.id}');"><span class="emp-order-id">${o.id} - ${o.createdAt.split(' ')[0]}</span><span class="emp-order-stat" style="color: ${statColor}; border: 1px solid ${statColor}40;">${adminTranslations['status_'+(o.status==='progress'?'pending':o.status==='completed'?'success':o.status)][currentAdminLang]}</span></div>`; }); } else ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Պատվերներ չկան (Нет заказов)</div>`;
+        if (empOrders.length > 0) { empOrders.forEach(o => { let statColor = '#9BAA9E'; if(o.status === 'completed') statColor = 'var(--tree-light)'; if(o.status === 'progress') statColor = '#FFB347'; ordersListDiv.innerHTML += `<div class="emp-order-item" onclick="closeEmployeeModal(); openOrderModal('${o.id}');"><span class="emp-order-id">${o.id} - ${o.createdAt.split(' ')[0]}</span><span class="emp-order-stat" style="color: ${statColor}; border: 1px solid ${statColor}40;">${adminTranslations['status_'+(o.status==='progress'?'pending':o.status==='completed'?'success':o.status)][currentAdminLang]}</span></div>`; }); } else ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
         
         const btnAccept = document.getElementById('modal-emp-accept-btn'); const btnReject = document.getElementById('modal-emp-reject-btn'); const btnEdit = document.getElementById('modal-emp-edit-btn');
         if (isPending) { btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; btnEdit.style.display = 'none'; } else { btnAccept.style.display = 'none'; btnReject.style.display = 'none'; btnEdit.style.display = 'flex'; }
@@ -758,7 +810,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.rejectEmployee = function() { 
         if (!currentActiveEmpId) return; 
-        if (confirm("Отказать кандидату? (Մերժե՞լ դիմորդին)")) { 
+        if (confirm("Reject?")) { 
             employeesData = employeesData.filter(e => e.id !== currentActiveEmpId); 
             renderDashboardMasters(); 
             closeEmployeeModal(); 
@@ -769,10 +821,10 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openEmployeeForm = function(empId = null) {
         currentEditingEmpId = empId; const form = document.getElementById('employee-form'); form.reset();
         if (empId) {
-            document.getElementById('emp-form-title').innerText = 'Խմբագրել (Редактировать)'; const emp = employeesData.find(e => e.id === empId);
+            const emp = employeesData.find(e => e.id === empId);
             if (emp) { document.getElementById('form-emp-name').value = emp.name; document.getElementById('form-emp-phone').value = emp.phone; document.getElementById('form-emp-address').value = emp.address || ''; document.getElementById('form-emp-birth').value = emp.birthDate || ''; document.getElementById('form-emp-type').value = emp.type; document.getElementById('form-emp-exp').value = emp.exp ? emp.exp.split('/')[0].trim() : ''; document.getElementById('form-emp-access-key').value = emp.accessKey || ''; }
             closeEmployeeModal();
-        } else { document.getElementById('emp-form-title').innerText = '+ Նոր աշխատակից (Новый сотрудник)'; document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000).toString(); }
+        } else { document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000).toString(); }
         document.getElementById('employee-form-modal').classList.add('active');
     };
 
@@ -781,8 +833,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.saveEmployeeForm = function(event) {
         event.preventDefault();
         const name = document.getElementById('form-emp-name').value; const phone = document.getElementById('form-emp-phone').value; const address = document.getElementById('form-emp-address').value; const birthDate = document.getElementById('form-emp-birth').value; const type = document.getElementById('form-emp-type').value; const exp = document.getElementById('form-emp-exp').value; const accessKey = document.getElementById('form-emp-access-key').value;
-        if (currentEditingEmpId) { const emp = employeesData.find(e => e.id === currentEditingEmpId); if (emp) { emp.name = name; emp.phone = phone; emp.address = address; emp.birthDate = birthDate; emp.type = type; emp.typeLabel = typeLabelsMap[type] || type; emp.exp = exp; emp.accessKey = accessKey; } } 
-        else { employeesData.push({ id: generateEmpId(), status: 'active', name: name, type: type, typeLabel: typeLabelsMap[type] || type, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [] }); }
+        if (currentEditingEmpId) { const emp = employeesData.find(e => e.id === currentEditingEmpId); if (emp) { emp.name = name; emp.phone = phone; emp.address = address; emp.birthDate = birthDate; emp.type = type; emp.exp = exp; emp.accessKey = accessKey; } } 
+        else { employeesData.push({ id: generateEmpId(), status: 'active', name: name, type: type, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [] }); }
         renderEmployees(); renderDashboardMasters(); closeEmployeeFormModal(); updateDashDots(); if (navigator.vibrate) navigator.vibrate(50);
     };
 
@@ -796,9 +848,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientCallBtn = document.getElementById('modal-client-phone-link'); if (order.clientPhone) { clientCallBtn.style.display = 'flex'; clientCallBtn.href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`; } else clientCallBtn.style.display = 'none';
         document.getElementById('modal-client-address').innerText = order.address || '---';
         
-        let wName = order.worker || 'Չկա (Нет)'; let wType = '---';
-        if (order.worker && order.worker.includes('(')) { const parts = order.worker.split('('); wName = parts[0].trim(); wType = parts[1].replace(')', '').trim(); } else if (order.worker === 'Չկա (Не назначен)') { wName = 'Չկա (Не назначен)'; wType = '---'; }
-        document.getElementById('modal-worker-name').innerText = wName; document.getElementById('modal-worker-type').innerText = wType; document.getElementById('modal-worker-phone-text').innerText = order.workerPhone || '---';
+        let wName = order.worker || '---';
+        if (order.worker && order.worker.includes('(')) { const parts = order.worker.split('('); wName = parts[0].trim(); }
+        document.getElementById('modal-worker-name').innerText = wName; document.getElementById('modal-worker-phone-text').innerText = order.workerPhone || '---';
         const workerCallBtn = document.getElementById('modal-worker-phone-link'); if (order.workerPhone) { workerCallBtn.style.display = 'flex'; workerCallBtn.href = `tel:${order.workerPhone.replace(/[^\d+]/g, '')}`; } else workerCallBtn.style.display = 'none';
         
         const servList = document.getElementById('modal-services-list'); servList.innerHTML = ''; let totalSum = 0;
@@ -813,24 +865,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closeOrderModal = function() { document.getElementById('order-modal').classList.remove('active'); currentActiveOrderId = null; };
     window.acceptOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (order && order.status === 'incoming') { order.status = 'new'; renderDashboardOrders(); renderOrders(); updateDashDots(); closeOrderModal(); setTimeout(() => openOrderForm(order.id), 300); } };
-    window.rejectOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (order && order.status === 'incoming') { if (confirm("Отказать в заявке? (Մերժե՞լ հայտը)")) { order.status = 'cancelled'; renderDashboardOrders(); updateDashDots(); closeOrderModal(); } } };
-    window.cancelOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (confirm("Չեղարկե՞լ այս պատվերը (Отменить этот заказ?)")) { if(order) { order.status = 'cancelled'; renderOrders(); } closeOrderModal(); } };
+    window.rejectOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (order && order.status === 'incoming') { if (confirm("Reject?")) { order.status = 'cancelled'; renderDashboardOrders(); updateDashDots(); closeOrderModal(); } } };
+    window.cancelOrder = function() { if (!currentActiveOrderId) return; const order = ordersData.find(o => o.id === currentActiveOrderId); if (confirm("Cancel order?")) { if(order) { order.status = 'cancelled'; renderOrders(); } closeOrderModal(); } };
 
     window.openOrderForm = function(orderId = null) {
         currentEditingOrderId = orderId; const form = document.getElementById('order-form'); form.reset(); document.getElementById('form-services-container').innerHTML = '';
-        const workerSelect = document.getElementById('form-worker'); workerSelect.innerHTML = '<option value="" data-phone="">Չկա (Не назначен)</option>';
-        const assistantSelect = document.getElementById('form-assistant'); assistantSelect.innerHTML = '<option value="" data-phone="">Առանց օգնականի (Без помощника)</option>';
-        employeesData.filter(e => e.status === 'active').forEach(emp => { const opt = `<option value="${emp.name}" data-phone="${emp.phone}">${emp.name} - ${emp.typeLabel.split('/')[0].trim()}</option>`; workerSelect.innerHTML += opt; assistantSelect.innerHTML += opt; });
+        const workerSelect = document.getElementById('form-worker'); workerSelect.innerHTML = '<option value="" data-phone="">---</option>';
+        const assistantSelect = document.getElementById('form-assistant'); assistantSelect.innerHTML = '<option value="" data-phone="">---</option>';
+        employeesData.filter(e => e.status === 'active').forEach(emp => { const opt = `<option value="${emp.name}" data-phone="${emp.phone}">${emp.name} - ${getEmpTypeLabel(emp.type)}</option>`; workerSelect.innerHTML += opt; assistantSelect.innerHTML += opt; });
         if (orderId) {
-            document.getElementById('order-form-title').innerText = adminTranslations['btn_edit_order'][currentAdminLang] || 'Редактировать заказ'; const order = ordersData.find(o => o.id === orderId);
+            const order = ordersData.find(o => o.id === orderId);
             if (order) { document.getElementById('form-client-name').value = order.clientName || ''; document.getElementById('form-phone').value = order.clientPhone; document.getElementById('form-address').value = order.address;
-                let workersArr = (order.worker && order.worker !== 'Չկա (Не назначен)') ? order.worker.split(',').map(w => w.trim()) : [];
+                let workersArr = (order.worker && order.worker !== '---' && order.worker !== 'Չկա') ? order.worker.split(',').map(w => w.trim()) : [];
                 if (workersArr.length > 0) { workerSelect.value = workersArr[0]; if (workersArr.length > 1) assistantSelect.value = workersArr[1]; }
                 order.services.forEach(s => addFormServiceRow(s.name, s.qty, s.price, s.done || false)); calculateOrderFormTotals();
                 if (order.profit !== undefined) { document.getElementById('form-profit-sum').value = order.profit; updateFormProfitFromSum(); }
             } closeOrderModal(); 
         } else {
-            document.getElementById('order-form-title').innerText = adminTranslations['btn_add_order'][currentAdminLang] || '+ Новый заказ'; document.getElementById('form-total-price').innerText = '0 ֏'; document.getElementById('form-profit-pct').value = '10'; document.getElementById('form-profit-sum').value = '0'; addFormServiceRow();
+            document.getElementById('form-total-price').innerText = '0 ֏'; document.getElementById('form-profit-pct').value = '10'; document.getElementById('form-profit-sum').value = '0'; addFormServiceRow();
         } document.getElementById('order-form-modal').classList.add('active');
     };
 
@@ -838,7 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.calculateOrderFormTotals = function() { let totalSum = 0; document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => { const qty = parseInt(row.querySelector('.serv-col-qty').value) || 0; const price = parseFloat(row.querySelector('.serv-col-price').value) || 0; totalSum += (qty * price); }); document.getElementById('form-total-price').innerText = totalSum.toLocaleString() + ' ֏'; const pct = parseFloat(document.getElementById('form-profit-pct').value) || 0; document.getElementById('form-profit-sum').value = Math.round(totalSum * (pct / 100)); };
     window.updateFormProfitFromPct = function() { let totalSum = 0; document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => { const qty = parseInt(row.querySelector('.serv-col-qty').value) || 0; const price = parseFloat(row.querySelector('.serv-col-price').value) || 0; totalSum += (qty * price); }); const pct = parseFloat(document.getElementById('form-profit-pct').value) || 0; document.getElementById('form-profit-sum').value = Math.round(totalSum * (pct / 100)); };
     window.updateFormProfitFromSum = function() { let totalSum = 0; document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => { const qty = parseInt(row.querySelector('.serv-col-qty').value) || 0; const price = parseFloat(row.querySelector('.serv-col-price').value) || 0; totalSum += (qty * price); }); const sum = parseFloat(document.getElementById('form-profit-sum').value) || 0; if (totalSum > 0) document.getElementById('form-profit-pct').value = ((sum / totalSum) * 100).toFixed(2); else document.getElementById('form-profit-pct').value = 0; };
-    window.addFormServiceRow = function(name = '', qty = 1, price = '', done = false) { const container = document.getElementById('form-services-container'); const row = document.createElement('div'); row.className = 'service-row-edit'; row.setAttribute('data-done', done); row.innerHTML = `<input type="text" class="glass-input serv-col-name" placeholder="Անվանում (Название)" value="${name}" required><input type="number" class="glass-input serv-col-qty" placeholder="Քան." min="1" value="${qty}" required oninput="calculateOrderFormTotals()"><input type="number" class="glass-input serv-col-price" placeholder="Գինը (Цена ֏)" min="0" value="${price}" required oninput="calculateOrderFormTotals()"><button type="button" class="serv-del-btn" onclick="removeFormServiceRow(this)">X</button>`; container.appendChild(row); };
+    window.addFormServiceRow = function(name = '', qty = 1, price = '', done = false) { const container = document.getElementById('form-services-container'); const row = document.createElement('div'); row.className = 'service-row-edit'; row.setAttribute('data-done', done); row.innerHTML = `<input type="text" class="glass-input serv-col-name" value="${name}" required><input type="number" class="glass-input serv-col-qty" min="1" value="${qty}" required oninput="calculateOrderFormTotals()"><input type="number" class="glass-input serv-col-price" min="0" value="${price}" required oninput="calculateOrderFormTotals()"><button type="button" class="serv-del-btn" onclick="removeFormServiceRow(this)">X</button>`; container.appendChild(row); };
     window.removeFormServiceRow = function(btnElement) { const row = btnElement.closest('.service-row-edit'); if (row) { row.remove(); calculateOrderFormTotals(); } };
 
     window.saveOrderForm = function(event) {
@@ -848,10 +900,10 @@ document.addEventListener('DOMContentLoaded', () => {
         let leadWorker = workerSelect.value.trim(); let assistant = assistantSelect.value.trim();
         let workerPhone = ''; if (leadWorker) workerPhone = workerSelect.options[workerSelect.selectedIndex].getAttribute('data-phone') || '';
         let combinedWorkers = []; if (leadWorker) combinedWorkers.push(leadWorker); if (assistant) combinedWorkers.push(assistant);
-        let finalWorkerString = combinedWorkers.length > 0 ? combinedWorkers.join(', ') : 'Չկա (Не назначен)';
+        let finalWorkerString = combinedWorkers.length > 0 ? combinedWorkers.join(', ') : '---';
         const services = [];
         document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => { const name = row.querySelector('.serv-col-name').value; const qty = parseInt(row.querySelector('.serv-col-qty').value); const price = parseFloat(row.querySelector('.serv-col-price').value); const done = row.getAttribute('data-done') === 'true'; if (name && qty > 0 && price >= 0) services.push({ name, qty, price, done }); });
-        if (services.length === 0) { alert('Խնդրում ենք ավելացնել գոնե մեկ ծառայություն (Добавьте хотя бы одну услугу)'); return; }
+        if (services.length === 0) { alert('Error: No services'); return; }
         const customProfit = parseFloat(document.getElementById('form-profit-sum').value) || 0;
         if (currentEditingOrderId) { const order = ordersData.find(o => o.id === currentEditingOrderId); if (order) { order.clientName = clientName; order.clientPhone = phone; order.address = address; order.worker = finalWorkerString; order.workerPhone = workerPhone; order.services = services; order.profit = customProfit; } } 
         else { ordersData.unshift({ id: generateOrderId(), status: 'new', createdAt: getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit }); }
@@ -862,7 +914,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderOrders(); 
     renderEmployees(); 
     
-    // Инициализация точек
     updateDashDots();
     switchDashboardView('overview');
 
@@ -872,7 +923,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch('/api/data'); const data = await res.json(); serverTranslations = data || {};
             document.getElementById('loader-wrap').style.display = 'none'; renderTranslationsEditor(); loadPromoAndNewsValues();
-        } catch (err) { document.getElementById('loader-wrap').innerHTML = '<span style="font-size:10px; color:red; font-weight:bold;">Սերվերի հետ կապի սխալ (Ошибка Vercel KV)</span>'; }
+        } catch (err) { document.getElementById('loader-wrap').innerHTML = '<span style="font-size:10px; color:red; font-weight:bold;">Error (Vercel KV)</span>'; }
     }
 
     function loadPromoAndNewsValues() {
@@ -890,7 +941,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTranslationsEditor() {
-        const list = document.getElementById('translations-list'); list.innerHTML = ''; const keyPrefix = adminTranslations['admin_key_title'][currentAdminLang] || "Բանալի:";
+        const list = document.getElementById('translations-list'); list.innerHTML = ''; const keyPrefix = adminTranslations['admin_key_title'][currentAdminLang] || "Key:";
         for (const key in serverTranslations) {
             if(typeof serverTranslations[key] !== 'object' || key === 'promo_title' || key === 'employee_news' || key === 'partners' || key === 'services') continue;
             const div = document.createElement('div'); div.className = 'translation-card';
@@ -904,7 +955,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function uploadToServer(buttonElement, originalText, spanElement) {
         try { const response = await fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(serverTranslations) }); const resData = await response.json();
             if(resData.success) { buttonElement.classList.add('success'); spanElement.innerHTML = '✅'; if (navigator.vibrate) navigator.vibrate(50); setTimeout(() => { buttonElement.classList.remove('success'); spanElement.innerHTML = originalText; }, 2500); }
-        } catch(e) { alert('Սերվերի հետ կապի սխալ (Ошибка базы)'); spanElement.innerHTML = originalText; }
+        } catch(e) { alert('Error'); spanElement.innerHTML = originalText; }
     }
 
     fetchAppDatabase();
