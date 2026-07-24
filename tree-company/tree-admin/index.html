@@ -29,7 +29,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=4.0.0">
+    <link rel="stylesheet" href="style.css?v=4.1.0">
 </head>
 <body>
 
@@ -59,13 +59,81 @@
             </div>
         </header>
 
-        <!-- 1. ПАНЕЛЬ ЗАКАЗОВ -->
-        <section class="admin-screen active" id="screen-orders">
+        <!-- 1. ДАШБОРД (ГЛАВНАЯ СТРАНИЦА ПО УМОЛЧАНИЮ) -->
+        <section class="admin-screen active" id="screen-dashboard">
             <button class="fab-btn" onclick="openOrderForm()" aria-label="Add Order">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
 
-            <h2 class="screen-title" data-i18n="title_orders">Հաճախորդների <span>պատվերներ</span></h2>
+            <h2 class="screen-title" data-i18n="tab_dashboard">Գլխավոր <span>էջ</span></h2>
+            
+            <div class="view-switcher" style="overflow-x: auto; white-space: nowrap; justify-content: flex-start; padding: 6px; gap: 8px;">
+                <button class="view-switch-btn dash-view-btn active" data-dash-view="overview" onclick="switchDashboardView('overview')" data-i18n="sw_overview">Обзор</button>
+                <button class="view-switch-btn dash-view-btn" data-dash-view="orders" onclick="switchDashboardView('orders')" style="position:relative;">
+                    <span data-i18n="sw_inc_orders">Заказы</span>
+                    <span class="badge" id="dash-badge-orders" style="display:none;">0</span>
+                </button>
+                <button class="view-switch-btn dash-view-btn" data-dash-view="masters" onclick="switchDashboardView('masters')" style="position:relative;">
+                    <span data-i18n="sw_inc_masters">Заявки</span>
+                    <span class="badge" id="dash-badge-masters" style="display:none;">0</span>
+                </button>
+                <button class="view-switch-btn dash-view-btn" data-dash-view="partners" onclick="switchDashboardView('partners')" style="position:relative;">
+                    <span data-i18n="sw_coop">Сотрудничество</span>
+                    <span class="badge" id="dash-badge-partners" style="display:none;">0</span>
+                </button>
+            </div>
+
+            <!-- Dashboard: ОБЗОР -->
+            <div id="dash-overview" class="dash-view-content">
+                <div class="stats-grid" style="margin-bottom: 12px;">
+                    <div class="stat-box" style="border-color: #FFB347; background: rgba(255, 179, 71, 0.05);">
+                        <div class="stat-value" id="dash-avg-rating" style="color: #FFB347;">★ 0.0</div>
+                        <div class="stat-label" data-i18n="lbl_company_rating">Рейтинг компании</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="dash-total-orders">0</div>
+                        <div class="stat-label" data-i18n="lbl_total_orders">Всего заказов</div>
+                    </div>
+                    <div class="stat-box" style="grid-column: span 2;">
+                        <div class="stat-value" id="dash-total-masters" style="color: var(--tree-light);">0</div>
+                        <div class="stat-label" data-i18n="lbl_total_masters">Всего активных мастеров</div>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h3 class="input-label" data-i18n="lbl_recent_reviews">Последние отзывы клиентов</h3>
+                    <div class="entity-list" id="dash-reviews-list"></div>
+                </div>
+            </div>
+
+            <!-- Dashboard: НОВЫЕ ЗАКАЗЫ (ТОЛЬКО ЧТЕНИЕ И ПРИНЯТИЕ) -->
+            <div id="dash-orders" class="dash-view-content" style="display:none;">
+                <div class="glass-panel">
+                    <h3 class="input-label">Входящие заказы от клиентов</h3>
+                    <div class="entity-list" id="dash-orders-list"></div>
+                </div>
+            </div>
+
+            <!-- Dashboard: ЗАЯВКИ МАСТЕРОВ -->
+            <div id="dash-masters" class="dash-view-content" style="display:none;">
+                <div class="glass-panel">
+                    <h3 class="input-label">Анкеты соискателей</h3>
+                    <div class="entity-list" id="dash-masters-list"></div>
+                </div>
+            </div>
+
+            <!-- Dashboard: СОТРУДНИЧЕСТВО (ПАРТНЕРЫ) -->
+            <div id="dash-partners" class="dash-view-content" style="display:none;">
+                <div class="glass-panel">
+                    <h3 class="input-label">Запросы на сотрудничество B2B</h3>
+                    <div class="entity-list" id="dash-partners-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ПАНЕЛЬ ЗАКАЗОВ (ТОЛЬКО АКТИВНЫЕ И ЗАВЕРШЕННЫЕ) -->
+        <section class="admin-screen" id="screen-orders">
+            <h2 class="screen-title" data-i18n="title_orders">Ակտիվ <span>պատվերներ</span></h2>
             
             <div class="glass-panel" style="padding: 14px 20px;">
                 <div class="search-container">
@@ -76,10 +144,6 @@
 
             <div class="glass-panel" style="margin-bottom: 4px; padding: 16px;">
                 <div class="stats-grid">
-                    <div class="stat-box" onclick="setOrderFilter('incoming')" style="cursor: pointer;">
-                        <div class="stat-value" id="count-incoming">0</div>
-                        <div class="stat-label" data-i18n="filter_incoming">Входящие</div>
-                    </div>
                     <div class="stat-box" onclick="setOrderFilter('new')" style="cursor: pointer;">
                         <div class="stat-value" id="count-new">0</div>
                         <div class="stat-label" data-i18n="filter_new">Новые</div>
@@ -88,8 +152,8 @@
                         <div class="stat-value" id="count-progress">0</div>
                         <div class="stat-label" data-i18n="filter_progress">В процессе</div>
                     </div>
-                    <div class="stat-box" onclick="setOrderFilter('completed')" style="cursor: pointer;">
-                        <div class="stat-value" id="count-completed">0</div>
+                    <div class="stat-box" onclick="setOrderFilter('completed')" style="cursor: pointer; grid-column: span 2; border-color: var(--tree-light);">
+                        <div class="stat-value" id="count-completed" style="color: var(--tree-light);">0</div>
                         <div class="stat-label" data-i18n="filter_completed">Завершено</div>
                     </div>
                 </div>
@@ -97,7 +161,6 @@
 
             <div class="filter-tabs">
                 <button class="filter-tab active" data-filter="all" data-i18n="filter_all">Բոլորը</button>
-                <button class="filter-tab" data-filter="incoming" data-i18n="filter_incoming">Входящие</button>
                 <button class="filter-tab" data-filter="new" data-i18n="filter_new">Новые</button>
                 <button class="filter-tab" data-filter="progress" data-i18n="filter_progress">В процессе</button>
                 <button class="filter-tab" data-filter="completed" data-i18n="filter_completed">Завершено</button>
@@ -111,23 +174,11 @@
             </div>
         </section>
 
-        <!-- 2. ПАНЕЛЬ СОТРУДНИКОВ -->
+        <!-- 3. ПАНЕЛЬ СОТРУДНИКОВ (ТОЛЬКО АКТИВНЫЕ) -->
         <section class="admin-screen" id="screen-employees">
-            <h2 class="screen-title" data-i18n="title_employees">Կադրեր և <span>հայտեր</span></h2>
+            <h2 class="screen-title" data-i18n="title_employees">Աշխատակիցներ (Сотрудники)</h2>
 
-            <div class="view-switcher">
-                <button type="button" class="view-switch-btn active" data-i18n="sw_requests" onclick="switchEmpView('requests')">Заявки</button>
-                <button type="button" class="view-switch-btn" data-i18n="sw_employees" onclick="switchEmpView('employees')">Сотрудники</button>
-            </div>
-
-            <div id="view-requests">
-                <div class="glass-panel">
-                    <h3 class="input-label" data-i18n="lbl_new_masters">Новые анкеты</h3>
-                    <div class="entity-list" id="candidates-list"></div>
-                </div>
-            </div>
-
-            <div id="view-employees" style="display: none;">
+            <div id="view-employees">
                 <div id="bday-banner-container" style="display: none; animation: screenFadeIn 0.5s ease;"></div>
 
                 <div class="glass-panel" style="padding: 14px 20px; margin-bottom: 8px;">
@@ -152,7 +203,7 @@
             </div>
         </section>
 
-        <!-- 3. ПАНЕЛЬ КЛИЕНТОВ (CRM) -->
+        <!-- 4. ПАНЕЛЬ КЛИЕНТОВ (CRM) -->
         <section class="admin-screen" id="screen-clients">
             <h2 class="screen-title">Բազա <span>Հաճախորդներ</span><br><span style="font-size: 12px; color: var(--text-sec);">(Клиенты / CRM)</span></h2>
             
@@ -172,7 +223,7 @@
             </div>
         </section>
 
-        <!-- 4. ПАНЕЛЬ ФИНАНСОВ -->
+        <!-- 5. ПАНЕЛЬ ФИНАНСОВ -->
         <section class="admin-screen" id="screen-finance">
             <h2 class="screen-title" data-i18n="title_finance">Ֆինանսական <span>վերլուծություն</span></h2>
             <div class="glass-panel">
@@ -202,7 +253,7 @@
             </div>
         </section>
 
-        <!-- 5. ПАНЕЛЬ КОНТЕНТА (CMS) -->
+        <!-- 6. ПАНЕЛЬ КОНТЕНТА (CMS) -->
         <section class="admin-screen" id="screen-content">
             <h2 class="screen-title">Կոնտենտ և <span>Կարգավորումներ</span><br><span style="font-size: 12px; color: var(--text-sec);">(Контент и Настройки)</span></h2>
             
@@ -330,7 +381,7 @@
                         <span class="detail-label">Հեռ. / Тел:</span>
                         <span class="detail-value">
                             <span id="modal-client-phone-text"></span>
-                            <a href="#" class="call-btn" id="modal-client-phone-link" aria-label="Call">
+                            <a href="#" class="call-btn" id="modal-client-phone-link" aria-label="Call" style="border-radius: 50%;">
                                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                             </a>
                         </span>
@@ -351,7 +402,7 @@
                         <span class="detail-label">Հեռ. / Тел:</span>
                         <span class="detail-value">
                             <span id="modal-worker-phone-text"></span>
-                            <a href="#" class="call-btn" id="modal-worker-phone-link" aria-label="Call" style="display:none;">
+                            <a href="#" class="call-btn" id="modal-worker-phone-link" aria-label="Call" style="display:none; border-radius: 50%;">
                                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                             </a>
                         </span>
@@ -491,7 +542,7 @@
                         <span class="detail-label">Հեռ. / Тел:</span>
                         <span class="detail-value">
                             <span id="modal-emp-phone-text"></span>
-                            <a href="#" class="call-btn" id="modal-emp-phone-link" aria-label="Call">
+                            <a href="#" class="call-btn" id="modal-emp-phone-link" aria-label="Call" style="border-radius: 50%;">
                                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                             </a>
                         </span>
@@ -566,7 +617,7 @@
                         <label class="input-label">PIN կոդ / Ключ (6 цифр)</label>
                         <div style="display: flex; gap: 8px;">
                             <input type="text" id="form-emp-access-key" class="glass-input" required pattern="\d{6}" maxlength="6" style="letter-spacing: 2px; font-weight: 800; font-family: monospace;" placeholder="Ор. 123456" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <button type="button" class="submit-btn" style="flex: 0 0 50px; margin: 0; background: rgba(0, 163, 255, 0.15); color: #00A3FF; box-shadow: none;" onclick="document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000); if(navigator.vibrate)navigator.vibrate(10);">⟳</button>
+                            <button type="button" class="submit-btn" style="flex: 0 0 50px; margin: 0; background: rgba(0, 163, 255, 0.15); color: #00A3FF; box-shadow: none; border-radius: 16px;" onclick="document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000); if(navigator.vibrate)navigator.vibrate(10);">⟳</button>
                         </div>
                     </div>
 
@@ -604,6 +655,43 @@
                         <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeEmployeeFormModal()">Չեղարկել (Отмена)</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Модальное окно просмотра ЗАЯВКИ ПАРТНЕРА -->
+        <div class="modal-overlay" id="coop-modal" onclick="closeCoopModal()">
+            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
+                <div class="entity-header">
+                    <h3 class="screen-title" id="modal-coop-company" style="margin:0;">Company</h3>
+                    <span class="entity-status new">B2B Request</span>
+                </div>
+
+                <div class="detail-block">
+                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;">Данные компании</div>
+                    <div class="detail-row">
+                        <span class="detail-label">Представитель:</span>
+                        <span class="detail-value" id="modal-coop-contact"></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Հեռ. / Тел:</span>
+                        <span class="detail-value">
+                            <span id="modal-coop-phone"></span>
+                            <a href="#" class="call-btn" id="modal-coop-phone-link" aria-label="Call" style="border-radius: 50%;">
+                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="detail-row" style="flex-direction: column; align-items: flex-start;">
+                        <span class="detail-label" style="margin-bottom: 6px;">Предложение:</span>
+                        <div class="detail-value" id="modal-coop-text" style="text-align: left; font-weight: 600; color: var(--text-sec); font-style: italic; width: 100%;"></div>
+                    </div>
+                </div>
+
+                <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin-top: 16px; width: 100%; gap: 8px;">
+                    <button type="button" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="acceptCoop()">Принять</button>
+                    <button type="button" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="rejectCoop()">Отклонить</button>
+                    <button type="button" class="submit-btn" style="flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 0; display: flex; justify-content: center; align-items: center;" onclick="closeCoopModal()"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                </div>
             </div>
         </div>
 
@@ -662,8 +750,13 @@
 
     </div>
 
+    <!-- ДОБАВЛЕНА НОВАЯ ВКЛАДКА, ТЕПЕРЬ ИХ 6 ДЛЯ ПОЛНОЦЕННОГО ДОСТУПА К ФУНКЦИЯМ -->
     <nav class="bottom-nav">
-        <button class="tab-item active" onclick="switchTab('screen-orders', this)">
+        <button class="tab-item active" onclick="switchTab('screen-dashboard', this)">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span data-i18n="tab_dashboard">Գլխավոր</span>
+        </button>
+        <button class="tab-item" onclick="switchTab('screen-orders', this)">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
             <span data-i18n="tab_orders">Պատվերներ</span>
         </button>
@@ -685,6 +778,6 @@
         </button>
     </nav>
 
-    <script src="admin.js?v=4.0.0"></script>
+    <script src="admin.js?v=4.1.0"></script>
 </body>
 </html>
