@@ -302,8 +302,18 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showEmployeeDashboard = function(empId) {
         const emp = employeesData.find(e => e.id === empId);
         if (!emp) { logoutEmployee(); return; }
-        document.getElementById('screen-login').classList.remove('active');
-        document.getElementById('screen-emp-orders').classList.add('active'); 
+
+        // Сбрасываем active со всех экранов и кнопок
+        document.querySelectorAll('.emp-screen').forEach(scr => scr.classList.remove('active'));
+        document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
+
+        // Включаем нужный экран (Главная / screen-emp-news)
+        document.getElementById('screen-emp-news').classList.add('active');
+        
+        // Подсвечиваем кнопку "Главная"
+        const homeBtn = document.querySelector('.tab-item[onclick*="screen-emp-news"]');
+        if (homeBtn) homeBtn.classList.add('active');
+
         document.getElementById('emp-bottom-nav').style.display = 'flex';
         
         const firstName = emp.name.split(' ')[0];
