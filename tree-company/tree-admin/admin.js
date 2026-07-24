@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 3.0.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.0.0)
 // =========================================================
-const APP_VERSION = '3.0.0';
+const APP_VERSION = '4.0.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
@@ -92,8 +92,7 @@ const adminTranslations = {
     "lbl_banner_am": { "AM": "Տեքստ բանների համար (Հայերեն)", "RU": "Текст баннера (Армянский)", "EN": "Banner text (Armenian)" },
     "lbl_banner_ru": { "AM": "Տեքստ բանների համար (Ռուսերեն)", "RU": "Текст баннера (Русский)", "EN": "Banner text (Russian)" },
     "lbl_banner_en": { "AM": "Տեքստ բանների համար (Անգլերեն)", "RU": "Текст баннера (Английский)", "EN": "Banner text (English)" },
-    "btn_save_promo": { "AM": "Պահպանել ակցիան", "RU": "Сохранить акцию", "EN": "Save promo" },
-    "title_content": { "AM": "Կոնտենտ և <span>գներ</span>", "RU": "Контент и <span>цены</span>", "EN": "Content and <span>prices</span>" },
+    "btn_save_promo": { "AM": "Պահպանել", "RU": "Сохранить", "EN": "Save" },
     "lbl_localization": { "AM": "Հավելվածի լոկալիզացիա", "RU": "Локализация приложения", "EN": "App localization" },
     "lbl_loading": { "AM": "Բազայի բեռնում...", "RU": "Загрузка базы...", "EN": "Loading database..." },
     "btn_save_trans": { "AM": "Պահպանել թարգմանությունները", "RU": "Сохранить переводы", "EN": "Save translations" },
@@ -139,28 +138,10 @@ function applyAdminLanguage() {
 
 // ================= ДАННЫЕ ЗАКАЗОВ, СОТРУДНИКОВ, КЛИЕНТОВ =================
 let ordersData = [
-    {
-        id: 'ORD-004', status: 'incoming', createdAt: getCurrentDateString(), completedAt: null,
-        clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50',
-        worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500
-    },
-    {
-        id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', completedAt: null,
-        clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12',
-        worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000
-    },
-    {
-        id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', completedAt: null,
-        clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4',
-        worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', workerPhone: '+374 77 999 888',
-        services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }], profit: 2900
-    },
-    {
-        id: 'ORD-001', status: 'completed', createdAt: '10.07.2026 09:15', completedAt: '11.07.2026 18:20',
-        clientName: 'Դավիթ Պետրոսյան', clientPhone: '+374 99 123 456', address: 'Երևան, Կոմիտաս 20',
-        worker: 'Գոռ Վարդանյան', workerPhone: '+374 77 111 555',
-        services: [{ name: 'Դռների տեղադրում (MDF)', qty: 3, price: 15000, done: true }], profit: 4500
-    }
+    { id: 'ORD-004', status: 'incoming', createdAt: getCurrentDateString(), completedAt: null, clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50', worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500 },
+    { id: 'ORD-003', status: 'new', createdAt: '15.07.2026 10:00', completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Չկա (Не назначен)', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000 },
+    { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026 15:30', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', workerPhone: '+374 77 999 888', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, { name: 'Անկյունակների տեղադրում', qty: 10, price: 200, done: false }], profit: 2900 },
+    { id: 'ORD-001', status: 'completed', createdAt: '10.07.2026 09:15', completedAt: '11.07.2026 18:20', clientName: 'Դավիթ Պետրոսյան', clientPhone: '+374 99 123 456', address: 'Երևան, Կոմիտաս 20', worker: 'Գոռ Վարդանյան', workerPhone: '+374 77 111 555', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 3, price: 15000, done: true }], profit: 4500 }
 ];
 
 let employeesData = [
@@ -178,8 +159,8 @@ let clientsData = [
 ];
 
 let servicesData = [
-    { id: 'srv1', name: 'Դռների տեղադրում', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M6 22h12"/><path d="M4 22h16"/><path d="M14 12h.01"/></svg>', status: 'active' },
-    { id: 'srv2', name: 'Պլինտուսների տեղադրում', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21H3V3"/><path d="M21 17H7v4"/><path d="M11 17v4"/><path d="M15 17v4"/></svg>', status: 'active' }
+    { id: 'srv1', name: 'Դռների տեղադրում', price: 15000, icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M6 22h12"/><path d="M4 22h16"/><path d="M14 12h.01"/></svg>', status: 'active' },
+    { id: 'srv2', name: 'Պլինտուսների տեղադրում', price: 1000, icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21H3V3"/><path d="M21 17H7v4"/><path d="M11 17v4"/><path d="M15 17v4"/></svg>', status: 'active' }
 ];
 
 let partnersData = [
@@ -190,7 +171,6 @@ let typeLabelsMap = { 'doors': 'Դռներ / Двери', 'electro': 'Էլեկտ
 
 function generateOrderId() { let max = 0; ordersData.forEach(o => { let n = parseInt(o.id.replace('ORD-','')); if(n>max)max=n; }); return 'ORD-'+(max+1).toString().padStart(3,'0'); }
 function generateEmpId() { let max = 0; employeesData.forEach(o => { let n = parseInt(o.id.replace('EMP-','')); if(n>max)max=n; }); return 'EMP-'+(max+1).toString().padStart(3,'0'); }
-function generateClientId() { return 'TR-' + Math.floor(1000 + Math.random() * 9000); }
 function getCurrentDateString() { const d = new Date(); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 
 function getBirthdayInfo(dateStr) {
@@ -238,7 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
     const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-
     if (isIos() && !isInStandaloneMode() && !localStorage.getItem('ios_admin_pwa_prompt_closed')) {
         document.body.insertAdjacentHTML('beforeend', `
         <div id="ios-pwa-prompt" style="position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border: 1px solid rgba(0,0,0,0.1); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 9999; display: flex; align-items: center; gap: 12px; color: #000;">
@@ -353,10 +332,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="entity-title" style="margin-top: 8px;">${c.name}</div>
                 <div class="entity-meta">Հեռախոս: <span style="font-weight: 700; color: var(--text);">${c.phone}</span></div>
                 <div class="entity-meta">Հասցե: ${c.address}</div>
-                <div style="display: flex; gap: 8px; margin-top: 12px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 12px;">
-                    <input type="number" id="discount-input-${c.id}" class="glass-input" placeholder="Զեղչ (%)" value="${c.discount}" style="padding: 8px; width: 60px; text-align: center;">
-                    <button class="submit-btn success" style="padding: 8px; margin: 0; font-size: 10px;" onclick="updateClientDiscount('${c.id}')">Պահպանել</button>
-                    <button class="call-btn" style="width: 34px; height: 34px;" onclick="window.location.href='tel:${c.phone.replace(/[^\d+]/g, '')}'"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
+                <div style="display: flex; gap: 6px; margin-top: 12px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 12px; align-items: center;">
+                    <div style="display: flex; background: rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden; border: 1px solid rgba(128,128,128,0.2);">
+                        <button style="width: 36px; height: 36px; border: none; background: transparent; color: var(--text); font-size: 16px; cursor: pointer; border-right: 1px solid rgba(128,128,128,0.2);" onclick="changeDiscount('${c.id}', -5)">-</button>
+                        <input type="number" id="discount-input-${c.id}" value="${c.discount}" style="width: 40px; border: none; background: transparent; text-align: center; color: var(--tree-light); font-weight: 900; outline: none; -moz-appearance: textfield;">
+                        <button style="width: 36px; height: 36px; border: none; background: transparent; color: var(--text); font-size: 16px; cursor: pointer; border-left: 1px solid rgba(128,128,128,0.2);" onclick="changeDiscount('${c.id}', 5)">+</button>
+                    </div>
+                    <button class="submit-btn success" style="padding: 0; height: 36px; margin: 0; flex: 1; font-size: 10px;" onclick="updateClientDiscount('${c.id}')">Պահպանել (OK)</button>
+                    <button class="call-btn" style="width: 36px; height: 36px;" onclick="window.location.href='tel:${c.phone.replace(/[^\d+]/g, '')}'"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></button>
                 </div>
             `;
             list.appendChild(card);
@@ -366,12 +349,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (document.getElementById('client-search')) document.getElementById('client-search').addEventListener('input', renderClients);
     
+    window.changeDiscount = function(id, val) {
+        const inp = document.getElementById(`discount-input-${id}`);
+        let current = parseInt(inp.value) || 0;
+        let next = current + val;
+        if (next < 0) next = 0; if (next > 100) next = 100;
+        inp.value = next;
+        if (navigator.vibrate) navigator.vibrate(10);
+    };
+
     window.updateClientDiscount = function(id) {
         const c = clientsData.find(x => x.id === id);
         if (c) {
             const val = parseInt(document.getElementById(`discount-input-${id}`).value) || 0;
             c.discount = val;
-            if (navigator.vibrate) navigator.vibrate(20);
+            if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
             renderClients();
         }
     };
@@ -387,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="width: 40px; height: 40px; border-radius: 12px; background: rgba(31,150,81,0.1); color: var(--tree-light); display: flex; justify-content: center; align-items: center;">${s.icon}</div>
                         <div>
                             <div style="font-size: 13px; font-weight: 800; color: var(--text);">${s.name}</div>
-                            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700; text-transform: uppercase;">${s.status === 'soon' ? 'Շուտով (Скоро)' : 'Ակտիվ (Активно)'}</div>
+                            <div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.status === 'soon' ? 'Շուտով (Скоро)' : `Ակտիվ (Активно) • ${s.price} ֏`}</div>
                         </div>
                     </div>
                     <button class="serv-del-btn" onclick="deleteService('${s.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
@@ -402,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
             list.innerHTML += `
                 <div class="entity-card" style="flex-direction: row; align-items: center; justify-content: space-between;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 50px; height: 50px; border-radius: 16px; border: 1px dashed rgba(128,128,128,0.3); display: flex; justify-content: center; align-items: center;">${p.logo}</div>
+                        <div style="width: 50px; height: 50px; border-radius: 16px; border: 1px dashed rgba(128,128,128,0.3); display: flex; justify-content: center; align-items: center; overflow: hidden;">${p.logo}</div>
                         <div style="font-size: 14px; font-weight: 800; color: var(--text);">${p.name}</div>
                     </div>
                     <button class="serv-del-btn" onclick="deletePartner('${p.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
@@ -411,12 +403,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
+    window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-price').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
     window.closeServiceForm = function() { document.getElementById('service-form-modal').classList.remove('active'); };
     window.saveServiceForm = function(e) { 
         e.preventDefault(); 
-        servicesData.push({ id: 's' + Math.random(), name: document.getElementById('form-cat-name').value, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }); 
-        renderAdminServices(); closeServiceForm(); 
+        servicesData.push({ id: 's' + Math.random(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }); 
+        renderAdminServices(); closeServiceForm(); if(navigator.vibrate)navigator.vibrate(20);
     };
     window.deleteService = function(id) { if(confirm('Ջնջե՞լ (Удалить?)')) { servicesData = servicesData.filter(s => s.id !== id); renderAdminServices(); } };
 
@@ -425,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.savePartnerForm = function(e) { 
         e.preventDefault(); 
         partnersData.push({ id: 'p' + Math.random(), name: document.getElementById('form-partner-name').value, logo: document.getElementById('form-partner-logo').value }); 
-        renderAdminPartners(); closePartnerForm(); 
+        renderAdminPartners(); closePartnerForm(); if(navigator.vibrate)navigator.vibrate(20);
     };
     window.deletePartner = function(id) { if(confirm('Ջնջե՞լ (Удалить?)')) { partnersData = partnersData.filter(p => p.id !== id); renderAdminPartners(); } };
 
