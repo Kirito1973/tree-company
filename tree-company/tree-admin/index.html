@@ -15,8 +15,22 @@
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
 
+    <script>
+        (function() {
+            try {
+                var savedTheme = localStorage.getItem('admin_theme');
+                var systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            } catch (e) {}
+        })();
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2.0.0">
 </head>
 <body>
 
@@ -31,7 +45,7 @@
             </button>
 
             <div class="header-logo-container">
-                <img src="assets/tree.svg" alt="Tree Logo" class="main-logo">
+                <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
             </div>
 
             <div class="lang-switcher" id="lang-switcher">
@@ -122,7 +136,6 @@
                 <div class="glass-panel">
                     <h3 class="input-label" data-i18n="lbl_new_masters">Новые анкеты</h3>
                     <div class="entity-list" id="candidates-list">
-                        <!-- JS выведет сюда заявки -->
                     </div>
                 </div>
             </div>
@@ -152,7 +165,6 @@
                 <div class="glass-panel">
                     <h3 class="input-label" data-i18n="lbl_active_emps">Активные сотрудники</h3>
                     <div class="entity-list" id="employees-list">
-                        <!-- JS выведет сотрудников -->
                     </div>
                 </div>
             </div>
@@ -399,13 +411,13 @@
                     </div>
                 </div>
 
-                <!-- ГРАФИК РАБОТЫ (НОВОЕ) -->
+                <!-- ГРАФИК РАБОТЫ -->
                 <div class="detail-block">
                     <div class="input-label" style="margin-bottom:6px;">Աշխատանքային գրաֆիկ / График работы</div>
                     <div id="modal-emp-schedule-list" style="display: flex; flex-wrap: wrap; gap: 4px;"></div>
                 </div>
 
-                <!-- ФИНАНСЫ И ДОЛГИ СОТРУДНИКА (НОВОЕ) -->
+                <!-- ФИНАНСЫ И ДОЛГИ СОТРУДНИКА -->
                 <div class="detail-block" style="background: rgba(255, 50, 50, 0.05); border-color: rgba(255, 50, 50, 0.2);">
                     <div class="input-label" style="margin-bottom:6px; color: #ff4444;">Ֆինանսներ (Долг компании)</div>
                     <div class="detail-row" style="border: none;">
@@ -540,15 +552,12 @@
                     <div class="input-group" style="margin-bottom: 12px;">
                         <label class="input-label" data-i18n="lbl_worker">Աշխատող (Главный Мастер)</label>
                         <select id="form-worker" class="glass-input">
-                            <!-- JS заполняет активными мастерами -->
                         </select>
                     </div>
 
-                    <!-- НОВОЕ: Выбор помощника -->
                     <div class="input-group" style="margin-bottom: 16px;">
                         <label class="input-label">Օգնական (Помощник)</label>
                         <select id="form-assistant" class="glass-input">
-                            <!-- JS заполняет активными мастерами -->
                         </select>
                     </div>
 
@@ -614,6 +623,6 @@
         </button>
     </nav>
 
-    <script src="admin.js"></script>
+    <script src="admin.js?v=2.0.0"></script>
 </body>
 </html>
