@@ -1,7 +1,7 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.6.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.7.0)
 // =========================================================
-const APP_VERSION = '4.6.0';
+const APP_VERSION = '4.7.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ================= ORDERS LOGIC =================
+    // ================= ORDERS LOGIC (ВКЛАДКА ЗАКАЗЫ) =================
     window.filterOrders = function() {
         const searchInput = document.getElementById('order-search');
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
@@ -514,6 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderOrders = function() {
         const list = document.getElementById('orders-list'); if (!list) return; list.innerHTML = '';
         let counts = { new: 0, progress: 0, completed: 0 };
+        // Здесь только принятые заказы
         const activeOrders = ordersData.filter(o => o.status !== 'incoming');
         
         activeOrders.forEach(order => {
@@ -809,7 +810,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-order-id').innerText = order.id; const statusEl = document.getElementById('modal-order-status'); statusEl.className = 'entity-status';
         if (order.status === 'incoming') { statusEl.classList.add('incoming'); statusEl.setAttribute('data-i18n', 'status_incoming'); } else if (order.status === 'new') { statusEl.classList.add('new'); statusEl.setAttribute('data-i18n', 'status_new'); } else if (order.status === 'progress') { statusEl.classList.add('pending'); statusEl.setAttribute('data-i18n', 'status_pending'); } else if (order.status === 'completed') { statusEl.setAttribute('data-i18n', 'status_success'); } else if (order.status === 'cancelled') { statusEl.classList.add('cancelled'); statusEl.setAttribute('data-i18n', 'status_cancelled'); }
         
-        // Prevent editing order status if it's already in progress or completed
         const btnEdit = document.getElementById('modal-edit-btn');
         const btnCancel = document.getElementById('modal-cancel-btn');
         const btnAccept = document.getElementById('modal-accept-btn');
