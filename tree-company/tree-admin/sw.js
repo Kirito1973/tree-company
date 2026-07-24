@@ -1,9 +1,9 @@
-const CACHE_NAME = 'tree-admin-v4.2.0';
+const CACHE_NAME = 'tree-admin-v4.4.0';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=4.2.0',
-    './admin.js?v=4.2.0',
+    './style.css?v=4.4.0',
+    './admin.js?v=4.4.0',
     './manifest.json',
     './assets/tree.png',
     './assets/apple-touch-icon.png',
