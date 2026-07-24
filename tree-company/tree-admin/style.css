@@ -269,7 +269,6 @@ body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
 .emp-order-id { font-weight: 800; font-size: 11px; color: var(--text); }
 .emp-order-stat { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 3px 6px; border-radius: 6px; }
 
-
 /* ==================== ПЛАВАЮЩАЯ КНОПКА (FAB) ==================== */
 .fab-btn {
     position: fixed;
@@ -303,4 +302,23 @@ body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
 
 .admin-screen:not(.active) .fab-btn {
     display: none;
+}
+
+/* ==================== АДАПТИВНОСТЬ ДЛЯ ПК И ПЛАНШЕТОВ ==================== */
+@media (min-width: 768px) {
+    .app-container { max-width: 720px; padding-bottom: 60px; }
+    .stats-grid { gap: 16px; }
+    .form-card, .glass-panel { padding: 32px 30px; }
+}
+
+@media (min-width: 1024px) {
+    .app-container { max-width: 1200px; padding-left: 160px; padding-right: 40px; padding-bottom: 40px; }
+    .bottom-nav { top: 50%; bottom: auto; left: 40px; transform: translateY(-50%); width: 100px; height: auto; flex-direction: column; gap: 40px; padding: 40px 10px; border-radius: 30px; }
+    .tab-item { font-size: 11px; padding: 10px; width: 100%; text-align: center; }
+    .tab-item svg { width: 28px; height: 28px; margin-bottom: 4px; }
+    .glass-panel { max-width: 900px; margin: 0 auto; padding: 40px; border-radius: 32px; gap: 20px; }
+    .filter-tabs { justify-content: center; margin-bottom: 20px; }
+    .modal-content { max-width: 450px; padding: 45px 30px; }
+    .view-switcher { max-width: 400px; margin: 0 auto 20px auto; }
+    .search-container { max-width: 600px; margin: 0 auto; }
 }
