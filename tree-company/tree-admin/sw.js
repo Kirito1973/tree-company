@@ -1,49 +1,57 @@
-const CACHE_NAME = 'tree-admin-cache-v2';
-const urlsToCache = [
-  './',
-  './index.html',
-  './style.css',
-  './admin.js',
-  './manifest.json',
-  './assets/tree.svg'
+const CACHE_NAME = 'tree-admin-v2.0.0';
+const ASSETS = [
+    './',
+    './index.html',
+    './style.css?v=2.0.0',
+    './admin.js?v=2.0.0',
+    './manifest.json',
+    './assets/tree.png',
+    './assets/apple-touch-icon.png',
+    './assets/icon-192.png',
+    './assets/icon-512.png',
+    './assets/icon-512-maskable.png',
+    './assets/free-icon-armenia-197516.png',
+    './assets/free-icon-russia-9994030.png',
+    './assets/united-kingdom.png'
 ];
 
-self.addEventListener('install', event => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            return Promise.allSettled(
+                ASSETS.map(asset => cache.add(asset).catch(err => console.warn('Кэш пропущен для:', asset)))
+            );
         })
-      );
-    }).then(() => self.clients.claim())
-  );
+    );
 });
 
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
-    return;
-  }
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response && response.status === 200 && response.type === 'basic') {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, responseToCache));
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      })
-  );
+self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim());
+    event.waitUntil(
+        caches.keys().then((keys) => {
+            return Promise.all(
+                keys.map((key) => {
+                    if (key !== CACHE_NAME) return caches.delete(key);
+                })
+            );
+        })
+    );
+});
+
+self.addEventListener('fetch', (event) => {
+    if (event.request.method !== 'GET') return;
+    event.respondWith(
+        fetch(event.request)
+            .then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+                }
+                return networkResponse;
+            })
+            .catch(() => {
+                return caches.match(event.request, { ignoreSearch: true });
+            })
+    );
 });
