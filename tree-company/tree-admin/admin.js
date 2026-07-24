@@ -184,7 +184,7 @@ let ordersData = [
         clientName: 'Աննա Հովհաննիսյան',
         clientPhone: '+374 91 555 444',
         address: 'Երևան, Մաշտոցի 4',
-        worker: 'Արմեն Սարգսյան (Դռներ)',
+        worker: 'Արմեն Սարգսյան, Գոռ Վարդանյան', // Демонстрация нескольких
         workerPhone: '+374 77 999 888',
         services: [
             { name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }, 
@@ -200,7 +200,7 @@ let ordersData = [
         clientName: 'Դավիթ Պետրոսյան',
         clientPhone: '+374 99 123 456',
         address: 'Երևան, Կոմիտաս 20',
-        worker: 'Գոռ Վարդանյան (Դռներ)', // Привязан к Гору
+        worker: 'Գոռ Վարդանյան',
         workerPhone: '+374 77 111 555',
         services: [
             { name: 'Դռների տեղադրում (MDF)', qty: 3, price: 15000, done: true }
@@ -209,13 +209,12 @@ let ordersData = [
     }
 ];
 
-// У одного из сотрудников ставим дату рождения на 15 июля (сегодня) для теста баннера!
 let employeesData = [
-    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 98 000 111', exp: '2 տարի / 2 года', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '654321' },
-    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456' },
-    { id: 'EMP-002', status: 'active', name: 'Կարեն Մելքոնյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 55 444 333', exp: '3 տարի / 3 года', rating: 4.5, birthDate: '02.12.1996', address: 'Երևան, Մաշտոցի 12', accessKey: '112233' },
-    { id: 'EMP-003', status: 'active', name: 'Վարդան Գրիգորյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 99 111 222', exp: '10 տարի / 10 лет', rating: 5.0, birthDate: '24.08.1985', address: 'Երևան, Աբովյան 20', accessKey: '998877' },
-    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000' }
+    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 98 000 111', exp: '2 տարի / 2 года', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '654321', companyDebt: 0, workingDates: [] },
+    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', typeLabel: 'Դռներ / Двери', phone: '+374 77 999 888', exp: '6 տարի / 6 лет', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: ['20.07.2026', '23.07.2026', '24.07.2026'] },
+    { id: 'EMP-002', status: 'active', name: 'Կարեն Մելքոնյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 55 444 333', exp: '3 տարի / 3 года', rating: 4.5, birthDate: '02.12.1996', address: 'Երևան, Մաշտոցի 12', accessKey: '112233', companyDebt: 4500, workingDates: [] },
+    { id: 'EMP-003', status: 'active', name: 'Վարդան Գրիգորյան', type: 'electro', typeLabel: 'Էլեկտրիկ / Электрик', phone: '+374 99 111 222', exp: '10 տարի / 10 лет', rating: 5.0, birthDate: '24.08.1985', address: 'Երևան, Աբովյան 20', accessKey: '998877', companyDebt: 0, workingDates: [] },
+    { id: 'EMP-004', status: 'active', name: 'Գոռ Վարդանյան', type: 'universal', typeLabel: 'Ունիվերսալ / Универсал', phone: '+374 77 111 555', exp: '5 տարի / 5 лет', rating: 4.9, birthDate: '15.07.1992', address: 'Երևան, Տերյան 50', accessKey: '000000', companyDebt: 12000, workingDates: [] }
 ];
 
 let typeLabelsMap = {
@@ -256,14 +255,13 @@ function getCurrentDateString() {
            String(now.getMinutes()).padStart(2, '0');
 }
 
-// === ФУНКЦИЯ РАСЧЕТА ДНЕЙ ДО ДНЯ РОЖДЕНИЯ ===
 function getBirthdayInfo(dateStr) {
     if (!dateStr || !dateStr.includes('.')) return null;
     const parts = dateStr.split('.');
     if (parts.length < 2) return null;
     
     const day = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1; // Месяцы в JS от 0 до 11
+    const month = parseInt(parts[1], 10) - 1; 
     
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -291,6 +289,7 @@ function getBirthdayInfo(dateStr) {
 let currentActiveOrderId = null;
 let currentEditingOrderId = null;
 let currentActiveEmpId = null;
+let currentEditingEmpId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -562,14 +561,14 @@ document.addEventListener('DOMContentLoaded', () => {
             card.innerHTML = `
                 <div class="entity-header">
                     <span class="entity-id">${emp.id}</span>
-                    <div class="rating-badge">★ ${emp.rating}</div>
+                    <div class="rating-badge">★ ${emp.rating.toFixed(1)}</div>
                 </div>
                 <div class="entity-title">${emp.name}</div>
                 <div class="entity-meta">
                     <span>Մասն.: ${emp.typeLabel.split(' / ')[0]}</span>
                 </div>
                 <div class="entity-meta">
-                    <span>Փորձ: ${emp.exp.split('/')[0].trim()}</span>
+                    <span>Պարտք: <b style="color:${(emp.companyDebt||0) < 0 ? '#1F9651' : '#ff4444'}">${(emp.companyDebt||0).toLocaleString()} ֏</b></span>
                 </div>
                 ${bdayHtml}
                 <div class="entity-meta" style="margin-top: 4px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 6px;">
@@ -605,6 +604,32 @@ document.addEventListener('DOMContentLoaded', () => {
         applyAdminLanguage();
     }
 
+    // --- Управление балансом и бонусами сотрудника ---
+    window.adjustEmpDebt = function(action) {
+        if (!currentActiveEmpId) return;
+        const emp = employeesData.find(e => e.id === currentActiveEmpId);
+        if (!emp) return;
+
+        const val = parseInt(document.getElementById('emp-finance-input').value) || 0;
+        if (emp.companyDebt === undefined) emp.companyDebt = 0;
+
+        if (action === 'add') {
+            emp.companyDebt += val;
+        } else if (action === 'bonus') {
+            emp.companyDebt -= val; // Бонус уменьшает долг перед компанией
+        } else if (action === 'reset') {
+            emp.companyDebt = 0;
+        }
+
+        const debtEl = document.getElementById('modal-emp-debt');
+        debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏';
+        debtEl.style.color = emp.companyDebt < 0 ? '#1F9651' : '#ff4444';
+        
+        document.getElementById('emp-finance-input').value = '';
+        renderEmployees();
+        if (navigator.vibrate) navigator.vibrate(20);
+    };
+
     // --- Модальное окно просмотра СОТРУДНИКА ---
     window.openEmployeeModal = function(empId) {
         currentActiveEmpId = empId;
@@ -627,6 +652,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-emp-access-key').innerText = emp.accessKey || '------';
         document.getElementById('modal-emp-birth').innerText = emp.birthDate || '---';
         
+        // Отрисовка Финансов (Долга)
+        const debtEl = document.getElementById('modal-emp-debt');
+        if (emp.companyDebt === undefined) emp.companyDebt = 0;
+        debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏';
+        debtEl.style.color = emp.companyDebt < 0 ? '#1F9651' : '#ff4444';
+
+        // Отрисовка Графика (Schedule)
+        const scheduleContainer = document.getElementById('modal-emp-schedule-list');
+        if (emp.workingDates && emp.workingDates.length > 0) {
+            scheduleContainer.innerHTML = emp.workingDates.map(d => `<span style="display:inline-block; background:rgba(35,169,91,0.1); color:var(--tree-light); border: 1px solid rgba(35,169,91,0.2); padding:4px 8px; border-radius:8px; font-size:10px; font-weight:800; margin-bottom:4px;">${d}</span>`).join('');
+        } else {
+            scheduleContainer.innerHTML = '<span style="font-size:10px; color:var(--text-sec);">Գրաֆիկ չկա (График не указан)</span>';
+        }
+
         // Отрисовка Обратного отсчета до ДР
         const bdayInfo = getBirthdayInfo(emp.birthDate);
         const bdayRow = document.getElementById('modal-emp-bday-row');
@@ -653,8 +692,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         document.getElementById('modal-emp-address').innerText = emp.address || '---';
-        document.getElementById('modal-emp-exp').innerText = emp.exp.split('/')[0].trim();
-        document.getElementById('modal-emp-rating').innerText = `★ ${emp.rating.toFixed(1)}`;
+        document.getElementById('modal-emp-exp').innerText = emp.exp ? emp.exp.split('/')[0].trim() : '0';
+        document.getElementById('modal-emp-rating').innerText = `★ ${(emp.rating || 0).toFixed(1)}`;
 
         // Логика Заказов сотрудника
         const empOrders = ordersData.filter(o => o.worker && o.worker.includes(emp.name));
@@ -734,13 +773,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Форма редактирования СОТРУДНИКА ---
-    window.openEmployeeForm = function() {
+    // --- Форма редактирования/добавления СОТРУДНИКА ---
+    window.openEmployeeForm = function(empId = null) {
+        currentEditingEmpId = empId;
         const form = document.getElementById('employee-form');
         form.reset();
         
-        if (currentActiveEmpId) {
-            const emp = employeesData.find(e => e.id === currentActiveEmpId);
+        if (empId) {
+            document.getElementById('emp-form-title').innerText = 'Խմբագրել (Редактировать)';
+            const emp = employeesData.find(e => e.id === empId);
             if (emp) {
                 document.getElementById('form-emp-name').value = emp.name;
                 document.getElementById('form-emp-phone').value = emp.phone;
@@ -751,6 +792,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('form-emp-access-key').value = emp.accessKey || '';
             }
             closeEmployeeModal();
+        } else {
+            document.getElementById('emp-form-title').innerText = '+ Նոր աշխատակից (Новый сотрудник)';
+            document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000).toString();
         }
         
         document.getElementById('employee-form-modal').classList.add('active');
@@ -758,6 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.closeEmployeeFormModal = function() {
         document.getElementById('employee-form-modal').classList.remove('active');
+        currentEditingEmpId = null;
     };
 
     window.saveEmployeeForm = function(event) {
@@ -771,8 +816,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const exp = document.getElementById('form-emp-exp').value;
         const accessKey = document.getElementById('form-emp-access-key').value;
 
-        if (currentActiveEmpId) {
-            const emp = employeesData.find(e => e.id === currentActiveEmpId);
+        if (currentEditingEmpId) {
+            const emp = employeesData.find(e => e.id === currentEditingEmpId);
             if (emp) {
                 emp.name = name;
                 emp.phone = phone;
@@ -783,7 +828,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 emp.exp = exp;
                 emp.accessKey = accessKey; 
             }
-        } 
+        } else {
+            const newEmp = {
+                id: generateEmpId(),
+                status: 'active',
+                name: name,
+                type: type,
+                typeLabel: typeLabelsMap[type] || type,
+                phone: phone,
+                exp: exp || '0',
+                rating: 0.0,
+                birthDate: birthDate,
+                address: address,
+                accessKey: accessKey,
+                companyDebt: 0,
+                workingDates: []
+            };
+            employeesData.push(newEmp);
+        }
 
         renderEmployees();
         renderRequests();
@@ -896,12 +958,14 @@ document.addEventListener('DOMContentLoaded', () => {
             btnCancel.style.display = 'none';
             btnAccept.style.display = 'flex';
             btnReject.style.display = 'flex';
-        } else if (order.status === 'new') {
+        } else if (order.status === 'new' || order.status === 'progress') {
+            // Теперь админ может редактировать и отменять заказ даже в процессе
             btnEdit.style.display = 'flex';
             btnCancel.style.display = 'flex'; 
             btnAccept.style.display = 'none';
             btnReject.style.display = 'none';
         } else {
+            // Completed, Cancelled
             btnEdit.style.display = 'flex';
             btnCancel.style.display = 'none';
             btnAccept.style.display = 'none';
@@ -943,16 +1007,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Отмена уже принятого (нового) заказа
+    // Отмена уже принятого (нового или в процессе) заказа
     window.cancelOrder = function() {
         if (!currentActiveOrderId) return;
         const order = ordersData.find(o => o.id === currentActiveOrderId);
         
-        if (order && order.status !== 'new') {
-            alert("Կարելի է չեղարկել միայն նոր պատվերները (Можно отменить только новые заказы)");
-            return;
-        }
-
         if (confirm("Չեղարկե՞լ այս պատվերը (Отменить этот заказ?)")) {
             if(order) {
                 order.status = 'cancelled';
@@ -962,18 +1021,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- Универсальная форма (Создание и Редактирование) ---
+    // --- Универсальная форма ЗАКАЗА (Создание и Редактирование с помощником) ---
     window.openOrderForm = function(orderId = null) {
         currentEditingOrderId = orderId;
         const form = document.getElementById('order-form');
         form.reset();
         document.getElementById('form-services-container').innerHTML = '';
         
-        // Перезаполняем список мастеров в селекте на основе активных сотрудников
+        // Перезаполняем список Главных мастеров
         const workerSelect = document.getElementById('form-worker');
         workerSelect.innerHTML = '<option value="" data-phone="">Չկա (Не назначен)</option>';
+        
+        // Перезаполняем список Помощников
+        const assistantSelect = document.getElementById('form-assistant');
+        assistantSelect.innerHTML = '<option value="" data-phone="">Առանց օգնականի (Без помощника)</option>';
+
         employeesData.filter(e => e.status === 'active').forEach(emp => {
-            workerSelect.innerHTML += `<option value="${emp.name} (${emp.typeLabel.split('/')[0].trim()})" data-phone="${emp.phone}">${emp.name} - ${emp.typeLabel}</option>`;
+            const opt = `<option value="${emp.name}" data-phone="${emp.phone}">${emp.name} - ${emp.typeLabel.split('/')[0].trim()}</option>`;
+            workerSelect.innerHTML += opt;
+            assistantSelect.innerHTML += opt;
         });
 
         if (orderId) {
@@ -985,7 +1051,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('form-client-name').value = order.clientName || '';
                 document.getElementById('form-phone').value = order.clientPhone;
                 document.getElementById('form-address').value = order.address;
-                document.getElementById('form-worker').value = order.worker === 'Չկա (Не назначен)' ? '' : order.worker;
+
+                // Разделяем worker на главного и помощников если они есть
+                let workersArr = (order.worker && order.worker !== 'Չկա (Не назначен)') ? order.worker.split(',').map(w => w.trim()) : [];
+                if (workersArr.length > 0) {
+                    workerSelect.value = workersArr[0]; // Первый - Главный
+                    if (workersArr.length > 1) {
+                        assistantSelect.value = workersArr[1]; // Второй - Помощник
+                    }
+                }
                 
                 order.services.forEach(s => addFormServiceRow(s.name, s.qty, s.price, s.done || false));
                 calculateOrderFormTotals();
@@ -1083,14 +1157,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientName = document.getElementById('form-client-name').value;
         const phone = document.getElementById('form-phone').value;
         const address = document.getElementById('form-address').value;
-        const workerSelect = document.getElementById('form-worker');
         
-        let worker = workerSelect.value.trim();
+        const workerSelect = document.getElementById('form-worker');
+        const assistantSelect = document.getElementById('form-assistant');
+        
+        let leadWorker = workerSelect.value.trim();
+        let assistant = assistantSelect.value.trim();
+        
         let workerPhone = '';
-        if (worker) {
+        if (leadWorker) {
             workerPhone = workerSelect.options[workerSelect.selectedIndex].getAttribute('data-phone') || '';
         }
-        if (!worker) worker = 'Չկա (Не назначен)';
+        
+        let combinedWorkers = [];
+        if (leadWorker) combinedWorkers.push(leadWorker);
+        if (assistant) combinedWorkers.push(assistant);
+
+        let finalWorkerString = combinedWorkers.length > 0 ? combinedWorkers.join(', ') : 'Չկա (Не назначен)';
 
         const services = [];
         const rows = document.querySelectorAll('#form-services-container .service-row-edit');
@@ -1117,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 order.clientName = clientName;
                 order.clientPhone = phone;
                 order.address = address;
-                order.worker = worker;
+                order.worker = finalWorkerString;
                 order.workerPhone = workerPhone;
                 order.services = services;
                 order.profit = customProfit;
@@ -1131,7 +1214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 clientName: clientName,
                 clientPhone: phone,
                 address: address,
-                worker: worker,
+                worker: finalWorkerString,
                 workerPhone: workerPhone,
                 services: services,
                 profit: customProfit 
@@ -1150,7 +1233,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEmployees(); 
 
 
-    // ================= РАБОТА С БАЗОЙ ДАННЫХ (Vercel KV) =================
+    // ================= РАБОТА С БАЗОЙ ДАННЫХ И НОВОСТЯМИ =================
     let serverTranslations = {};
 
     async function fetchAppDatabase() {
@@ -1160,18 +1243,23 @@ document.addEventListener('DOMContentLoaded', () => {
             serverTranslations = data || {};
             document.getElementById('loader-wrap').style.display = 'none';
             renderTranslationsEditor();
-            loadPromoValues();
+            loadPromoAndNewsValues();
         } catch (err) {
             console.error("Database error:", err);
             document.getElementById('loader-wrap').innerHTML = '<span style="font-size:10px; color:red; font-weight:bold;">Սերվերի հետ կապի սխալ (Ошибка Vercel KV)</span>';
         }
     }
 
-    function loadPromoValues() {
+    function loadPromoAndNewsValues() {
         if(serverTranslations['promo_title']) {
             if(serverTranslations['promo_title']['AM']) document.getElementById('promo-text-am').value = serverTranslations['promo_title']['AM'];
             if(serverTranslations['promo_title']['RU']) document.getElementById('promo-text-ru').value = serverTranslations['promo_title']['RU'];
             if(serverTranslations['promo_title']['EN']) document.getElementById('promo-text-en').value = serverTranslations['promo_title']['EN'];
+        }
+        if(serverTranslations['employee_news']) {
+            if(serverTranslations['employee_news']['AM']) document.getElementById('emp-news-am').value = serverTranslations['employee_news']['AM'];
+            if(serverTranslations['employee_news']['RU']) document.getElementById('emp-news-ru').value = serverTranslations['employee_news']['RU'];
+            if(serverTranslations['employee_news']['EN']) document.getElementById('emp-news-en').value = serverTranslations['employee_news']['EN'];
         }
     }
 
@@ -1186,6 +1274,11 @@ document.addEventListener('DOMContentLoaded', () => {
         serverTranslations['promo_title']['AM'] = document.getElementById('promo-text-am').value;
         serverTranslations['promo_title']['RU'] = document.getElementById('promo-text-ru').value;
         serverTranslations['promo_title']['EN'] = document.getElementById('promo-text-en').value;
+
+        if (!serverTranslations['employee_news']) serverTranslations['employee_news'] = {};
+        serverTranslations['employee_news']['AM'] = document.getElementById('emp-news-am').value;
+        serverTranslations['employee_news']['RU'] = document.getElementById('emp-news-ru').value;
+        serverTranslations['employee_news']['EN'] = document.getElementById('emp-news-en').value;
 
         await uploadToServer(btn, origText, span);
     }
