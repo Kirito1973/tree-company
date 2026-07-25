@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>TREE Admin - Control Center</title>
+    <title>TREE Admin - Modular</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,7 +32,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=4.8.0">
+    <link rel="stylesheet" href="style.css?v=5.0.0">
 </head>
 <body>
 
@@ -45,11 +45,9 @@
             <button class="theme-btn" id="theme-btn" aria-label="Theme" onclick="toggleTheme(event)">
                 <span class="theme-icon" id="theme-icon"></span>
             </button>
-
             <div class="header-logo-container">
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
             </div>
-
             <div class="lang-switcher" id="lang-switcher">
                 <button class="lang-btn-main" id="current-lang-btn" type="button" onclick="toggleLangMenu(event)">
                     <img src="assets/free-icon-armenia-197516.png" class="lang-flag">
@@ -118,13 +116,12 @@
             <button class="fab-btn" onclick="openOrderForm()" aria-label="Add Order">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </button>
-
             <h2 class="screen-title" data-i18n="tab_orders">Պատվերներ</h2>
             
             <div class="glass-panel" style="padding: 14px 20px;">
                 <div class="search-container">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
-                    <input type="text" class="glass-input search-input" id="order-search" data-i18n-placeholder="pl_search_order" placeholder="Որոնել ID-ով, հեռախոսով...">
+                    <input type="text" class="glass-input search-input" id="order-search" data-i18n-placeholder="pl_search_order" placeholder="Որոնել...">
                 </div>
             </div>
 
@@ -148,40 +145,31 @@
             <div class="filter-tabs">
                 <button class="filter-tab active" data-filter="all" data-i18n="filter_all">Բոլորը</button>
                 <button class="filter-tab" data-filter="new" data-i18n="filter_new">Նոր</button>
-                <button class="filter-tab" data-filter="progress" data-i18n="filter_progress">Ընթացքի մեջ</button>
+                <button class="filter-tab" data-filter="progress" data-i18n="filter_progress">Ընթացքում</button>
                 <button class="filter-tab" data-filter="completed" data-i18n="filter_completed">Ավարտված</button>
             </div>
-
-            <div class="glass-panel">
-                <div class="entity-list" id="orders-list"></div>
-            </div>
+            <div class="glass-panel"><div class="entity-list" id="orders-list"></div></div>
         </section>
 
         <section class="admin-screen" id="screen-finance">
             <h2 class="screen-title" data-i18n="tab_finance">Ֆինանսներ</h2>
-            
             <div class="glass-panel">
                 <div class="stats-grid">
                     <div class="stat-box">
                         <div class="stat-value">624k ֏</div>
-                        <div class="stat-label" data-i18n="lbl_turnover">Շրջանառություն (Ամիս)</div>
+                        <div class="stat-label" data-i18n="lbl_turnover">Շրջանառություն</div>
                     </div>
                     <div class="stat-box">
                         <div class="stat-value">93.6k ֏</div>
-                        <div class="stat-label" data-i18n="lbl_income">Եկամուտ (15%)</div>
+                        <div class="stat-label" data-i18n="lbl_income">Եկամուտ</div>
                     </div>
                 </div>
             </div>
-
             <div class="glass-panel">
-                <h3 class="input-label" data-i18n="lbl_history">Վճարումների պատմություն</h3>
+                <h3 class="input-label" data-i18n="lbl_history">Պատմություն</h3>
                 <div class="entity-list">
                     <div class="entity-card" style="border-left: 4px solid var(--tree-light);">
-                        <div class="entity-header">
-                            <span class="entity-id" data-i18n="com_1">Միջնորդավճար #ORD-003</span>
-                            <span class="stat-value" style="font-size:12px;">+18,000 ֏</span>
-                        </div>
-                        <div class="entity-meta" data-i18n="com_paid_1">Վճարված է կատարողի կողմից • Այսօր 14:12</div>
+                        <div class="entity-header"><span class="entity-id">#ORD-003</span><span class="stat-value" style="font-size:12px;">+18,000 ֏</span></div>
                     </div>
                 </div>
             </div>
@@ -189,55 +177,45 @@
 
         <section class="admin-screen" id="screen-employees">
             <h2 class="screen-title" data-i18n="tab_employees">Աշխատակիցներ</h2>
-
             <div id="bday-banner-container" style="display: none; animation: screenFadeIn 0.5s ease;"></div>
-
             <div class="glass-panel" style="padding: 14px 20px; margin-bottom: 8px;">
-                <button class="submit-btn" onclick="openEmployeeForm()" style="margin: 0 0 16px 0; background: linear-gradient(135deg, #00C8FF, #00A3FF); box-shadow: 0 8px 20px rgba(0, 163, 255, 0.3);" data-i18n="btn_add_emp">+ Նոր աշխատակից</button>
+                <button class="submit-btn" onclick="openEmployeeForm()" style="margin: 0 0 16px 0; background: linear-gradient(135deg, #00C8FF, #00A3FF);" data-i18n="btn_add_emp">+ Նոր</button>
                 <div class="search-container">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
                     <input type="text" class="glass-input search-input" id="employee-search" data-i18n-placeholder="pl_search_emp" placeholder="Որոնել...">
                 </div>
             </div>
-
             <div class="filter-tabs" style="margin-bottom: 8px;">
                 <button class="filter-tab active" data-emp-filter="all" data-i18n="cat_all" onclick="setEmpFilter('all')">Բոլորը</button>
                 <button class="filter-tab" data-emp-filter="doors" data-i18n="cat_doors" onclick="setEmpFilter('doors')">Դռներ</button>
-                <button class="filter-tab" data-emp-filter="electro" data-i18n="cat_electro" onclick="setEmpFilter('electro')">Էլեկտրիկներ</button>
+                <button class="filter-tab" data-emp-filter="electro" data-i18n="cat_electro" onclick="setEmpFilter('electro')">Էլեկտրիկ</button>
                 <button class="filter-tab" data-emp-filter="universal" data-i18n="cat_universal" onclick="setEmpFilter('universal')">Ունիվերսալ</button>
             </div>
-
-            <div class="glass-panel">
-                <div class="entity-list" id="employees-list"></div>
-            </div>
+            <div class="glass-panel"><div class="entity-list" id="employees-list"></div></div>
         </section>
 
         <section class="admin-screen" id="screen-partners">
             <h2 class="screen-title" data-i18n="tab_partners">Գործընկերներ</h2>
-            
             <div class="glass-panel" style="padding: 14px 20px; margin-bottom: 8px;">
-                <button class="submit-btn" onclick="openPartnerForm()" style="margin: 0; background: linear-gradient(135deg, #00C8FF, #00A3FF); box-shadow: 0 8px 20px rgba(0, 163, 255, 0.3);" data-i18n="lbl_add_partner">+ Ավելացնել գործընկեր</button>
+                <button class="submit-btn" onclick="openPartnerForm()" style="margin: 0; background: linear-gradient(135deg, #00C8FF, #00A3FF);" data-i18n="lbl_add_partner">+ Ավելացնել</button>
             </div>
-
             <div class="glass-panel">
-                <h3 class="input-label" data-i18n="lbl_active_partners">Ակտիվ ընկերություններ</h3>
+                <h3 class="input-label" data-i18n="lbl_active_partners">Ակտիվ</h3>
                 <div class="entity-list" id="admin-partners-list"></div>
             </div>
         </section>
 
         <section class="admin-screen" id="screen-clients">
             <h2 class="screen-title" data-i18n="tab_clients">Հաճախորդներ</h2>
-            
             <div class="glass-panel" style="padding: 14px 20px;">
                 <div class="search-container">
-                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
-                    <input type="text" class="glass-input search-input" id="client-search" data-i18n-placeholder="pl_search_order" placeholder="Որոնել ID-ով, հեռախոսով...">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65"></line></svg>
+                    <input type="text" class="glass-input search-input" id="client-search" data-i18n-placeholder="pl_search_order" placeholder="Որոնել...">
                 </div>
             </div>
-
             <div class="glass-panel">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 class="input-label" data-i18n="lbl_all_clients">Բոլոր հաճախորդները</h3>
+                    <h3 class="input-label" data-i18n="lbl_all_clients">Բոլորը</h3>
                     <div class="stat-value" id="clients-total-count" style="font-size: 14px;">0</div>
                 </div>
                 <div class="entity-list" id="clients-list"></div>
@@ -246,53 +224,32 @@
 
         <section class="admin-screen" id="screen-management">
             <h2 class="screen-title" data-i18n="tab_management">Կառավարում</h2>
-            
             <div class="view-switcher" style="overflow-x: auto; white-space: nowrap; justify-content: flex-start; padding: 6px; gap: 8px;">
-                <button class="view-switch-btn active" onclick="switchManagementTab('promo', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="tab_promo">Ակցիաներ</button>
-                <button class="view-switch-btn" onclick="switchManagementTab('services', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="lbl_services">Ծառայություններ</button>
-                <button class="view-switch-btn" onclick="switchManagementTab('translations', this)" style="flex: 0 0 auto; padding: 10px 16px;" data-i18n="lbl_localization">Լեզուներ</button>
+                <button class="view-switch-btn active" onclick="switchManagementTab('promo', this)" data-i18n="tab_promo">Ակցիաներ</button>
+                <button class="view-switch-btn" onclick="switchManagementTab('services', this)" data-i18n="lbl_services">Ծառայություններ</button>
+                <button class="view-switch-btn" onclick="switchManagementTab('translations', this)" data-i18n="lbl_localization">Լեզուներ</button>
             </div>
 
             <div id="mng-view-promo">
                 <form class="glass-panel" id="promo-banner-form" onsubmit="savePromo(event)">
-                    <h3 class="input-label" data-i18n="lbl_manage_promo">Զեղչի առաջարկի կառավարում</h3>
-                    
+                    <h3 class="input-label" data-i18n="lbl_manage_promo">Կառավարում</h3>
                     <div class="input-group">
-                        <label class="input-label" data-i18n="lbl_discount_pct">Զեղչի տոկոս (%)</label>
+                        <label class="input-label" data-i18n="lbl_discount_pct">%</label>
                         <input type="number" class="glass-input" id="promo-discount-input" value="10" style="font-size: 18px; font-weight: 900; color: #FFB347;">
                     </div>
-
                     <div class="input-group">
-                        <label class="input-label" data-i18n="lbl_banner_am">Տեքստ բանների համար (Հայերեն)</label>
-                        <textarea class="glass-input" id="promo-text-am" style="resize:none; height:60px;">Պատվիրեք հավելվածով և ստացեք <span class="promo-highlight">10% զեղչ</span> հենց հիմա</textarea>
+                        <label class="input-label">AM</label>
+                        <textarea class="glass-input" id="promo-text-am" style="resize:none; height:60px;"></textarea>
                     </div>
-
                     <div class="input-group">
-                        <label class="input-label" data-i18n="lbl_banner_ru">Տեքստ բանների համար (Ռուսերեն)</label>
-                        <textarea class="glass-input" id="promo-text-ru" style="resize:none; height:60px;">Закажите в приложении и получите <span class="promo-highlight">скидку 10%</span></textarea>
+                        <label class="input-label">RU</label>
+                        <textarea class="glass-input" id="promo-text-ru" style="resize:none; height:60px;"></textarea>
                     </div>
-
                     <div class="input-group">
-                        <label class="input-label" data-i18n="lbl_banner_en">Տեքստ բանների համար (Անգլերեն)</label>
-                        <textarea class="glass-input" id="promo-text-en" style="resize:none; height:60px;">Order in the app and get a <span class="promo-highlight">10% discount</span> now</textarea>
+                        <label class="input-label">EN</label>
+                        <textarea class="glass-input" id="promo-text-en" style="resize:none; height:60px;"></textarea>
                     </div>
-
-                    <div class="input-group" style="margin-top: 16px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 16px;">
-                        <h3 class="input-label" data-i18n="lbl_emp_news">Նորություններ աշխատակիցների համար</h3>
-                        <label class="input-label" style="margin-top:8px;">Հայերեն (AM)</label>
-                        <textarea class="glass-input" id="emp-news-am" style="resize:none; height:60px;"></textarea>
-                        
-                        <label class="input-label" style="margin-top:8px;">Русский (RU)</label>
-                        <textarea class="glass-input" id="emp-news-ru" style="resize:none; height:60px;"></textarea>
-                        
-                        <label class="input-label" style="margin-top:8px;">English (EN)</label>
-                        <textarea class="glass-input" id="emp-news-en" style="resize:none; height:60px;"></textarea>
-                    </div>
-
-                    <button type="submit" class="submit-btn success" id="promo-submit-btn">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>
-                        <span data-i18n="btn_save_promo">Պահպանել</span>
-                    </button>
+                    <button type="submit" class="submit-btn success" id="promo-submit-btn"><span data-i18n="btn_save">Պահպանել</span></button>
                 </form>
             </div>
 
@@ -308,425 +265,17 @@
 
             <div id="mng-view-translations" style="display: none; padding-bottom: 80px;">
                 <div class="glass-panel" style="border-radius: 24px 24px 0 0;">
-                    <h3 class="input-label" data-i18n="lbl_localization">Հավելվածի լոկալիզացիա</h3>
-                    <div id="loader-wrap" class="loader-wrap">
-                        <div class="spinner"></div>
-                        <span style="font-size:11px; font-weight:800; color:var(--text-sec);" data-i18n="lbl_loading">Բազայի բեռնում...</span>
-                    </div>
+                    <h3 class="input-label" data-i18n="lbl_localization">Լեզուներ</h3>
+                    <div id="loader-wrap" class="loader-wrap"><div class="spinner"></div><span style="font-size:11px;" data-i18n="lbl_loading">Բեռնում...</span></div>
                     <div id="translations-list" style="display:flex; flex-direction:column; gap:14px;"></div>
                 </div>
                 <div style="position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; padding: 0 16px; z-index: 1500;">
-                    <button class="submit-btn success" onclick="saveTranslations()" id="trans-save-btn" style="box-shadow: 0 10px 30px rgba(35, 169, 91, 0.4);">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>
-                        <span data-i18n="btn_save_trans">Պահպանել</span>
-                    </button>
+                    <button class="submit-btn success" onclick="saveTranslations()" id="trans-save-btn"><span data-i18n="btn_save">Պահպանել</span></button>
                 </div>
             </div>
         </section>
 
-        <div class="modal-overlay" id="review-modal" onclick="closeReviewModal()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <div class="entity-header" style="margin-bottom: 12px;">
-                    <h3 class="screen-title" id="modal-rev-client" style="margin:0; text-transform:none;">Client</h3>
-                    <span id="modal-rev-stars" style="color:#FFB347; font-size:16px; font-weight:900;"></span>
-                </div>
-                <div class="detail-block" style="border: none; background: rgba(0,0,0,0.05); border-radius: 12px; padding: 16px;">
-                    <div style="font-size: 13px; font-weight: 600; line-height: 1.5; color: var(--text);" id="modal-rev-text"></div>
-                </div>
-                <div style="text-align: right; margin-top: 10px; font-size: 10px; font-weight: bold; color: var(--text-sec);" id="modal-rev-date"></div>
-                <button type="button" class="submit-btn" style="margin-top: 20px; border-radius: 30px; background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeReviewModal()" data-i18n="btn_close">Փակել</button>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="order-modal" onclick="closeOrderModal()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <div class="entity-header">
-                    <h3 class="screen-title" id="modal-order-id" style="margin:0;">#ORD-000</h3>
-                    <span class="entity-status" id="modal-order-status">Статус</span>
-                </div>
-
-                <div class="detail-block" style="display:flex; flex-direction:column; gap:6px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span class="input-label" data-i18n="lbl_date_created">Ստեղծման ամսաթիվ</span>
-                        <span class="entity-meta" id="modal-date-created" style="font-size:11px; font-weight:700;"></span>
-                    </div>
-                    <div style="display:none; justify-content:space-between; align-items:center;" id="modal-date-completed-wrapper">
-                        <span class="input-label" data-i18n="lbl_date_completed">Ավարտման ամսաթիվ</span>
-                        <span class="entity-meta" id="modal-date-completed" style="font-size:11px; font-weight:700; color:var(--tree-light);"></span>
-                    </div>
-                </div>
-                
-                <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_client_details">Հաճախորդ</div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_name">Անուն:</span>
-                        <span class="detail-value" id="modal-client-name"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
-                        <span class="detail-value">
-                            <span id="modal-client-phone-text"></span>
-                            <a href="#" class="call-btn" id="modal-client-phone-link" aria-label="Call" style="border-radius: 50%;">
-                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            </a>
-                        </span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_address">Հասցե:</span>
-                        <span class="detail-value" id="modal-client-address" style="text-align: right;"></span>
-                    </div>
-                </div>
-
-                <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_worker_details">Աշխատողներ</div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_master">Գլխավոր:</span>
-                        <span class="detail-value" id="modal-worker-name"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
-                        <span class="detail-value">
-                            <span id="modal-worker-phone-text"></span>
-                            <a href="#" class="call-btn" id="modal-worker-phone-link" aria-label="Call" style="display:none; border-radius: 50%;">
-                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            </a>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="detail-block">
-                    <div class="input-label" data-i18n="lbl_services">Ծառայություններ</div>
-                    <div id="modal-services-list" style="margin-top: 8px; display:flex; flex-direction:column;"></div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top: 8px;">
-                    <div class="stat-box">
-                        <div class="stat-value" id="modal-total-price">0 ֏</div>
-                        <div class="stat-label" data-i18n="lbl_total">Ընդհանուր</div>
-                    </div>
-                    <div class="stat-box" style="border-color: var(--tree-light);">
-                        <div class="stat-value" id="modal-company-profit" style="color:var(--tree-light);">0 ֏</div>
-                        <div class="stat-label" data-i18n="lbl_profit">Շահույթ</div>
-                    </div>
-                </div>
-
-                <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 8px; margin-top: 16px; width: 100%;">
-                    <button type="button" id="modal-accept-btn" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0 10px; height: 44px; margin: 0; display: none; justify-content: center; align-items: center; font-size: 11px;" onclick="acceptOrder()">
-                        <span data-i18n="btn_accept_order">Ընդունել</span>
-                    </button>
-                    <button type="button" id="modal-reject-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0 10px; height: 44px; margin: 0; display: none; justify-content: center; align-items: center; font-size: 11px;" onclick="rejectOrder()">
-                        <span data-i18n="btn_reject_order">Մերժել</span>
-                    </button>
-                    
-                    <button type="button" id="modal-edit-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(35, 169, 91, 0.9); padding: 0 10px; height: 44px; margin: 0; display: flex; justify-content: center; align-items: center; font-size: 11px;" onclick="openOrderForm(currentActiveOrderId)">
-                        <span data-i18n="btn_edit_order">Խմբագրել</span>
-                    </button>
-                    <button type="button" id="modal-cancel-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0 10px; height: 44px; margin: 0; display: flex; justify-content: center; align-items: center; font-size: 11px;" onclick="cancelOrder()">
-                        <span data-i18n="btn_cancel_order">Չեղարկել</span>
-                    </button>
-                    
-                    <button type="button" class="submit-btn" style="flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 0; margin: 0; display: flex; justify-content: center; align-items: center;" onclick="closeOrderModal()">
-                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="order-form-modal" onclick="closeOrderFormModal()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <h3 class="screen-title" style="margin-bottom: 16px;" id="order-form-title">+ Նոր պատվեր</h3>
-                
-                <form id="order-form" onsubmit="saveOrderForm(event)">
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_client_name">Անուն Ազգանուն</label>
-                        <input type="text" id="form-client-name" class="glass-input" required>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_phone">Հեռախոս</label>
-                        <input type="text" id="form-phone" class="glass-input" required>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_address">Հասցե</label>
-                        <input type="text" id="form-address" class="glass-input" required>
-                    </div>
-
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_master">Աշխատող (Գլխավոր)</label>
-                        <select id="form-worker" class="glass-input"></select>
-                    </div>
-
-                    <div class="input-group" style="margin-bottom: 16px;">
-                        <label class="input-label" data-i18n="lbl_assistant">Օգնական</label>
-                        <select id="form-assistant" class="glass-input"></select>
-                    </div>
-
-                    <div class="detail-block" style="margin-bottom: 16px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <label class="input-label" data-i18n="lbl_services">Ծառայություններ</label>
-                            <button type="button" class="add-serv-btn" onclick="addFormServiceRow()" data-i18n="btn_add">+ Ավելացնել</button>
-                        </div>
-                        <div id="form-services-container" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                    </div>
-                    
-                    <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 16px;">
-                        <div class="stat-box">
-                            <div class="stat-label" data-i18n="lbl_total">Ընդհանուր</div>
-                            <div class="stat-value" id="form-total-price" style="font-size: 14px; margin-top: 4px;">0 ֏</div>
-                        </div>
-                        <div class="stat-box" style="border-color: var(--tree-light); background: rgba(31,150,81,0.05); padding: 10px;">
-                            <div class="stat-label" data-i18n="lbl_profit">Շահույթ</div>
-                            <div style="display: flex; gap: 4px; margin-top: 6px; align-items: center;">
-                                <input type="number" id="form-profit-pct" class="glass-input" step="any" style="padding: 6px; font-size: 12px; text-align: center; width: 45%;" value="10" placeholder="%" oninput="updateFormProfitFromPct()">
-                                <span style="font-size: 12px; font-weight: bold; color: var(--text-sec);">%</span>
-                                <input type="number" id="form-profit-sum" class="glass-input" step="any" style="padding: 6px; font-size: 13px; text-align: center; color: var(--tree-light); font-weight: 800; width: 55%; margin-left: 4px;" placeholder="0" oninput="updateFormProfitFromSum()">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="input-group" style="gap: 10px; margin-top: 20px;">
-                        <button type="submit" class="submit-btn success">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>
-                            <span data-i18n="btn_save">Պահպանել</span>
-                        </button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeOrderFormModal()" data-i18n="btn_cancel">
-                            Չեղարկել
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="employee-modal" onclick="closeEmployeeModal()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <div class="entity-header">
-                    <h3 class="screen-title" id="modal-emp-id" style="margin:0;">#EMP-000</h3>
-                    <span class="entity-status new" id="modal-emp-type" style="background: rgba(31, 150, 81, 0.15); color: var(--tree-light);">Тип</span>
-                </div>
-
-                <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="lbl_worker_details">Տվյալներ</div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_name">Անուն:</span>
-                        <span class="detail-value" id="modal-emp-name"></span>
-                    </div>
-                    <div class="detail-row" id="emp-pin-row">
-                        <span class="detail-label" data-i18n="lbl_pin">PIN կոդ:</span>
-                        <span class="detail-value" id="modal-emp-access-key" style="font-family: monospace; font-size: 14px; letter-spacing: 2px; color: var(--tree-light);"></span>
-                    </div>
-                    <div class="detail-row" id="modal-emp-bday-row">
-                        <span class="detail-label" data-i18n="lbl_bday">Ծննդ.:</span>
-                        <span class="detail-value">
-                            <span id="modal-emp-birth" style="margin-right: 6px;"></span>
-                            <span id="modal-emp-bday-countdown" style="font-size: 9px; color: var(--text-sec);"></span>
-                        </span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
-                        <span class="detail-value">
-                            <span id="modal-emp-phone-text"></span>
-                            <a href="#" class="call-btn" id="modal-emp-phone-link" aria-label="Call" style="border-radius: 50%;">
-                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            </a>
-                        </span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_address">Հասցե:</span>
-                        <span class="detail-value" id="modal-emp-address" style="text-align: right;"></span>
-                    </div>
-                </div>
-
-                <div class="detail-block" id="emp-schedule-block">
-                    <div class="input-label" style="margin-bottom:6px;" data-i18n="lbl_schedule">Աշխատանքային գրաֆիկ</div>
-                    <div id="modal-emp-schedule-list" style="display: flex; flex-wrap: wrap; gap: 4px;"></div>
-                </div>
-
-                <div class="detail-block" id="emp-finance-block" style="background: rgba(255, 50, 50, 0.05); border-color: rgba(255, 50, 50, 0.2);">
-                    <div class="input-label" style="margin-bottom:6px; color: #ff4444;" data-i18n="tab_finance">Ֆինանսներ</div>
-                    <div class="detail-row" style="border: none;">
-                        <span class="detail-label" data-i18n="lbl_debt">Պարտք:</span>
-                        <span class="detail-value" id="modal-emp-debt" style="color: #ff4444; font-size: 16px;">0 ֏</span>
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <input type="number" id="emp-finance-input" class="glass-input" data-i18n-placeholder="pl_amount" placeholder="Գումար (֏)" style="padding: 10px;">
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button class="submit-btn" style="padding: 10px; margin: 0; font-size: 11px; background: rgba(255, 50, 50, 0.8);" onclick="adjustEmpDebt('add')" data-i18n="btn_add_debt">+ Պարտք</button>
-                        <button class="submit-btn success" style="padding: 10px; margin: 0; font-size: 11px;" onclick="adjustEmpDebt('bonus')" data-i18n="btn_add_bonus">- Բոնուս</button>
-                        <button class="submit-btn" style="padding: 10px; margin: 0; font-size: 11px; background: transparent; color: var(--text); border: 1px solid var(--text-sec);" onclick="adjustEmpDebt('reset')" data-i18n="btn_reset">Զրոյացնել</button>
-                    </div>
-                </div>
-
-                <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-top: 8px;">
-                    <div class="stat-box">
-                        <div class="stat-value" id="modal-emp-exp" style="font-size: 16px;">0</div>
-                        <div class="stat-label" data-i18n="lbl_exp">Փորձ</div>
-                    </div>
-                    <div class="stat-box" style="border-color: #FFB347; background: rgba(255, 179, 71, 0.05);">
-                        <div class="stat-value" id="modal-emp-rating" style="color:#FFB347; font-size: 16px;">★ 0.0</div>
-                        <div class="stat-label" data-i18n="lbl_rating">Վարկանիշ</div>
-                    </div>
-                </div>
-
-                <div class="stat-box" id="emp-orders-block" onclick="toggleEmpOrders()" style="cursor: pointer; border-color: var(--tree-light); background: rgba(31,150,81,0.05); margin-top: 10px; width: 100%; padding: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="stat-label" style="margin: 0;" data-i18n="tab_orders">Պատվերներ</span>
-                        <div class="stat-value" id="modal-emp-orders-count" style="color: var(--tree-light); font-size: 16px;">0</div>
-                    </div>
-                    <div id="modal-emp-orders-list" class="emp-orders-list" onclick="event.stopPropagation()"></div>
-                </div>
-
-                <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin-top: 16px; width: 100%; gap: 8px;">
-                    <button type="button" id="modal-emp-accept-btn" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="acceptEmployee()" data-i18n="btn_accept_order">Ընդունել</button>
-                    <button type="button" id="modal-emp-reject-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="rejectEmployee()" data-i18n="btn_reject_order">Մերժել</button>
-                    
-                    <button type="button" id="modal-emp-edit-btn" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(35, 169, 91, 0.9); padding: 0; height: 40px; display: none; justify-content: center; align-items: center;" onclick="openEmployeeForm(currentActiveEmpId)" data-i18n="btn_edit_order">Խմբագրել</button>
-                    <button type="button" class="submit-btn" style="flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 0; display: flex; justify-content: center; align-items: center;" onclick="closeEmployeeModal()"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="employee-form-modal" onclick="closeEmployeeFormModal()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <h3 class="screen-title" style="margin-bottom: 16px;" id="emp-form-title">Խմբագրել</h3>
-                
-                <form id="employee-form" onsubmit="saveEmployeeForm(event)">
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_client_name">Անուն Ազգանուն</label>
-                        <input type="text" id="form-emp-name" class="glass-input" required>
-                    </div>
-                    
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_pin">PIN կոդ (6 նիշ)</label>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="form-emp-access-key" class="glass-input" required pattern="\d{6}" maxlength="6" style="letter-spacing: 2px; font-weight: 800; font-family: monospace;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            <button type="button" class="submit-btn" style="flex: 0 0 50px; margin: 0; background: rgba(0, 163, 255, 0.15); color: #00A3FF; box-shadow: none; border-radius: 16px;" onclick="document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000); if(navigator.vibrate)navigator.vibrate(10);">⟳</button>
-                        </div>
-                    </div>
-
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_phone">Հեռախոս</label>
-                        <input type="text" id="form-emp-phone" class="glass-input" required>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_bday">Ծննդյան օր</label>
-                        <input type="text" id="form-emp-birth" class="glass-input">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_address">Հասցե</label>
-                        <input type="text" id="form-emp-address" class="glass-input">
-                    </div>
-                    
-                    <div class="stats-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 16px;">
-                        <div class="input-group">
-                            <label class="input-label" data-i18n="lbl_type">Մասնագիտություն</label>
-                            <select id="form-emp-type" class="glass-input" style="padding: 10px;">
-                                <option value="doors">Դռներ</option>
-                                <option value="electro">Էլեկտրիկ</option>
-                                <option value="universal">Ունիվերսալ</option>
-                                <option value="cleaning">Մաքրում</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label class="input-label" data-i18n="lbl_exp">Փորձ</label>
-                            <input type="text" id="form-emp-exp" class="glass-input" style="padding: 10px;">
-                        </div>
-                    </div>
-
-                    <div class="input-group" style="gap: 10px; margin-top: 20px;">
-                        <button type="submit" class="submit-btn success"><span data-i18n="btn_save">Պահպանել</span></button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeEmployeeFormModal()" data-i18n="btn_cancel">Չեղարկել</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="coop-modal" onclick="closeCoopModal()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <div class="entity-header">
-                    <h3 class="screen-title" id="modal-coop-company" style="margin:0;">Company</h3>
-                    <span class="entity-status new">B2B Request</span>
-                </div>
-
-                <div class="detail-block">
-                    <div class="input-label" style="margin-bottom:6px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom:6px;" data-i18n="tab_partners">Գործընկերներ</div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_name">Անուն:</span>
-                        <span class="detail-value" id="modal-coop-contact"></span>
-                    </div>
-                    <div class="detail-row">
-                        <span class="detail-label" data-i18n="lbl_phone">Հեռ.:</span>
-                        <span class="detail-value">
-                            <span id="modal-coop-phone"></span>
-                            <a href="#" class="call-btn" id="modal-coop-phone-link" aria-label="Call" style="border-radius: 50%;">
-                                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                            </a>
-                        </span>
-                    </div>
-                    <div class="detail-row" style="flex-direction: column; align-items: flex-start; border: none;">
-                        <span class="detail-label" style="margin-bottom: 6px;" data-i18n="lbl_offer">Առաջարկ:</span>
-                        <div class="detail-value" id="modal-coop-text" style="text-align: left; font-weight: 600; color: var(--text-sec); font-style: italic; width: 100%;"></div>
-                    </div>
-                </div>
-
-                <div id="modal-action-buttons" style="display: flex; flex-direction: row; justify-content: center; align-items: center; margin-top: 16px; width: 100%; gap: 8px;">
-                    <button type="button" class="submit-btn success" style="flex: 1; border-radius: 30px; padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="acceptCoop()" data-i18n="btn_accept_order">Ընդունել</button>
-                    <button type="button" class="submit-btn" style="flex: 1; border-radius: 30px; background: rgba(255, 50, 50, 0.85); padding: 0; height: 40px; display: flex; justify-content: center; align-items: center;" onclick="rejectCoop()" data-i18n="btn_reject_order">Մերժել</button>
-                    <button type="button" class="submit-btn" style="flex: 0 0 40px; width: 40px; height: 40px; border-radius: 50%; background: transparent; border: 1px solid var(--text-sec); color: var(--text); padding: 0; display: flex; justify-content: center; align-items: center;" onclick="closeCoopModal()"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="service-form-modal" onclick="closeServiceForm()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <h3 class="screen-title" style="margin-bottom: 16px;" id="serv-form-title" data-i18n="lbl_add_service">Ավելացնել ծառայություն</h3>
-                <form onsubmit="saveServiceForm(event)">
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_name">Անվանում</label>
-                        <input type="text" id="form-cat-name" class="glass-input" required>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_price_base">Գինը (֏)</label>
-                        <input type="number" id="form-cat-price" class="glass-input">
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_icon">SVG Պատկեր</label>
-                        <textarea id="form-cat-icon" class="glass-input" style="height: 60px; font-family: monospace;" placeholder="<svg>...</svg>"></textarea>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_status">Կարգավիճակ</label>
-                        <select id="form-cat-status" class="glass-input" style="padding: 10px;">
-                            <option value="active">Ակտիվ</option>
-                            <option value="soon">Շուտով</option>
-                        </select>
-                    </div>
-                    <div class="input-group" style="gap: 10px; margin-top: 20px;">
-                        <button type="submit" class="submit-btn success"><span data-i18n="btn_save">Պահպանել</span></button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closeServiceForm()" data-i18n="btn_cancel">Չեղարկել</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="partner-form-modal" onclick="closePartnerForm()">
-            <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
-                <h3 class="screen-title" style="margin-bottom: 16px;" id="partner-form-title" data-i18n="lbl_add_partner">Ավելացնել գործընկեր</h3>
-                <form onsubmit="savePartnerForm(event)">
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_name">Անվանում</label>
-                        <input type="text" id="form-partner-name" class="glass-input" required>
-                    </div>
-                    <div class="input-group" style="margin-bottom: 12px;">
-                        <label class="input-label" data-i18n="lbl_logo">Լոգո (URL կամ SVG)</label>
-                        <textarea id="form-partner-logo" class="glass-input" style="height: 80px;" placeholder="https://... или <svg>..."></textarea>
-                    </div>
-                    <div class="input-group" style="gap: 10px; margin-top: 20px;">
-                        <button type="submit" class="submit-btn success"><span data-i18n="btn_save">Պահպանել</span></button>
-                        <button type="button" class="submit-btn" style="background: transparent; border: 1px solid var(--text-sec); color: var(--text);" onclick="closePartnerForm()" data-i18n="btn_cancel">Չեղարկել</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
+        <div id="modals-container"></div>
     </div>
 
     <nav class="bottom-nav">
@@ -760,6 +309,13 @@
         </button>
     </nav>
 
-    <script src="admin.js?v=4.8.0"></script>
+    <script src="js/core.js?v=5.0.0"></script>
+    <script src="js/dashboard.js?v=5.0.0"></script>
+    <script src="js/orders.js?v=5.0.0"></script>
+    <script src="js/finance.js?v=5.0.0"></script>
+    <script src="js/employees.js?v=5.0.0"></script>
+    <script src="js/partners.js?v=5.0.0"></script>
+    <script src="js/clients.js?v=5.0.0"></script>
+    <script src="js/management.js?v=5.0.0"></script>
 </body>
 </html>
