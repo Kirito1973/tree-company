@@ -62,7 +62,6 @@ body.force-dark .main-logo { filter: drop-shadow(0 0 8px rgba(255,255,255,0.4)) 
 .lang-tab.active { background: rgba(128, 128, 128, 0.2); opacity: 1; transform: scale(1.1); }
 .lang-flag { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; pointer-events: none; }
 
-/* ОБНОВЛЕННАЯ НИЖНЯЯ ПАНЕЛЬ ДЛЯ 7 РАЗДЕЛОВ */
 .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; height: 76px; background: var(--card-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-top: 1px solid var(--card-border); border-radius: 24px 24px 0 0; box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.05), var(--glass-rim); display: flex; justify-content: space-around; align-items: center; padding: 0 5px; z-index: 1000; }
 .tab-item { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; min-width: 0; height: 100%; color: var(--text-sec); text-decoration: none; font-size: 7.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: none; background: transparent; padding: 0; margin: 0; }
 .tab-item svg { width: 20px; height: 20px; margin-bottom: 4px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); stroke: var(--text-sec); fill: none; }
@@ -80,25 +79,11 @@ body.force-dark .dash-tab { background: rgba(255, 255, 255, 0.08); }
 .dash-tab.active { background: var(--tree-light); box-shadow: 0 8px 20px rgba(31, 150, 81, 0.4); transform: translateY(-4px); }
 .dash-tab.active svg { stroke: white; }
 
-.notif-dot { 
-    position: absolute; 
-    top: 4px; 
-    right: 4px; 
-    width: 10px; 
-    height: 10px; 
-    background-color: #ff4444; 
-    border-radius: 50%; 
-    box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); 
-    border: 2px solid var(--bg-base); 
-    z-index: 2; 
-    pointer-events: none;
-}
-
+.notif-dot { position: absolute; top: 4px; right: 4px; width: 10px; height: 10px; background-color: #ff4444; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); border: 2px solid var(--bg-base); z-index: 2; pointer-events: none; }
 .notif-dot-card { position: absolute; top: 12px; right: 12px; width: 10px; height: 10px; background-color: #ff4444; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); animation: pulse-dot 1.5s infinite; pointer-events: none; }
 @keyframes pulse-dot { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); } }
 
 .rating-hero { font-size: 56px; font-weight: 900; color: #FFB347; display: flex; justify-content: center; align-items: center; text-shadow: 0 8px 25px rgba(255, 179, 71, 0.35); margin: 10px 0 30px 0; letter-spacing: -1px; background: none; border: none; box-shadow: none; pointer-events: none; }
-
 .truncate-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; }
 
 .view-switcher { display: flex; background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 20px; padding: 6px; box-shadow: 0 4px 15px var(--shadow), var(--glass-rim); margin-bottom: 8px; overflow-x: auto; scrollbar-width: none; }
@@ -219,6 +204,21 @@ body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
 .fab-btn:active { transform: scale(0.9); box-shadow: 0 4px 12px rgba(31, 150, 81, 0.3); }
 .fab-btn svg { width: 28px; height: 28px; stroke: white; }
 .admin-screen:not(.active) .fab-btn { display: none; }
+
+/* ЭКРАН АВТОРИЗАЦИИ (PIN) */
+.auth-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: var(--bg-base);
+    z-index: 99999;
+    display: flex; justify-content: center; align-items: center;
+    padding: 20px; transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.auth-overlay.hidden {
+    opacity: 0; visibility: hidden; pointer-events: none;
+}
+.auth-card {
+    max-width: 340px; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
+}
 
 @media (min-width: 768px) {
     .app-container { max-width: 720px; padding-bottom: 60px; }
