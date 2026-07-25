@@ -1,17 +1,13 @@
 // =========================================================
-// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.6.1)
+// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Автообновляемая версия)
 // =========================================================
-const APP_VERSION = '5.6.1';
-
-if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
-    if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => { for (let reg of regs) reg.unregister(); });
-    if ('caches' in window) caches.keys().then(names => { for (let name of names) caches.delete(name); });
-    localStorage.setItem('tree_admin_version', APP_VERSION);
-    window.location.reload(true);
-}
 
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION).then(reg => reg.update()); });
+    window.addEventListener('load', () => { 
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            reg.update(); 
+        }); 
+    });
 }
 
 window.currentAdminLang = localStorage.getItem('admin_app_lang') || 'AM';
