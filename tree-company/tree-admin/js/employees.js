@@ -68,8 +68,30 @@ window.openEmployeeModal = function(empId) {
 
 window.closeEmployeeModal = function() { document.getElementById('employee-modal').classList.remove('active'); window.currentActiveEmpId = null; };
 window.toggleEmpOrders = function() { document.getElementById('modal-emp-orders-list').classList.toggle('open'); };
-window.acceptEmployee = function() { if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); if (emp) { emp.status = 'active'; emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString(); if(window.renderDashboardMasters) window.renderDashboardMasters(); window.renderEmployees(); if(window.updateDashDots) window.updateDashDots(); window.openEmployeeModal(emp.id); if (navigator.vibrate) navigator.vibrate(20); } };
-window.rejectEmployee = function() { if (!window.currentActiveEmpId) return; if (confirm("Reject?")) { window.employeesData = window.employeesData.filter(e => e.id !== window.currentActiveEmpId); if(window.renderDashboardMasters) window.renderDashboardMasters(); window.closeEmployeeModal(); if(window.updateDashDots) window.updateDashDots(); } };
+
+window.acceptEmployee = function() { 
+    if (!window.currentActiveEmpId) return; 
+    const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
+    if (emp) { 
+        emp.status = 'active'; 
+        emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString(); 
+        if(window.renderDashboardMasters) window.renderDashboardMasters(); 
+        window.renderEmployees(); 
+        if(window.updateDashDots) window.updateDashDots(); 
+        window.openEmployeeModal(emp.id); 
+        if (navigator.vibrate) navigator.vibrate(20); 
+    } 
+};
+
+window.rejectEmployee = function() { 
+    if (!window.currentActiveEmpId) return; 
+    if (confirm("Reject?")) { 
+        window.employeesData = window.employeesData.filter(e => e.id !== window.currentActiveEmpId); 
+        if(window.renderDashboardMasters) window.renderDashboardMasters(); 
+        window.closeEmployeeModal(); 
+        if(window.updateDashDots) window.updateDashDots(); 
+    } 
+};
 
 window.adjustEmpDebt = function(action) {
     if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); if (!emp) return;
