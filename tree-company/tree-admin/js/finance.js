@@ -1,3 +1,3 @@
 // Этот файл зарезервирован для логики раздела ФИНАНСЫ.
 // Здесь будут графики, выплаты мастерам и подсчет выручки.
-console.log("Finance module initialized v5.6.0");
+console.log("Finance module initialized - Anti Cache");
