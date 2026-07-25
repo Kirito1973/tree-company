@@ -79,7 +79,28 @@ body.force-dark .dash-tab { background: rgba(255, 255, 255, 0.08); }
 .dash-tab.active { background: var(--tree-light); box-shadow: 0 8px 20px rgba(31, 150, 81, 0.4); transform: translateY(-4px); }
 .dash-tab.active svg { stroke: white; }
 
-.notif-dot { position: absolute; top: 4px; right: 4px; width: 10px; height: 10px; background-color: #ff4444; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); border: 2px solid var(--bg-base); z-index: 2; pointer-events: none; }
+.notif-dot { 
+    position: absolute; 
+    top: -2px; 
+    right: -2px; 
+    min-width: 18px; 
+    height: 18px; 
+    padding: 0 5px;
+    background-color: #ff4444; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 10px rgba(255, 68, 68, 0.6); 
+    border: 2px solid var(--bg-base); 
+    z-index: 2; 
+    pointer-events: none; 
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
 .notif-dot-card { position: absolute; top: 12px; right: 12px; width: 10px; height: 10px; background-color: #ff4444; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); animation: pulse-dot 1.5s infinite; pointer-events: none; }
 @keyframes pulse-dot { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); } }
 
