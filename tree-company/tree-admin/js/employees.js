@@ -3,6 +3,9 @@ window.setEmpFilter = function(filterValue) {
     window.renderEmployees(); 
 };
 
+window.filterEmployees = function() { window.renderEmployees(); };
+if (document.getElementById('employee-search')) document.getElementById('employee-search').addEventListener('input', window.filterEmployees);
+
 window.renderEmployees = function() {
     const list = document.getElementById('employees-list'); if (!list) return; list.innerHTML = '';
     const activeTab = document.querySelector('#screen-employees .filter-tab.active'); const activeFilter = activeTab ? activeTab.getAttribute('data-emp-filter') : 'all';
@@ -16,3 +19,4 @@ window.renderEmployees = function() {
     });
     window.applyAdminLanguage();
 }
+// Здесь будет openEmployeeModal, saveEmployeeForm и т.д.
