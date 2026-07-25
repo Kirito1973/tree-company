@@ -30,7 +30,7 @@ window.renderClients = function() {
     document.getElementById('clients-total-count').innerText = count;
 };
 
-if (document.getElementById('client-search')) document.getElementById('client-search').addEventListener('input', window.renderClients);
+document.addEventListener('DOMContentLoaded', () => { if (document.getElementById('client-search')) document.getElementById('client-search').addEventListener('input', window.renderClients); });
 
 window.changeDiscount = function(id, val) {
     const inp = document.getElementById(`discount-input-${id}`);
