@@ -1,7 +1,7 @@
 // =========================================================
 // ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.4.1)
 // =========================================================
-const APP_VERSION = '5.4.1';
+const APP_VERSION = '5.4.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => { for (let reg of regs) reg.unregister(); });
