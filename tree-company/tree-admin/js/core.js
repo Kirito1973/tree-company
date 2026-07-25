@@ -76,7 +76,8 @@ window.adminTranslations = {
     "lbl_add_service": { "AM": "Ավելացնել ծառայություն", "RU": "Добавить услугу", "EN": "Add Service" },
     "lbl_price_base": { "AM": "Գինը (֏)", "RU": "Базовая цена (֏)", "EN": "Base Price (֏)" },
     "lbl_icon": { "AM": "SVG Պատկեր", "RU": "SVG Иконка", "EN": "SVG Icon" },
-    "lbl_logo": { "AM": "Լոգո (URL կամ SVG)", "RU": "Лого (URL/SVG)", "EN": "Logo (URL/SVG)" }
+    "lbl_logo": { "AM": "Լոգո (URL կամ SVG)", "RU": "Лого (URL/SVG)", "EN": "Logo (URL/SVG)" },
+    "lbl_master": { "AM": "Վարպետ:", "RU": "Мастер:", "EN": "Master:" }
 };
 
 // ТЕСТОВЫЕ ДАННЫЕ 
@@ -99,13 +100,11 @@ window.cooperationRequestsData = [
 
 // 5 НОВЫХ И 3 СТАРЫХ ОТЗЫВА
 window.reviewsData = [
-    // --- НОВЫЕ (isNew: true) ---
     { id: 'REV-008', isNew: true, clientName: 'Մարիա Գրիգորյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ արագ և որակով տեղադրեցին դռները: Վարպետն իր գործի գիտակն է, անպայման էլի կդիմեմ ձեզ:', date: '25.07.2026' },
     { id: 'REV-007', isNew: true, clientName: 'Տիգրան Հարությունյան', masterName: 'Կարեն Մինասյան', rating: 4.5, text: 'Ամեն ինչ նորմալ էր, շնորհակալություն վարպետին: Մի փոքր աղբ մնաց աշխատանքից հետո, դրա համար կես աստղ իջեցրեցի:', date: '25.07.2026' },
     { id: 'REV-006', isNew: true, clientName: 'Լուսինե', masterName: 'Կարեն (Universal)', rating: 5, text: 'Գերազանց սպասարկում: Խորհուրդ եմ տալիս բոլորին: Շատ բարեհամբույր և պրոֆեսիոնալ մոտեցում:', date: '24.07.2026' },
     { id: 'REV-005', isNew: true, clientName: 'Հայկ Պետրոսյան', masterName: 'Արմեն Սարգսյան', rating: 4, text: 'Լավ աշխատանք, բայց փոքր-ինչ ուշացան պայմանավորված ժամից: Արդյունքը գոհացնող է:', date: '24.07.2026' },
     { id: 'REV-004', isNew: true, clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով: Շնորհակալություն ամբողջ թիմին:', date: '23.07.2026' },
-    // --- СТАРЫЕ (isNew: false) ---
     { id: 'REV-003', isNew: false, clientName: 'Արթուր', masterName: 'Արամ Գևորգյան', rating: 3.5, text: 'Միջին որակի աշխատանք, սպասում էի ավելին: Բայց գինը մատչելի էր, այնպես որ նորմալ է:', date: '20.07.2026' },
     { id: 'REV-002', isNew: false, clientName: 'Գոհար', masterName: 'Տիգրան Վարդանյան', rating: 5, text: 'Հիանալի աշխատանք: Շնորհակալություն արագ արձագանքելու համար:', date: '18.07.2026' },
     { id: 'REV-001', isNew: false, clientName: 'Վարդան', masterName: 'Կարեն Մինասյան', rating: 4, text: 'Լավ մաստեր էր, բայց նյութերի գները մի քիչ բարձր են շուկայականից:', date: '15.07.2026' }
