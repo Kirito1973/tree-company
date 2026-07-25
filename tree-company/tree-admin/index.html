@@ -153,10 +153,10 @@
             </div>
 
             <div class="filter-tabs">
-                <button class="filter-tab active" data-filter="all" data-i18n="filter_all">Բոլորը</button>
-                <button class="filter-tab" data-filter="new" data-i18n="filter_new">Նոր</button>
-                <button class="filter-tab" data-filter="progress" data-i18n="filter_progress">Ընթացքում</button>
-                <button class="filter-tab" data-filter="completed" data-i18n="filter_completed">Ավարտված</button>
+                <button class="filter-tab active" data-filter="all" data-i18n="filter_all" onclick="setOrderFilter('all')">Բոլորը</button>
+                <button class="filter-tab" data-filter="new" data-i18n="filter_new" onclick="setOrderFilter('new')">Նոր</button>
+                <button class="filter-tab" data-filter="progress" data-i18n="filter_progress" onclick="setOrderFilter('progress')">Ընթացքում</button>
+                <button class="filter-tab" data-filter="completed" data-i18n="filter_completed" onclick="setOrderFilter('completed')">Ավարտված</button>
             </div>
             <div class="glass-panel"><div class="entity-list" id="orders-list"></div></div>
         </section>
@@ -319,13 +319,6 @@
         </button>
     </nav>
 
-    <script src="js/core.js?v=5.3.0"></script>
-    <script src="js/dashboard.js?v=5.3.0"></script>
-    <script src="js/orders.js?v=5.3.0"></script>
-    <script src="js/finance.js?v=5.3.0"></script>
-    <script src="js/employees.js?v=5.3.0"></script>
-    <script src="js/partners.js?v=5.3.0"></script>
-    <script src="js/clients.js?v=5.3.0"></script>
-    <script src="js/management.js?v=5.3.0"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
