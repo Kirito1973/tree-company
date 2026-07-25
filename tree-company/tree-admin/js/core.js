@@ -1,4 +1,4 @@
-const APP_VERSION = '5.1.0';
+const APP_VERSION = '5.2.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => { for (let reg of regs) reg.unregister(); });
@@ -11,7 +11,7 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js?v=' + APP_VERSION).then(reg => reg.update()); });
 }
 
-const adminTranslations = {
+window.adminTranslations = {
     "tab_dashboard": { "AM": "Գլխավոր", "RU": "Главная", "EN": "Dashboard" },
     "tab_orders": { "AM": "Պատվերներ", "RU": "Заказы", "EN": "Orders" },
     "tab_finance": { "AM": "Ֆինանսներ", "RU": "Финансы", "EN": "Finance" },
@@ -28,7 +28,7 @@ const adminTranslations = {
     "btn_accept_order": { "AM": "Ընդունել", "RU": "Принять", "EN": "Accept" },
     "btn_reject_order": { "AM": "Մերժել", "RU": "Отказать", "EN": "Reject" },
     "filter_all": { "AM": "Բոլորը", "RU": "Все", "EN": "All" },
-    "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
+    "filter_new": { "AM": "Նոր (Առանց վարպետի)", "RU": "Новые", "EN": "New" },
     "filter_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
     "filter_completed": { "AM": "Ավարտված", "RU": "Завершенные", "EN": "Completed" },
     "status_incoming": { "AM": "Սպասում է", "RU": "Ожидает", "EN": "Pending" },
@@ -52,19 +52,19 @@ const adminTranslations = {
     "cat_electro": { "AM": "Էլեկտրիկներ", "RU": "Электрики", "EN": "Electricians" },
     "cat_universal": { "AM": "Ունիվերսալ", "RU": "Универсалы", "EN": "Universal" },
     "status_check": { "AM": "Ստուգում", "RU": "Проверка", "EN": "Checking" },
-    "lbl_turnover": { "AM": "Շրջանառություն (Ամիս)", "RU": "Оборот (Мес)", "EN": "Turnover (Mo)" },
-    "lbl_income": { "AM": "Եկամուտ (15%)", "RU": "Доход (15%)", "EN": "Income (15%)" },
-    "lbl_history": { "AM": "Վճարումների պատմություն", "RU": "История начислений", "EN": "Payment History" },
-    "lbl_manage_promo": { "AM": "Զեղչի առաջարկի կառավարում", "RU": "Управление скидками", "EN": "Manage offer" },
+    "lbl_turnover": { "AM": "Շրջանառություն", "RU": "Оборот", "EN": "Turnover" },
+    "lbl_income": { "AM": "Եկամուտ", "RU": "Доход", "EN": "Income" },
+    "lbl_history": { "AM": "Պատմություն", "RU": "История", "EN": "History" },
+    "lbl_manage_promo": { "AM": "Կառավարում", "RU": "Управление", "EN": "Manage" },
     "btn_save": { "AM": "Պահպանել", "RU": "Сохранить", "EN": "Save" },
-    "lbl_all_clients": { "AM": "Բոլոր հաճախորդները", "RU": "Все клиенты", "EN": "All clients" },
+    "lbl_all_clients": { "AM": "Բոլորը", "RU": "Все клиенты", "EN": "All clients" },
     "lbl_name": { "AM": "Անուն:", "RU": "Имя:", "EN": "Name:" },
     "lbl_phone": { "AM": "Հեռ.:", "RU": "Тел.:", "EN": "Phone:" },
     "lbl_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
     "lbl_master": { "AM": "Գլխավոր:", "RU": "Мастер:", "EN": "Master:" }
 };
 
-let currentAdminLang = localStorage.getItem('admin_app_lang') || 'AM';
+window.currentAdminLang = localStorage.getItem('admin_app_lang') || 'AM';
 let rotationDegrees = 0;
 
 window.toggleTheme = function(e) {
@@ -78,29 +78,29 @@ window.toggleTheme = function(e) {
 
 window.toggleLangMenu = function(e) { e.stopPropagation(); document.getElementById('lang-switcher').classList.toggle('open'); };
 window.setAdminLang = function(lang, e) {
-    e.stopPropagation(); currentAdminLang = lang; localStorage.setItem('admin_app_lang', currentAdminLang);
+    e.stopPropagation(); window.currentAdminLang = lang; localStorage.setItem('admin_app_lang', window.currentAdminLang);
     document.querySelectorAll('.lang-tab').forEach(tab => { if (tab.getAttribute('data-lang') === lang) tab.classList.add('active'); else tab.classList.remove('active'); });
     const activeTab = document.querySelector(`.lang-tab[data-lang="${lang}"]`); if(activeTab) document.getElementById('current-lang-btn').innerHTML = activeTab.innerHTML;
-    applyAdminLanguage(); 
-    if(window.renderDashboardOrders) renderDashboardOrders();
-    if(window.renderOrders) renderOrders(); 
-    if(window.renderEmployees) renderEmployees(); 
-    if(window.renderClients) renderClients(); 
+    window.applyAdminLanguage(); 
+    if(window.renderDashboardOrders) window.renderDashboardOrders();
+    if(window.renderOrders) window.renderOrders(); 
+    if(window.renderEmployees) window.renderEmployees(); 
+    if(window.renderClients) window.renderClients(); 
     document.getElementById('lang-switcher').classList.remove('open');
 };
 
 document.addEventListener('click', () => { const switcher = document.getElementById('lang-switcher'); if(switcher) switcher.classList.remove('open'); });
 
-window.getEmpTypeLabel = function(type) { const key = 'cat_' + type; if (adminTranslations[key] && adminTranslations[key][currentAdminLang]) return adminTranslations[key][currentAdminLang]; return type; };
+window.getEmpTypeLabel = function(type) { const key = 'cat_' + type; if (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) return window.adminTranslations[key][window.currentAdminLang]; return type; };
 
 window.applyAdminLanguage = function() {
-    document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (adminTranslations[key] && adminTranslations[key][currentAdminLang]) el.innerHTML = adminTranslations[key][currentAdminLang]; });
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (adminTranslations[key] && adminTranslations[key][currentAdminLang]) el.placeholder = adminTranslations[key][currentAdminLang]; });
+    document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) el.innerHTML = window.adminTranslations[key][window.currentAdminLang]; });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) el.placeholder = window.adminTranslations[key][window.currentAdminLang]; });
 }
 
-// === МОК ДАННЫЕ ===
-window.ordersData = [ { id: 'ORD-004', status: 'incoming', createdAt: '25.07.2026', completedAt: null, clientName: 'Արամ', clientPhone: '+374 98 123 789', address: 'Տերյան 50', worker: 'Չկա', workerPhone: '', services: [{ name: 'Էլեկտրիկ', qty: 1, price: 5000, done: false }], profit: 500 } ];
-window.employeesData = [ { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', phone: '+374 77 999 888', exp: '6', rating: 4.8, birthDate: '12.05.1990', address: 'Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: [] } ];
+// === БАЗА ДАННЫХ ===
+window.ordersData = [ { id: 'ORD-004', status: 'incoming', createdAt: '25.07.2026', completedAt: null, clientName: 'Արամ', clientPhone: '+374 98 123 789', address: 'Տերյան 50', worker: 'Չկա', workerPhone: '', services: [{ name: 'Էլեկտրիկ', qty: 1, price: 5000, done: false }], profit: 500 }, { id: 'ORD-003', status: 'new', createdAt: '15.07.2026', completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Աբովյան 12', worker: 'Չկա', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000 } ];
+window.employeesData = [ { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', phone: '+374 77 999 888', exp: '6', rating: 4.8, birthDate: '12.05.1990', address: 'Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: [] }, { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', phone: '+374 98 000 111', exp: '2', rating: 0.0, birthDate: '05.08.1998', address: 'Րաֆֆու 10', accessKey: '', companyDebt: 0, workingDates: [] } ];
 window.clientsData = [ { id: 'TR-1234', name: 'Արամ', phone: '+374 98 123 789', address: 'Տերյան 50', discount: 0 } ];
 window.servicesData = [ { id: 'srv1', name: 'Դռներ', price: 15000, icon: '<svg></svg>', status: 'active' } ];
 window.partnersData = [ { id: 'p1', name: 'BuildingCorp', logo: '<svg></svg>' } ];
@@ -108,6 +108,7 @@ window.reviewsData = [ { id: 'REV-001', isNew: true, clientName: 'Աննա', mas
 window.cooperationRequestsData = [ { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն', phone: '+374 99 112 233', text: 'Առաջարկում ենք 20% զեղչ:', date: '24.07.2026', status: 'pending' } ];
 
 window.generateOrderId = function() { return 'ORD-' + Math.floor(Math.random() * 1000); };
+window.generateEmpId = function() { return 'EMP-' + Math.floor(Math.random() * 1000); };
 window.getCurrentDateString = function() { const d = new Date(); return d.getDate()+'.'+(d.getMonth()+1)+'.'+d.getFullYear(); };
 
 window.switchTab = function(screenId, btnElement) {
@@ -117,28 +118,27 @@ window.switchTab = function(screenId, btnElement) {
     btnElement.classList.add('active');
     if (navigator.vibrate) navigator.vibrate(20); 
 
-    if(screenId === 'screen-dashboard' && window.switchDashboardView) switchDashboardView('overview');
-    if(screenId === 'screen-orders' && window.filterOrders) filterOrders();
-    if(screenId === 'screen-employees' && window.renderEmployees) renderEmployees();
-    if(screenId === 'screen-partners' && window.renderAdminPartners) renderAdminPartners();
-    if(screenId === 'screen-clients' && window.renderClients) renderClients();
+    if(screenId === 'screen-dashboard' && window.switchDashboardView) window.switchDashboardView('overview');
+    if(screenId === 'screen-orders' && window.filterOrders) window.filterOrders();
+    if(screenId === 'screen-employees' && window.renderEmployees) window.renderEmployees();
+    if(screenId === 'screen-partners' && window.renderAdminPartners) window.renderAdminPartners();
+    if(screenId === 'screen-clients' && window.renderClients) window.renderClients();
     if(screenId === 'screen-management' && window.switchManagementTab) {
         let activeMngTab = document.querySelector('#screen-management .view-switch-btn.active') || document.querySelector('#screen-management .view-switch-btn');
-        switchManagementTab('promo', activeMngTab);
+        window.switchManagementTab('promo', activeMngTab);
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    applyAdminLanguage();
+    window.applyAdminLanguage();
     const themeIcon = document.getElementById('theme-icon');
     if (themeIcon) themeIcon.innerHTML = document.body.classList.contains('force-dark') ? `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>` : `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`; 
 
-    // ================= ЛОГИКА АВТОРИЗАЦИИ (PIN-КОД) =================
+    // АВТОРИЗАЦИЯ PIN
     const authScreen = document.getElementById('auth-screen');
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
 
-    // Проверяем сессию. Если авторизован - скрываем экран
     if (sessionStorage.getItem('tree_authenticated') === 'true') {
         authScreen.classList.add('hidden');
     } else {
@@ -147,22 +147,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pinInput.addEventListener('input', (e) => {
         authError.style.opacity = '0';
-        let val = e.target.value.replace(/[^0-9]/g, ''); // Только цифры
+        let val = e.target.value.replace(/[^0-9]/g, '');
         e.target.value = val;
-
         if (val.length === 6) {
             if (val === '000000') {
-                // ПАРОЛЬ ВЕРНЫЙ
                 sessionStorage.setItem('tree_authenticated', 'true');
                 authScreen.classList.add('hidden');
                 pinInput.blur();
                 if (navigator.vibrate) navigator.vibrate(20);
             } else {
-                // ПАРОЛЬ НЕВЕРНЫЙ
                 if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
                 authError.style.opacity = '1';
-                pinInput.value = ''; // Очищаем поле для нового ввода
+                pinInput.value = ''; 
             }
         }
     });
+
+    if(window.updateDashDots) window.updateDashDots();
 });
