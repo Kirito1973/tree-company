@@ -30,7 +30,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=5.5.0">
+    <link rel="stylesheet" href="style.css?v=5.6.0">
 </head>
 <body>
 
@@ -285,7 +285,9 @@
             </div>
         </section>
 
+        <!-- КОНТЕЙНЕР ДЛЯ ВСЕХ МОДАЛЬНЫХ ОКОН -->
         <div id="modals-container">
+            
             <!-- Модалка отзыва -->
             <div id="review-modal" class="modal-overlay" onclick="closeReviewModal()">
                 <div class="modal-content glass-panel" onclick="event.stopPropagation()">
@@ -308,7 +310,7 @@
                     <p id="modal-coop-text" style="font-size:12px; margin-top:15px; color:var(--text);"></p>
                     <div style="display:flex; gap:10px; margin-top:20px;">
                         <button class="submit-btn success" onclick="acceptCoop()" data-i18n="btn_accept_order" style="margin-top:0;">Принять</button>
-                        <button class="submit-btn" onclick="rejectCoop()" data-i18n="btn_reject_order" style="margin-top:0; background:rgba(255,68,68,0.2); color:#ff4444; box-shadow:none;">Отклонить</button>
+                        <button class="submit-btn" onclick="rejectCoop()" data-i18n="btn_reject_order" style="margin:0; background:rgba(255,68,68,0.2); color:#ff4444; box-shadow:none;">Отклонить</button>
                     </div>
                 </div>
             </div>
@@ -539,13 +541,13 @@
     </nav>
 
     <!-- Ровно 8 файлов логики -->
-    <script src="js/core.js?v=5.5.0"></script>
-    <script src="js/dashboard.js?v=5.5.0"></script>
-    <script src="js/orders.js?v=5.5.0"></script>
-    <script src="js/finance.js?v=5.5.0"></script>
-    <script src="js/employees.js?v=5.5.0"></script>
-    <script src="js/partners.js?v=5.5.0"></script>
-    <script src="js/clients.js?v=5.5.0"></script>
-    <script src="js/management.js?v=5.5.0"></script>
+    <script src="js/core.js?v=5.6.0"></script>
+    <script src="js/dashboard.js?v=5.6.0"></script>
+    <script src="js/orders.js?v=5.6.0"></script>
+    <script src="js/finance.js?v=5.6.0"></script>
+    <script src="js/employees.js?v=5.6.0"></script>
+    <script src="js/partners.js?v=5.6.0"></script>
+    <script src="js/clients.js?v=5.6.0"></script>
+    <script src="js/management.js?v=5.6.0"></script>
 </body>
 </html>
