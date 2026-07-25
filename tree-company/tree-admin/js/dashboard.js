@@ -48,7 +48,7 @@ window.renderDashboardOverview = function() {
 window.renderDashboardOrders = function() {
     const list = document.getElementById('dash-orders-list'); list.innerHTML = '';
     window.ordersData.filter(o => o.status === 'incoming').forEach(order => {
-        list.innerHTML += `<div class="entity-card"><div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status incoming">New Req</span></div><div class="entity-meta">${order.clientName} | ${order.clientPhone}</div></div>`;
+        list.innerHTML += `<div class="entity-card"><div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status incoming">New</span></div><div class="entity-meta">${order.clientName} | ${order.clientPhone}</div></div>`;
     });
 };
 
@@ -66,4 +66,13 @@ window.renderDashboardPartnerRequests = function() {
     });
 };
 
-document.addEventListener('DOMContentLoaded', () => { window.updateDashDots(); window.switchDashboardView('overview'); });
+window.openReviewModal = function(id) {
+    const rev = window.reviewsData.find(r => r.id === id); if(!rev) return;
+    if (rev.isNew) { rev.isNew = false; window.renderDashboardOverview(); window.updateDashDots(); }
+    document.getElementById('modal-rev-client').innerText = rev.clientName;
+    document.getElementById('modal-rev-stars').innerText = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
+    document.getElementById('modal-rev-text').innerText = rev.text;
+    document.getElementById('modal-rev-date').innerText = rev.date;
+    document.getElementById('review-modal').classList.add('active');
+};
+window.closeReviewModal = function() { document.getElementById('review-modal').classList.remove('active'); };
