@@ -1,16 +1,16 @@
-const CACHE_NAME = 'tree-admin-v5.0.0';
+const CACHE_NAME = 'tree-admin-v5.1.0';
 const ASSETS = [
     './',
     './index.html',
-    './style.css?v=5.0.0',
-    './js/core.js?v=5.0.0',
-    './js/dashboard.js?v=5.0.0',
-    './js/orders.js?v=5.0.0',
-    './js/employees.js?v=5.0.0',
-    './js/finance.js?v=5.0.0',
-    './js/partners.js?v=5.0.0',
-    './js/clients.js?v=5.0.0',
-    './js/management.js?v=5.0.0',
+    './style.css?v=5.1.0',
+    './js/core.js?v=5.1.0',
+    './js/dashboard.js?v=5.1.0',
+    './js/orders.js?v=5.1.0',
+    './js/finance.js?v=5.1.0',
+    './js/employees.js?v=5.1.0',
+    './js/partners.js?v=5.1.0',
+    './js/clients.js?v=5.1.0',
+    './js/management.js?v=5.1.0',
     './manifest.json'
 ];
 
