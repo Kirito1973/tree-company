@@ -1,7 +1,7 @@
 // =========================================================
-// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.6.0)
+// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.6.1)
 // =========================================================
-const APP_VERSION = '5.6.0';
+const APP_VERSION = '5.6.1';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => { for (let reg of regs) reg.unregister(); });
@@ -83,32 +83,36 @@ window.adminTranslations = {
     "lbl_logo": { "AM": "Լոգո (URL կամ SVG)", "RU": "Лого (URL/SVG)", "EN": "Logo (URL/SVG)" }
 };
 
-// ТЕСТОВЫЕ ДАННЫЕ (с новыми заявками для тестов индикаторов)
+// ТЕСТОВЫЕ ДАННЫЕ 
 window.ordersData = [
     { id: 'ORD-004', status: 'incoming', createdAt: '25.07.2026', completedAt: null, clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50', worker: 'Չկա', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500 },
     { id: 'ORD-005', status: 'incoming', createdAt: '26.07.2026', completedAt: null, clientName: 'Լևոն Սարգսյան', clientPhone: '+374 91 112 233', address: 'Երևան, Կիևյան 15', worker: 'Չկա', workerPhone: '', services: [{ name: 'Խողովակների փոխարինում', qty: 1, price: 12000, done: false }], profit: 1200 },
-    { id: 'ORD-006', status: 'incoming', createdAt: '26.07.2026', completedAt: null, clientName: 'Մարիամ Գրիգորյան', clientPhone: '+374 99 445 566', address: 'Երևան, Բաղրամյան 2', worker: 'Չկա', workerPhone: '', services: [{ name: 'Լամինատի տեղադրում', qty: 20, price: 2000, done: false }], profit: 4000 },
-    { id: 'ORD-003', status: 'new', createdAt: '15.07.2026', completedAt: null, clientName: 'Գոռ Վարդանյան', clientPhone: '+374 95 188 038', address: 'Երևան, Աբովյան 12', worker: 'Չկա', workerPhone: '', services: [{ name: 'Դռների տեղադրում (MDF)', qty: 2, price: 15000, done: false }], profit: 3000 },
-    { id: 'ORD-002', status: 'progress', createdAt: '14.07.2026', completedAt: null, clientName: 'Աննա Հովհաննիսյան', clientPhone: '+374 91 555 444', address: 'Երևան, Մաշտոցի 4', worker: 'Արմեն Սարգսյան', workerPhone: '+374 77 999 888', services: [{ name: 'Պլաստիկ պլինտուս', qty: 45, price: 600, done: true }], profit: 2900 }
+    { id: 'ORD-006', status: 'incoming', createdAt: '26.07.2026', completedAt: null, clientName: 'Մարիամ Գրիգորյան', clientPhone: '+374 99 445 566', address: 'Երևան, Բաղրամյան 2', worker: 'Չկա', workerPhone: '', services: [{ name: 'Լամինատի տեղադրում', qty: 20, price: 2000, done: false }], profit: 4000 }
 ];
 
 window.employeesData = [
     { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', phone: '+374 77 999 888', exp: '6', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: ['20.07.2026'] },
     { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', phone: '+374 98 000 111', exp: '2', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '', companyDebt: 0, workingDates: [] },
-    { id: 'EMP-006', status: 'pending', name: 'Կարեն Մինասյան', type: 'doors', phone: '+374 55 777 888', exp: '5', rating: 0.0, birthDate: '10.10.1995', address: 'Երևան, Շիրազի 5', accessKey: '', companyDebt: 0, workingDates: [] },
-    { id: 'EMP-007', status: 'pending', name: 'Տիգրան Վարդանյան', type: 'universal', phone: '+374 93 222 333', exp: '8', rating: 0.0, birthDate: '22.04.1988', address: 'Երևան, Պարոնյան 12', accessKey: '', companyDebt: 0, workingDates: [] }
+    { id: 'EMP-006', status: 'pending', name: 'Կարեն Մինասյան', type: 'doors', phone: '+374 55 777 888', exp: '5', rating: 0.0, birthDate: '10.10.1995', address: 'Երևան, Շիրազի 5', accessKey: '', companyDebt: 0, workingDates: [] }
 ];
 
 window.cooperationRequestsData = [
     { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով:', date: '24.07.2026', status: 'pending' },
-    { id: 'COOP-REQ-02', company: 'DoorTech', contact: 'Աննա', phone: '+374 98 555 666', text: 'Պատրաստ ենք տրամադրել MDF դռներ մեծածախ գներով:', date: '25.07.2026', status: 'pending' },
-    { id: 'COOP-REQ-03', company: 'ElectroVolt', contact: 'Գևորգ', phone: '+374 91 777 888', text: 'Էլեկտրական լարերի և աքսեսուարների ներմուծում անմիջապես արտադրողից:', date: '26.07.2026', status: 'pending' }
+    { id: 'COOP-REQ-02', company: 'DoorTech', contact: 'Աննա', phone: '+374 98 555 666', text: 'Պատրաստ ենք տրամադրել MDF դռներ մեծածախ գներով:', date: '25.07.2026', status: 'pending' }
 ];
 
+// 5 НОВЫХ И 3 СТАРЫХ ОТЗЫВА
 window.reviewsData = [
-    { id: 'REV-001', isNew: true, clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով:', date: '22.07.2026' },
-    { id: 'REV-002', isNew: true, clientName: 'Հայկ Պետրոսյան', masterName: 'Արմեն Սարգսյան', rating: 4, text: 'Լավ աշխատանք, բայց փոքր-ինչ ուշացան:', date: '25.07.2026' },
-    { id: 'REV-003', isNew: true, clientName: 'Լուսինե', masterName: 'Կարեն (Universal)', rating: 5, text: 'Գերազանց սպասարկում: Խորհուրդ եմ տալիս բոլորին:', date: '26.07.2026' }
+    // --- НОВЫЕ (isNew: true) ---
+    { id: 'REV-008', isNew: true, clientName: 'Մարիա Գրիգորյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ արագ և որակով տեղադրեցին դռները: Վարպետն իր գործի գիտակն է, անպայման էլի կդիմեմ ձեզ:', date: '25.07.2026' },
+    { id: 'REV-007', isNew: true, clientName: 'Տիգրան Հարությունյան', masterName: 'Կարեն Մինասյան', rating: 4.5, text: 'Ամեն ինչ նորմալ էր, շնորհակալություն վարպետին: Մի փոքր աղբ մնաց աշխատանքից հետո, դրա համար կես աստղ իջեցրեցի:', date: '25.07.2026' },
+    { id: 'REV-006', isNew: true, clientName: 'Լուսինե', masterName: 'Կարեն (Universal)', rating: 5, text: 'Գերազանց սպասարկում: Խորհուրդ եմ տալիս բոլորին: Շատ բարեհամբույր և պրոֆեսիոնալ մոտեցում:', date: '24.07.2026' },
+    { id: 'REV-005', isNew: true, clientName: 'Հայկ Պետրոսյան', masterName: 'Արմեն Սարգսյան', rating: 4, text: 'Լավ աշխատանք, բայց փոքր-ինչ ուշացան պայմանավորված ժամից: Արդյունքը գոհացնող է:', date: '24.07.2026' },
+    { id: 'REV-004', isNew: true, clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով: Շնորհակալություն ամբողջ թիմին:', date: '23.07.2026' },
+    // --- СТАРЫЕ (isNew: false) ---
+    { id: 'REV-003', isNew: false, clientName: 'Արթուր', masterName: 'Արամ Գևորգյան', rating: 3.5, text: 'Միջին որակի աշխատանք, սպասում էի ավելին: Բայց գինը մատչելի էր, այնպես որ նորմալ է:', date: '20.07.2026' },
+    { id: 'REV-002', isNew: false, clientName: 'Գոհար', masterName: 'Տիգրան Վարդանյան', rating: 5, text: 'Հիանալի աշխատանք: Շնորհակալություն արագ արձագանքելու համար:', date: '18.07.2026' },
+    { id: 'REV-001', isNew: false, clientName: 'Վարդան', masterName: 'Կարեն Մինասյան', rating: 4, text: 'Լավ մաստեր էր, բայց նյութերի գները մի քիչ բարձր են շուկայականից:', date: '15.07.2026' }
 ];
 
 window.clientsData = [ { id: 'TR-1234', name: 'Արամ Խաչատրյան', phone: '+374 98 123 789', address: 'Երևան, Տերյան 50', discount: 0 } ];
