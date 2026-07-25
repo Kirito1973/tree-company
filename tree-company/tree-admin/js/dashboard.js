@@ -49,23 +49,33 @@ window.renderDashboardOverview = function() {
 
     const revList = document.getElementById('dash-reviews-list');
     revList.innerHTML = '';
+    
+    // Безопасное получение перевода
+    const masterLabel = (window.adminTranslations['lbl_master'] && window.adminTranslations['lbl_master'][window.currentAdminLang]) ? window.adminTranslations['lbl_master'][window.currentAdminLang] : 'Мастер:';
+
     if(window.reviewsData.length > 0) {
         window.reviewsData.slice().forEach(rev => {
             const stars = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
             let newDotHtml = rev.isNew ? `<div class="notif-dot-card"></div>` : '';
+            
+            // Если отзыв не новый, делаем карточку чуть прозрачнее, чтобы отличать визуально
+            const opacityStyle = rev.isNew ? 'opacity: 1;' : 'opacity: 0.65;';
+
             revList.innerHTML += `
-                <div class="entity-card" style="cursor:pointer; position:relative;" onclick="openReviewModal('${rev.id}')">
+                <div class="entity-card" style="cursor:pointer; position:relative; ${opacityStyle}" onclick="openReviewModal('${rev.id}')">
                     ${newDotHtml}
                     <div class="entity-header">
                         <span class="entity-id" style="color:var(--text); font-size: 12px;">${rev.clientName}</span>
                         <span style="color:#FFB347; font-size:12px; font-weight:900;">${stars}</span>
                     </div>
-                    <div class="entity-meta" style="margin-top:4px;">${window.adminTranslations['lbl_master'][window.currentAdminLang]} <b style="color:var(--tree-light);">${rev.masterName}</b></div>
+                    <div class="entity-meta" style="margin-top:4px;">${masterLabel} <b style="color:var(--tree-light);">${rev.masterName}</b></div>
                     <div class="truncate-text" style="font-size: 11px; font-weight: 600; font-style: italic; color: var(--text-sec); margin-top: 8px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 8px;">"${rev.text}"</div>
                     <div style="font-size: 9px; color: var(--text-sec); text-align: right; margin-top: 6px;">${rev.date}</div>
                 </div>
             `;
         });
+    } else {
+        revList.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">Нет отзывов</div>`;
     }
 };
 
