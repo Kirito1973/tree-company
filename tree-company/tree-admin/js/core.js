@@ -1,7 +1,7 @@
 // =========================================================
-// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.4.1)
+// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.5.0)
 // =========================================================
-const APP_VERSION = '5.4.0';
+const APP_VERSION = '5.5.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => { for (let reg of regs) reg.unregister(); });
@@ -152,7 +152,7 @@ window.applyAdminLanguage = function() {
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) el.placeholder = window.adminTranslations[key][window.currentAdminLang]; });
 };
 
-// ГЛАВНАЯ НАВИГАЦИЯ
+// ГЛАВНАЯ НАВИГАЦИЯ (Нижнее меню)
 window.switchTab = function(screenId, btnElement) {
     document.querySelectorAll('.admin-screen').forEach(scr => scr.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
@@ -180,21 +180,6 @@ function initApp() {
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
 
-    function checkPinCode(val) {
-        if (val === '000000') {
-            sessionStorage.setItem('tree_authenticated', 'true');
-            authScreen.classList.add('hidden');
-            pinInput.blur();
-            if (navigator.vibrate) navigator.vibrate(20);
-            if(window.updateDashDots) window.updateDashDots();
-            if(window.switchDashboardView) window.switchDashboardView('overview');
-        } else {
-            if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
-            authError.style.opacity = '1';
-            pinInput.value = ''; 
-        }
-    }
-
     if (sessionStorage.getItem('tree_authenticated') === 'true') {
         authScreen.classList.add('hidden');
         if(window.updateDashDots) window.updateDashDots();
@@ -208,9 +193,26 @@ function initApp() {
 
     pinInput.addEventListener('input', (e) => {
         authError.style.opacity = '0';
-        const val = e.target.value.trim();
-        if (val.length >= 6) {
-            checkPinCode(val.substring(0, 6)); // Отправляем ровно 6 символов, даже если клавиатура добавила пробел
+        const val = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = val;
+        
+        // Быстрый вход, если введен пароль "6000", "000000", или пароль любого активного сотрудника
+        const emp = window.employeesData.find(emp => emp.accessKey === val && emp.status === 'active');
+        const isMaster = (val === '6000' || val === '000000' || val === '006000' || val === '600000');
+        
+        if (isMaster || emp) {
+            sessionStorage.setItem('tree_authenticated', 'true');
+            authScreen.classList.add('hidden');
+            pinInput.blur();
+            pinInput.value = ''; // Очищаем поле для безопасности
+            if (navigator.vibrate) navigator.vibrate(20);
+            if(window.updateDashDots) window.updateDashDots();
+            if(window.switchDashboardView) window.switchDashboardView('overview');
+        } else if (val.length >= 6) {
+            // Показываем ошибку только если введено 6 символов, и совпадений не найдено
+            if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
+            authError.style.opacity = '1';
+            pinInput.value = ''; 
         }
     });
 
@@ -221,7 +223,6 @@ function initApp() {
     });
 }
 
-// Надежный запуск скрипта
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
