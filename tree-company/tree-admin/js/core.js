@@ -1,7 +1,7 @@
 // =========================================================
-// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.4.0)
+// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Версия 5.4.1)
 // =========================================================
-const APP_VERSION = '5.4.0';
+const APP_VERSION = '5.4.1';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
     if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => { for (let reg of regs) reg.unregister(); });
@@ -152,7 +152,7 @@ window.applyAdminLanguage = function() {
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) el.placeholder = window.adminTranslations[key][window.currentAdminLang]; });
 };
 
-// ГЛАВНАЯ НАВИГАЦИЯ (Нижнее меню)
+// ГЛАВНАЯ НАВИГАЦИЯ
 window.switchTab = function(screenId, btnElement) {
     document.querySelectorAll('.admin-screen').forEach(scr => scr.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
@@ -171,17 +171,36 @@ window.switchTab = function(screenId, btnElement) {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+// ИНИЦИАЛИЗАЦИЯ И ЛОГИКА АВТОРИЗАЦИИ
+function initApp() {
     updateThemeIcon();
     window.applyAdminLanguage();
     
-    // ЛОГИКА АВТОРИЗАЦИИ (PIN)
     const authScreen = document.getElementById('auth-screen');
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
 
+    function checkPinCode(val) {
+        if (val === '000000') {
+            sessionStorage.setItem('tree_authenticated', 'true');
+            authScreen.classList.add('hidden');
+            pinInput.blur();
+            if (navigator.vibrate) navigator.vibrate(20);
+            if(window.updateDashDots) window.updateDashDots();
+            if(window.switchDashboardView) window.switchDashboardView('overview');
+        } else {
+            if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
+            authError.style.opacity = '1';
+            pinInput.value = ''; 
+        }
+    }
+
     if (sessionStorage.getItem('tree_authenticated') === 'true') {
         authScreen.classList.add('hidden');
+        if(window.updateDashDots) window.updateDashDots();
+        if(window.switchDashboardView) window.switchDashboardView('overview');
+        if(window.renderOrders) window.renderOrders();
+        if(window.renderEmployees) window.renderEmployees();
     } else {
         authScreen.classList.remove('hidden');
         setTimeout(() => pinInput.focus(), 300);
@@ -189,21 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     pinInput.addEventListener('input', (e) => {
         authError.style.opacity = '0';
-        let val = e.target.value.replace(/[^0-9]/g, '');
-        e.target.value = val;
-        if (val.length === 6) {
-            if (val === '000000') {
-                sessionStorage.setItem('tree_authenticated', 'true');
-                authScreen.classList.add('hidden');
-                pinInput.blur();
-                if (navigator.vibrate) navigator.vibrate(20);
-                if(window.updateDashDots) window.updateDashDots();
-                if(window.switchDashboardView) window.switchDashboardView('overview');
-            } else {
-                if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
-                authError.style.opacity = '1';
-                pinInput.value = ''; 
-            }
+        const val = e.target.value.trim();
+        if (val.length >= 6) {
+            checkPinCode(val.substring(0, 6)); // Отправляем ровно 6 символов, даже если клавиатура добавила пробел
         }
     });
 
@@ -212,12 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.hidden || document.visibilityState === 'hidden') { privacyScreen.style.opacity = '1'; } 
         else { privacyScreen.style.opacity = '0'; }
     });
+}
 
-    // Инициализация при старте (если авторизован)
-    if (sessionStorage.getItem('tree_authenticated') === 'true') {
-        if(window.updateDashDots) window.updateDashDots();
-        if(window.switchDashboardView) window.switchDashboardView('overview');
-        if(window.renderOrders) window.renderOrders();
-        if(window.renderEmployees) window.renderEmployees();
-    }
-});
+// Надежный запуск скрипта
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
