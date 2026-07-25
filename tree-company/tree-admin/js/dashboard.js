@@ -50,7 +50,7 @@ window.renderDashboardOverview = function() {
     const revList = document.getElementById('dash-reviews-list');
     revList.innerHTML = '';
     if(window.reviewsData.length > 0) {
-        window.reviewsData.slice().reverse().forEach(rev => {
+        window.reviewsData.slice().forEach(rev => {
             const stars = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
             let newDotHtml = rev.isNew ? `<div class="notif-dot-card"></div>` : '';
             revList.innerHTML += `
@@ -73,6 +73,7 @@ window.openReviewModal = function(id) {
     const rev = window.reviewsData.find(r => r.id === id);
     if(!rev) return;
     
+    // Снимаем статус "Новый" и моментально обновляем интерфейс
     if (rev.isNew) { 
         rev.isNew = false; 
         window.renderDashboardOverview(); 
@@ -84,6 +85,7 @@ window.openReviewModal = function(id) {
     document.getElementById('modal-rev-text').innerText = rev.text;
     document.getElementById('modal-rev-date').innerText = rev.date;
     document.getElementById('review-modal').classList.add('active');
+    
     if (navigator.vibrate) navigator.vibrate(10);
 };
 
