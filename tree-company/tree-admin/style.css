@@ -140,10 +140,6 @@ body.force-dark .entity-card { background: rgba(0, 0, 0, 0.2); }
 .entity-title { font-size: 13px; font-weight: 800; color: var(--text); }
 .entity-meta { font-size: 10px; color: var(--text-sec); font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
 
-.loader-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; gap: 12px; }
-.spinner { width: 32px; height: 32px; border: 3px solid rgba(31, 150, 81, 0.2); border-top-color: var(--tree-light); border-radius: 50%; animation: spin 1s infinite linear; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
 .search-container { position: relative; width: 100%; }
 .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sec); opacity: 0.7; }
 .search-input { padding-left: 42px !important; border-radius: 20px !important; }
@@ -155,6 +151,7 @@ body.force-dark .filter-tab { background: rgba(0, 0, 0, 0.2); }
 .filter-tab:active { transform: scale(0.95); }
 .filter-tab.active { background: var(--tree-light); color: white; border-color: var(--tree-light); box-shadow: 0 6px 15px rgba(31,150,81,0.3); }
 
+/* МОДАЛКИ */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.3s ease; }
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 .modal-content { width: 92%; max-width: 400px; max-height: 85vh; transform: translateY(20px); transition: all 0.3s ease; }
@@ -173,14 +170,12 @@ body.force-dark .detail-block { background: rgba(0, 0, 0, 0.15); }
 .call-btn:active { transform: scale(0.9); background: rgba(31, 150, 81, 0.25); }
 .call-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
 
-.service-item-static { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text); padding-bottom: 8px; border-bottom: 1px dashed rgba(128,128,128,0.2); margin-bottom: 8px; cursor: pointer; transition: all 0.3s; user-select: none; -webkit-user-select: none; }
+.service-item-static { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text); padding-bottom: 8px; border-bottom: 1px dashed rgba(128,128,128,0.2); margin-bottom: 8px; cursor: pointer; transition: all 0.3s; user-select: none; }
 .service-item-static:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 .service-checkbox { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--tree-light); cursor: pointer; flex-shrink: 0; }
-.serv-name-static { flex: 1; display: flex; align-items: center; transition: all 0.3s; }
-.serv-qty-static { margin: 0 10px; color: var(--text-sec); transition: all 0.3s; }
-.serv-price-static { font-weight: 800; transition: all 0.3s; }
-.service-item-static.done { opacity: 0.5; }
-.service-item-static.done .serv-name-static { text-decoration: line-through; }
+.serv-name-static { flex: 1; display: flex; align-items: center; }
+.serv-qty-static { margin: 0 10px; color: var(--text-sec); }
+.serv-price-static { font-weight: 800; }
 
 .service-row-edit { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; }
 .service-row-edit .glass-input { padding: 10px; font-size: 11px; }
@@ -190,35 +185,16 @@ body.force-dark .detail-block { background: rgba(0, 0, 0, 0.15); }
 .serv-del-btn { background: rgba(255,50,50,0.1); color: #ff4444; border: 1px solid rgba(255,50,50,0.2); border-radius: 12px; min-width: 34px; height: 34px; display: flex; justify-content: center; align-items: center; cursor: pointer; font-weight: bold; }
 .add-serv-btn { background: rgba(31, 150, 81, 0.1); color: var(--tree-light); border: 1px solid rgba(31, 150, 81, 0.2); border-radius: 12px; padding: 4px 10px; font-size: 10px; font-weight: 800; cursor: pointer; }
 
-.rating-badge { display: flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 800; background: rgba(255, 179, 71, 0.15); padding: 4px 8px; border-radius: 8px; }
-
-.emp-orders-list { display: none; flex-direction: column; gap: 8px; margin-top: 12px; border-top: 1px dashed rgba(128,128,128,0.2); padding-top: 12px; }
-.emp-orders-list.open { display: flex; }
-.emp-order-item { background: rgba(255,255,255,0.4); padding: 10px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: transform 0.2s;}
-body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
-.emp-order-item:active { transform: scale(0.98); }
-.emp-order-id { font-weight: 800; font-size: 11px; color: var(--text); }
-.emp-order-stat { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 3px 6px; border-radius: 6px; }
-
 .fab-btn { position: fixed; bottom: 96px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #23A95B, #1F9651); color: white; border: none; box-shadow: 0 8px 24px rgba(31, 150, 81, 0.4); display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: transform 0.3s, box-shadow 0.3s; }
 .fab-btn:active { transform: scale(0.9); box-shadow: 0 4px 12px rgba(31, 150, 81, 0.3); }
 .fab-btn svg { width: 28px; height: 28px; stroke: white; }
 .admin-screen:not(.active) .fab-btn { display: none; }
 
-/* ЭКРАН АВТОРИЗАЦИИ (PIN) */
-.auth-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: var(--bg-base);
-    z-index: 99999;
-    display: flex; justify-content: center; align-items: center;
-    padding: 20px; transition: opacity 0.4s ease, visibility 0.4s ease;
-}
-.auth-overlay.hidden {
-    opacity: 0; visibility: hidden; pointer-events: none;
-}
-.auth-card {
-    max-width: 340px; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 40px 20px;
-}
+/* ЭКРАН ПРИВАТНОСТИ И АВТОРИЗАЦИИ */
+.privacy-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-base); z-index: 9999999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+.auth-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-base); z-index: 9999998; display: flex; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.4s ease, visibility 0.4s ease; }
+.auth-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+.auth-card { max-width: 340px; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
 
 @media (min-width: 768px) {
     .app-container { max-width: 720px; padding-bottom: 60px; }
@@ -234,5 +210,4 @@ body.force-dark .emp-order-item { background: rgba(0,0,0,0.2); }
     .filter-tabs { justify-content: center; margin-bottom: 20px; }
     .modal-content { max-width: 450px; padding: 45px 30px; }
     .view-switcher, .dash-switcher { max-width: 600px; margin: 0 auto 20px auto; }
-    .search-container { max-width: 600px; margin: 0 auto; }
 }
