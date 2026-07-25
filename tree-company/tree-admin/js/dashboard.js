@@ -6,10 +6,22 @@ window.updateDashDots = function() {
     const incPartners = window.cooperationRequestsData.filter(c => c.status === 'pending').length;
     const incReviews = window.reviewsData.filter(r => r.isNew).length;
 
-    document.getElementById('dash-dot-orders').style.display = (incOrders > window.dashViewedState.orders) ? 'block' : 'none';
-    document.getElementById('dash-dot-masters').style.display = (incMasters > window.dashViewedState.masters) ? 'block' : 'none';
-    document.getElementById('dash-dot-partners').style.display = (incPartners > window.dashViewedState.partners) ? 'block' : 'none';
-    document.getElementById('dash-dot-overview').style.display = (incReviews > 0) ? 'block' : 'none';
+    const updateDot = (id, count) => {
+        const dot = document.getElementById(id);
+        if (!dot) return;
+        if (count > 0) {
+            dot.style.display = 'flex'; 
+            dot.innerText = count > 99 ? '99+' : count; 
+        } else {
+            dot.style.display = 'none'; 
+            dot.innerText = '';
+        }
+    };
+
+    updateDot('dash-dot-orders', incOrders);
+    updateDot('dash-dot-masters', incMasters);
+    updateDot('dash-dot-partners', incPartners);
+    updateDot('dash-dot-overview', incReviews);
 };
 
 window.switchDashboardView = function(viewName) {
@@ -18,10 +30,6 @@ window.switchDashboardView = function(viewName) {
     
     document.querySelectorAll('.dash-view-content').forEach(el => el.style.display = 'none');
     document.getElementById('dash-' + viewName).style.display = 'block';
-
-    if (viewName === 'orders') window.dashViewedState.orders = window.ordersData.filter(o => o.status === 'incoming').length;
-    if (viewName === 'masters') window.dashViewedState.masters = window.employeesData.filter(e => e.status === 'pending').length;
-    if (viewName === 'partners') window.dashViewedState.partners = window.cooperationRequestsData.filter(c => c.status === 'pending').length;
 
     window.updateDashDots();
 
@@ -64,7 +72,13 @@ window.renderDashboardOverview = function() {
 window.openReviewModal = function(id) {
     const rev = window.reviewsData.find(r => r.id === id);
     if(!rev) return;
-    if (rev.isNew) { rev.isNew = false; window.renderDashboardOverview(); window.updateDashDots(); }
+    
+    if (rev.isNew) { 
+        rev.isNew = false; 
+        window.renderDashboardOverview(); 
+        window.updateDashDots(); 
+    }
+    
     document.getElementById('modal-rev-client').innerText = rev.clientName;
     document.getElementById('modal-rev-stars').innerText = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
     document.getElementById('modal-rev-text').innerText = rev.text;
@@ -72,6 +86,7 @@ window.openReviewModal = function(id) {
     document.getElementById('review-modal').classList.add('active');
     if (navigator.vibrate) navigator.vibrate(10);
 };
+
 window.closeReviewModal = function() { document.getElementById('review-modal').classList.remove('active'); };
 
 window.renderDashboardOrders = function() {
@@ -130,6 +145,7 @@ window.openCoopModal = function(id) {
     document.getElementById('coop-modal').classList.add('active');
 };
 window.closeCoopModal = function() { document.getElementById('coop-modal').classList.remove('active'); currentActiveCoopId = null; };
+
 window.acceptCoop = function() {
     if(!currentActiveCoopId) return; const coop = window.cooperationRequestsData.find(c => c.id === currentActiveCoopId);
     if(coop) {
