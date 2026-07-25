@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>TREE Admin - Modular</title>
+    <title>TREE Admin - Control Center</title>
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,9 +32,23 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=5.0.0">
+    <link rel="stylesheet" href="style.css?v=5.1.0">
 </head>
 <body>
+
+    <div id="auth-screen" class="auth-overlay">
+        <div class="auth-card glass-panel">
+            <div class="header-logo-container" style="width: 80px; margin-bottom: 20px;">
+                <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
+            </div>
+            <h2 class="screen-title" style="margin-bottom: 10px; font-size: 20px;">Մուտք <br><span style="font-size: 14px; color: var(--text-sec);">(Вход)</span></h2>
+            <p style="font-size: 10px; color: var(--text-sec); margin-bottom: 24px; text-align: center; font-weight: 600;">Մուտքագրեք 6-նիշանոց PIN կոդը<br>(Введите 6-значный пароль)</p>
+            
+            <input type="password" id="pin-input" class="glass-input" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" style="text-align: center; font-size: 32px; letter-spacing: 12px; padding: 20px; font-family: monospace;">
+            
+            <div id="auth-error" style="color: #ff4444; font-size: 11px; font-weight: bold; text-align: center; margin-top: 16px; opacity: 0; transition: opacity 0.3s;">Սխալ PIN (Неверный пароль)</div>
+        </div>
+    </div>
 
     <div class="noise-overlay"></div>
     <div class="ambient-glow"></div>
@@ -309,13 +323,13 @@
         </button>
     </nav>
 
-    <script src="js/core.js?v=5.0.0"></script>
-    <script src="js/dashboard.js?v=5.0.0"></script>
-    <script src="js/orders.js?v=5.0.0"></script>
-    <script src="js/finance.js?v=5.0.0"></script>
-    <script src="js/employees.js?v=5.0.0"></script>
-    <script src="js/partners.js?v=5.0.0"></script>
-    <script src="js/clients.js?v=5.0.0"></script>
-    <script src="js/management.js?v=5.0.0"></script>
+    <script src="js/core.js?v=5.1.0"></script>
+    <script src="js/dashboard.js?v=5.1.0"></script>
+    <script src="js/orders.js?v=5.1.0"></script>
+    <script src="js/finance.js?v=5.1.0"></script>
+    <script src="js/employees.js?v=5.1.0"></script>
+    <script src="js/partners.js?v=5.1.0"></script>
+    <script src="js/clients.js?v=5.1.0"></script>
+    <script src="js/management.js?v=5.1.0"></script>
 </body>
 </html>
