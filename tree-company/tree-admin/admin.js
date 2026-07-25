@@ -1,13 +1,25 @@
 // =========================================================
-// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.7.0)
+// СИСТЕМА ЖЕСТКОГО АВТООБНОВЛЕНИЯ PWA (Версия 4.8.0)
 // =========================================================
-const APP_VERSION = '4.7.0';
+const APP_VERSION = '4.8.0';
 
 if (localStorage.getItem('tree_admin_version') !== APP_VERSION) {
-    if ('caches' in window) caches.keys().then(names => names.forEach(name => caches.delete(name)));
-    if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            for (let reg of regs) reg.unregister();
+        });
+    }
+    if ('caches' in window) {
+        caches.keys().then(names => {
+            for (let name of names) caches.delete(name);
+        });
+    }
     localStorage.setItem('tree_admin_version', APP_VERSION);
-    window.location.reload(true);
+    if (!window.location.search.includes('v=')) {
+        window.location.href = window.location.pathname + '?v=' + APP_VERSION;
+    } else {
+        window.location.reload(true);
+    }
 }
 
 if ('serviceWorker' in navigator) {
@@ -26,13 +38,15 @@ function switchTab(screenId, btnElement) {
 
     if(screenId === 'screen-dashboard') switchDashboardView('overview');
     if(screenId === 'screen-orders') filterOrders();
-    // Финансы - статика, обновлять особо не нужно при клике, но если надо - здесь
     if(screenId === 'screen-employees') renderEmployees();
     if(screenId === 'screen-partners') renderAdminPartners();
     if(screenId === 'screen-clients') renderClients();
+    if(screenId === 'screen-management') {
+        let activeMngTab = document.querySelector('#screen-management .view-switch-btn.active') || document.querySelector('#screen-management .view-switch-btn');
+        switchManagementTab('promo', activeMngTab);
+    }
 }
 
-// Навигация внутри Дашборда (Отзывы, Входящие, B2B)
 let dashViewedState = { orders: 0, masters: 0, partners: 0 };
 
 function updateDashDots() {
@@ -67,7 +81,6 @@ function switchDashboardView(viewName) {
     if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// Навигация внутри раздела Управление
 function switchManagementTab(tabName, btnElement) {
     document.querySelectorAll('#screen-management > div[id^="mng-view-"]').forEach(el => el.style.display = 'none');
     document.getElementById('mng-view-' + tabName).style.display = 'block';
@@ -79,7 +92,6 @@ function switchManagementTab(tabName, btnElement) {
     if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// Фильтр во вкладке "Заказы"
 let currentDashOrdFilter = 'all';
 function setOrderFilter(filterValue) {
     currentDashOrdFilter = filterValue;
@@ -114,7 +126,7 @@ const adminTranslations = {
     "btn_accept_order": { "AM": "Ընդունել", "RU": "Принять", "EN": "Accept" },
     "btn_reject_order": { "AM": "Մերժել", "RU": "Отказать", "EN": "Reject" },
     "filter_all": { "AM": "Բոլորը", "RU": "Все", "EN": "All" },
-    "filter_new": { "AM": "Նոր (Առանց վարպետի)", "RU": "Новые (Без мастера)", "EN": "New (No master)" },
+    "filter_new": { "AM": "Նոր", "RU": "Новые", "EN": "New" },
     "filter_progress": { "AM": "Ընթացքի մեջ", "RU": "В процессе", "EN": "In Progress" },
     "filter_completed": { "AM": "Ավարտված", "RU": "Завершенные", "EN": "Completed" },
     "status_incoming": { "AM": "Սպասում է", "RU": "Ожидает", "EN": "Pending" },
@@ -497,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // ================= ORDERS LOGIC (ВКЛАДКА ЗАКАЗЫ) =================
+    // ================= ORDERS LOGIC =================
     window.filterOrders = function() {
         const searchInput = document.getElementById('order-search');
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
@@ -514,7 +526,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.renderOrders = function() {
         const list = document.getElementById('orders-list'); if (!list) return; list.innerHTML = '';
         let counts = { new: 0, progress: 0, completed: 0 };
-        // Здесь только принятые заказы
         const activeOrders = ordersData.filter(o => o.status !== 'incoming');
         
         activeOrders.forEach(order => {
