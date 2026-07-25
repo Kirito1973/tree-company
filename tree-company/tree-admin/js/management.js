@@ -23,7 +23,6 @@ window.saveServiceForm = function(e) {
 };
 window.deleteService = function(id) { if(confirm('Delete?')) { window.servicesData = window.servicesData.filter(s => s.id !== id); window.renderAdminServices(); } };
 
-// Настройки переводов и промо (Имитация работы с Vercel)
 window.serverTranslations = {};
 window.fetchAppDatabase = async function() {
     try {
