@@ -191,9 +191,19 @@ body.force-dark .detail-block { background: rgba(0, 0, 0, 0.15); }
 .call-btn:active { transform: scale(0.9); background: rgba(31, 150, 81, 0.25); }
 .call-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
 
-.service-item-static { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text); padding-bottom: 8px; border-bottom: 1px dashed rgba(128,128,128,0.2); margin-bottom: 8px; cursor: pointer; transition: all 0.3s; user-select: none; }
+.service-item-static { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--text); padding-bottom: 8px; border-bottom: 1px dashed rgba(128,128,128,0.2); margin-bottom: 8px; transition: all 0.3s; user-select: none; }
 .service-item-static:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-.service-checkbox { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--tree-light); cursor: pointer; flex-shrink: 0; }
+
+/* НОВЫЙ ТУМБЛЕР (Вместо чекбокса) */
+.ios-toggle-wrap { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; }
+.ios-toggle-wrap input { opacity: 0; width: 0; height: 0; }
+.ios-toggle-slider { position: absolute; cursor: not-allowed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(128,128,128,0.3); transition: .3s; border-radius: 22px; }
+.ios-toggle-slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.ios-toggle-wrap input:checked + .ios-toggle-slider { background-color: var(--tree-light); }
+.ios-toggle-wrap input:checked + .ios-toggle-slider:before { transform: translateX(18px); }
+/* Затемняем, если выключено админом */
+.ios-toggle-wrap input:disabled + .ios-toggle-slider { opacity: 0.7; cursor: default; }
+
 .serv-name-static { flex: 1; display: flex; align-items: center; }
 .serv-qty-static { margin: 0 10px; color: var(--text-sec); }
 .serv-price-static { font-weight: 800; }
