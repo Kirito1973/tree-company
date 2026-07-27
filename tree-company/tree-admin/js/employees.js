@@ -65,7 +65,10 @@ window.previewEmpPhoto = function(event) {
             const base64 = canvas.toDataURL('image/jpeg', 0.8);
             document.getElementById('form-emp-photo-base64').value = base64;
             document.getElementById('form-emp-photo-preview').style.backgroundImage = `url(${base64})`;
-            document.getElementById('form-emp-photo-preview').innerText = '';
+            
+            // Прячем иконку и текст
+            document.getElementById('photo-placeholder-icon').style.display = 'none';
+            document.getElementById('photo-placeholder-text').style.display = 'none';
         }
     };
 };
@@ -81,7 +84,6 @@ window.renderEmployees = function() {
     window.employeesData.filter(e => e.status === 'active').forEach(emp => {
         const textToSearch = (emp.name + " " + emp.phone).toLowerCase(); const matchesSearch = textToSearch.includes(empSearchTerm);
         
-        // НОВОЕ: Проверка фильтра для массива профессий
         let matchesFilter = false;
         if (activeFilter === 'all') {
             matchesFilter = true;
@@ -157,8 +159,18 @@ window.openEmployeeModal = function(empId) {
     const ordersListDiv = document.getElementById('modal-emp-orders-list'); ordersListDiv.innerHTML = ''; ordersListDiv.classList.remove('open'); 
     if (empOrders.length > 0) { empOrders.forEach(o => { let statColor = '#9BAA9E'; if(o.status === 'completed') statColor = 'var(--tree-light)'; if(o.status === 'progress') statColor = '#FFB347'; ordersListDiv.innerHTML += `<div class="emp-order-item" onclick="closeEmployeeModal(); openOrderModal('${o.id}');"><span class="emp-order-id">${o.id}</span><span class="emp-order-stat" style="color: ${statColor}; border: 1px solid ${statColor}40;">${window.adminTranslations['status_'+(o.status==='progress'?'pending':o.status==='completed'?'success':o.status)][window.currentAdminLang]}</span></div>`; }); } else ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
     
-    const btnAccept = document.getElementById('modal-emp-accept-btn'); const btnReject = document.getElementById('modal-emp-reject-btn'); const btnEdit = document.getElementById('modal-emp-edit-btn');
-    if (isPending) { btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; btnEdit.style.display = 'none'; } else { btnAccept.style.display = 'none'; btnReject.style.display = 'none'; btnEdit.style.display = 'flex'; }
+    const btnAccept = document.getElementById('modal-emp-accept-btn'); 
+    const btnReject = document.getElementById('modal-emp-reject-btn'); 
+    const btnEdit = document.getElementById('modal-emp-edit-btn');
+    const btnFire = document.getElementById('modal-emp-fire-btn');
+
+    if (isPending) { 
+        btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; btnEdit.style.display = 'none'; 
+        if(btnFire) btnFire.style.display = 'none';
+    } else { 
+        btnAccept.style.display = 'none'; btnReject.style.display = 'none'; btnEdit.style.display = 'flex'; 
+        if(btnFire) btnFire.style.display = 'flex';
+    }
     document.getElementById('emp-pin-row').style.display = isPending ? 'none' : 'flex'; document.getElementById('emp-schedule-block').style.display = isPending ? 'none' : 'block'; document.getElementById('emp-finance-block').style.display = isPending ? 'none' : 'block'; document.getElementById('emp-orders-block').style.display = isPending ? 'none' : 'block';
     if (isPending) bdayRow.style.display = 'none';
 
@@ -173,7 +185,12 @@ window.acceptEmployee = async function() {
     const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
     if (emp) { 
         emp.status = 'active'; 
-        emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString(); 
+        
+        // ОБНОВЛЕНО: Генерируем ПИН-код только если его вообще не было (чтобы не затирать ручной ввод)
+        if (!emp.accessKey) {
+            emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString(); 
+        }
+        
         await window.syncEmployeesToServer();
         if(window.renderDashboardMasters) window.renderDashboardMasters(); 
         window.renderEmployees(); 
@@ -194,6 +211,22 @@ window.rejectEmployee = async function() {
     } 
 };
 
+// НОВОЕ: Функция увольнения сотрудника
+window.fireEmployee = async function() {
+    if (!window.currentActiveEmpId) return; 
+    if (confirm("Вы уверены, что хотите уволить этого сотрудника? Он будет удален из активного списка.")) { 
+        const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
+        if (emp) {
+            emp.status = 'dismissed'; 
+            await window.syncEmployeesToServer();
+            if(window.renderDashboardMasters) window.renderDashboardMasters(); 
+            window.renderEmployees(); 
+            window.closeEmployeeModal(); 
+            if(window.updateDashDots) window.updateDashDots(); 
+        }
+    } 
+};
+
 window.adjustEmpDebt = async function(action) {
     if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); if (!emp) return;
     const val = parseInt(document.getElementById('emp-finance-input').value) || 0; if (emp.companyDebt === undefined) emp.companyDebt = 0;
@@ -204,17 +237,17 @@ window.adjustEmpDebt = async function(action) {
     document.getElementById('emp-finance-input').value = ''; window.renderEmployees(); if (navigator.vibrate) navigator.vibrate(20);
 };
 
-// НОВОЕ: Рендер чипов для выбора профессий
 window.renderProfessionsForm = function(selected = []) {
     const container = document.getElementById('form-emp-professions-container');
     container.innerHTML = '';
     
-    // Собираем все уникальные профессии (стандартные + те, что уже есть у мастеров)
     let allProfs = new Set([...window.availableProfessions]);
     if (window.employeesData) {
         window.employeesData.forEach(e => {
-            if (Array.isArray(e.type)) e.type.forEach(t => allProfs.add(t));
-            else if (e.type) allProfs.add(e.type);
+            if(e.status !== 'dismissed') {
+                if (Array.isArray(e.type)) e.type.forEach(t => allProfs.add(t));
+                else if (e.type) allProfs.add(e.type);
+            }
         });
     }
     selected.forEach(s => allProfs.add(s));
@@ -222,17 +255,21 @@ window.renderProfessionsForm = function(selected = []) {
     allProfs.forEach(prof => {
         const isActive = selected.includes(prof) ? 'active' : '';
         const label = window.getEmpTypeLabel([prof]);
-        container.innerHTML += `<div class="prof-chip ${isActive}" data-val="${prof}" onclick="this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10);">${label}</div>`;
+        const isCustom = !window.availableProfessions.includes(prof);
+        
+        // НОВОЕ: Добавляем крестик для удаления кастомной профессии
+        const delBtn = isCustom ? `<span class="del-chip" style="margin-left:6px; color:#ff4444; font-weight:900; font-size:14px;">&times;</span>` : '';
+        
+        container.innerHTML += `<div class="prof-chip ${isActive}" data-val="${prof}" onclick="if(event.target.classList.contains('del-chip')) { this.remove(); } else { this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10); }">${label}${delBtn}</div>`;
     });
 };
 
-// НОВОЕ: Кнопка добавления кастомной профессии
 window.addNewProfession = function() {
     const newProf = prompt('Введите название новой профессии (например, Установщик плинтусов):');
     if (newProf && newProf.trim() !== '') {
         const val = newProf.trim();
         const container = document.getElementById('form-emp-professions-container');
-        container.innerHTML += `<div class="prof-chip active" data-val="${val}" onclick="this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10);">${val}</div>`;
+        container.innerHTML += `<div class="prof-chip active" data-val="${val}" onclick="if(event.target.classList.contains('del-chip')) { this.remove(); } else { this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10); }">${val} <span class="del-chip" style="margin-left:6px; color:#ff4444; font-weight:900; font-size:14px;">&times;</span></div>`;
     }
 };
 
@@ -255,11 +292,13 @@ window.openEmployeeForm = function(empId = null) {
             
             if (emp.photo) {
                 photoPreview.style.backgroundImage = `url(${emp.photo})`;
-                photoPreview.innerText = '';
+                document.getElementById('photo-placeholder-icon').style.display = 'none';
+                document.getElementById('photo-placeholder-text').style.display = 'none';
                 photoBase64.value = emp.photo;
             } else {
                 photoPreview.style.backgroundImage = 'none';
-                photoPreview.innerText = 'ԼՈՒՍԱՆԿԱՐ';
+                document.getElementById('photo-placeholder-icon').style.display = 'block';
+                document.getElementById('photo-placeholder-text').style.display = 'block';
                 photoBase64.value = '';
             }
             
@@ -269,7 +308,8 @@ window.openEmployeeForm = function(empId = null) {
     } else { 
         document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000).toString(); 
         photoPreview.style.backgroundImage = 'none';
-        photoPreview.innerText = 'ԼՈՒՍԱՆԿԱՐ';
+        document.getElementById('photo-placeholder-icon').style.display = 'block';
+        document.getElementById('photo-placeholder-text').style.display = 'block';
         photoBase64.value = '';
     }
     
@@ -284,7 +324,6 @@ window.closeEmployeeFormModal = function() { document.getElementById('employee-f
 window.saveEmployeeForm = async function(event) {
     event.preventDefault();
     
-    // Считываем все выделенные зеленым чипы профессий
     const selectedProfChips = document.querySelectorAll('#form-emp-professions-container .prof-chip.active');
     const finalTypes = Array.from(selectedProfChips).map(c => c.getAttribute('data-val'));
     
