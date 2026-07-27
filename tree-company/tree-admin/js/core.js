@@ -61,6 +61,7 @@ window.adminTranslations = {
     "btn_cancel": { "AM": "Չեղարկել", "RU": "Отмена", "EN": "Cancel" },
     "btn_close": { "AM": "Փակել", "RU": "Закрыть", "EN": "Close" },
     "btn_add": { "AM": "+ Ավելացնել", "RU": "+ Добавить", "EN": "+ Add" },
+    "btn_fire": { "AM": "Հեռացնել", "RU": "Уволить", "EN": "Fire" },
     "lbl_all_clients": { "AM": "Բոլորը", "RU": "Все клиенты", "EN": "All clients" },
     "lbl_name": { "AM": "Անուն:", "RU": "Имя:", "EN": "Name:" },
     "lbl_phone": { "AM": "Հեռ.:", "RU": "Тел.:", "EN": "Phone:" },
@@ -94,12 +95,10 @@ window.reviewsData = [
 window.clientsData = [ { id: 'TR-1234', name: 'Արամ Խաչատրյան', phone: '+374 98 123 789', address: 'Երևան, Տերյան 50', discount: 0 } ];
 window.partnersData = [ { id: 'p1', name: 'BuildingCorp', logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>' } ];
 
-// УТИЛИТЫ
 window.generateOrderId = function() { return 'ORD-' + Math.floor(100 + Math.random() * 900); };
 window.generateEmpId = function() { return 'EMP-' + Math.floor(100 + Math.random() * 900); };
 window.getCurrentDateString = function() { const d = new Date(); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear(); };
 
-// НОВОЕ: Обработка массива профессий
 window.getEmpTypeLabel = function(type) { 
     if (!type) return '---';
     if (Array.isArray(type)) {
@@ -124,7 +123,6 @@ window.getBirthdayInfo = function(dateStr) {
     return { isToday: (today.getDate() === day && today.getMonth() === month), daysLeft: Math.ceil(diffTime / (1000 * 60 * 60 * 24)) };
 };
 
-// ТЕМА И ЯЗЫК
 let rotationDegrees = 0;
 window.toggleTheme = function(e) {
     e.stopPropagation(); rotationDegrees += 360; 
