@@ -1,17 +1,22 @@
 window.dashViewedState = { orders: 0, masters: 0, partners: 0 };
 
 window.updateDashDots = function() {
-    const incOrders = window.ordersData.filter(o => o.status === 'incoming').length;
-    const incMasters = window.employeesData.filter(e => e.status === 'pending').length;
-    const incPartners = window.cooperationRequestsData.filter(c => c.status === 'pending').length;
-    const incReviews = window.reviewsData.filter(r => r.isNew).length;
+    const incOrders = window.ordersData ? window.ordersData.filter(o => o.status === 'incoming').length : 0;
+    const incMasters = window.employeesData ? window.employeesData.filter(e => e.status === 'pending').length : 0;
+    const incPartners = window.cooperationRequestsData ? window.cooperationRequestsData.filter(c => c.status === 'pending').length : 0;
+    const incReviews = window.reviewsData ? window.reviewsData.filter(r => r.isNew).length : 0;
 
     const updateDot = (id, count) => {
         const dot = document.getElementById(id);
         if (!dot) return;
         if (count > 0) {
-            dot.style.display = 'flex'; 
-            dot.innerText = count > 99 ? '99+' : count; 
+            dot.style.display = 'block'; 
+            dot.innerText = ''; 
+            dot.style.minWidth = '12px';
+            dot.style.height = '12px';
+            dot.style.padding = '0';
+            dot.style.top = '2px';
+            dot.style.right = '2px';
         } else {
             dot.style.display = 'none'; 
             dot.innerText = '';
@@ -37,28 +42,34 @@ window.switchDashboardView = function(viewName) {
     if(viewName === 'orders') window.renderDashboardOrders();
     if(viewName === 'masters') window.renderDashboardMasters();
     if(viewName === 'partners') window.renderDashboardPartnerRequests();
-    if (navigator.vibrate) navigator.vibrate(10);
+    
+    // Исправление Intervention ошибки: вибрируем только если пользователь уже взаимодействовал со страницей
+    if (navigator.vibrate) {
+        if (!navigator.userActivation || navigator.userActivation.hasBeenActive) {
+            navigator.vibrate(10);
+        }
+    }
 };
 
 window.renderDashboardOverview = function() {
     let totalRating = 0;
-    window.reviewsData.forEach(r => totalRating += r.rating);
-    const avgRating = window.reviewsData.length > 0 ? (totalRating / window.reviewsData.length).toFixed(1) : '0.0';
+    if(window.reviewsData && window.reviewsData.length > 0) {
+        window.reviewsData.forEach(r => totalRating += r.rating);
+    }
+    const avgRating = (window.reviewsData && window.reviewsData.length > 0) ? (totalRating / window.reviewsData.length).toFixed(1) : '0.0';
 
     document.getElementById('dash-avg-rating-hero').innerText = `★ ${avgRating}`;
 
     const revList = document.getElementById('dash-reviews-list');
     revList.innerHTML = '';
     
-    // Безопасное получение перевода
-    const masterLabel = (window.adminTranslations['lbl_master'] && window.adminTranslations['lbl_master'][window.currentAdminLang]) ? window.adminTranslations['lbl_master'][window.currentAdminLang] : 'Мастер:';
+    const masterLabel = (window.adminTranslations && window.adminTranslations['lbl_master'] && window.adminTranslations['lbl_master'][window.currentAdminLang]) ? window.adminTranslations['lbl_master'][window.currentAdminLang] : 'Мастер:';
 
-    if(window.reviewsData.length > 0) {
+    if(window.reviewsData && window.reviewsData.length > 0) {
         window.reviewsData.slice().forEach(rev => {
             const stars = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
             let newDotHtml = rev.isNew ? `<div class="notif-dot-card"></div>` : '';
             
-            // Если отзыв не новый, делаем карточку чуть прозрачнее, чтобы отличать визуально
             const opacityStyle = rev.isNew ? 'opacity: 1;' : 'opacity: 0.65;';
 
             revList.innerHTML += `
@@ -80,10 +91,10 @@ window.renderDashboardOverview = function() {
 };
 
 window.openReviewModal = function(id) {
+    if(!window.reviewsData) return;
     const rev = window.reviewsData.find(r => r.id === id);
     if(!rev) return;
     
-    // Снимаем статус "Новый" и моментально обновляем интерфейс
     if (rev.isNew) { 
         rev.isNew = false; 
         window.renderDashboardOverview(); 
@@ -103,11 +114,13 @@ window.closeReviewModal = function() { document.getElementById('review-modal').c
 
 window.renderDashboardOrders = function() {
     const list = document.getElementById('dash-orders-list'); list.innerHTML = '';
+    if(!window.ordersData) { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; return; }
+    
     let filtered = window.ordersData.filter(o => o.status === 'incoming');
     if(filtered.length > 0) {
         filtered.forEach(order => {
-            let mainTitle = order.services.length > 0 ? order.services[0].name : "---";
-            if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
+            let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
+            if(order.services && order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
             const card = document.createElement('div'); card.className = 'entity-card'; card.onclick = () => window.openOrderModal(order.id);
             card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status incoming" data-i18n="status_incoming"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${window.adminTranslations['lbl_name'][window.currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${window.adminTranslations['lbl_phone'][window.currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${window.adminTranslations['lbl_address'][window.currentAdminLang]} ${order.address}</div>`;
             list.appendChild(card);
@@ -120,6 +133,8 @@ window.renderDashboardOrders = function() {
 
 window.renderDashboardMasters = function() {
     const list = document.getElementById('dash-masters-list'); list.innerHTML = '';
+    if(!window.employeesData) { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; return; }
+    
     const pendingMasters = window.employeesData.filter(e => e.status === 'pending');
     if(pendingMasters.length > 0) {
         pendingMasters.forEach(emp => {
@@ -135,6 +150,8 @@ window.renderDashboardMasters = function() {
 
 window.renderDashboardPartnerRequests = function() {
     const list = document.getElementById('dash-partners-requests-list'); list.innerHTML = '';
+    if(!window.cooperationRequestsData) { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; return; }
+    
     const pendingPartners = window.cooperationRequestsData.filter(c => c.status === 'pending');
     if(pendingPartners.length > 0) {
         pendingPartners.forEach(coop => {
