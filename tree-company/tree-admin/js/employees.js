@@ -1,7 +1,6 @@
 window.currentActiveEmpId = null;
 window.currentEditingEmpId = null;
 
-// Стандартные профессии по умолчанию
 window.availableProfessions = ['doors', 'electro', 'universal'];
 
 window.fetchEmployees = async function() {
@@ -66,7 +65,6 @@ window.previewEmpPhoto = function(event) {
             document.getElementById('form-emp-photo-base64').value = base64;
             document.getElementById('form-emp-photo-preview').style.backgroundImage = `url(${base64})`;
             
-            // Прячем иконку и текст
             document.getElementById('photo-placeholder-icon').style.display = 'none';
             document.getElementById('photo-placeholder-text').style.display = 'none';
         }
@@ -154,10 +152,28 @@ window.openEmployeeModal = function(empId) {
     if (emp.phone) { phoneLink.style.display = 'flex'; phoneLink.href = `tel:${emp.phone.replace(/[^\d+]/g, '')}`; } else phoneLink.style.display = 'none';
     document.getElementById('modal-emp-address').innerText = emp.address || '---'; document.getElementById('modal-emp-exp').innerText = emp.exp ? emp.exp.split('/')[0].trim() : '0'; document.getElementById('modal-emp-rating').innerText = `★ ${(emp.rating || 0).toFixed(1)}`;
     
-    const empOrders = window.ordersData ? window.ordersData.filter(o => o.worker && o.worker.includes(emp.name)) : []; 
+    // Получение ВСЕХ не-отмененных заказов мастера
+    const empOrders = window.ordersData ? window.ordersData.filter(o => o.worker && o.worker.includes(emp.name) && o.status !== 'cancelled') : []; 
     document.getElementById('modal-emp-orders-count').innerText = empOrders.length;
-    const ordersListDiv = document.getElementById('modal-emp-orders-list'); ordersListDiv.innerHTML = ''; ordersListDiv.classList.remove('open'); 
-    if (empOrders.length > 0) { empOrders.forEach(o => { let statColor = '#9BAA9E'; if(o.status === 'completed') statColor = 'var(--tree-light)'; if(o.status === 'progress') statColor = '#FFB347'; ordersListDiv.innerHTML += `<div class="emp-order-item" onclick="closeEmployeeModal(); openOrderModal('${o.id}');"><span class="emp-order-id">${o.id}</span><span class="emp-order-stat" style="color: ${statColor}; border: 1px solid ${statColor}40;">${window.adminTranslations['status_'+(o.status==='progress'?'pending':o.status==='completed'?'success':o.status)][window.currentAdminLang]}</span></div>`; }); } else ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
+    const ordersListDiv = document.getElementById('modal-emp-orders-list'); 
+    ordersListDiv.innerHTML = ''; 
+    ordersListDiv.classList.remove('open'); 
+    
+    if (empOrders.length > 0) { 
+        empOrders.forEach(o => { 
+            let statColor = '#9BAA9E'; 
+            let statKey = o.status;
+            if(o.status === 'completed') { statColor = 'var(--tree-light)'; statKey = 'success'; } 
+            else if(o.status === 'progress') { statColor = '#FFB347'; statKey = 'pending'; }
+            else if(o.status === 'new') { statColor = '#00C8FF'; statKey = 'new'; } 
+            
+            const statusText = (window.adminTranslations['status_'+statKey] && window.adminTranslations['status_'+statKey][window.currentAdminLang]) ? window.adminTranslations['status_'+statKey][window.currentAdminLang] : o.status;
+            
+            ordersListDiv.innerHTML += `<div class="emp-order-item" style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:rgba(128,128,128,0.1); border-radius:12px; margin-bottom:6px; cursor:pointer; transition: background 0.2s;" onclick="closeEmployeeModal(); openOrderModal('${o.id}');"><span class="emp-order-id" style="font-weight:900; font-size:12px; color:var(--text);">${o.id}</span><span class="emp-order-stat" style="color: ${statColor}; font-size:9px; font-weight:900; text-transform:uppercase; padding:4px 8px; background: ${statColor}15; border-radius:8px;">${statusText}</span></div>`; 
+        }); 
+    } else { 
+        ordersListDiv.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec); padding: 10px;">Չկան պատվերներ (Нет заказов)</div>`; 
+    }
     
     const btnAccept = document.getElementById('modal-emp-accept-btn'); 
     const btnReject = document.getElementById('modal-emp-reject-btn'); 
@@ -185,12 +201,9 @@ window.acceptEmployee = async function() {
     const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
     if (emp) { 
         emp.status = 'active'; 
-        
-        // ОБНОВЛЕНО: Генерируем ПИН-код только если его вообще не было (чтобы не затирать ручной ввод)
         if (!emp.accessKey) {
             emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString(); 
         }
-        
         await window.syncEmployeesToServer();
         if(window.renderDashboardMasters) window.renderDashboardMasters(); 
         window.renderEmployees(); 
@@ -211,7 +224,7 @@ window.rejectEmployee = async function() {
     } 
 };
 
-// НОВОЕ: Функция увольнения сотрудника
+// Функция увольнения сотрудника
 window.fireEmployee = async function() {
     if (!window.currentActiveEmpId) return; 
     if (confirm("Вы уверены, что хотите уволить этого сотрудника? Он будет удален из активного списка.")) { 
@@ -228,13 +241,34 @@ window.fireEmployee = async function() {
 };
 
 window.adjustEmpDebt = async function(action) {
-    if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); if (!emp) return;
-    const val = parseInt(document.getElementById('emp-finance-input').value) || 0; if (emp.companyDebt === undefined) emp.companyDebt = 0;
-    if (action === 'add') emp.companyDebt += val; else if (action === 'bonus') emp.companyDebt -= val; else if (action === 'reset') emp.companyDebt = 0;
+    if (!window.currentActiveEmpId) return; 
+    const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
+    if (!emp) return;
+    
+    const inputEl = document.getElementById('emp-finance-input');
+    const val = parseInt(inputEl.value, 10); 
+    
+    // Проверка, что сумма введена
+    if (isNaN(val) || val <= 0) {
+        alert("Укажите корректную сумму!");
+        return;
+    }
+    
+    if (emp.companyDebt === undefined || isNaN(emp.companyDebt)) {
+        emp.companyDebt = 0;
+    }
+    
+    if (action === 'add') emp.companyDebt += val; 
+    else if (action === 'bonus') emp.companyDebt -= val; 
     
     await window.syncEmployeesToServer();
-    const debtEl = document.getElementById('modal-emp-debt'); debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏'; debtEl.style.color = emp.companyDebt < 0 ? '#1F9651' : '#ff4444';
-    document.getElementById('emp-finance-input').value = ''; window.renderEmployees(); if (navigator.vibrate) navigator.vibrate(20);
+    
+    const debtEl = document.getElementById('modal-emp-debt'); 
+    debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏'; 
+    debtEl.style.color = emp.companyDebt < 0 ? '#1F9651' : '#ff4444';
+    inputEl.value = ''; 
+    window.renderEmployees(); 
+    if (navigator.vibrate) navigator.vibrate(20);
 };
 
 window.renderProfessionsForm = function(selected = []) {
@@ -257,7 +291,7 @@ window.renderProfessionsForm = function(selected = []) {
         const label = window.getEmpTypeLabel([prof]);
         const isCustom = !window.availableProfessions.includes(prof);
         
-        // НОВОЕ: Добавляем крестик для удаления кастомной профессии
+        // Крестик для удаления кастомной профессии
         const delBtn = isCustom ? `<span class="del-chip" style="margin-left:6px; color:#ff4444; font-weight:900; font-size:14px;">&times;</span>` : '';
         
         container.innerHTML += `<div class="prof-chip ${isActive}" data-val="${prof}" onclick="if(event.target.classList.contains('del-chip')) { this.remove(); } else { this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10); }">${label}${delBtn}</div>`;
