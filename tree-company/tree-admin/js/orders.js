@@ -2,7 +2,7 @@ window.currentDashOrdFilter = 'all';
 window.currentActiveOrderId = null;
 window.currentEditingOrderId = null;
 
-// НОВОЕ: Получение заказов с сервера при старте
+// Получение заказов с сервера при старте
 window.fetchOrders = async function() {
     try {
         const res = await fetch('/api/orders');
@@ -20,7 +20,7 @@ window.fetchOrders = async function() {
     }
 };
 
-// НОВОЕ: Тихая синхронизация с сервером
+// Тихая синхронизация с сервером
 window.syncOrdersToServer = async function() {
     try {
         await fetch('/api/orders', {
@@ -82,22 +82,15 @@ window.renderOrders = function() {
     window.applyAdminLanguage(); window.filterOrders();
 };
 
-window.toggleServiceStatus = async function(orderId, serviceIndex, checkboxElem) {
-    const order = window.ordersData.find(o => o.id === orderId);
-    if (order && order.services[serviceIndex]) { 
-        order.services[serviceIndex].done = checkboxElem.checked; 
-        checkboxElem.checked ? checkboxElem.closest('.service-item-static').classList.add('done') : checkboxElem.closest('.service-item-static').classList.remove('done'); 
-        if (navigator.vibrate) navigator.vibrate(10); 
-        
-        // Отправляем изменения на сервер в фоне
-        await window.syncOrdersToServer();
-    }
-};
-
 window.openOrderModal = function(orderId) {
     window.currentActiveOrderId = orderId; const order = window.ordersData.find(o => o.id === orderId); if (!order) return;
     document.getElementById('modal-order-id').innerText = order.id; const statusEl = document.getElementById('modal-order-status'); statusEl.className = 'entity-status';
-    if (order.status === 'incoming') { statusEl.classList.add('incoming'); statusEl.setAttribute('data-i18n', 'status_incoming'); } else if (order.status === 'new') { statusEl.classList.add('new'); statusEl.setAttribute('data-i18n', 'status_new'); } else if (order.status === 'progress') { statusEl.classList.add('pending'); statusEl.setAttribute('data-i18n', 'status_pending'); } else if (order.status === 'completed') { statusEl.setAttribute('data-i18n', 'status_success'); } else if (order.status === 'cancelled') { statusEl.classList.add('cancelled'); statusEl.setAttribute('data-i18n', 'status_cancelled'); }
+    
+    if (order.status === 'incoming') { statusEl.classList.add('incoming'); statusEl.setAttribute('data-i18n', 'status_incoming'); } 
+    else if (order.status === 'new') { statusEl.classList.add('new'); statusEl.setAttribute('data-i18n', 'status_new'); } 
+    else if (order.status === 'progress') { statusEl.classList.add('pending'); statusEl.setAttribute('data-i18n', 'status_pending'); } 
+    else if (order.status === 'completed') { statusEl.setAttribute('data-i18n', 'status_success'); } 
+    else if (order.status === 'cancelled') { statusEl.classList.add('cancelled'); statusEl.setAttribute('data-i18n', 'status_cancelled'); }
     
     const btnEdit = document.getElementById('modal-edit-btn'); const btnCancel = document.getElementById('modal-cancel-btn'); const btnAccept = document.getElementById('modal-accept-btn'); const btnReject = document.getElementById('modal-reject-btn');
     if (order.status === 'incoming') { btnEdit.style.display = 'none'; btnCancel.style.display = 'none'; btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; } 
@@ -116,7 +109,27 @@ window.openOrderModal = function(orderId) {
     const workerCallBtn = document.getElementById('modal-worker-phone-link'); if (order.workerPhone) { workerCallBtn.style.display = 'flex'; workerCallBtn.href = `tel:${order.workerPhone.replace(/[^\d+]/g, '')}`; } else workerCallBtn.style.display = 'none';
     
     const servList = document.getElementById('modal-services-list'); servList.innerHTML = ''; let totalSum = 0;
-    order.services.forEach((s, index) => { const rowSum = s.qty * s.price; totalSum += rowSum; const isLocked = (order.status === 'completed' || order.status === 'cancelled' || order.status === 'incoming') ? 'disabled' : ''; const checkedAttr = s.done ? 'checked' : ''; const doneClass = s.done ? 'done' : ''; servList.innerHTML += `<label class="service-item-static ${doneClass}"><input type="checkbox" class="service-checkbox" ${checkedAttr} ${isLocked} onchange="window.toggleServiceStatus('${order.id}', ${index}, this)"><span class="serv-name-static">${s.name}</span><span class="serv-qty-static">${s.qty} x ${s.price} ֏</span><span class="serv-price-static">${rowSum} ֏</span></label>`; });
+    
+    // ОБНОВЛЕНО: Новый тумблер iOS/Android. Он навсегда ЗАБЛОКИРОВАН (disabled) для администратора.
+    order.services.forEach((s, index) => { 
+        const rowSum = s.qty * s.price; 
+        totalSum += rowSum; 
+        const checkedAttr = s.done ? 'checked' : ''; 
+        const doneClass = s.done ? 'done' : ''; 
+        
+        servList.innerHTML += `
+            <label class="service-item-static ${doneClass}" style="cursor: default;">
+                <div class="ios-toggle-wrap" style="margin-right: 10px;">
+                    <input type="checkbox" ${checkedAttr} disabled>
+                    <span class="ios-toggle-slider"></span>
+                </div>
+                <span class="serv-name-static">${s.name}</span>
+                <span class="serv-qty-static">${s.qty} x ${s.price} ֏</span>
+                <span class="serv-price-static">${rowSum} ֏</span>
+            </label>
+        `; 
+    });
+    
     const profit = order.profit !== undefined ? order.profit : (totalSum * 0.10);
     document.getElementById('modal-total-price').innerText = totalSum.toLocaleString() + ' ֏'; document.getElementById('modal-company-profit').innerText = profit.toLocaleString() + ' ֏';
     
@@ -198,7 +211,6 @@ window.removeFormServiceRow = function(btnElement) { const row = btnElement.clos
 window.saveOrderForm = async function(event) {
     event.preventDefault();
     
-    // Блокируем кнопку на время сохранения
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const origText = submitBtn.innerText;
     submitBtn.innerText = '...';
@@ -206,7 +218,17 @@ window.saveOrderForm = async function(event) {
 
     const clientName = document.getElementById('form-client-name').value; const phone = document.getElementById('form-phone').value; const address = document.getElementById('form-address').value;
     const workerSelect = document.getElementById('form-worker'); const assistantSelect = document.getElementById('form-assistant');
+    
     let leadWorker = workerSelect.value.trim(); let assistant = assistantSelect.value.trim();
+    
+    // ОБНОВЛЕНО: Проверка на совпадение мастера и помощника
+    if (leadWorker && assistant && leadWorker === assistant) {
+        alert('Ошибка: Главный мастер и помощник не могут быть одним и тем же человеком!');
+        submitBtn.innerText = origText;
+        submitBtn.disabled = false;
+        return;
+    }
+
     let workerPhone = ''; if (leadWorker) workerPhone = workerSelect.options[workerSelect.selectedIndex].getAttribute('data-phone') || '';
     let combinedWorkers = []; if (leadWorker) combinedWorkers.push(leadWorker); if (assistant) combinedWorkers.push(assistant);
     let finalWorkerString = combinedWorkers.length > 0 ? combinedWorkers.join(', ') : '---';
@@ -218,7 +240,6 @@ window.saveOrderForm = async function(event) {
     if (window.currentEditingOrderId) { const order = window.ordersData.find(o => o.id === window.currentEditingOrderId); if (order) { order.clientName = clientName; order.clientPhone = phone; order.address = address; order.worker = finalWorkerString; order.workerPhone = workerPhone; order.services = services; order.profit = customProfit; } } 
     else { window.ordersData.unshift({ id: window.generateOrderId(), status: 'new', createdAt: window.getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit }); }
     
-    // Отправляем изменения на сервер
     await window.syncOrdersToServer();
 
     window.renderOrders(); if(window.renderDashboardOrders) window.renderDashboardOrders(); if(window.updateDashDots) window.updateDashDots(); window.closeOrderFormModal(); if (navigator.vibrate) navigator.vibrate(50);
