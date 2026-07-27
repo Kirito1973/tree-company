@@ -439,6 +439,7 @@
                         <button id="modal-emp-accept-btn" class="submit-btn success" onclick="acceptEmployee()" data-i18n="btn_accept_order" style="margin:0;">Принять</button>
                         <button id="modal-emp-reject-btn" class="submit-btn" onclick="rejectEmployee()" data-i18n="btn_reject_order" style="margin:0; background:rgba(255,68,68,0.2); color:#ff4444; box-shadow:none;">Отклонить</button>
                         <button id="modal-emp-edit-btn" class="submit-btn" onclick="openEmployeeForm(window.currentActiveEmpId)" data-i18n="btn_edit_order" style="margin:0;">Изменить</button>
+                        <button id="modal-emp-fire-btn" class="submit-btn" onclick="fireEmployee()" style="margin:0; background:rgba(255,68,68,0.2); color:#ff4444; box-shadow:none;">Уволить</button>
                     </div>
                     <button class="submit-btn" onclick="closeEmployeeModal()" data-i18n="btn_close" style="background:transparent; color:var(--text-sec); box-shadow:none; border:1px solid rgba(128,128,128,0.2); margin-top:10px;">Закрыть</button>
                 </div>
@@ -449,10 +450,12 @@
                     <h3 class="screen-title" data-i18n="btn_add_emp">Сотрудник</h3>
                     <form id="employee-form" onsubmit="saveEmployeeForm(event)" style="display:flex; flex-direction:column; gap:12px;">
                         
-                        <div style="display:flex; gap:10px; align-items:center; justify-content:center; margin-bottom: 4px;">
-                            <div id="form-emp-photo-preview" style="width:60px; height:60px; border-radius:50%; background:rgba(128,128,128,0.2); background-size:cover; background-position:center; display:flex; justify-content:center; align-items:center; font-size:10px; color:var(--text-sec); border:1px dashed var(--text-sec); overflow:hidden;">ԼՈՒՍԱՆԿԱՐ</div>
+                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom: 12px;">
+                            <div id="form-emp-photo-preview" onclick="document.getElementById('form-emp-photo').click()" style="width:80px; height:80px; border-radius:50%; background:rgba(128,128,128,0.15); background-size:cover; background-position:center; display:flex; flex-direction:column; justify-content:center; align-items:center; border:2px dashed var(--tree-light); cursor:pointer; overflow:hidden; transition:all 0.3s; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                                <svg id="photo-placeholder-icon" viewBox="0 0 24 24" width="24" height="24" stroke="var(--tree-light)" stroke-width="2" fill="none" style="margin-bottom:4px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                                <span id="photo-placeholder-text" style="font-size:8px; font-weight:800; color:var(--text-sec); text-transform:uppercase;">ՖՈՏՈ (Фото)</span>
+                            </div>
                             <input type="file" id="form-emp-photo" accept="image/*" style="display:none;" onchange="previewEmpPhoto(event)">
-                            <button type="button" class="submit-btn" style="margin:0; padding:10px 16px; flex:none; font-size:10px; background:rgba(128,128,128,0.2); color:var(--text); box-shadow:none;" onclick="document.getElementById('form-emp-photo').click()">Ընտրել...</button>
                             <input type="hidden" id="form-emp-photo-base64">
                         </div>
 
@@ -464,7 +467,6 @@
                             <input type="number" id="form-emp-exp" class="glass-input" data-i18n-placeholder="lbl_exp" placeholder="Опыт (лет)">
                         </div>
                         
-                        <!-- НОВОЕ: Контейнер для множественного выбора профессий -->
                         <div style="display:flex; flex-direction:column; gap:8px;">
                             <div style="display:flex; justify-content:space-between; align-items:center;">
                                 <span class="input-label" data-i18n="lbl_professions">Профессии</span>
