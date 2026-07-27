@@ -77,25 +77,20 @@ window.adminTranslations = {
     "lbl_price_base": { "AM": "Գինը (֏)", "RU": "Базовая цена (֏)", "EN": "Base Price (֏)" },
     "lbl_icon": { "AM": "SVG Պատկեր", "RU": "SVG Иконка", "EN": "SVG Icon" },
     "lbl_logo": { "AM": "Լոգո (URL կամ SVG)", "RU": "Лого (URL/SVG)", "EN": "Logo (URL/SVG)" },
-    "lbl_master": { "AM": "Վարպետ:", "RU": "Мастер:", "EN": "Master:" }
+    "lbl_master": { "AM": "Վարպետ:", "RU": "Мастер:", "EN": "Master:" },
+    "lbl_professions": { "AM": "Մասնագիտություններ", "RU": "Профессии", "EN": "Professions" }
 };
 
-// Базы данных (Очищены, так как теперь питаются от сервера)
 window.ordersData = [];
 window.employeesData = [];
 window.servicesData = [];
 
-// Тестовые массивы (Оставлены временно, пока не переведены на API)
 window.cooperationRequestsData = [
-    { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով:', date: '24.07.2026', status: 'pending' },
-    { id: 'COOP-REQ-02', company: 'DoorTech', contact: 'Աննա', phone: '+374 98 555 666', text: 'Պատրաստ ենք տրամադրել MDF դռներ մեծածախ գներով:', date: '25.07.2026', status: 'pending' }
+    { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով:', date: '24.07.2026', status: 'pending' }
 ];
-
 window.reviewsData = [
-    { id: 'REV-008', isNew: true, clientName: 'Մարիա Գրիգորյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ արագ և որակով տեղադրեցին դռները: Վարպետն իր գործի գիտակն է, անպայման էլի կդիմեմ ձեզ:', date: '25.07.2026' },
-    { id: 'REV-007', isNew: true, clientName: 'Տիգրան Հարությունյան', masterName: 'Կարեն Մինասյան', rating: 4.5, text: 'Ամեն ինչ նորմալ էր, շնորհակալություն վարպետին: Մի փոքր աղբ մնաց աշխատանքից հետո, դրա համար կես աստղ իջեցրեցի:', date: '25.07.2026' }
+    { id: 'REV-008', isNew: true, clientName: 'Մարիա Գրիգորյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ արագ և որակով տեղադրեցին դռները: Վարպետն իր գործի գիտակն է, անպայման էլի կդիմեմ ձեզ:', date: '25.07.2026' }
 ];
-
 window.clientsData = [ { id: 'TR-1234', name: 'Արամ Խաչատրյան', phone: '+374 98 123 789', address: 'Երևան, Տերյան 50', discount: 0 } ];
 window.partnersData = [ { id: 'p1', name: 'BuildingCorp', logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>' } ];
 
@@ -103,7 +98,19 @@ window.partnersData = [ { id: 'p1', name: 'BuildingCorp', logo: '<svg viewBox="0
 window.generateOrderId = function() { return 'ORD-' + Math.floor(100 + Math.random() * 900); };
 window.generateEmpId = function() { return 'EMP-' + Math.floor(100 + Math.random() * 900); };
 window.getCurrentDateString = function() { const d = new Date(); return String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear(); };
-window.getEmpTypeLabel = function(type) { const key = 'cat_' + type; return (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) ? window.adminTranslations[key][window.currentAdminLang] : type; };
+
+// НОВОЕ: Обработка массива профессий
+window.getEmpTypeLabel = function(type) { 
+    if (!type) return '---';
+    if (Array.isArray(type)) {
+        return type.map(t => {
+            const key = 'cat_' + t; 
+            return (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) ? window.adminTranslations[key][window.currentAdminLang] : t;
+        }).join(', ');
+    }
+    const key = 'cat_' + type; 
+    return (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) ? window.adminTranslations[key][window.currentAdminLang] : type; 
+};
 
 window.getBirthdayInfo = function(dateStr) {
     if (!dateStr || !dateStr.includes('.')) return null;
@@ -172,7 +179,6 @@ window.switchTab = function(screenId, btnElement) {
     }
 };
 
-// БИОМЕТРИЯ (WebAuthn)
 window.registerBiometric = async function() {
     try {
         const publicKey = {
@@ -215,24 +221,19 @@ window.authenticateBiometric = async function() {
 
 function finishLogin() {
     document.getElementById('auth-screen').classList.add('hidden');
-    
-    // Исправление ошибки Intervention: вибрируем, только если был клик или тап
     if (navigator.vibrate) {
         if (!navigator.userActivation || navigator.userActivation.hasBeenActive) {
             navigator.vibrate(20);
         }
     }
-    
     if(window.updateDashDots) window.updateDashDots();
     if(window.switchDashboardView) window.switchDashboardView('overview');
     
-    // Запускаем стягивание серверных данных
     if(window.fetchOrders) window.fetchOrders();
     if(window.fetchEmployees) window.fetchEmployees();
     if(window.fetchServices) window.fetchServices();
 }
 
-// ИНИЦИАЛИЗАЦИЯ И ЛОГИКА АВТОРИЗАЦИИ
 function initApp() {
     updateThemeIcon();
     window.applyAdminLanguage();
@@ -241,7 +242,6 @@ function initApp() {
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
 
-    // Рендер кнопки биометрии (если отпечаток был привязан ранее)
     if (localStorage.getItem('tree_biometric_id')) {
         const authCard = document.querySelector('.auth-card');
         if (!document.getElementById('fingerprint-btn')) {
@@ -259,7 +259,6 @@ function initApp() {
     async function checkPinCode(val) {
         authError.style.opacity = '0';
         try {
-            // Отправляем ПИН-код на сервер
             const res = await fetch('/api/auth', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -272,7 +271,6 @@ function initApp() {
                 pinInput.blur();
                 pinInput.value = ''; 
                 
-                // Предлагаем привязать биометрию
                 if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
                     setTimeout(() => {
                         if (confirm("Включить вход по отпечатку пальца / FaceID для будущих входов?")) {
