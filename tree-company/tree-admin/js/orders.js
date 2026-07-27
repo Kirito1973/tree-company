@@ -2,6 +2,37 @@ window.currentDashOrdFilter = 'all';
 window.currentActiveOrderId = null;
 window.currentEditingOrderId = null;
 
+// НОВОЕ: Получение заказов с сервера при старте
+window.fetchOrders = async function() {
+    try {
+        const res = await fetch('/api/orders');
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.length > 0) {
+                window.ordersData = data;
+            }
+            window.renderOrders();
+            if(window.renderDashboardOrders) window.renderDashboardOrders();
+            if(window.updateDashDots) window.updateDashDots();
+        }
+    } catch (err) {
+        console.error('Ошибка загрузки заказов:', err);
+    }
+};
+
+// НОВОЕ: Тихая синхронизация с сервером
+window.syncOrdersToServer = async function() {
+    try {
+        await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orders: window.ordersData })
+        });
+    } catch (err) {
+        console.error('Ошибка синхронизации заказов:', err);
+    }
+};
+
 window.setOrderFilter = function(filterValue) {
     window.currentDashOrdFilter = filterValue;
     document.querySelectorAll('#screen-orders .filter-tab').forEach(t => {
@@ -25,6 +56,9 @@ window.filterOrders = function() {
 
 document.addEventListener('DOMContentLoaded', () => {
     if(document.getElementById('order-search')) document.getElementById('order-search').addEventListener('input', window.filterOrders);
+    
+    // Запускаем скачивание заказов при открытии админки
+    window.fetchOrders();
 });
 
 window.renderOrders = function() {
@@ -48,9 +82,16 @@ window.renderOrders = function() {
     window.applyAdminLanguage(); window.filterOrders();
 };
 
-window.toggleServiceStatus = function(orderId, serviceIndex, checkboxElem) {
+window.toggleServiceStatus = async function(orderId, serviceIndex, checkboxElem) {
     const order = window.ordersData.find(o => o.id === orderId);
-    if (order && order.services[serviceIndex]) { order.services[serviceIndex].done = checkboxElem.checked; checkboxElem.checked ? checkboxElem.closest('.service-item-static').classList.add('done') : checkboxElem.closest('.service-item-static').classList.remove('done'); if (navigator.vibrate) navigator.vibrate(10); }
+    if (order && order.services[serviceIndex]) { 
+        order.services[serviceIndex].done = checkboxElem.checked; 
+        checkboxElem.checked ? checkboxElem.closest('.service-item-static').classList.add('done') : checkboxElem.closest('.service-item-static').classList.remove('done'); 
+        if (navigator.vibrate) navigator.vibrate(10); 
+        
+        // Отправляем изменения на сервер в фоне
+        await window.syncOrdersToServer();
+    }
 };
 
 window.openOrderModal = function(orderId) {
@@ -84,9 +125,50 @@ window.openOrderModal = function(orderId) {
 
 window.closeOrderModal = function() { document.getElementById('order-modal').classList.remove('active'); window.currentActiveOrderId = null; };
 
-window.acceptOrder = function() { if (!window.currentActiveOrderId) return; const order = window.ordersData.find(o => o.id === window.currentActiveOrderId); if (order && order.status === 'incoming') { order.status = 'new'; if(window.renderDashboardOrders) window.renderDashboardOrders(); window.renderOrders(); if(window.updateDashDots) window.updateDashDots(); window.closeOrderModal(); setTimeout(() => window.openOrderForm(order.id), 300); } };
-window.rejectOrder = function() { if (!window.currentActiveOrderId) return; const order = window.ordersData.find(o => o.id === window.currentActiveOrderId); if (order && order.status === 'incoming') { if (confirm("Reject?")) { order.status = 'cancelled'; if(window.renderDashboardOrders) window.renderDashboardOrders(); if(window.updateDashDots) window.updateDashDots(); window.closeOrderModal(); } } };
-window.cancelOrder = function() { if (!window.currentActiveOrderId) return; const order = window.ordersData.find(o => o.id === window.currentActiveOrderId); if (confirm("Cancel order?")) { if(order) { order.status = 'cancelled'; window.renderOrders(); } window.closeOrderModal(); } };
+window.acceptOrder = async function() { 
+    if (!window.currentActiveOrderId) return; 
+    const order = window.ordersData.find(o => o.id === window.currentActiveOrderId); 
+    if (order && order.status === 'incoming') { 
+        order.status = 'new'; 
+        
+        await window.syncOrdersToServer();
+        
+        if(window.renderDashboardOrders) window.renderDashboardOrders(); 
+        window.renderOrders(); 
+        if(window.updateDashDots) window.updateDashDots(); 
+        window.closeOrderModal(); 
+        setTimeout(() => window.openOrderForm(order.id), 300); 
+    } 
+};
+
+window.rejectOrder = async function() { 
+    if (!window.currentActiveOrderId) return; 
+    const order = window.ordersData.find(o => o.id === window.currentActiveOrderId); 
+    if (order && order.status === 'incoming') { 
+        if (confirm("Reject?")) { 
+            order.status = 'cancelled'; 
+            
+            await window.syncOrdersToServer();
+            
+            if(window.renderDashboardOrders) window.renderDashboardOrders(); 
+            if(window.updateDashDots) window.updateDashDots(); 
+            window.closeOrderModal(); 
+        } 
+    } 
+};
+
+window.cancelOrder = async function() { 
+    if (!window.currentActiveOrderId) return; 
+    const order = window.ordersData.find(o => o.id === window.currentActiveOrderId); 
+    if (confirm("Cancel order?")) { 
+        if(order) { 
+            order.status = 'cancelled'; 
+            await window.syncOrdersToServer();
+            window.renderOrders(); 
+        } 
+        window.closeOrderModal(); 
+    } 
+};
 
 window.openOrderForm = function(orderId = null) {
     window.currentEditingOrderId = orderId; const form = document.getElementById('order-form'); form.reset(); document.getElementById('form-services-container').innerHTML = '';
@@ -113,8 +195,15 @@ window.updateFormProfitFromSum = function() { let totalSum = 0; document.querySe
 window.addFormServiceRow = function(name = '', qty = 1, price = '', done = false) { const container = document.getElementById('form-services-container'); const row = document.createElement('div'); row.className = 'service-row-edit'; row.setAttribute('data-done', done); row.innerHTML = `<input type="text" class="glass-input serv-col-name" value="${name}" required><input type="number" class="glass-input serv-col-qty" min="1" value="${qty}" required oninput="calculateOrderFormTotals()"><input type="number" class="glass-input serv-col-price" min="0" value="${price}" required oninput="calculateOrderFormTotals()"><button type="button" class="serv-del-btn" onclick="removeFormServiceRow(this)">X</button>`; container.appendChild(row); };
 window.removeFormServiceRow = function(btnElement) { const row = btnElement.closest('.service-row-edit'); if (row) { row.remove(); window.calculateOrderFormTotals(); } };
 
-window.saveOrderForm = function(event) {
+window.saveOrderForm = async function(event) {
     event.preventDefault();
+    
+    // Блокируем кнопку на время сохранения
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const origText = submitBtn.innerText;
+    submitBtn.innerText = '...';
+    submitBtn.disabled = true;
+
     const clientName = document.getElementById('form-client-name').value; const phone = document.getElementById('form-phone').value; const address = document.getElementById('form-address').value;
     const workerSelect = document.getElementById('form-worker'); const assistantSelect = document.getElementById('form-assistant');
     let leadWorker = workerSelect.value.trim(); let assistant = assistantSelect.value.trim();
@@ -123,11 +212,17 @@ window.saveOrderForm = function(event) {
     let finalWorkerString = combinedWorkers.length > 0 ? combinedWorkers.join(', ') : '---';
     const services = [];
     document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => { const name = row.querySelector('.serv-col-name').value; const qty = parseInt(row.querySelector('.serv-col-qty').value); const price = parseFloat(row.querySelector('.serv-col-price').value); const done = row.getAttribute('data-done') === 'true'; if (name && qty > 0 && price >= 0) services.push({ name, qty, price, done }); });
-    if (services.length === 0) { alert('Error: No services'); return; }
+    if (services.length === 0) { alert('Error: No services'); submitBtn.innerText = origText; submitBtn.disabled = false; return; }
     const customProfit = parseFloat(document.getElementById('form-profit-sum').value) || 0;
     
     if (window.currentEditingOrderId) { const order = window.ordersData.find(o => o.id === window.currentEditingOrderId); if (order) { order.clientName = clientName; order.clientPhone = phone; order.address = address; order.worker = finalWorkerString; order.workerPhone = workerPhone; order.services = services; order.profit = customProfit; } } 
     else { window.ordersData.unshift({ id: window.generateOrderId(), status: 'new', createdAt: window.getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit }); }
     
+    // Отправляем изменения на сервер
+    await window.syncOrdersToServer();
+
     window.renderOrders(); if(window.renderDashboardOrders) window.renderDashboardOrders(); if(window.updateDashDots) window.updateDashDots(); window.closeOrderFormModal(); if (navigator.vibrate) navigator.vibrate(50);
+    
+    submitBtn.innerText = origText;
+    submitBtn.disabled = false;
 };
