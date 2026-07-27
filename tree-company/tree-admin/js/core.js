@@ -1,5 +1,5 @@
 // =========================================================
-// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Автообновляемая версия)
+// ЯДРО СИСТЕМЫ И ИНИЦИАЛИЗАЦИЯ (Серверная Auth + WebAuthn)
 // =========================================================
 
 if ('serviceWorker' in navigator) {
@@ -80,38 +80,23 @@ window.adminTranslations = {
     "lbl_master": { "AM": "Վարպետ:", "RU": "Мастер:", "EN": "Master:" }
 };
 
-// ТЕСТОВЫЕ ДАННЫЕ 
-window.ordersData = [
-    { id: 'ORD-004', status: 'incoming', createdAt: '25.07.2026', completedAt: null, clientName: 'Արամ Խաչատրյան', clientPhone: '+374 98 123 789', address: 'Երևան, Տերյան 50', worker: 'Չկա', workerPhone: '', services: [{ name: 'Էլեկտրիկի ծառայություն', qty: 1, price: 5000, done: false }], profit: 500 },
-    { id: 'ORD-005', status: 'incoming', createdAt: '26.07.2026', completedAt: null, clientName: 'Լևոն Սարգսյան', clientPhone: '+374 91 112 233', address: 'Երևան, Կիևյան 15', worker: 'Չկա', workerPhone: '', services: [{ name: 'Խողովակների փոխարինում', qty: 1, price: 12000, done: false }], profit: 1200 },
-    { id: 'ORD-006', status: 'incoming', createdAt: '26.07.2026', completedAt: null, clientName: 'Մարիամ Գրիգորյան', clientPhone: '+374 99 445 566', address: 'Երևան, Բաղրամյան 2', worker: 'Չկա', workerPhone: '', services: [{ name: 'Լամինատի տեղադրում', qty: 20, price: 2000, done: false }], profit: 4000 }
-];
+// Базы данных (Очищены, так как теперь питаются от сервера)
+window.ordersData = [];
+window.employeesData = [];
+window.servicesData = [];
 
-window.employeesData = [
-    { id: 'EMP-001', status: 'active', name: 'Արմեն Սարգսյան', type: 'doors', phone: '+374 77 999 888', exp: '6', rating: 4.8, birthDate: '12.05.1990', address: 'Երևան, Կոմիտաս 45', accessKey: '123456', companyDebt: -2500, workingDates: ['20.07.2026'] },
-    { id: 'EMP-005', status: 'pending', name: 'Արամ Գևորգյան', type: 'electro', phone: '+374 98 000 111', exp: '2', rating: 0.0, birthDate: '05.08.1998', address: 'Երևան, Րաֆֆու 10', accessKey: '', companyDebt: 0, workingDates: [] },
-    { id: 'EMP-006', status: 'pending', name: 'Կարեն Մինասյան', type: 'doors', phone: '+374 55 777 888', exp: '5', rating: 0.0, birthDate: '10.10.1995', address: 'Երևան, Շիրազի 5', accessKey: '', companyDebt: 0, workingDates: [] }
-];
-
+// Тестовые массивы (Оставлены временно, пока не переведены на API)
 window.cooperationRequestsData = [
     { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով:', date: '24.07.2026', status: 'pending' },
     { id: 'COOP-REQ-02', company: 'DoorTech', contact: 'Աննա', phone: '+374 98 555 666', text: 'Պատրաստ ենք տրամադրել MDF դռներ մեծածախ գներով:', date: '25.07.2026', status: 'pending' }
 ];
 
-// 5 НОВЫХ И 3 СТАРЫХ ОТЗЫВА
 window.reviewsData = [
     { id: 'REV-008', isNew: true, clientName: 'Մարիա Գրիգորյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ արագ և որակով տեղադրեցին դռները: Վարպետն իր գործի գիտակն է, անպայման էլի կդիմեմ ձեզ:', date: '25.07.2026' },
-    { id: 'REV-007', isNew: true, clientName: 'Տիգրան Հարությունյան', masterName: 'Կարեն Մինասյան', rating: 4.5, text: 'Ամեն ինչ նորմալ էր, շնորհակալություն վարպետին: Մի փոքր աղբ մնաց աշխատանքից հետո, դրա համար կես աստղ իջեցրեցի:', date: '25.07.2026' },
-    { id: 'REV-006', isNew: true, clientName: 'Լուսինե', masterName: 'Կարեն (Universal)', rating: 5, text: 'Գերազանց սպասարկում: Խորհուրդ եմ տալիս բոլորին: Շատ բարեհամբույր և պրոֆեսիոնալ մոտեցում:', date: '24.07.2026' },
-    { id: 'REV-005', isNew: true, clientName: 'Հայկ Պետրոսյան', masterName: 'Արմեն Սարգսյան', rating: 4, text: 'Լավ աշխատանք, բայց փոքր-ինչ ուշացան պայմանավորված ժամից: Արդյունքը գոհացնող է:', date: '24.07.2026' },
-    { id: 'REV-004', isNew: true, clientName: 'Աննա Հովհաննիսյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ գոհ եմ արդյունքից: Ամեն ինչ կատարվել է ժամանակին և որակով: Շնորհակալություն ամբողջ թիմին:', date: '23.07.2026' },
-    { id: 'REV-003', isNew: false, clientName: 'Արթուր', masterName: 'Արամ Գևորգյան', rating: 3.5, text: 'Միջին որակի աշխատանք, սպասում էի ավելին: Բայց գինը մատչելի էր, այնպես որ նորմալ է:', date: '20.07.2026' },
-    { id: 'REV-002', isNew: false, clientName: 'Գոհար', masterName: 'Տիգրան Վարդանյան', rating: 5, text: 'Հիանալի աշխատանք: Շնորհակալություն արագ արձագանքելու համար:', date: '18.07.2026' },
-    { id: 'REV-001', isNew: false, clientName: 'Վարդան', masterName: 'Կարեն Մինասյան', rating: 4, text: 'Լավ մաստեր էր, բայց նյութերի գները մի քիչ բարձր են շուկայականից:', date: '15.07.2026' }
+    { id: 'REV-007', isNew: true, clientName: 'Տիգրան Հարությունյան', masterName: 'Կարեն Մինասյան', rating: 4.5, text: 'Ամեն ինչ նորմալ էր, շնորհակալություն վարպետին: Մի փոքր աղբ մնաց աշխատանքից հետո, դրա համար կես աստղ իջեցրեցի:', date: '25.07.2026' }
 ];
 
 window.clientsData = [ { id: 'TR-1234', name: 'Արամ Խաչատրյան', phone: '+374 98 123 789', address: 'Երևան, Տերյան 50', discount: 0 } ];
-window.servicesData = [ { id: 'srv1', name: 'Դռների տեղադրում', price: 15000, icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M6 22h12"/><path d="M4 22h16"/><path d="M14 12h.01"/></svg>', status: 'active' } ];
 window.partnersData = [ { id: 'p1', name: 'BuildingCorp', logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>' } ];
 
 // УТИЛИТЫ
@@ -167,13 +152,14 @@ window.applyAdminLanguage = function() {
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) el.placeholder = window.adminTranslations[key][window.currentAdminLang]; });
 };
 
-// ГЛАВНАЯ НАВИГАЦИЯ
 window.switchTab = function(screenId, btnElement) {
     document.querySelectorAll('.admin-screen').forEach(scr => scr.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     btnElement.classList.add('active');
-    if (navigator.vibrate) navigator.vibrate(20); 
+    if (navigator.vibrate) {
+        if (!navigator.userActivation || navigator.userActivation.hasBeenActive) navigator.vibrate(20);
+    }
 
     if(screenId === 'screen-dashboard' && window.switchDashboardView) window.switchDashboardView('overview');
     if(screenId === 'screen-orders' && window.filterOrders) window.filterOrders();
@@ -186,6 +172,61 @@ window.switchTab = function(screenId, btnElement) {
     }
 };
 
+// БИОМЕТРИЯ (WebAuthn)
+window.registerBiometric = async function() {
+    try {
+        const publicKey = {
+            challenge: new Uint8Array(32),
+            rp: { name: "Tree Company" },
+            user: { id: new Uint8Array(16), name: "user", displayName: "User" },
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
+            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
+            timeout: 60000
+        };
+        const credential = await navigator.credentials.create({ publicKey });
+        const rawId = Array.from(new Uint8Array(credential.rawId));
+        localStorage.setItem('tree_biometric_id', JSON.stringify(rawId));
+        alert("Успешно! Теперь вы можете входить по отпечатку.");
+        location.reload(); // Перезагружаем, чтобы появилась кнопка
+    } catch (e) {
+        console.error("Ошибка привязки биометрии:", e);
+    }
+};
+
+window.authenticateBiometric = async function() {
+    try {
+        const savedId = JSON.parse(localStorage.getItem('tree_biometric_id'));
+        if (!savedId) return;
+        
+        const publicKey = {
+            challenge: new Uint8Array(32),
+            allowCredentials: [{ type: "public-key", id: new Uint8Array(savedId) }],
+            userVerification: "required",
+            timeout: 60000
+        };
+        await navigator.credentials.get({ publicKey });
+        
+        // Если отпечаток совпал - пускаем!
+        sessionStorage.setItem('tree_authenticated', 'true');
+        finishLogin();
+    } catch (e) {
+        console.error("Отпечаток не распознан", e);
+    }
+};
+
+function finishLogin() {
+    document.getElementById('auth-screen').classList.add('hidden');
+    if (navigator.vibrate) navigator.vibrate(20);
+    
+    if(window.updateDashDots) window.updateDashDots();
+    if(window.switchDashboardView) window.switchDashboardView('overview');
+    
+    // Запускаем стягивание серверных данных
+    if(window.fetchOrders) window.fetchOrders();
+    if(window.fetchEmployees) window.fetchEmployees();
+    if(window.fetchServices) window.fetchServices();
+}
+
 // ИНИЦИАЛИЗАЦИЯ И ЛОГИКА АВТОРИЗАЦИИ
 function initApp() {
     updateThemeIcon();
@@ -195,31 +236,62 @@ function initApp() {
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
 
-    function checkPinCode(val) {
-        const emp = window.employeesData.find(emp => emp.accessKey === val && emp.status === 'active');
-        const isMaster = (val === '6000' || val === '000000' || val === '006000' || val === '600000');
-        
-        if (isMaster || emp) {
-            sessionStorage.setItem('tree_authenticated', 'true');
-            authScreen.classList.add('hidden');
-            pinInput.blur();
-            pinInput.value = ''; 
-            if (navigator.vibrate) navigator.vibrate(20);
-            if(window.updateDashDots) window.updateDashDots();
-            if(window.switchDashboardView) window.switchDashboardView('overview');
-        } else {
-            if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
+    // Рендер кнопки биометрии (если отпечаток был привязан ранее)
+    if (localStorage.getItem('tree_biometric_id')) {
+        const authCard = document.querySelector('.auth-card');
+        if (!document.getElementById('fingerprint-btn')) {
+            const fpBtn = document.createElement('button');
+            fpBtn.id = 'fingerprint-btn';
+            fpBtn.innerHTML = `<svg viewBox="0 0 24 24" width="40" height="40" stroke="currentColor" stroke-width="1.5" fill="none"><path d="M12 2v20M17 5c0 4-4 6-4 6s-4-2-4-6a4 4 0 0 1 8 0z"></path><path d="M22 12c0 4-4 6-4 6s-4-2-4-6a8 8 0 0 1 16 0z"></path></svg><span style="font-size:10px; display:block; margin-top:6px; font-weight:800; color:var(--text-sec);">Отпечаток / FaceID</span>`;
+            fpBtn.style.cssText = "background:transparent; border:none; color:var(--tree-light); margin-top:24px; cursor:pointer; display:flex; flex-direction:column; align-items:center; transition:transform 0.2s;";
+            fpBtn.onclick = () => window.authenticateBiometric();
+            fpBtn.onmousedown = () => fpBtn.style.transform = 'scale(0.9)';
+            fpBtn.onmouseup = () => fpBtn.style.transform = 'scale(1)';
+            authCard.appendChild(fpBtn);
+        }
+    }
+
+    async function checkPinCode(val) {
+        authError.style.opacity = '0';
+        try {
+            // Отправляем ПИН-код на наш новый сервер
+            const res = await fetch('/api/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pin: val })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                sessionStorage.setItem('tree_authenticated', 'true');
+                pinInput.blur();
+                pinInput.value = ''; 
+                
+                // Предлагаем привязать биометрию, если устройство поддерживает, но мы еще этого не сделали
+                if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
+                    setTimeout(() => {
+                        if (confirm("Включить вход по отпечатку пальца / FaceID для будущих входов?")) {
+                            window.registerBiometric();
+                        }
+                    }, 500);
+                }
+                
+                finishLogin();
+            } else {
+                if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
+                authError.innerText = data.error || "Սխալ PIN (Неверный пароль)";
+                authError.style.opacity = '1';
+                pinInput.value = ''; 
+            }
+        } catch (e) {
+            authError.innerText = "Ошибка сервера";
             authError.style.opacity = '1';
-            pinInput.value = ''; 
+            pinInput.value = '';
         }
     }
 
     if (sessionStorage.getItem('tree_authenticated') === 'true') {
-        authScreen.classList.add('hidden');
-        if(window.updateDashDots) window.updateDashDots();
-        if(window.switchDashboardView) window.switchDashboardView('overview');
-        if(window.renderOrders) window.renderOrders();
-        if(window.renderEmployees) window.renderEmployees();
+        finishLogin();
     } else {
         authScreen.classList.remove('hidden');
         setTimeout(() => pinInput.focus(), 300);
