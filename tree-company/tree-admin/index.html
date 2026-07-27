@@ -390,7 +390,6 @@
                 </div>
             </div>
 
-            <!-- ОБНОВЛЕНО: Просмотр профиля сотрудника с аватаром -->
             <div id="employee-modal" class="modal-overlay" onclick="closeEmployeeModal()">
                 <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                     <div class="entity-header" style="margin-bottom:10px;">
@@ -445,7 +444,6 @@
                 </div>
             </div>
 
-            <!-- ОБНОВЛЕНО: Форма сотрудника с полем для фото -->
             <div id="employee-form-modal" class="modal-overlay" onclick="closeEmployeeFormModal()">
                 <div class="modal-content glass-panel modal-scroll" onclick="event.stopPropagation()">
                     <h3 class="screen-title" data-i18n="btn_add_emp">Сотрудник</h3>
@@ -465,11 +463,16 @@
                             <input type="text" id="form-emp-birth" class="glass-input" data-i18n-placeholder="lbl_bday" placeholder="ДД.ММ.ГГГГ">
                             <input type="number" id="form-emp-exp" class="glass-input" data-i18n-placeholder="lbl_exp" placeholder="Опыт (лет)">
                         </div>
-                        <select id="form-emp-type" class="glass-input">
-                            <option value="doors" data-i18n="cat_doors">Двери</option>
-                            <option value="electro" data-i18n="cat_electro">Электрик</option>
-                            <option value="universal" data-i18n="cat_universal">Универсал</option>
-                        </select>
+                        
+                        <!-- НОВОЕ: Контейнер для множественного выбора профессий -->
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="input-label" data-i18n="lbl_professions">Профессии</span>
+                                <button type="button" class="add-serv-btn" onclick="addNewProfession()">+ Добавить</button>
+                            </div>
+                            <div id="form-emp-professions-container" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+                        </div>
+
                         <input type="text" id="form-emp-access-key" class="glass-input" data-i18n-placeholder="lbl_pin" placeholder="PIN код" required>
                         
                         <div style="display:flex; gap:10px; margin-top:10px;">
