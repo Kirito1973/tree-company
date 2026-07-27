@@ -1,7 +1,12 @@
 window.dashViewedState = { orders: 0, masters: 0, partners: 0 };
 
 window.updateDashDots = function() {
-    const incOrders = window.ordersData ? window.ordersData.filter(o => o.status === 'incoming').length : 0;
+    // ОБНОВЛЕНО: Отлавливаем не только входящие с сайта, но и новые без работника
+    const incOrders = window.ordersData ? window.ordersData.filter(o => 
+        o.status === 'incoming' || 
+        (o.status === 'new' && (!o.worker || o.worker === '---' || o.worker === 'Չկա'))
+    ).length : 0;
+    
     const incMasters = window.employeesData ? window.employeesData.filter(e => e.status === 'pending').length : 0;
     const incPartners = window.cooperationRequestsData ? window.cooperationRequestsData.filter(c => c.status === 'pending').length : 0;
     const incReviews = window.reviewsData ? window.reviewsData.filter(r => r.isNew).length : 0;
@@ -43,7 +48,6 @@ window.switchDashboardView = function(viewName) {
     if(viewName === 'masters') window.renderDashboardMasters();
     if(viewName === 'partners') window.renderDashboardPartnerRequests();
     
-    // Исправление Intervention ошибки: вибрируем только если пользователь уже взаимодействовал со страницей
     if (navigator.vibrate) {
         if (!navigator.userActivation || navigator.userActivation.hasBeenActive) {
             navigator.vibrate(10);
@@ -116,13 +120,23 @@ window.renderDashboardOrders = function() {
     const list = document.getElementById('dash-orders-list'); list.innerHTML = '';
     if(!window.ordersData) { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; return; }
     
-    let filtered = window.ordersData.filter(o => o.status === 'incoming');
+    // ОБНОВЛЕНО: Фильтруем заказы, у которых статус "Новый" и при этом нет сотрудника
+    let filtered = window.ordersData.filter(o => 
+        o.status === 'incoming' || 
+        (o.status === 'new' && (!o.worker || o.worker === '---' || o.worker === 'Չկա'))
+    );
+    
     if(filtered.length > 0) {
         filtered.forEach(order => {
             let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
             if(order.services && order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
+            
+            // Если заказ без мастера, подсвечиваем его как "Новый"
+            let statClass = order.status === 'incoming' ? 'incoming' : 'new';
+            let statI18n = order.status === 'incoming' ? 'status_incoming' : 'status_new';
+            
             const card = document.createElement('div'); card.className = 'entity-card'; card.onclick = () => window.openOrderModal(order.id);
-            card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status incoming" data-i18n="status_incoming"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${window.adminTranslations['lbl_name'][window.currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${window.adminTranslations['lbl_phone'][window.currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${window.adminTranslations['lbl_address'][window.currentAdminLang]} ${order.address}</div>`;
+            card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statClass}" data-i18n="${statI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${window.adminTranslations['lbl_name'][window.currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${window.adminTranslations['lbl_phone'][window.currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${window.adminTranslations['lbl_address'][window.currentAdminLang]} ${order.address}</div>`;
             list.appendChild(card);
         });
         window.applyAdminLanguage();
