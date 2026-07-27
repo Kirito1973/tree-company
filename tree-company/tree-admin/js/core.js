@@ -187,7 +187,7 @@ window.registerBiometric = async function() {
         const rawId = Array.from(new Uint8Array(credential.rawId));
         localStorage.setItem('tree_biometric_id', JSON.stringify(rawId));
         alert("Успешно! Теперь вы можете входить по отпечатку.");
-        location.reload(); // Перезагружаем, чтобы появилась кнопка
+        location.reload(); 
     } catch (e) {
         console.error("Ошибка привязки биометрии:", e);
     }
@@ -206,7 +206,6 @@ window.authenticateBiometric = async function() {
         };
         await navigator.credentials.get({ publicKey });
         
-        // Если отпечаток совпал - пускаем!
         sessionStorage.setItem('tree_authenticated', 'true');
         finishLogin();
     } catch (e) {
@@ -216,7 +215,13 @@ window.authenticateBiometric = async function() {
 
 function finishLogin() {
     document.getElementById('auth-screen').classList.add('hidden');
-    if (navigator.vibrate) navigator.vibrate(20);
+    
+    // Исправление ошибки Intervention: вибрируем, только если был клик или тап
+    if (navigator.vibrate) {
+        if (!navigator.userActivation || navigator.userActivation.hasBeenActive) {
+            navigator.vibrate(20);
+        }
+    }
     
     if(window.updateDashDots) window.updateDashDots();
     if(window.switchDashboardView) window.switchDashboardView('overview');
@@ -254,7 +259,7 @@ function initApp() {
     async function checkPinCode(val) {
         authError.style.opacity = '0';
         try {
-            // Отправляем ПИН-код на наш новый сервер
+            // Отправляем ПИН-код на сервер
             const res = await fetch('/api/auth', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -267,7 +272,7 @@ function initApp() {
                 pinInput.blur();
                 pinInput.value = ''; 
                 
-                // Предлагаем привязать биометрию, если устройство поддерживает, но мы еще этого не сделали
+                // Предлагаем привязать биометрию
                 if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
                     setTimeout(() => {
                         if (confirm("Включить вход по отпечатку пальца / FaceID для будущих входов?")) {
