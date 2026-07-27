@@ -1,7 +1,9 @@
 window.currentActiveEmpId = null;
 window.currentEditingEmpId = null;
 
-// Загрузка сотрудников с сервера
+// Стандартные профессии по умолчанию
+window.availableProfessions = ['doors', 'electro', 'universal'];
+
 window.fetchEmployees = async function() {
     try {
         const res = await fetch('/api/employees');
@@ -19,7 +21,6 @@ window.fetchEmployees = async function() {
     }
 };
 
-// Тихая синхронизация с сервером
 window.syncEmployeesToServer = async function() {
     try {
         await fetch('/api/employees', {
@@ -44,7 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.fetchEmployees();
 });
 
-// НОВОЕ: Обработка и сжатие фото прямо в браузере (чтобы не перегружать сервер)
 window.previewEmpPhoto = function(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -55,14 +55,14 @@ window.previewEmpPhoto = function(event) {
         img.src = e.target.result;
         img.onload = () => {
             const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 250; // Сжимаем до размера аватара
+            const MAX_WIDTH = 250; 
             const scaleSize = MAX_WIDTH / img.width;
             canvas.width = MAX_WIDTH;
             canvas.height = img.height * scaleSize;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             
-            const base64 = canvas.toDataURL('image/jpeg', 0.8); // 80% качество
+            const base64 = canvas.toDataURL('image/jpeg', 0.8);
             document.getElementById('form-emp-photo-base64').value = base64;
             document.getElementById('form-emp-photo-preview').style.backgroundImage = `url(${base64})`;
             document.getElementById('form-emp-photo-preview').innerText = '';
@@ -80,13 +80,24 @@ window.renderEmployees = function() {
 
     window.employeesData.filter(e => e.status === 'active').forEach(emp => {
         const textToSearch = (emp.name + " " + emp.phone).toLowerCase(); const matchesSearch = textToSearch.includes(empSearchTerm);
-        const matchesFilter = activeFilter === 'all' || emp.type === activeFilter;
+        
+        // НОВОЕ: Проверка фильтра для массива профессий
+        let matchesFilter = false;
+        if (activeFilter === 'all') {
+            matchesFilter = true;
+        } else {
+            if (Array.isArray(emp.type)) {
+                matchesFilter = emp.type.includes(activeFilter);
+            } else {
+                matchesFilter = (emp.type === activeFilter);
+            }
+        }
+        
         if (!matchesFilter || !matchesSearch) return;
         
         const bdayInfo = window.getBirthdayInfo(emp.birthDate); if (bdayInfo && bdayInfo.isToday) bdayEmployees.push(emp.name);
         let bdayHtml = ''; if (bdayInfo) { if (bdayInfo.isToday) bdayHtml = `<div style="color: #FFB347; font-weight: 800; font-size: 10px; margin-top: 6px; display: flex; align-items: center; gap: 4px;">🎉 Happy Birthday!</div>`; else bdayHtml = `<div style="color: var(--text-sec); font-weight: 600; font-size: 9px; margin-top: 6px;">🎂 ${bdayInfo.daysLeft} days left</div>`; }
         
-        // НОВОЕ: Отображение фото в списке (если нет - показываем первую букву имени)
         const photoHtml = emp.photo ? 
             `<div style="width: 46px; height: 46px; border-radius: 50%; background-image: url(${emp.photo}); background-size: cover; background-position: center; border: 2px solid var(--tree-light); flex-shrink: 0;"></div>` : 
             `<div style="width: 46px; height: 46px; border-radius: 50%; background: rgba(128,128,128,0.1); display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 900; color: var(--text-sec); flex-shrink: 0;">${emp.name.charAt(0)}</div>`;
@@ -119,7 +130,6 @@ window.openEmployeeModal = function(empId) {
     const typeBadge = document.getElementById('modal-emp-type');
     if (isPending) { typeBadge.style.background = 'rgba(255, 179, 71, 0.15)'; typeBadge.style.color = '#FFB347'; } else { typeBadge.style.background = 'rgba(31, 150, 81, 0.15)'; typeBadge.style.color = 'var(--tree-light)'; }
     
-    // НОВОЕ: Показываем фото в модалке просмотра
     const photoEl = document.getElementById('modal-emp-photo');
     if (emp.photo) {
         photoEl.style.backgroundImage = `url(${emp.photo})`;
@@ -164,9 +174,7 @@ window.acceptEmployee = async function() {
     if (emp) { 
         emp.status = 'active'; 
         emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString(); 
-        
         await window.syncEmployeesToServer();
-        
         if(window.renderDashboardMasters) window.renderDashboardMasters(); 
         window.renderEmployees(); 
         if(window.updateDashDots) window.updateDashDots(); 
@@ -179,9 +187,7 @@ window.rejectEmployee = async function() {
     if (!window.currentActiveEmpId) return; 
     if (confirm("Reject?")) { 
         window.employeesData = window.employeesData.filter(e => e.id !== window.currentActiveEmpId); 
-        
         await window.syncEmployeesToServer();
-        
         if(window.renderDashboardMasters) window.renderDashboardMasters(); 
         window.closeEmployeeModal(); 
         if(window.updateDashDots) window.updateDashDots(); 
@@ -194,9 +200,40 @@ window.adjustEmpDebt = async function(action) {
     if (action === 'add') emp.companyDebt += val; else if (action === 'bonus') emp.companyDebt -= val; else if (action === 'reset') emp.companyDebt = 0;
     
     await window.syncEmployeesToServer();
-    
     const debtEl = document.getElementById('modal-emp-debt'); debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏'; debtEl.style.color = emp.companyDebt < 0 ? '#1F9651' : '#ff4444';
     document.getElementById('emp-finance-input').value = ''; window.renderEmployees(); if (navigator.vibrate) navigator.vibrate(20);
+};
+
+// НОВОЕ: Рендер чипов для выбора профессий
+window.renderProfessionsForm = function(selected = []) {
+    const container = document.getElementById('form-emp-professions-container');
+    container.innerHTML = '';
+    
+    // Собираем все уникальные профессии (стандартные + те, что уже есть у мастеров)
+    let allProfs = new Set([...window.availableProfessions]);
+    if (window.employeesData) {
+        window.employeesData.forEach(e => {
+            if (Array.isArray(e.type)) e.type.forEach(t => allProfs.add(t));
+            else if (e.type) allProfs.add(e.type);
+        });
+    }
+    selected.forEach(s => allProfs.add(s));
+    
+    allProfs.forEach(prof => {
+        const isActive = selected.includes(prof) ? 'active' : '';
+        const label = window.getEmpTypeLabel([prof]);
+        container.innerHTML += `<div class="prof-chip ${isActive}" data-val="${prof}" onclick="this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10);">${label}</div>`;
+    });
+};
+
+// НОВОЕ: Кнопка добавления кастомной профессии
+window.addNewProfession = function() {
+    const newProf = prompt('Введите название новой профессии (например, Установщик плинтусов):');
+    if (newProf && newProf.trim() !== '') {
+        const val = newProf.trim();
+        const container = document.getElementById('form-emp-professions-container');
+        container.innerHTML += `<div class="prof-chip active" data-val="${val}" onclick="this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10);">${val}</div>`;
+    }
 };
 
 window.openEmployeeForm = function(empId = null) {
@@ -204,6 +241,7 @@ window.openEmployeeForm = function(empId = null) {
     
     const photoPreview = document.getElementById('form-emp-photo-preview');
     const photoBase64 = document.getElementById('form-emp-photo-base64');
+    let empTypes = [];
     
     if (empId) { 
         const emp = window.employeesData.find(e => e.id === empId); 
@@ -212,11 +250,9 @@ window.openEmployeeForm = function(empId = null) {
             document.getElementById('form-emp-phone').value = emp.phone; 
             document.getElementById('form-emp-address').value = emp.address || ''; 
             document.getElementById('form-emp-birth').value = emp.birthDate || ''; 
-            document.getElementById('form-emp-type').value = emp.type; 
             document.getElementById('form-emp-exp').value = emp.exp ? emp.exp.split('/')[0].trim() : ''; 
             document.getElementById('form-emp-access-key').value = emp.accessKey || ''; 
             
-            // Подгружаем фото в форму редактирования
             if (emp.photo) {
                 photoPreview.style.backgroundImage = `url(${emp.photo})`;
                 photoPreview.innerText = '';
@@ -226,6 +262,8 @@ window.openEmployeeForm = function(empId = null) {
                 photoPreview.innerText = 'ԼՈՒՍԱՆԿԱՐ';
                 photoBase64.value = '';
             }
+            
+            empTypes = Array.isArray(emp.type) ? emp.type : [emp.type];
         } 
         window.closeEmployeeModal(); 
     } else { 
@@ -234,6 +272,8 @@ window.openEmployeeForm = function(empId = null) {
         photoPreview.innerText = 'ԼՈՒՍԱՆԿԱՐ';
         photoBase64.value = '';
     }
+    
+    window.renderProfessionsForm(empTypes);
     
     document.getElementById('form-emp-photo').value = '';
     document.getElementById('employee-form-modal').classList.add('active');
@@ -244,21 +284,30 @@ window.closeEmployeeFormModal = function() { document.getElementById('employee-f
 window.saveEmployeeForm = async function(event) {
     event.preventDefault();
     
+    // Считываем все выделенные зеленым чипы профессий
+    const selectedProfChips = document.querySelectorAll('#form-emp-professions-container .prof-chip.active');
+    const finalTypes = Array.from(selectedProfChips).map(c => c.getAttribute('data-val'));
+    
+    if (finalTypes.length === 0) {
+        alert('Выберите хотя бы одну профессию!');
+        return;
+    }
+
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const origText = submitBtn.innerText;
     submitBtn.innerText = '...';
     submitBtn.disabled = true;
 
-    const name = document.getElementById('form-emp-name').value; const phone = document.getElementById('form-emp-phone').value; const address = document.getElementById('form-emp-address').value; const birthDate = document.getElementById('form-emp-birth').value; const type = document.getElementById('form-emp-type').value; const exp = document.getElementById('form-emp-exp').value; const accessKey = document.getElementById('form-emp-access-key').value;
-    const photo = document.getElementById('form-emp-photo-base64').value; // Забираем фото
+    const name = document.getElementById('form-emp-name').value; const phone = document.getElementById('form-emp-phone').value; const address = document.getElementById('form-emp-address').value; const birthDate = document.getElementById('form-emp-birth').value; const exp = document.getElementById('form-emp-exp').value; const accessKey = document.getElementById('form-emp-access-key').value;
+    const photo = document.getElementById('form-emp-photo-base64').value; 
     
     if (window.currentEditingEmpId) { 
         const emp = window.employeesData.find(e => e.id === window.currentEditingEmpId); 
         if (emp) { 
-            emp.name = name; emp.phone = phone; emp.address = address; emp.birthDate = birthDate; emp.type = type; emp.exp = exp; emp.accessKey = accessKey; emp.photo = photo; 
+            emp.name = name; emp.phone = phone; emp.address = address; emp.birthDate = birthDate; emp.type = finalTypes; emp.exp = exp; emp.accessKey = accessKey; emp.photo = photo; 
         } 
     } else { 
-        window.employeesData.push({ id: window.generateEmpId(), status: 'active', name: name, type: type, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [], photo: photo }); 
+        window.employeesData.push({ id: window.generateEmpId(), status: 'active', name: name, type: finalTypes, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [], photo: photo }); 
     }
     
     await window.syncEmployeesToServer();
