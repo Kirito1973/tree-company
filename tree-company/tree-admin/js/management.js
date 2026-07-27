@@ -9,19 +9,88 @@ window.switchManagementTab = function(tabName, btnElement) {
 
 window.renderAdminServices = function() {
     const list = document.getElementById('admin-services-list'); if (!list) return; list.innerHTML = '';
+    // Массив window.servicesData теперь берется напрямую с сервера Vercel
     window.servicesData.forEach(s => {
         list.innerHTML += `<div class="entity-card" style="flex-direction: row; align-items: center; justify-content: space-between;"><div style="display: flex; align-items: center; gap: 12px;"><div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(31,150,81,0.1); color: var(--tree-light); display: flex; justify-content: center; align-items: center;">${s.icon}</div><div><div style="font-size: 13px; font-weight: 800; color: var(--text);">${s.name}</div><div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.price} ֏</div></div></div><button class="serv-del-btn" onclick="deleteService('${s.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></div>`;
     });
 };
 
+// Загрузка услуг с сервера
+window.fetchServices = async function() {
+    try {
+        const res = await fetch('/api/services');
+        if(res.ok) {
+            const data = await res.json();
+            window.servicesData = data || [];
+            window.renderAdminServices();
+        }
+    } catch(err) {
+        console.error('Ошибка загрузки услуг:', err);
+    }
+};
+
 window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-price').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
 window.closeServiceForm = function() { document.getElementById('service-form-modal').classList.remove('active'); };
-window.saveServiceForm = function(e) { 
+
+// Сохранение услуги на сервер
+window.saveServiceForm = async function(e) { 
     e.preventDefault(); 
-    window.servicesData.push({ id: 's' + Math.random(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }); 
-    window.renderAdminServices(); window.closeServiceForm(); if(navigator.vibrate)navigator.vibrate(20);
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const origText = submitBtn.innerText;
+    submitBtn.innerText = '...';
+    submitBtn.disabled = true;
+
+    // Генерируем уникальный ID на основе времени
+    const newService = { 
+        id: 's' + Date.now(), 
+        name: document.getElementById('form-cat-name').value, 
+        price: parseInt(document.getElementById('form-cat-price').value) || 0, 
+        icon: document.getElementById('form-cat-icon').value || '<svg></svg>', 
+        status: document.getElementById('form-cat-status').value 
+    }; 
+    
+    const updatedServices = [...window.servicesData, newService];
+
+    try {
+        const res = await fetch('/api/services', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ services: updatedServices })
+        });
+        if(res.ok) {
+            window.servicesData = updatedServices;
+            window.renderAdminServices(); 
+            window.closeServiceForm(); 
+            if(navigator.vibrate) navigator.vibrate(20);
+        }
+    } catch(err) {
+        alert('Ошибка связи с сервером');
+    } finally {
+        submitBtn.innerText = origText;
+        submitBtn.disabled = false;
+    }
 };
-window.deleteService = function(id) { if(confirm('Delete?')) { window.servicesData = window.servicesData.filter(s => s.id !== id); window.renderAdminServices(); } };
+
+// Удаление услуги с сервера
+window.deleteService = async function(id) { 
+    if(confirm('Удалить услугу?')) { 
+        const updatedServices = window.servicesData.filter(s => s.id !== id);
+        try {
+            const res = await fetch('/api/services', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ services: updatedServices })
+            });
+            if(res.ok) {
+                window.servicesData = updatedServices; 
+                window.renderAdminServices(); 
+                if(navigator.vibrate) navigator.vibrate(20);
+            }
+        } catch(err) {
+            alert('Ошибка при удалении');
+        }
+    } 
+};
 
 window.serverTranslations = {};
 window.fetchAppDatabase = async function() {
@@ -62,4 +131,7 @@ window.uploadToServer = async function(buttonElement, originalText, spanElement)
     } catch(e) { console.error('API Err'); spanElement.innerHTML = originalText; }
 };
 
-document.addEventListener('DOMContentLoaded', () => { window.fetchAppDatabase(); });
+document.addEventListener('DOMContentLoaded', () => { 
+    window.fetchAppDatabase(); 
+    window.fetchServices(); // Запуск получения данных при старте
+});
