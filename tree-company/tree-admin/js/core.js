@@ -198,22 +198,17 @@ window.registerBiometric = async function() {
 };
 
 // Функция авторизации по лицу/отпечатку
-window.authenticateBiometric = async function(isRetry = false) {
-    const autoContainer = document.getElementById('bio-auto-container');
-    const pinContainer = document.getElementById('pin-input-container');
-    const scanIcon = document.getElementById('bio-scan-icon');
+window.authenticateBiometric = async function() {
+    const scanIcon = document.getElementById('bio-icon-circle');
     const authError = document.getElementById('auth-error');
     
     try {
         const savedId = JSON.parse(localStorage.getItem('tree_biometric_id'));
-        if (!savedId) return;
-        
-        // Показываем анимацию сканирования, если это первый запуск
-        if (!isRetry) {
-            if(autoContainer) autoContainer.style.display = 'flex';
-            if(pinContainer) pinContainer.style.display = 'none';
-            if(scanIcon) scanIcon.className = 'bio-icon scanning';
+        if (!savedId) {
+            if (authError) { authError.innerText = "Биометрия не настроена на этом устройстве"; authError.style.opacity = '1'; }
+            return;
         }
+        
         if (authError) authError.style.opacity = '0';
         
         const publicKey = {
@@ -226,28 +221,15 @@ window.authenticateBiometric = async function(isRetry = false) {
         // Системный вызов FaceID / TouchID
         await navigator.credentials.get({ publicKey });
         
-        // Успех
-        if (scanIcon && !isRetry) scanIcon.className = 'bio-icon success';
         sessionStorage.setItem('tree_authenticated', 'true');
-        
-        setTimeout(finishLogin, isRetry ? 100 : 600);
+        finishLogin();
     } catch (e) {
         console.warn("Биометрия отменена или не распознана", e);
         
-        // Если произошла ошибка - прячем экран автоскана и показываем поле для пароля
-        if(autoContainer) autoContainer.style.display = 'none';
-        if(pinContainer) pinContainer.style.display = 'flex';
-        
-        // Показываем кнопку повтора (для отпечатка/лица) под паролем
-        const retryBtn = document.getElementById('retry-bio-btn');
-        if(retryBtn) retryBtn.style.display = 'flex';
-        
-        if (authError) {
-            authError.innerText = "Չհաջողվեց (Не распознано, введите пароль)";
-            authError.style.opacity = '1';
-            setTimeout(() => { authError.style.opacity = '0'; }, 4000);
+        if (scanIcon) {
+            scanIcon.classList.add('error');
+            setTimeout(() => { scanIcon.classList.remove('error'); }, 500);
         }
-        setTimeout(() => { document.getElementById('pin-input').focus(); }, 100);
     }
 };
 
@@ -273,29 +255,15 @@ function initApp() {
     const authScreen = document.getElementById('auth-screen');
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
-    
-    const bioAutoContainer = document.getElementById('bio-auto-container');
-    const pinContainer = document.getElementById('pin-input-container');
-    const retryBtn = document.getElementById('retry-bio-btn');
-
-    // Если биометрия уже настроена
-    if (localStorage.getItem('tree_biometric_id')) {
-        if (sessionStorage.getItem('tree_authenticated') !== 'true') {
-            // Показываем большую иконку ожидания
-            if (bioAutoContainer) bioAutoContainer.style.display = 'flex';
-            if (pinContainer) pinContainer.style.display = 'none';
-            // Автоматически запускаем системный запрос FaceID через 0.5 сек
-            setTimeout(() => { window.authenticateBiometric(false); }, 500);
-        }
-    } else {
-        // Если биометрии нет, показываем только Пароль
-        if (bioAutoContainer) bioAutoContainer.style.display = 'none';
-        if (pinContainer) pinContainer.style.display = 'flex';
-        if (retryBtn) retryBtn.style.display = 'none';
-    }
+    const loginBtn = document.getElementById('login-submit-btn');
 
     async function checkPinCode(val) {
+        if (!val) return;
         authError.style.opacity = '0';
+        
+        const originalText = loginBtn.innerText;
+        loginBtn.innerText = '...';
+        
         try {
             const res = await fetch('/api/auth', {
                 method: 'POST',
@@ -329,26 +297,35 @@ function initApp() {
             authError.style.opacity = '1';
             pinInput.value = '';
         }
+        loginBtn.innerText = originalText;
     }
 
     if (sessionStorage.getItem('tree_authenticated') === 'true') {
         finishLogin();
     } else {
         authScreen.classList.remove('hidden');
-        if (!localStorage.getItem('tree_biometric_id')) {
-            setTimeout(() => pinInput.focus(), 300);
-        }
     }
 
-    // Слушатель ввода: теперь ждем ровно 10 любых символов (без фильтрации букв)
-    pinInput.addEventListener('input', (e) => {
-        authError.style.opacity = '0';
-        const val = e.target.value; 
+    // Вход по клику на кнопку
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            checkPinCode(pinInput.value);
+        });
+    }
+
+    // Вход по нажатию Enter на клавиатуре
+    if (pinInput) {
+        pinInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkPinCode(pinInput.value);
+            }
+        });
         
-        if (val.length >= 10) {
-            checkPinCode(val.substring(0, 10)); 
-        }
-    });
+        // Убираем красную ошибку при наборе текста
+        pinInput.addEventListener('input', () => {
+            authError.style.opacity = '0';
+        });
+    }
 
     const privacyScreen = document.getElementById('privacy-overlay');
     document.addEventListener("visibilitychange", () => {
