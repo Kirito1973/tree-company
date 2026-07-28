@@ -20,16 +20,16 @@ window.fetchOrders = async function() {
     }
 };
 
-// Тихая синхронизация с сервером
-window.syncOrdersToServer = async function() {
+// Точечная синхронизация с сервером
+window.syncSingleOrder = async function(order, action = 'update') {
     try {
         await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orders: window.ordersData })
+            body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null })
         });
     } catch (err) {
-        console.error('Ошибка синхронизации заказов:', err);
+        console.error('Ошибка синхронизации заказа:', err);
     }
 };
 
@@ -110,7 +110,6 @@ window.openOrderModal = function(orderId) {
     
     const servList = document.getElementById('modal-services-list'); servList.innerHTML = ''; let totalSum = 0;
     
-    // ОБНОВЛЕНО: Новый тумблер iOS/Android. Он навсегда ЗАБЛОКИРОВАН (disabled) для администратора.
     order.services.forEach((s, index) => { 
         const rowSum = s.qty * s.price; 
         totalSum += rowSum; 
@@ -144,7 +143,7 @@ window.acceptOrder = async function() {
     if (order && order.status === 'incoming') { 
         order.status = 'new'; 
         
-        await window.syncOrdersToServer();
+        await window.syncSingleOrder(order);
         
         if(window.renderDashboardOrders) window.renderDashboardOrders(); 
         window.renderOrders(); 
@@ -161,7 +160,7 @@ window.rejectOrder = async function() {
         if (confirm("Reject?")) { 
             order.status = 'cancelled'; 
             
-            await window.syncOrdersToServer();
+            await window.syncSingleOrder(order);
             
             if(window.renderDashboardOrders) window.renderDashboardOrders(); 
             if(window.updateDashDots) window.updateDashDots(); 
@@ -176,7 +175,7 @@ window.cancelOrder = async function() {
     if (confirm("Cancel order?")) { 
         if(order) { 
             order.status = 'cancelled'; 
-            await window.syncOrdersToServer();
+            await window.syncSingleOrder(order);
             window.renderOrders(); 
         } 
         window.closeOrderModal(); 
@@ -221,7 +220,6 @@ window.saveOrderForm = async function(event) {
     
     let leadWorker = workerSelect.value.trim(); let assistant = assistantSelect.value.trim();
     
-    // ОБНОВЛЕНО: Проверка на совпадение мастера и помощника
     if (leadWorker && assistant && leadWorker === assistant) {
         alert('Ошибка: Главный мастер и помощник не могут быть одним и тем же человеком!');
         submitBtn.innerText = origText;
@@ -237,10 +235,25 @@ window.saveOrderForm = async function(event) {
     if (services.length === 0) { alert('Error: No services'); submitBtn.innerText = origText; submitBtn.disabled = false; return; }
     const customProfit = parseFloat(document.getElementById('form-profit-sum').value) || 0;
     
-    if (window.currentEditingOrderId) { const order = window.ordersData.find(o => o.id === window.currentEditingOrderId); if (order) { order.clientName = clientName; order.clientPhone = phone; order.address = address; order.worker = finalWorkerString; order.workerPhone = workerPhone; order.services = services; order.profit = customProfit; } } 
-    else { window.ordersData.unshift({ id: window.generateOrderId(), status: 'new', createdAt: window.getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit }); }
+    let currentOrder;
     
-    await window.syncOrdersToServer();
+    if (window.currentEditingOrderId) { 
+        currentOrder = window.ordersData.find(o => o.id === window.currentEditingOrderId); 
+        if (currentOrder) { 
+            currentOrder.clientName = clientName; 
+            currentOrder.clientPhone = phone; 
+            currentOrder.address = address; 
+            currentOrder.worker = finalWorkerString; 
+            currentOrder.workerPhone = workerPhone; 
+            currentOrder.services = services; 
+            currentOrder.profit = customProfit; 
+        } 
+    } else { 
+        currentOrder = { id: window.generateOrderId(), status: 'new', createdAt: window.getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit };
+        window.ordersData.unshift(currentOrder); 
+    }
+    
+    await window.syncSingleOrder(currentOrder);
 
     window.renderOrders(); if(window.renderDashboardOrders) window.renderDashboardOrders(); if(window.updateDashDots) window.updateDashDots(); window.closeOrderFormModal(); if (navigator.vibrate) navigator.vibrate(50);
     
