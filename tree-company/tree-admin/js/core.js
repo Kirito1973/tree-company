@@ -66,7 +66,7 @@ window.adminTranslations = {
     "lbl_name": { "AM": "Անուն:", "RU": "Имя:", "EN": "Name:" },
     "lbl_phone": { "AM": "Հեռ.:", "RU": "Тел.:", "EN": "Phone:" },
     "lbl_address": { "AM": "Հասցե:", "RU": "Адрес:", "EN": "Address:" },
-    "lbl_pin": { "AM": "PIN կոդ:", "RU": "PIN код:", "EN": "PIN code:" },
+    "lbl_pin": { "AM": "PIN կոդ:", "RU": "Գաղտնաբառ:", "EN": "Password:" },
     "lbl_bday": { "AM": "Ծննդ.:", "RU": "Дата рожд.:", "EN": "Birth:" },
     "lbl_exp": { "AM": "Փորձ", "RU": "Опыт", "EN": "Experience" },
     "lbl_debt": { "AM": "Պարտք:", "RU": "Долг:", "EN": "Debt:" },
@@ -234,16 +234,16 @@ window.authenticateBiometric = async function(isRetry = false) {
     } catch (e) {
         console.warn("Биометрия отменена или не распознана", e);
         
-        // Если произошла ошибка - прячем экран автоскана и показываем PIN-код
+        // Если произошла ошибка - прячем экран автоскана и показываем поле для пароля
         if(autoContainer) autoContainer.style.display = 'none';
         if(pinContainer) pinContainer.style.display = 'flex';
         
-        // Показываем кнопку повтора (для отпечатка/лица) под PIN-кодом
+        // Показываем кнопку повтора (для отпечатка/лица) под паролем
         const retryBtn = document.getElementById('retry-bio-btn');
         if(retryBtn) retryBtn.style.display = 'flex';
         
         if (authError) {
-            authError.innerText = "Չհաջողվեց (Не распознано, введите PIN)";
+            authError.innerText = "Չհաջողվեց (Не распознано, введите пароль)";
             authError.style.opacity = '1';
             setTimeout(() => { authError.style.opacity = '0'; }, 4000);
         }
@@ -288,7 +288,7 @@ function initApp() {
             setTimeout(() => { window.authenticateBiometric(false); }, 500);
         }
     } else {
-        // Если биометрии нет, показываем только PIN-код
+        // Если биометрии нет, показываем только Пароль
         if (bioAutoContainer) bioAutoContainer.style.display = 'none';
         if (pinContainer) pinContainer.style.display = 'flex';
         if (retryBtn) retryBtn.style.display = 'none';
@@ -320,7 +320,7 @@ function initApp() {
                 finishLogin();
             } else {
                 if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
-                authError.innerText = data.error || "Սխալ PIN (Неверный пароль)";
+                authError.innerText = data.error || "Սխալ գաղտնաբառ (Неверный пароль)";
                 authError.style.opacity = '1';
                 pinInput.value = ''; 
             }
@@ -340,15 +340,13 @@ function initApp() {
         }
     }
 
+    // Слушатель ввода: теперь ждем ровно 10 любых символов (без фильтрации букв)
     pinInput.addEventListener('input', (e) => {
         authError.style.opacity = '0';
-        const val = e.target.value.replace(/[^0-9]/g, '');
-        e.target.value = val;
+        const val = e.target.value; 
         
-        if (val === '6000') {
-            checkPinCode(val);
-        } else if (val.length >= 6) {
-            checkPinCode(val.substring(0, 6)); 
+        if (val.length >= 10) {
+            checkPinCode(val.substring(0, 10)); 
         }
     });
 
