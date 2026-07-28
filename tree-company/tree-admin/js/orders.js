@@ -2,6 +2,33 @@ window.currentDashOrdFilter = 'all';
 window.currentActiveOrderId = null;
 window.currentEditingOrderId = null;
 
+// Функция для генерации порядкового номера (ORD-0001, ORD-0002 и т.д.)
+window.generateSequentialOrderId = function() {
+    if (!window.ordersData || window.ordersData.length === 0) {
+        return 'ORD-0001';
+    }
+    
+    let maxId = 0;
+    
+    // Проходимся по всем заказам, ищем максимальный номер
+    window.ordersData.forEach(order => {
+        // Оставляем из ID только цифры
+        const numStr = order.id.replace(/\D/g, '');
+        if (numStr) {
+            const num = parseInt(numStr, 10);
+            if (num > maxId) {
+                maxId = num;
+            }
+        }
+    });
+    
+    // Увеличиваем максимальный на 1
+    const nextId = maxId + 1;
+    
+    // Добавляем нули спереди, чтобы было минимум 4 символа (0001, 0012, 0125)
+    return 'ORD-' + String(nextId).padStart(4, '0');
+};
+
 // Получение заказов с сервера при старте
 window.fetchOrders = async function() {
     try {
@@ -66,7 +93,14 @@ window.renderOrders = function() {
     let counts = { new: 0, progress: 0, completed: 0 };
     const activeOrders = window.ordersData.filter(o => o.status !== 'incoming');
     
-    activeOrders.forEach(order => {
+    // Сортируем заказы по номеру (самые новые сверху)
+    const sortedOrders = activeOrders.slice().sort((a, b) => {
+        const numA = parseInt(a.id.replace(/\D/g, '') || 0, 10);
+        const numB = parseInt(b.id.replace(/\D/g, '') || 0, 10);
+        return numB - numA;
+    });
+    
+    sortedOrders.forEach(order => {
         if (counts[order.status] !== undefined) counts[order.status]++;
         let mainTitle = order.services.length > 0 ? order.services[0].name : "---";
         if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
@@ -249,7 +283,7 @@ window.saveOrderForm = async function(event) {
             currentOrder.profit = customProfit; 
         } 
     } else { 
-        currentOrder = { id: window.generateOrderId(), status: 'new', createdAt: window.getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit };
+        currentOrder = { id: window.generateSequentialOrderId(), status: 'new', createdAt: window.getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit };
         window.ordersData.unshift(currentOrder); 
     }
     
