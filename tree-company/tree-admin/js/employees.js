@@ -3,6 +3,16 @@ window.currentEditingEmpId = null;
 
 window.availableProfessions = ['doors', 'electro', 'universal'];
 
+// Функция генерации сложного 10-значного пароля для сотрудников
+window.generateComplexPassword = function() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let pass = '';
+    for(let i = 0; i < 10; i++) {
+        pass += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return pass;
+};
+
 window.fetchEmployees = async function() {
     try {
         const res = await fetch('/api/employees');
@@ -152,7 +162,6 @@ window.openEmployeeModal = function(empId) {
     if (emp.phone) { phoneLink.style.display = 'flex'; phoneLink.href = `tel:${emp.phone.replace(/[^\d+]/g, '')}`; } else phoneLink.style.display = 'none';
     document.getElementById('modal-emp-address').innerText = emp.address || '---'; document.getElementById('modal-emp-exp').innerText = emp.exp ? emp.exp.split('/')[0].trim() : '0'; document.getElementById('modal-emp-rating').innerText = `★ ${(emp.rating || 0).toFixed(1)}`;
     
-    // Получение ВСЕХ не-отмененных заказов мастера
     const empOrders = window.ordersData ? window.ordersData.filter(o => o.worker && o.worker.includes(emp.name) && o.status !== 'cancelled') : []; 
     document.getElementById('modal-emp-orders-count').innerText = empOrders.length;
     const ordersListDiv = document.getElementById('modal-emp-orders-list'); 
@@ -202,7 +211,8 @@ window.acceptEmployee = async function() {
     if (emp) { 
         emp.status = 'active'; 
         if (!emp.accessKey) {
-            emp.accessKey = Math.floor(100000 + Math.random() * 900000).toString(); 
+            // Генерируем 10-значный сложный пароль
+            emp.accessKey = window.generateComplexPassword(); 
         }
         await window.syncEmployeesToServer();
         if(window.renderDashboardMasters) window.renderDashboardMasters(); 
@@ -224,7 +234,6 @@ window.rejectEmployee = async function() {
     } 
 };
 
-// Функция увольнения сотрудника
 window.fireEmployee = async function() {
     if (!window.currentActiveEmpId) return; 
     if (confirm("Вы уверены, что хотите уволить этого сотрудника? Он будет удален из активного списка.")) { 
@@ -248,7 +257,6 @@ window.adjustEmpDebt = async function(action) {
     const inputEl = document.getElementById('emp-finance-input');
     const val = parseInt(inputEl.value, 10); 
     
-    // Проверка, что сумма введена
     if (isNaN(val) || val <= 0) {
         alert("Укажите корректную сумму!");
         return;
@@ -291,7 +299,6 @@ window.renderProfessionsForm = function(selected = []) {
         const label = window.getEmpTypeLabel([prof]);
         const isCustom = !window.availableProfessions.includes(prof);
         
-        // Крестик для удаления кастомной профессии
         const delBtn = isCustom ? `<span class="del-chip" style="margin-left:6px; color:#ff4444; font-weight:900; font-size:14px;">&times;</span>` : '';
         
         container.innerHTML += `<div class="prof-chip ${isActive}" data-val="${prof}" onclick="if(event.target.classList.contains('del-chip')) { this.remove(); } else { this.classList.toggle('active'); if(navigator.vibrate) navigator.vibrate(10); }">${label}${delBtn}</div>`;
@@ -340,7 +347,8 @@ window.openEmployeeForm = function(empId = null) {
         } 
         window.closeEmployeeModal(); 
     } else { 
-        document.getElementById('form-emp-access-key').value = Math.floor(100000 + Math.random() * 900000).toString(); 
+        // Генерируем 10-значный сложный пароль
+        document.getElementById('form-emp-access-key').value = window.generateComplexPassword(); 
         photoPreview.style.backgroundImage = 'none';
         document.getElementById('photo-placeholder-icon').style.display = 'block';
         document.getElementById('photo-placeholder-text').style.display = 'block';
