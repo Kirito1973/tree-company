@@ -54,25 +54,18 @@
                         <line x1="15" y1="9" x2="15.01" y2="9"/>
                     </svg>
                 </div>
-                <p style="font-size: 10px; color: var(--text-sec); margin-top: 14px; font-weight: 800; text-transform: uppercase;">Face ID / Սպասում է</p>
+                <p style="font-size: 10px; color: var(--text-sec); margin-top: 14px; font-weight: 800; text-transform: uppercase;">Սպասում է (Ожидание...)</p>
             </div>
 
             <div id="pin-input-container" style="display:none; flex-direction:column; align-items:center; width:100%;">
-                <p style="font-size: 10px; color: var(--text-sec); margin-bottom: 24px; text-align: center; font-weight: 600;">Մուտքագրեք PIN կոդը<br>(Введите PIN-код)</p>
-                <input type="password" id="pin-input" class="glass-input" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="••••••" style="text-align: center; font-size: 32px; letter-spacing: 12px; padding: 20px; font-family: monospace;">
+                <p style="font-size: 10px; color: var(--text-sec); margin-bottom: 24px; text-align: center; font-weight: 600;">Մուտքագրեք գաղտնաբառը<br>(Введите 10-значный пароль)</p>
                 
-                <div id="retry-bio-btn" style="display:none; flex-direction:column; align-items:center; margin-top: 30px;">
-                    <p style="font-size: 9px; color: var(--text-sec); margin-bottom: 8px; font-weight: 700; text-transform: uppercase;">Կամ օգտագործեք մատնահետք</p>
-                    <button class="bio-icon" style="width: 54px; height: 54px;" onclick="authenticateBiometric(true)" aria-label="Touch ID">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M12 2a10 10 0 0 0-10 10v2a10 10 0 0 0 10 10 10 10 0 0 0 10-10v-2a10 10 0 0 0-10-10z"></path>
-                            <path d="M8 12a4 4 0 0 1 8 0"></path>
-                            <path d="M10 16a2 2 0 0 1 4 0"></path>
-                            <path d="M6 12v2"></path>
-                            <path d="M18 12v2"></path>
-                        </svg>
-                    </button>
-                </div>
+                <input type="password" id="pin-input" class="glass-input" maxlength="10" placeholder="••••••••••" style="text-align: center; font-size: 24px; letter-spacing: 6px; padding: 20px; font-family: monospace;">
+                
+                <button id="retry-bio-btn" class="submit-btn" style="background:transparent; border:1px solid rgba(128,128,128,0.2); color:var(--text); box-shadow:none; margin-top:20px; padding:12px; display:none;" onclick="authenticateBiometric(true)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:18px; height:18px; margin-right:6px;"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    <span>Отпечаток / Face ID</span>
+                </button>
             </div>
             
             <div id="auth-error" style="color: #ff4444; font-size: 11px; font-weight: bold; text-align: center; margin-top: 16px; opacity: 0; transition: opacity 0.3s;"></div>
@@ -83,6 +76,7 @@
     <div class="ambient-glow"></div>
 
     <div class="app-container">
+        
         <header class="app-header">
             <button class="theme-btn" id="theme-btn" aria-label="Theme" onclick="toggleTheme(event)">
                 <span class="theme-icon" id="theme-icon"></span>
@@ -505,7 +499,7 @@
                             <div id="form-emp-professions-container" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
                         </div>
 
-                        <input type="text" id="form-emp-access-key" class="glass-input" data-i18n-placeholder="lbl_pin" placeholder="PIN код" required>
+                        <input type="text" id="form-emp-access-key" class="glass-input" data-i18n-placeholder="lbl_pin" placeholder="Пароль" required>
                         
                         <div style="display:flex; gap:10px; margin-top:10px;">
                             <button type="submit" class="submit-btn success" data-i18n="btn_save">Сохранить</button>
