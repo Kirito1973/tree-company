@@ -4,23 +4,16 @@ window.currentEditingOrderId = null;
 
 // Функция для генерации порядкового номера (ORD-0001, ORD-0002 и т.д.)
 window.generateSequentialOrderId = function() {
-    if (!window.ordersData || window.ordersData.length === 0) {
-        return 'ORD-0001';
-    }
-    
+    if (!window.ordersData || window.ordersData.length === 0) return 'ORD-0001';
     let maxId = 0;
     window.ordersData.forEach(order => {
         const numStr = order.id.replace(/\D/g, '');
         if (numStr) {
             const num = parseInt(numStr, 10);
-            if (num > maxId) {
-                maxId = num;
-            }
+            if (num > maxId) maxId = num;
         }
     });
-    
-    const nextId = maxId + 1;
-    return 'ORD-' + String(nextId).padStart(4, '0');
+    return 'ORD-' + String(maxId + 1).padStart(4, '0');
 };
 
 // Получение заказов с сервера при старте
@@ -29,16 +22,12 @@ window.fetchOrders = async function() {
         const res = await fetch('/api/orders');
         if (res.ok) {
             const data = await res.json();
-            if (data && data.length > 0) {
-                window.ordersData = data;
-            }
+            if (data && data.length > 0) window.ordersData = data;
             window.renderOrders();
             if(window.renderDashboardOrders) window.renderDashboardOrders();
             if(window.updateDashDots) window.updateDashDots();
         }
-    } catch (err) {
-        console.error('Ошибка загрузки заказов:', err);
-    }
+    } catch (err) { console.error('Ошибка загрузки заказов:', err); }
 };
 
 // Точечная синхронизация с сервером
@@ -49,29 +38,35 @@ window.syncSingleOrder = async function(order, action = 'update') {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null })
         });
-    } catch (err) {
-        console.error('Ошибка синхронизации заказа:', err);
-    }
+    } catch (err) { console.error('Ошибка синхронизации заказа:', err); }
 };
 
 window.setOrderFilter = function(filterValue) {
     window.currentDashOrdFilter = filterValue;
-    document.querySelectorAll('#screen-orders .filter-tab').forEach(t => {
-        if (t.getAttribute('data-filter') === filterValue) t.classList.add('active'); else t.classList.remove('active');
+    // Меняем активный класс у новых иконок
+    document.querySelectorAll('.icon-filter').forEach(t => {
+        if (t.getAttribute('data-filter') === filterValue) t.classList.add('active'); 
+        else t.classList.remove('active');
     });
     window.filterOrders();
 };
 
 window.filterOrders = function() {
     const searchInput = document.getElementById('order-search');
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-    const activeTab = document.querySelector('#screen-orders .filter-tab.active');
+    // Очищаем поисковый запрос от пробелов, плюсов и скобок для точного поиска номера
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().replace(/[\s\-\+\(\)]/g, '') : '';
+    const activeTab = document.querySelector('.icon-filter.active');
     const activeFilter = activeTab ? activeTab.getAttribute('data-filter') : 'all';
     
     document.querySelectorAll('#orders-list .entity-card').forEach(card => {
-        const text = card.innerText.toLowerCase(); const status = card.getAttribute('data-status');
-        const matchesSearch = text.includes(searchTerm); const matchesFilter = activeFilter === 'all' || status === activeFilter;
-        if (status === 'cancelled' && activeFilter !== 'all' && searchTerm === '') card.style.display = 'none'; else card.style.display = (matchesSearch && matchesFilter) ? 'flex' : 'none';
+        // Очищаем текст внутри карточки заказа (ID, Имя, Номер) от символов
+        const text = card.innerText.toLowerCase().replace(/[\s\-\+\(\)]/g, ''); 
+        const status = card.getAttribute('data-status');
+        
+        const matchesSearch = text.includes(searchTerm); 
+        const matchesFilter = activeFilter === 'all' || status === activeFilter;
+        
+        card.style.display = (matchesSearch && matchesFilter) ? 'flex' : 'none';
     });
 };
 
@@ -82,8 +77,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.renderOrders = function() {
     const list = document.getElementById('orders-list'); if (!list) return; list.innerHTML = '';
-    let counts = { new: 0, progress: 0, completed: 0 };
+    
+    // Счетчики для 5 иконок
+    let counts = { all: 0, new: 0, progress: 0, completed: 0, cancelled: 0 };
+    
+    // Не учитываем входящие неподтвержденные заявки в общем списке
     const activeOrders = window.ordersData.filter(o => o.status !== 'incoming');
+    counts.all = activeOrders.length;
     
     // Сортируем заказы по номеру (самые новые сверху)
     const sortedOrders = activeOrders.slice().sort((a, b) => {
@@ -94,17 +94,28 @@ window.renderOrders = function() {
     
     sortedOrders.forEach(order => {
         if (counts[order.status] !== undefined) counts[order.status]++;
+        
         let mainTitle = order.services.length > 0 ? order.services[0].name : "---";
         if(order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
+        
         let statusClass = '', statusI18n = '';
-        if (order.status === 'new') { statusClass = 'new'; statusI18n = 'status_new'; } else if (order.status === 'progress') { statusClass = 'pending'; statusI18n = 'status_pending'; } else if (order.status === 'completed') { statusI18n = 'status_success'; } else if (order.status === 'cancelled') { statusClass = 'cancelled'; statusI18n = 'status_cancelled'; }
+        if (order.status === 'new') { statusClass = 'new'; statusI18n = 'status_new'; } 
+        else if (order.status === 'progress') { statusClass = 'pending'; statusI18n = 'status_pending'; } 
+        else if (order.status === 'completed') { statusI18n = 'status_success'; } 
+        else if (order.status === 'cancelled') { statusClass = 'cancelled'; statusI18n = 'status_cancelled'; }
         
         const card = document.createElement('div'); card.className = 'entity-card'; card.setAttribute('data-status', order.status); card.onclick = () => window.openOrderModal(order.id);
         card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statusClass}" data-i18n="${statusI18n}"></span></div><div class="entity-title">${mainTitle}</div><div class="entity-meta">${window.adminTranslations['lbl_name'][window.currentAdminLang]} ${order.clientName || '---'}</div><div class="entity-meta">${window.adminTranslations['lbl_phone'][window.currentAdminLang]} ${order.clientPhone}</div><div class="entity-meta">${window.adminTranslations['lbl_address'][window.currentAdminLang]} ${order.address}</div>`;
         list.appendChild(card);
     });
     
-    document.getElementById('count-new').innerText = counts.new; document.getElementById('count-progress').innerText = counts.progress; document.getElementById('count-completed').innerText = counts.completed;
+    // Обновляем бейджики над иконками
+    document.getElementById('count-all').innerText = counts.all; 
+    document.getElementById('count-new').innerText = counts.new; 
+    document.getElementById('count-progress').innerText = counts.progress; 
+    document.getElementById('count-completed').innerText = counts.completed;
+    document.getElementById('count-cancelled').innerText = counts.cancelled;
+    
     window.applyAdminLanguage(); window.filterOrders();
 };
 
@@ -119,24 +130,26 @@ window.openOrderModal = function(orderId) {
     else if (order.status === 'cancelled') { statusEl.classList.add('cancelled'); statusEl.setAttribute('data-i18n', 'status_cancelled'); }
     
     const btnEdit = document.getElementById('modal-edit-btn'); const btnCancel = document.getElementById('modal-cancel-btn'); const btnAccept = document.getElementById('modal-accept-btn'); const btnReject = document.getElementById('modal-reject-btn');
+    
     if (order.status === 'incoming') { btnEdit.style.display = 'none'; btnCancel.style.display = 'none'; btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; } 
     else if (order.status === 'new') { btnEdit.style.display = 'flex'; btnCancel.style.display = 'flex'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; } 
     else if (order.status === 'progress') { btnEdit.style.display = 'flex'; btnCancel.style.display = 'flex'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; } 
     else { btnEdit.style.display = 'flex'; btnCancel.style.display = 'none'; btnAccept.style.display = 'none'; btnReject.style.display = 'none'; }
 
-    // Динамически добавляем кнопку "Удалить" в модальное окно
-    if (btnEdit && btnEdit.parentNode) {
-        btnEdit.parentNode.style.flexWrap = 'wrap'; // Чтобы кнопки красиво переносились
+    // Добавляем красивую кнопку "Удалить" в сетку (если её там еще нет)
+    const actionGrid = document.getElementById('modal-actions-container');
+    if (actionGrid) {
         let btnDelete = document.getElementById('modal-delete-btn');
         if (!btnDelete) {
             btnDelete = document.createElement('button');
             btnDelete.id = 'modal-delete-btn';
-            btnDelete.className = 'submit-btn';
+            btnDelete.className = 'modal-btn danger';
             btnDelete.innerHTML = 'Удалить';
-            btnDelete.style.cssText = 'margin:0; background:rgba(255,68,68,0.1); color:#ff4444; box-shadow:none; border:1px solid rgba(255,68,68,0.3); flex: 1; min-width: 100px;';
             btnDelete.onclick = window.deleteOrderPermanent;
-            btnEdit.parentNode.appendChild(btnDelete);
+            actionGrid.appendChild(btnDelete);
         }
+        // Скрываем или показываем кнопку удалить в зависимости от статуса
+        if (order.status === 'incoming') btnDelete.style.display = 'flex'; else btnDelete.style.display = 'flex';
     }
     
     document.getElementById('modal-date-created').innerText = order.createdAt || '---'; const completedWrapper = document.getElementById('modal-date-completed-wrapper');
@@ -219,72 +232,43 @@ window.cancelOrder = async function() {
     } 
 };
 
-// --- НОВАЯ ФУНКЦИЯ УДАЛЕНИЯ НАВСЕГДА С БИОМЕТРИЕЙ/PIN ---
+// Удаление заказа навсегда
 window.deleteOrderPermanent = async function() {
     if (!window.currentActiveOrderId) return;
     const order = window.ordersData.find(o => o.id === window.currentActiveOrderId);
     if (!order) return;
 
-    if (!confirm(`Вы уверены, что хотите НАВСЕГДА удалить заказ ${order.id}? Это действие необратимо.`)) {
-        return;
-    }
+    if (!confirm(`Вы уверены, что хотите НАВСЕГДА удалить заказ ${order.id}? Это действие необратимо.`)) return;
 
     let isAuthorized = false;
 
-    // Шаг 1: Пытаемся использовать биометрию
     if (localStorage.getItem('tree_biometric_id')) {
         try {
             const savedId = JSON.parse(localStorage.getItem('tree_biometric_id'));
-            const publicKey = {
-                challenge: new Uint8Array(32),
-                allowCredentials: [{ type: "public-key", id: new Uint8Array(savedId) }],
-                userVerification: "required",
-                timeout: 60000
-            };
+            const publicKey = { challenge: new Uint8Array(32), allowCredentials: [{ type: "public-key", id: new Uint8Array(savedId) }], userVerification: "required", timeout: 60000 };
             await navigator.credentials.get({ publicKey });
-            isAuthorized = true; // Биометрия прошла успешно
-        } catch (e) {
-            console.warn('Биометрия отменена или не распознана');
-        }
+            isAuthorized = true;
+        } catch (e) { console.warn('Биометрия отменена или не распознана'); }
     }
 
-    // Шаг 2: Если биометрии нет или её отменили - запрашиваем PIN-код
     if (!isAuthorized) {
         const pin = prompt("Для подтверждения удаления введите PIN-код администратора:");
-        if (!pin) return; // Нажали "Отмена"
+        if (!pin) return;
         
         try {
-            const res = await fetch('/api/auth', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pin: pin })
-            });
+            const res = await fetch('/api/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pin: pin }) });
             const data = await res.json();
-            
-            if (data.success && data.role === 'admin') {
-                isAuthorized = true;
-            } else {
-                alert("Неверный PIN-код или недостаточно прав!");
-                return;
-            }
-        } catch (err) {
-            alert("Ошибка связи с сервером при проверке PIN.");
-            return;
-        }
+            if (data.success && data.role === 'admin') isAuthorized = true; else { alert("Неверный PIN-код или недостаточно прав!"); return; }
+        } catch (err) { alert("Ошибка связи с сервером при проверке PIN."); return; }
     }
 
-    // Шаг 3: Авторизация пройдена -> Удаляем заказ
     if (isAuthorized) {
         const btnDelete = document.getElementById('modal-delete-btn');
         if(btnDelete) btnDelete.innerText = 'Удаление...';
         
-        // Удаляем из локального массива
         window.ordersData = window.ordersData.filter(o => o.id !== order.id);
-        
-        // Отправляем команду на сервер (action: 'delete')
         await window.syncSingleOrder(order, 'delete');
         
-        // Обновляем интерфейсы
         window.renderOrders();
         if(window.renderDashboardOrders) window.renderDashboardOrders();
         if(window.updateDashDots) window.updateDashDots();
@@ -322,54 +306,35 @@ window.removeFormServiceRow = function(btnElement) { const row = btnElement.clos
 
 window.saveOrderForm = async function(event) {
     event.preventDefault();
-    
-    const submitBtn = event.target.querySelector('button[type="submit"]');
-    const origText = submitBtn.innerText;
-    submitBtn.innerText = '...';
-    submitBtn.disabled = true;
+    const submitBtn = event.target.querySelector('button[type="submit"]'); const origText = submitBtn.innerText; submitBtn.innerText = '...'; submitBtn.disabled = true;
 
     const clientName = document.getElementById('form-client-name').value; const phone = document.getElementById('form-phone').value; const address = document.getElementById('form-address').value;
     const workerSelect = document.getElementById('form-worker'); const assistantSelect = document.getElementById('form-assistant');
-    
     let leadWorker = workerSelect.value.trim(); let assistant = assistantSelect.value.trim();
     
-    if (leadWorker && assistant && leadWorker === assistant) {
-        alert('Ошибка: Главный мастер и помощник не могут быть одним и тем же человеком!');
-        submitBtn.innerText = origText;
-        submitBtn.disabled = false;
-        return;
-    }
+    if (leadWorker && assistant && leadWorker === assistant) { alert('Ошибка: Главный мастер и помощник не могут быть одним и тем же человеком!'); submitBtn.innerText = origText; submitBtn.disabled = false; return; }
 
     let workerPhone = ''; if (leadWorker) workerPhone = workerSelect.options[workerSelect.selectedIndex].getAttribute('data-phone') || '';
     let combinedWorkers = []; if (leadWorker) combinedWorkers.push(leadWorker); if (assistant) combinedWorkers.push(assistant);
     let finalWorkerString = combinedWorkers.length > 0 ? combinedWorkers.join(', ') : '---';
+    
     const services = [];
     document.querySelectorAll('#form-services-container .service-row-edit').forEach(row => { const name = row.querySelector('.serv-col-name').value; const qty = parseInt(row.querySelector('.serv-col-qty').value); const price = parseFloat(row.querySelector('.serv-col-price').value); const done = row.getAttribute('data-done') === 'true'; if (name && qty > 0 && price >= 0) services.push({ name, qty, price, done }); });
     if (services.length === 0) { alert('Error: No services'); submitBtn.innerText = origText; submitBtn.disabled = false; return; }
+    
     const customProfit = parseFloat(document.getElementById('form-profit-sum').value) || 0;
     
     let currentOrder;
-    
     if (window.currentEditingOrderId) { 
         currentOrder = window.ordersData.find(o => o.id === window.currentEditingOrderId); 
-        if (currentOrder) { 
-            currentOrder.clientName = clientName; 
-            currentOrder.clientPhone = phone; 
-            currentOrder.address = address; 
-            currentOrder.worker = finalWorkerString; 
-            currentOrder.workerPhone = workerPhone; 
-            currentOrder.services = services; 
-            currentOrder.profit = customProfit; 
-        } 
+        if (currentOrder) { currentOrder.clientName = clientName; currentOrder.clientPhone = phone; currentOrder.address = address; currentOrder.worker = finalWorkerString; currentOrder.workerPhone = workerPhone; currentOrder.services = services; currentOrder.profit = customProfit; } 
     } else { 
         currentOrder = { id: window.generateSequentialOrderId(), status: 'new', createdAt: window.getCurrentDateString(), completedAt: null, clientName: clientName, clientPhone: phone, address: address, worker: finalWorkerString, workerPhone: workerPhone, services: services, profit: customProfit };
         window.ordersData.unshift(currentOrder); 
     }
     
     await window.syncSingleOrder(currentOrder);
-
     window.renderOrders(); if(window.renderDashboardOrders) window.renderDashboardOrders(); if(window.updateDashDots) window.updateDashDots(); window.closeOrderFormModal(); if (navigator.vibrate) navigator.vibrate(50);
     
-    submitBtn.innerText = origText;
-    submitBtn.disabled = false;
+    submitBtn.innerText = origText; submitBtn.disabled = false;
 };
