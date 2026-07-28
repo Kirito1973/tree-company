@@ -106,7 +106,7 @@ select.glass-input { appearance: none; -webkit-appearance: none; background-imag
 select.glass-input option { background-color: var(--bg-base); color: var(--text); font-weight: 600; }
 body.force-dark select.glass-input option { background-color: #1a231d; }
 
-.submit-btn { background: linear-gradient(135deg, #23A95B, #1F9651); color: #FFFFFF; border: none; border-radius: 16px; padding: 16px; font-family: inherit; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 20px rgba(31, 150, 81, 0.3); width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; }
+.submit-btn { background: linear-gradient(135deg, #23A95B, #1F9651); color: #FFFFFF; border: none; border-radius: 50px; padding: 16px; font-family: inherit; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 20px rgba(31, 150, 81, 0.3); width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 8px; }
 .submit-btn:active { transform: scale(0.96); box-shadow: 0 4px 12px rgba(31, 150, 81, 0.15); }
 .submit-btn.success { background: linear-gradient(135deg, #25D366, #128C7E); }
 
@@ -126,8 +126,6 @@ body.force-dark .stat-box { background: rgba(0, 0, 0, 0.2); }
 .stat-label { font-size: 9px; font-weight: 800; color: var(--text-sec); text-transform: uppercase; margin-top: 4px; }
 
 .entity-list { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 6px; }
-
-/* ОБНОВЛЕННЫЕ КАРТОЧКИ С КОНТРАСТНЫМ ФОНОМ */
 .entity-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); }
 body.force-dark .entity-card { background: rgba(30, 35, 32, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); }
 .entity-card:active { transform: scale(0.97); }
@@ -154,10 +152,25 @@ body.force-dark .filter-tab { background: rgba(0, 0, 0, 0.2); }
 .filter-tab:active { transform: scale(0.95); }
 .filter-tab.active { background: var(--tree-light); color: white; border-color: var(--tree-light); box-shadow: 0 6px 15px rgba(31,150,81,0.3); }
 
+/* Иконки-фильтры заказов */
+.icon-filters-container { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 20px; padding: 10px 16px; box-shadow: 0 4px 15px var(--shadow); }
+.icon-filter { position: relative; background: transparent; border: none; color: var(--text-sec); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 8px; border-radius: 12px; }
+.icon-filter svg { width: 24px; height: 24px; transition: transform 0.3s; stroke: currentColor; }
+.icon-filter.active { background: var(--tree-light); color: white; box-shadow: 0 4px 12px rgba(31, 150, 81, 0.4); }
+.icon-filter.active svg { transform: scale(1.15); }
+
+/* Счетчики (бейджики) */
+.filter-count { position: absolute; top: -4px; right: -4px; background: #ff4444; color: white; font-size: 9px; font-weight: 900; min-width: 16px; height: 16px; border-radius: 8px; display: flex; justify-content: center; align-items: center; padding: 0 4px; box-shadow: 0 2px 6px rgba(255,68,68,0.4); border: 2px solid var(--bg-base); pointer-events: none; }
+
+/* КРЕСТИК ЗАКРЫТИЯ МОДАЛКИ (НОВОЕ) */
+.modal-close-x { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; background: rgba(128, 128, 128, 0.15); border: none; color: var(--text-sec); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s; z-index: 10; }
+.modal-close-x:active { transform: scale(0.9); background: rgba(128,128,128,0.25); }
+.modal-close-x svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; }
+
 /* МОДАЛКИ */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 2000; opacity: 0; visibility: hidden; pointer-events: none; transition: all 0.3s ease; }
 .modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
-.modal-content { width: 92%; max-width: 400px; max-height: 85vh; transform: translateY(20px); transition: all 0.3s ease; }
+.modal-content { position: relative; width: 92%; max-width: 400px; max-height: 85vh; transform: translateY(20px); transition: all 0.3s ease; }
 .modal-overlay.active .modal-content { transform: translateY(0); }
 .modal-scroll { overflow-y: auto; scrollbar-width: none; }
 .modal-scroll::-webkit-scrollbar { display: none; }
@@ -209,22 +222,23 @@ body.force-dark .detail-block { background: rgba(0, 0, 0, 0.15); }
 .auth-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 .auth-card { max-width: 340px; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
 
-/* --- НОВЫЕ СТИЛИ ДЛЯ ИКОНОК ЗАКАЗОВ И МОДАЛКИ --- */
-.icon-filters-container { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 14px; background: var(--card-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--card-border); border-radius: 20px; padding: 10px 16px; box-shadow: 0 4px 15px var(--shadow); }
-.icon-filter { position: relative; background: transparent; border: none; color: var(--text-sec); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 8px; border-radius: 12px; }
-.icon-filter svg { width: 24px; height: 24px; transition: transform 0.3s; stroke: currentColor; }
-.icon-filter.active { background: var(--tree-light); color: white; box-shadow: 0 4px 12px rgba(31, 150, 81, 0.4); }
-.icon-filter.active svg { transform: scale(1.15); }
-
-.filter-count { position: absolute; top: -4px; right: -4px; background: #ff4444; color: white; font-size: 9px; font-weight: 900; min-width: 16px; height: 16px; border-radius: 8px; display: flex; justify-content: center; align-items: center; padding: 0 4px; box-shadow: 0 2px 6px rgba(255,68,68,0.4); border: 2px solid var(--bg-base); pointer-events: none; }
-
+/* КРУГЛЫЕ КНОПКИ ДЛЯ МОДАЛКИ (НОВОЕ) */
 .modal-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-.modal-btn { padding: 14px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 14px; border: none; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; justify-content: center; align-items: center; width: 100%; }
+.modal-btn { padding: 14px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 50px; border: none; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; justify-content: center; align-items: center; width: 100%; }
 .modal-btn:active { transform: scale(0.95); }
 .modal-btn.primary { background: rgba(0, 200, 255, 0.15); color: #00A3FF; }
 .modal-btn.success { background: linear-gradient(135deg, #23A95B, #1F9651); color: white; box-shadow: 0 4px 15px rgba(31, 150, 81, 0.3); }
 .modal-btn.danger { background: rgba(255, 68, 68, 0.15); color: #ff4444; border: 1px solid rgba(255, 68, 68, 0.2); }
-.modal-btn.secondary { background: transparent; color: var(--text-sec); border: 1px solid rgba(128,128,128,0.2); }
+
+/* АНИМАЦИЯ И ИКОНКА FACEID (НОВОЕ) */
+.bio-icon { width: 70px; height: 70px; border-radius: 50%; background: rgba(128, 128, 128, 0.1); color: var(--tree-light); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; }
+.bio-icon svg { width: 34px; height: 34px; stroke: currentColor; z-index: 2; transition: all 0.3s; }
+.bio-icon.scanning { animation: bio-pulse 1.5s infinite; color: #00A3FF; background: rgba(0, 163, 255, 0.1); }
+.bio-icon.success { color: white; background: #25D366; }
+.bio-icon.error { color: white; background: #ff4444; animation: shake-err 0.4s; }
+
+@keyframes bio-pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 163, 255, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(0, 163, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 163, 255, 0); } }
+@keyframes shake-err { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
 @media (min-width: 768px) {
     .app-container { max-width: 720px; padding-bottom: 60px; }
