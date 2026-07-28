@@ -197,8 +197,10 @@ window.registerBiometric = async function() {
     }
 };
 
-// --- НОВАЯ КРАСИВАЯ ФУНКЦИЯ ДЛЯ ВХОДА ЧЕРЕЗ FACEID / ОТПЕЧАТОК ---
-window.authenticateBiometric = async function() {
+// Функция авторизации по лицу/отпечатку
+window.authenticateBiometric = async function(isRetry = false) {
+    const autoContainer = document.getElementById('bio-auto-container');
+    const pinContainer = document.getElementById('pin-input-container');
     const scanIcon = document.getElementById('bio-scan-icon');
     const authError = document.getElementById('auth-error');
     
@@ -206,8 +208,12 @@ window.authenticateBiometric = async function() {
         const savedId = JSON.parse(localStorage.getItem('tree_biometric_id'));
         if (!savedId) return;
         
-        // Включаем красивую пульсацию иконки сканирования
-        if (scanIcon) scanIcon.className = 'bio-icon scanning';
+        // Показываем анимацию сканирования, если это первый запуск
+        if (!isRetry) {
+            if(autoContainer) autoContainer.style.display = 'flex';
+            if(pinContainer) pinContainer.style.display = 'none';
+            if(scanIcon) scanIcon.className = 'bio-icon scanning';
+        }
         if (authError) authError.style.opacity = '0';
         
         const publicKey = {
@@ -217,34 +223,32 @@ window.authenticateBiometric = async function() {
             timeout: 60000
         };
         
+        // Системный вызов FaceID / TouchID
         await navigator.credentials.get({ publicKey });
         
-        // В случае успеха иконка загорается зеленым
-        if (scanIcon) scanIcon.className = 'bio-icon success';
+        // Успех
+        if (scanIcon && !isRetry) scanIcon.className = 'bio-icon success';
         sessionStorage.setItem('tree_authenticated', 'true');
         
-        // Ждем 0.8 сек, чтобы пользователь увидел зеленую иконку успеха, затем открываем админку
-        setTimeout(finishLogin, 800);
+        setTimeout(finishLogin, isRetry ? 100 : 600);
     } catch (e) {
-        console.warn("Биометрия не распознана или отменена", e);
+        console.warn("Биометрия отменена или не распознана", e);
         
-        // Иконка загорается красным и трясется
-        if (scanIcon) {
-            scanIcon.className = 'bio-icon error';
-            setTimeout(() => { scanIcon.className = 'bio-icon'; }, 2000);
-        }
+        // Если произошла ошибка - прячем экран автоскана и показываем PIN-код
+        if(autoContainer) autoContainer.style.display = 'none';
+        if(pinContainer) pinContainer.style.display = 'flex';
+        
+        // Показываем кнопку повтора (для отпечатка/лица) под PIN-кодом
+        const retryBtn = document.getElementById('retry-bio-btn');
+        if(retryBtn) retryBtn.style.display = 'flex';
+        
         if (authError) {
-            authError.innerText = "Չհաջողվեց (Лицо или палец не распознан)";
+            authError.innerText = "Չհաջողվեց (Не распознано, введите PIN)";
             authError.style.opacity = '1';
+            setTimeout(() => { authError.style.opacity = '0'; }, 4000);
         }
+        setTimeout(() => { document.getElementById('pin-input').focus(); }, 100);
     }
-};
-
-// Функция переключения обратно на PIN-код, если FaceID не сработал
-window.switchToPin = function() {
-    document.getElementById('bio-auth-container').style.display = 'none';
-    document.getElementById('pin-input-container').style.display = 'flex';
-    setTimeout(() => { document.getElementById('pin-input').focus(); }, 100);
 };
 
 function finishLogin() {
@@ -270,24 +274,24 @@ function initApp() {
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
     
-    const bioContainer = document.getElementById('bio-auth-container');
+    const bioAutoContainer = document.getElementById('bio-auto-container');
     const pinContainer = document.getElementById('pin-input-container');
+    const retryBtn = document.getElementById('retry-bio-btn');
 
-    // Если биометрия уже настроена - показываем красивую иконку FaceID
+    // Если биометрия уже настроена
     if (localStorage.getItem('tree_biometric_id')) {
-        if (bioContainer) bioContainer.style.display = 'flex';
-        if (pinContainer) pinContainer.style.display = 'none';
-        
-        // Автоматически запускаем сканирование FaceID/TouchID через 0.6 сек после загрузки
-        setTimeout(() => {
-            if (sessionStorage.getItem('tree_authenticated') !== 'true') {
-                window.authenticateBiometric();
-            }
-        }, 600);
+        if (sessionStorage.getItem('tree_authenticated') !== 'true') {
+            // Показываем большую иконку ожидания
+            if (bioAutoContainer) bioAutoContainer.style.display = 'flex';
+            if (pinContainer) pinContainer.style.display = 'none';
+            // Автоматически запускаем системный запрос FaceID через 0.5 сек
+            setTimeout(() => { window.authenticateBiometric(false); }, 500);
+        }
     } else {
         // Если биометрии нет, показываем только PIN-код
-        if (bioContainer) bioContainer.style.display = 'none';
+        if (bioAutoContainer) bioAutoContainer.style.display = 'none';
         if (pinContainer) pinContainer.style.display = 'flex';
+        if (retryBtn) retryBtn.style.display = 'none';
     }
 
     async function checkPinCode(val) {
