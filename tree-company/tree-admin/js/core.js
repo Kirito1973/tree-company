@@ -3,11 +3,7 @@
 // =========================================================
 
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => { 
-        navigator.serviceWorker.register('./sw.js').then(reg => {
-            reg.update(); 
-        }); 
-    });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').then(reg => reg.update()); });
 }
 
 window.currentAdminLang = localStorage.getItem('admin_app_lang') || 'AM';
@@ -85,15 +81,10 @@ window.adminTranslations = {
 window.ordersData = [];
 window.employeesData = [];
 window.servicesData = [];
-
-window.cooperationRequestsData = [
-    { id: 'COOP-REQ-01', company: 'BuildMaster LLC', contact: 'Արմեն Հակոբյան', phone: '+374 99 112 233', text: 'Առաջարկում ենք շինանյութի մատակարարում 20% զեղչով:', date: '24.07.2026', status: 'pending' }
-];
-window.reviewsData = [
-    { id: 'REV-008', isNew: true, clientName: 'Մարիա Գրիգորյան', masterName: 'Արմեն Սարգսյան', rating: 5, text: 'Շատ արագ և որակով տեղադրեցին դռները: Վարպետն իր գործի գիտակն է, անպայման էլի կդիմեմ ձեզ:', date: '25.07.2026' }
-];
-window.clientsData = [ { id: 'TR-1234', name: 'Արամ Խաչատրյան', phone: '+374 98 123 789', address: 'Երևան, Տերյան 50', discount: 0 } ];
-window.partnersData = [ { id: 'p1', name: 'BuildingCorp', logo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>' } ];
+window.cooperationRequestsData = [];
+window.reviewsData = [];
+window.clientsData = [];
+window.partnersData = [];
 
 window.generateOrderId = function() { return 'ORD-' + Math.floor(100 + Math.random() * 900); };
 window.generateEmpId = function() { return 'EMP-' + Math.floor(100 + Math.random() * 900); };
@@ -101,14 +92,8 @@ window.getCurrentDateString = function() { const d = new Date(); return String(d
 
 window.getEmpTypeLabel = function(type) { 
     if (!type) return '---';
-    if (Array.isArray(type)) {
-        return type.map(t => {
-            const key = 'cat_' + t; 
-            return (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) ? window.adminTranslations[key][window.currentAdminLang] : t;
-        }).join(', ');
-    }
-    const key = 'cat_' + type; 
-    return (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) ? window.adminTranslations[key][window.currentAdminLang] : type; 
+    if (Array.isArray(type)) { return type.map(t => { const key = 'cat_' + t; return (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) ? window.adminTranslations[key][window.currentAdminLang] : t; }).join(', '); }
+    const key = 'cat_' + type; return (window.adminTranslations[key] && window.adminTranslations[key][window.currentAdminLang]) ? window.adminTranslations[key][window.currentAdminLang] : type; 
 };
 
 window.getBirthdayInfo = function(dateStr) {
@@ -162,9 +147,7 @@ window.switchTab = function(screenId, btnElement) {
     document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     btnElement.classList.add('active');
-    if (navigator.vibrate) {
-        if (!navigator.userActivation || navigator.userActivation.hasBeenActive) navigator.vibrate(20);
-    }
+    if (navigator.vibrate) navigator.vibrate(20);
 
     if(screenId === 'screen-dashboard' && window.switchDashboardView) window.switchDashboardView('overview');
     if(screenId === 'screen-orders' && window.filterOrders) window.filterOrders();
@@ -179,70 +162,40 @@ window.switchTab = function(screenId, btnElement) {
 
 window.registerBiometric = async function() {
     try {
-        const publicKey = {
-            challenge: new Uint8Array(32),
-            rp: { name: "Tree Company" },
-            user: { id: new Uint8Array(16), name: "user", displayName: "User" },
-            pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
-            authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
-            timeout: 60000
-        };
+        const publicKey = { challenge: new Uint8Array(32), rp: { name: "Tree Company" }, user: { id: new Uint8Array(16), name: "user", displayName: "User" }, pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }], authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" }, timeout: 60000 };
         const credential = await navigator.credentials.create({ publicKey });
         const rawId = Array.from(new Uint8Array(credential.rawId));
         localStorage.setItem('tree_biometric_id', JSON.stringify(rawId));
         alert("Успешно! Теперь вы можете входить по отпечатку или FaceID.");
         location.reload(); 
-    } catch (e) {
-        console.error("Ошибка привязки биометрии:", e);
-    }
+    } catch (e) { console.error("Ошибка привязки биометрии:", e); }
 };
 
-// Функция авторизации по лицу/отпечатку
 window.authenticateBiometric = async function() {
     const scanIcon = document.getElementById('bio-icon-circle');
     const authError = document.getElementById('auth-error');
     
     try {
         const savedId = JSON.parse(localStorage.getItem('tree_biometric_id'));
-        if (!savedId) {
-            if (authError) { authError.innerText = "Биометрия не настроена на этом устройстве"; authError.style.opacity = '1'; }
-            return;
-        }
-        
+        if (!savedId) { if (authError) { authError.innerText = "Биометрия не настроена"; authError.style.opacity = '1'; } return; }
         if (authError) authError.style.opacity = '0';
         
-        const publicKey = {
-            challenge: new Uint8Array(32),
-            allowCredentials: [{ type: "public-key", id: new Uint8Array(savedId) }],
-            userVerification: "required",
-            timeout: 60000
-        };
-        
-        // Системный вызов FaceID / TouchID
+        const publicKey = { challenge: new Uint8Array(32), allowCredentials: [{ type: "public-key", id: new Uint8Array(savedId) }], userVerification: "required", timeout: 60000 };
         await navigator.credentials.get({ publicKey });
         
         sessionStorage.setItem('tree_authenticated', 'true');
         finishLogin();
     } catch (e) {
         console.warn("Биометрия отменена или не распознана", e);
-        
-        if (scanIcon) {
-            scanIcon.classList.add('error');
-            setTimeout(() => { scanIcon.classList.remove('error'); }, 500);
-        }
+        if (scanIcon) { scanIcon.classList.add('error'); setTimeout(() => { scanIcon.classList.remove('error'); }, 500); }
     }
 };
 
 function finishLogin() {
     document.getElementById('auth-screen').classList.add('hidden');
-    if (navigator.vibrate) {
-        if (!navigator.userActivation || navigator.userActivation.hasBeenActive) {
-            navigator.vibrate(20);
-        }
-    }
+    if (navigator.vibrate) navigator.vibrate(20);
     if(window.updateDashDots) window.updateDashDots();
     if(window.switchDashboardView) window.switchDashboardView('overview');
-    
     if(window.fetchOrders) window.fetchOrders();
     if(window.fetchEmployees) window.fetchEmployees();
     if(window.fetchServices) window.fetchServices();
@@ -265,9 +218,11 @@ function initApp() {
         loginBtn.innerText = '...';
         
         try {
+            // ОТПРАВЛЯЕМ ЗАПРОС С ПАРАМЕТРОМ credentials: 'include' ЧТОБЫ БРАУЗЕР ПОЛУЧИЛ КУКУ
             const res = await fetch('/api/auth', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ pin: val })
             });
             const data = await res.json();
@@ -278,11 +233,7 @@ function initApp() {
                 pinInput.value = ''; 
                 
                 if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
-                    setTimeout(() => {
-                        if (confirm("Включить вход по FaceID / Отпечатку пальца для будущих входов?")) {
-                            window.registerBiometric();
-                        }
-                    }, 500);
+                    setTimeout(() => { if (confirm("Включить вход по FaceID / Отпечатку пальца?")) window.registerBiometric(); }, 500);
                 }
                 
                 finishLogin();
@@ -290,12 +241,10 @@ function initApp() {
                 if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
                 authError.innerText = data.error || "Սխալ գաղտնաբառ (Неверный пароль)";
                 authError.style.opacity = '1';
-                pinInput.value = ''; 
             }
         } catch (e) {
             authError.innerText = "Ошибка сервера";
             authError.style.opacity = '1';
-            pinInput.value = '';
         }
         loginBtn.innerText = originalText;
     }
@@ -306,25 +255,13 @@ function initApp() {
         authScreen.classList.remove('hidden');
     }
 
-    // Вход по клику на кнопку
     if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-            checkPinCode(pinInput.value);
-        });
+        loginBtn.addEventListener('click', () => { checkPinCode(pinInput.value); });
     }
 
-    // Вход по нажатию Enter на клавиатуре
     if (pinInput) {
-        pinInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkPinCode(pinInput.value);
-            }
-        });
-        
-        // Убираем красную ошибку при наборе текста
-        pinInput.addEventListener('input', () => {
-            authError.style.opacity = '0';
-        });
+        pinInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPinCode(pinInput.value); });
+        pinInput.addEventListener('input', () => { authError.style.opacity = '0'; });
     }
 
     const privacyScreen = document.getElementById('privacy-overlay');
@@ -334,8 +271,5 @@ function initApp() {
     });
 }
 
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-} else {
-    initApp();
-}
+if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initApp); } 
+else { initApp(); }
