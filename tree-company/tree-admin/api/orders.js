@@ -1,6 +1,5 @@
 import { kv } from '@vercel/kv';
 
-// Вспомогательная функция для чтения секретных Куки
 function getCookie(request, name) {
     const cookieHeader = request.headers.cookie;
     if (!cookieHeader) return null;
@@ -23,20 +22,15 @@ export default async function handler(request, response) {
     
     if (request.method === 'OPTIONS') return response.status(200).end();
 
-    // ==========================================
-    // 🛡️ СИСТЕМА БЕЗОПАСНОСТИ (ПРОВЕРКА ТОКЕНА)
-    // ==========================================
     const token = getCookie(request, 'auth_token');
     if (!token) {
         return response.status(401).json({ error: 'Отказано в доступе. Вы не авторизованы.' });
     }
     
-    // Проверяем, существует ли сессия в базе
     const sessionRole = await kv.get(`session_${token}`);
     if (!sessionRole) {
         return response.status(401).json({ error: 'Сессия устарела. Войдите заново.' });
     }
-    // ==========================================
 
     try {
         if (request.method === 'GET') {
