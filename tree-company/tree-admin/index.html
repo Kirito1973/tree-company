@@ -39,36 +39,39 @@
     </div>
 
     <div id="auth-screen" class="auth-overlay">
-        <div class="auth-card glass-panel" style="position: relative;">
-            <div class="header-logo-container" style="width: 80px; margin-bottom: 20px;">
+        <div class="auth-card glass-panel" style="position: relative; padding: 40px 30px; text-align: center;">
+            <div class="header-logo-container" style="width: 80px; margin: 0 auto 20px auto;">
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
             </div>
-            <h2 class="screen-title" style="margin-bottom: 10px; font-size: 20px;">Մուտք</h2>
             
-            <div id="bio-auto-container" style="display:none; flex-direction:column; align-items:center; width:100%;">
-                <div id="bio-scan-icon" class="bio-icon scanning">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
-                        <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                        <line x1="9" y1="9" x2="9.01" y2="9"/>
-                        <line x1="15" y1="9" x2="15.01" y2="9"/>
-                    </svg>
-                </div>
-                <p style="font-size: 10px; color: var(--text-sec); margin-top: 14px; font-weight: 800; text-transform: uppercase;">Սպասում է (Ожидание...)</p>
+            <h2 class="screen-title" style="margin-bottom: 5px; font-size: 22px;">Բարի գալուստ</h2>
+            <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 30px; font-weight: 600;">Добро пожаловать, Администратор</p>
+            
+            <div style="width:100%; position: relative;">
+                <input type="password" id="pin-input" class="glass-input" maxlength="10" placeholder="Գաղտնաբառ (Пароль)" style="text-align: center; font-size: 16px; letter-spacing: 4px; padding: 18px; border-radius: 20px;">
+                <button id="login-submit-btn" class="submit-btn success" style="margin-top: 15px; border-radius: 20px; font-size: 14px;">Մուտք (Войти)</button>
             </div>
 
-            <div id="pin-input-container" style="display:none; flex-direction:column; align-items:center; width:100%;">
-                <p style="font-size: 10px; color: var(--text-sec); margin-bottom: 24px; text-align: center; font-weight: 600;">Մուտքագրեք գաղտնաբառը<br>(Введите 10-значный пароль)</p>
-                
-                <input type="password" id="pin-input" class="glass-input" maxlength="10" placeholder="••••••••••" style="text-align: center; font-size: 24px; letter-spacing: 6px; padding: 20px; font-family: monospace;">
-                
-                <button id="retry-bio-btn" class="submit-btn" style="background:transparent; border:1px solid rgba(128,128,128,0.2); color:var(--text); box-shadow:none; margin-top:20px; padding:12px; display:none;" onclick="authenticateBiometric(true)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:18px; height:18px; margin-right:6px;"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-                    <span>Отпечаток / Face ID</span>
-                </button>
+            <div style="display: flex; align-items: center; width: 100%; margin: 25px 0;">
+                <div style="flex: 1; height: 1px; background: rgba(128,128,128,0.2);"></div>
+                <span style="font-size: 10px; color: var(--text-sec); padding: 0 10px; text-transform: uppercase; font-weight: 800;">ԿԱՄ (ИЛИ)</span>
+                <div style="flex: 1; height: 1px; background: rgba(128,128,128,0.2);"></div>
             </div>
+
+            <button id="bio-scan-btn" class="bio-icon-btn" onclick="authenticateBiometric()" style="display: flex; flex-direction: column; align-items: center; background: transparent; border: none; cursor: pointer; width: 100%;">
+                <div class="bio-icon-circle" id="bio-icon-circle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2a10 10 0 0 0-10 10v2a10 10 0 0 0 10 10 10 10 0 0 0 10-10v-2a10 10 0 0 0-10-10z"></path>
+                        <path d="M8 12a4 4 0 0 1 8 0"></path>
+                        <path d="M10 16a2 2 0 0 1 4 0"></path>
+                        <path d="M6 12v2"></path>
+                        <path d="M18 12v2"></path>
+                    </svg>
+                </div>
+                <span style="font-size: 10px; color: var(--text); margin-top: 12px; font-weight: 800; text-transform: uppercase;">Face ID / Touch ID</span>
+            </button>
             
-            <div id="auth-error" style="color: #ff4444; font-size: 11px; font-weight: bold; text-align: center; margin-top: 16px; opacity: 0; transition: opacity 0.3s;"></div>
+            <div id="auth-error" style="color: #ff4444; font-size: 11px; font-weight: bold; text-align: center; margin-top: 20px; opacity: 0; transition: opacity 0.3s;"></div>
         </div>
     </div>
 
