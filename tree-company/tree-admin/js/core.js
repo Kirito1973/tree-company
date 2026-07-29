@@ -28,8 +28,9 @@ function initApp() {
                 pinInput.blur();
                 pinInput.value = ''; 
                 
+                // Предлагаем сохранить Touch ID (отпечаток), если еще не сохранено
                 if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
-                    setTimeout(() => { if (confirm("Включить вход по FaceID / Отпечатку пальца?")) window.registerBiometric(); }, 500);
+                    setTimeout(() => { if (confirm("Включить вход по Отпечатку пальца (Touch ID)?")) window.registerBiometric(); }, 500);
                 }
                 
                 finishLogin();
@@ -49,6 +50,15 @@ function initApp() {
         finishLogin();
     } else {
         authScreen.classList.remove('hidden');
+        
+        // Автоматический вызов Touch ID при открытии страницы, если отпечаток привязан
+        if (localStorage.getItem('tree_biometric_id')) {
+            setTimeout(() => {
+                if (typeof window.authenticateBiometric === 'function') {
+                    window.authenticateBiometric();
+                }
+            }, 400); // Небольшая пауза для плавной загрузки UI
+        }
     }
 
     if (loginBtn) {
