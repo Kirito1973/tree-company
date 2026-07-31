@@ -1,3 +1,4 @@
+
 window.switchManagementTab = function(tabName, btnElement) {
     document.querySelectorAll('#screen-management > div[id^="mng-view-"]').forEach(el => el.style.display = 'none');
     document.getElementById('mng-view-' + tabName).style.display = 'block';
