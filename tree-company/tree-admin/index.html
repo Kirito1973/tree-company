@@ -38,12 +38,8 @@
         <img src="assets/tree.png" alt="Tree" style="width: 80px; opacity: 0.8;">
     </div>
 
+    <!-- Окно авторизации -->
     <div id="auth-screen" class="auth-overlay">
-        <script>
-            if (sessionStorage.getItem('tree_authenticated') === 'true') {
-                document.getElementById('auth-screen').style.display = 'none';
-            }
-        </script>
         <div class="auth-card glass-panel" style="position: relative; padding: 40px 30px; text-align: center;">
             <div class="header-logo-container" style="width: 80px; margin: 0 auto 20px auto;">
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
@@ -79,9 +75,6 @@
             <div id="auth-error" style="color: #ff4444; font-size: 11px; font-weight: bold; text-align: center; margin-top: 20px; opacity: 0; transition: opacity 0.3s;"></div>
         </div>
     </div>
-
-    <div class="noise-overlay"></div>
-    <div class="ambient-glow"></div>
 
     <div class="app-container">
         
@@ -238,6 +231,7 @@
             </div>
         </section>
 
+        <!-- Модалки -->
         <div id="review-modal" class="modal-overlay">
             <div class="modal-content glass-panel">
                 <button class="modal-close-x" onclick="closeReviewModal()">✖</button>
@@ -407,13 +401,7 @@
         </button>
     </nav>
 
-    <script src="js/core.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/orders.js"></script>
-    <script src="js/finance.js"></script>
-    <script src="js/employees.js"></script>
-    <script src="js/partners.js"></script>
-    <script src="js/clients.js"></script>
-    <script src="js/management.js"></script>
+    <!-- ТОЛЬКО ОДИН ФАЙЛ СКРИПТА -->
+    <script src="js/admin.js"></script>
 </body>
 </html>
