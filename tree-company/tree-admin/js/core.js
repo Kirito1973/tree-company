@@ -1,3 +1,4 @@
+
 // Функция переключения вкладок
 window.switchTab = function(screenId, btnElement) {
     document.querySelectorAll('.admin-screen').forEach(el => {
