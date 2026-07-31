@@ -1,3 +1,4 @@
+
 console.log("Finance module initialized");
 
 window.renderFinance = function() {
