@@ -1,4 +1,3 @@
-
 window.renderClients = function() {
     const list = document.getElementById('clients-list'); if (!list) return; list.innerHTML = '';
     const searchInput = document.getElementById('client-search'); const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
