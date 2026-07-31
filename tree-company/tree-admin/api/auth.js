@@ -21,7 +21,6 @@ export default async function handler(request, response) {
 
             const trueAdminPin = process.env.ADMIN_PIN;
 
-            // Проверка PIN-кода администратора
             if (trueAdminPin && pin === trueAdminPin) {
                 const token = 'sk_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
                 await kv.set(`session_${token}`, 'admin', { ex: 86400 }); 
@@ -31,7 +30,6 @@ export default async function handler(request, response) {
                 return response.status(200).json({ success: true, role: 'admin' });
             }
 
-            // Проверка PIN-кода сотрудника
             const employees = await kv.get('tree_employees') || [];
             const emp = employees.find(e => e.accessKey === pin && e.status === 'active');
             
