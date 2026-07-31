@@ -1,4 +1,4 @@
-// === НАВИГАЦИЯ (ИСПРАВЛЕНО) ===
+// === НАВИГАЦИЯ ===
 window.switchTab = function(screenId, btnElement) {
     document.querySelectorAll('.admin-screen').forEach(el => {
         el.style.display = 'none';
@@ -7,7 +7,7 @@ window.switchTab = function(screenId, btnElement) {
     
     const targetScreen = document.getElementById(screenId);
     if(targetScreen) {
-        targetScreen.style.display = 'flex'; 
+        targetScreen.style.display = 'flex';
         targetScreen.classList.add('active');
     }
     
@@ -21,13 +21,12 @@ window.switchTab = function(screenId, btnElement) {
     if (navigator.vibrate) navigator.vibrate(10);
 };
 
-// === ТЕМА (СВЕТЛАЯ / ТЕМНАЯ) (ИСПРАВЛЕНО) ===
+// === ТЕМА (СВЕТЛАЯ / ТЕМНАЯ) ===
 window.updateThemeIcon = function() {
     const icon = document.getElementById('theme-icon');
     const root = document.documentElement;
     let theme = root.getAttribute('data-theme');
     
-    // Если тема не задана, берем из памяти или настроек телефона
     if(!theme) {
         theme = (localStorage.getItem('admin_theme') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
         root.setAttribute('data-theme', theme);
@@ -55,8 +54,8 @@ window.toggleTheme = function(e) {
     if(navigator.vibrate) navigator.vibrate(10);
 };
 
-// === ЯЗЫКИ (АРМ / РУС / АНГЛ) (ИСПРАВЛЕНО) ===
-window.currentAdminLang = localStorage.getItem('admin_lang') || 'AM'; // Армянский по умолчанию
+// === МУЛЬТИЯЗЫЧНОСТЬ (AM / RU / EN) ===
+window.currentAdminLang = localStorage.getItem('admin_lang') || 'AM'; // По умолчанию Армянский
 
 window.toggleLangMenu = function(e) {
     if(e) e.stopPropagation();
@@ -74,7 +73,7 @@ window.setAdminLang = function(lang, e) {
     
     const flags = { 'AM': 'assets/free-icon-armenia-197516.png', 'RU': 'assets/free-icon-russia-9994030.png', 'EN': 'assets/united-kingdom.png' };
     const mainBtn = document.getElementById('current-lang-btn');
-    if (mainBtn) mainBtn.innerHTML = `<img src="${flags[lang]}" class="lang-flag">`;
+    if (mainBtn && flags[lang]) mainBtn.innerHTML = `<img src="${flags[lang]}" class="lang-flag">`;
     
     document.querySelectorAll('.lang-tab').forEach(tab => {
         if (tab.getAttribute('data-lang') === lang) tab.classList.add('active');
@@ -100,18 +99,17 @@ window.applyAdminLanguage = function() {
             }
         });
         
-        // Обновляем списки после перевода
+        // Обновляем списки после смены языка
         if (typeof window.renderDashboardOrders === 'function') window.renderDashboardOrders();
         if (typeof window.renderDashboardMasters === 'function') window.renderDashboardMasters();
         if (typeof window.renderEmployees === 'function') window.renderEmployees();
     }
 };
 
-// === ИНИЦИАЛИЗАЦИЯ ===
+// === ИНИЦИАЛИЗАЦИЯ И АВТОРИЗАЦИЯ ===
 function initApp() {
     window.updateThemeIcon();
     
-    // Устанавливаем иконку языка при загрузке
     const flags = { 'AM': 'assets/free-icon-armenia-197516.png', 'RU': 'assets/free-icon-russia-9994030.png', 'EN': 'assets/united-kingdom.png' };
     const mainBtn = document.getElementById('current-lang-btn');
     if (mainBtn && flags[window.currentAdminLang]) mainBtn.innerHTML = `<img src="${flags[window.currentAdminLang]}" class="lang-flag">`;
@@ -125,16 +123,16 @@ function initApp() {
     const togglePwdBtn = document.getElementById('toggle-password-btn');
     const eyeIcon = document.getElementById('eye-icon');
 
-    // Логика кнопки "Показать пароль" (ИСПРАВЛЕНО: Сброс letter-spacing)
+    // Логика глазика (Исправлен отступ букв при показе)
     if (togglePwdBtn && pinInput && eyeIcon) {
         togglePwdBtn.addEventListener('click', () => {
             if (pinInput.type === 'password') {
                 pinInput.type = 'text';
-                pinInput.style.letterSpacing = 'normal'; // Пароль любой длины теперь влезает
+                pinInput.style.letterSpacing = 'normal'; // Пароль виден целиком
                 eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
             } else {
                 pinInput.type = 'password';
-                pinInput.style.letterSpacing = '4px'; // Возвращаем стилизацию звездочек
+                pinInput.style.letterSpacing = '4px'; // Возвращаем стилизацию скрытых символов
                 eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
             }
         });
@@ -216,7 +214,7 @@ function finishLogin() {
     if (typeof window.fetchOrders === 'function') window.fetchOrders();
     if (typeof window.fetchEmployees === 'function') window.fetchEmployees();
     if (typeof window.fetchServices === 'function') window.fetchServices();
-    if (typeof window.fetchAppDatabase === 'function') window.fetchAppDatabase(); // Подгружает переводы
+    if (typeof window.fetchAppDatabase === 'function') window.fetchAppDatabase();
 }
 
 if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initApp); } 
