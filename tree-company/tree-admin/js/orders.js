@@ -1,4 +1,3 @@
-
 window.fetchOrders = async function() {
     try {
         const res = await fetch('/api/orders', { credentials: 'include' });
