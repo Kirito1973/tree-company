@@ -1,4 +1,3 @@
-
 window.currentActiveEmpId = null;
 window.currentEditingEmpId = null;
 
@@ -212,7 +211,6 @@ window.acceptEmployee = async function() {
     if (emp) { 
         emp.status = 'active'; 
         if (!emp.accessKey) {
-            // Генерируем 10-значный сложный пароль
             emp.accessKey = window.generateComplexPassword(); 
         }
         await window.syncEmployeesToServer();
@@ -348,7 +346,6 @@ window.openEmployeeForm = function(empId = null) {
         } 
         window.closeEmployeeModal(); 
     } else { 
-        // Генерируем 10-значный сложный пароль
         document.getElementById('form-emp-access-key').value = window.generateComplexPassword(); 
         photoPreview.style.backgroundImage = 'none';
         document.getElementById('photo-placeholder-icon').style.display = 'block';
