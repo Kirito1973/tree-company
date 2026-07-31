@@ -1,3 +1,4 @@
+
 window.renderAdminPartners = function() {
     const list = document.getElementById('admin-partners-list'); if (!list) return; list.innerHTML = '';
     window.partnersData.forEach(p => {
