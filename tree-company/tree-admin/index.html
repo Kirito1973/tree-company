@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="hy">
 <head>
@@ -39,7 +38,7 @@
         <img src="assets/tree.png" alt="Tree" style="width: 80px; opacity: 0.8;">
     </div>
 
-    <!-- КРАСИВЫЙ ЭКРАН ВХОДА (ТОЛЬКО АРМЯНСКИЙ + КНОПКА ГЛАЗА) -->
+    <!-- КРАСИВЫЙ ЭКРАН ВХОДА -->
     <div id="auth-screen" class="auth-overlay">
         <div class="auth-card glass-panel" style="position: relative; padding: 40px 30px; text-align: center;">
             <div class="header-logo-container" style="width: 80px; margin: 0 auto 20px auto;">
@@ -47,21 +46,21 @@
             </div>
             
             <h2 class="screen-title" style="margin-bottom: 5px; font-size: 22px;">Բարի գալուստ</h2>
-            <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 30px; font-weight: 600;">Ադմինիստրատոր</p>
+            <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 30px; font-weight: 600;">Добро пожаловать, Администратор</p>
             
             <div style="width:100%; position: relative;">
-                <input type="password" id="pin-input" class="glass-input" placeholder="Գաղտնաբառ" style="text-align: center; font-size: 16px; letter-spacing: 4px; padding: 18px; border-radius: 20px; padding-right: 50px;">
+                <input type="password" id="pin-input" class="glass-input" placeholder="Գաղտնաբառ (Пароль)" style="text-align: center; font-size: 16px; letter-spacing: 4px; padding: 18px; border-radius: 20px; padding-right: 50px;">
                 <button id="toggle-password-btn" style="position: absolute; right: 15px; top: 18px; background: transparent; border: none; color: var(--text-sec); cursor: pointer; display: flex; align-items: center; justify-content: center; height: 24px; padding: 0;">
                     <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-                <button id="login-submit-btn" class="submit-btn success" style="margin-top: 15px; border-radius: 20px; font-size: 14px;">Մուտք</button>
+                <button id="login-submit-btn" class="submit-btn success" style="margin-top: 15px; border-radius: 20px; font-size: 14px;">Մուտք (Войти)</button>
             </div>
 
             <div style="display: flex; align-items: center; width: 100%; margin: 25px 0;">
                 <div style="flex: 1; height: 1px; background: rgba(128,128,128,0.2);"></div>
-                <span style="font-size: 10px; color: var(--text-sec); padding: 0 10px; text-transform: uppercase; font-weight: 800;">ԿԱՄ</span>
+                <span style="font-size: 10px; color: var(--text-sec); padding: 0 10px; text-transform: uppercase; font-weight: 800;">ԿԱՄ (ИЛИ)</span>
                 <div style="flex: 1; height: 1px; background: rgba(128,128,128,0.2);"></div>
             </div>
 
@@ -94,8 +93,17 @@
             <div class="header-logo-container">
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
             </div>
-            <!-- Языковой переключатель удален, система работает только на армянском -->
-            <div style="width: 48px; height: 48px;"></div>
+            <!-- ВОССТАНОВЛЕННЫЙ ВЫБОР ЯЗЫКА -->
+            <div class="lang-switcher" id="lang-switcher">
+                <button class="lang-btn-main" id="current-lang-btn" type="button" onclick="toggleLangMenu(event)">
+                    <img src="assets/free-icon-armenia-197516.png" class="lang-flag">
+                </button>
+                <div class="lang-dropdown-content">
+                    <button type="button" class="lang-tab active" data-lang="AM" onclick="setAdminLang('AM', event)"><img src="assets/free-icon-armenia-197516.png" class="lang-flag"></button>
+                    <button type="button" class="lang-tab" data-lang="RU" onclick="setAdminLang('RU', event)"><img src="assets/free-icon-russia-9994030.png" class="lang-flag"></button>
+                    <button type="button" class="lang-tab" data-lang="EN" onclick="setAdminLang('EN', event)"><img src="assets/united-kingdom.png" class="lang-flag"></button>
+                </div>
+            </div>
         </header>
 
         <section class="admin-screen active" id="screen-dashboard">
@@ -148,7 +156,7 @@
 
         <!-- МАКЕТ ФИНАНСОВ -->
         <section class="admin-screen" id="screen-finance">
-            <h2 class="screen-title">Ֆինանսներ</h2>
+            <h2 class="screen-title" data-i18n="tab_finance">Ֆինանսներ</h2>
             
             <div class="stats-grid" style="margin-bottom: 16px;">
                 <div class="stat-box">
@@ -169,8 +177,13 @@
             </div>
         </section>
 
-        <!-- (Остальные секции экрана: screen-orders, screen-employees, screen-partners, screen-clients, screen-management, modals-container) -->
-        <!-- Их код остается в точности таким же, как был в версии без автоматизации, мы не меняем структуру админки. -->
+        <!-- Остальные секции экрана -->
+        <section class="admin-screen" id="screen-orders"></section>
+        <section class="admin-screen" id="screen-employees"></section>
+        <section class="admin-screen" id="screen-partners"></section>
+        <section class="admin-screen" id="screen-clients"></section>
+        <section class="admin-screen" id="screen-management"></section>
+        <div id="modals-container"></div>
 
     </div>
 
