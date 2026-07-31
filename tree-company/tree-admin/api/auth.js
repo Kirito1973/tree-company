@@ -14,32 +14,47 @@ export default async function handler(request, response) {
 
     try {
         if (request.method === 'POST') {
-            const { pin } = request.body;
+            // 1. Защита от пробелов (срезаем пробелы с телефона)
+            const rawPin = request.body.pin;
+            const pin = rawPin ? String(rawPin).trim() : '';
+            
             if (!pin) {
                 return response.status(400).json({ error: 'Գաղտնաբառը մուտքագրված չէ (Пароль не указан)' });
             }
 
-            const trueAdminPin = process.env.ADMIN_PIN;
+            // Точно так же срезаем пробелы из настроек Vercel на всякий случай
+            const rawAdminPin = process.env.ADMIN_PIN;
+            const trueAdminPin = rawAdminPin ? String(rawAdminPin).trim() : null;
 
+            // 2. Если пароль совпал с Vercel ADMIN_PIN
             if (trueAdminPin && pin === trueAdminPin) {
                 const token = 'sk_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-                await kv.set(`session_${token}`, 'admin', { ex: 86400 }); 
+                
+                // Проверка работы базы данных
+                try {
+                    await kv.set(`session_${token}`, 'admin', { ex: 86400 }); 
+                } catch (kvError) {
+                    console.error("KV DB Error:", kvError);
+                    return response.status(500).json({ error: 'Ошибка БД: База Vercel KV не подключена!' });
+                }
                 
                 response.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict; Secure`);
-                
                 return response.status(200).json({ success: true, role: 'admin' });
             }
 
-            const employees = await kv.get('tree_employees') || [];
-            const emp = employees.find(e => e.accessKey === pin && e.status === 'active');
-            
-            if (emp) {
-                const token = 'sk_emp_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
-                await kv.set(`session_${token}`, `employee_${emp.id}`, { ex: 86400 });
+            // 3. Проверка пароля сотрудников (если админский не подошел)
+            try {
+                const employees = await kv.get('tree_employees') || [];
+                const emp = employees.find(e => e.accessKey === pin && e.status === 'active');
                 
-                response.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict; Secure`);
-                
-                return response.status(200).json({ success: true, role: 'employee', name: emp.name });
+                if (emp) {
+                    const token = 'sk_emp_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                    await kv.set(`session_${token}`, `employee_${emp.id}`, { ex: 86400 });
+                    response.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict; Secure`);
+                    return response.status(200).json({ success: true, role: 'employee', name: emp.name });
+                }
+            } catch (kvError) {
+                // Если база не подключена, игнорируем ошибку здесь, чтобы вывести ошибку пароля
             }
 
             return response.status(401).json({ success: false, error: 'Սխալ գաղտնաբառ (Неверный пароль)' });
@@ -48,6 +63,6 @@ export default async function handler(request, response) {
         return response.status(405).json({ error: 'Method not allowed' });
     } catch (error) {
         console.error('API Auth Error:', error);
-        return response.status(500).json({ error: 'Internal Server Error' });
+        return response.status(500).json({ error: 'Внутренняя ошибка сервера' });
     }
 }
