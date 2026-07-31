@@ -14,6 +14,14 @@ export default async function handler(request, response) {
 
     try {
         if (request.method === 'POST') {
+            const ip = request.headers['x-forwarded-for'] || 'unknown_ip';
+            const rateLimitKey = `rate_limit_${ip}`;
+            
+            const attempts = await kv.get(rateLimitKey) || 0;
+            if (attempts >= 5) {
+                return response.status(429).json({ success: false, error: 'Արգելափակված է 15 րոպեով (Слишком много попыток. Ждите 15 минут)' });
+            }
+
             const { pin } = request.body;
             if (!pin) {
                 return response.status(400).json({ error: 'Գաղտնաբառը մուտքագրված չէ (Пароль не указан)' });
@@ -22,6 +30,8 @@ export default async function handler(request, response) {
             const trueAdminPin = process.env.ADMIN_PIN;
 
             if (trueAdminPin && pin === trueAdminPin) {
+                await kv.del(rateLimitKey); 
+                
                 const token = 'sk_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
                 await kv.set(`session_${token}`, 'admin', { ex: 86400 }); 
                 
@@ -34,6 +44,7 @@ export default async function handler(request, response) {
             const emp = employees.find(e => e.accessKey === pin && e.status === 'active');
             
             if (emp) {
+                await kv.del(rateLimitKey);
                 const token = 'sk_emp_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
                 await kv.set(`session_${token}`, `employee_${emp.id}`, { ex: 86400 });
                 
@@ -42,6 +53,7 @@ export default async function handler(request, response) {
                 return response.status(200).json({ success: true, role: 'employee', name: emp.name });
             }
 
+            await kv.set(rateLimitKey, attempts + 1, { ex: 900 });
             return response.status(401).json({ success: false, error: 'Սխալ գաղտնաբառ (Неверный пароль)' });
         }
 
