@@ -16,7 +16,7 @@ export default async function handler(request, response) {
         if (request.method === 'POST') {
             const { pin } = request.body;
             if (!pin) {
-                return response.status(400).json({ error: 'Գաղտնաբառը մուտքագրված չէ (Пароль не указан)' });
+                return response.status(400).json({ error: 'Գաղտնաբառը մուտքագրված չէ' });
             }
 
             const trueAdminPin = process.env.ADMIN_PIN;
@@ -44,8 +44,8 @@ export default async function handler(request, response) {
                 return response.status(200).json({ success: true, role: 'employee', name: emp.name });
             }
 
-            // Без блокировок — просто отдаем ошибку неверного пароля
-            return response.status(401).json({ success: false, error: 'Սխալ գաղտնաբառ (Неверный пароль)' });
+            // Без блокировок — отдаем ошибку неверного пароля только на армянском
+            return response.status(401).json({ success: false, error: 'Սխալ գաղտնաբառ' });
         }
 
         return response.status(405).json({ error: 'Method not allowed' });
