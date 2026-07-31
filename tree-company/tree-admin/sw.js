@@ -1,3 +1,4 @@
+
 const CACHE_NAME = 'tree-admin-no-cache';
 
 self.addEventListener('install', (event) => {
