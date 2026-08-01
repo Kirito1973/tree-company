@@ -846,7 +846,7 @@ window.uploadToServer = async function(buttonElement, originalText, spanElement)
    INITIALIZATION
    ========================================================================== */
 function initApp() {
-    updateThemeIcon();
+    window.updateThemeIcon(); // ИСПРАВЛЕНО
     window.applyAdminLanguage();
     
     const authScreen = document.getElementById('auth-screen');
@@ -857,7 +857,6 @@ function initApp() {
     const eyeClosed = document.getElementById('eye-icon-closed');
     const eyeOpen = document.getElementById('eye-icon-open');
 
-    // Логика кнопки показа пароля
     if (toggleBtn && pinInput) {
         toggleBtn.addEventListener('click', () => {
             if (pinInput.type === 'password') {
@@ -876,7 +875,6 @@ function initApp() {
         if (!val) return;
         authError.style.opacity = '0';
         
-        // Включаем красивую анимацию лоадера
         const originalText = loginBtn.innerText;
         loginBtn.innerHTML = '<svg class="spinner-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>';
         loginBtn.style.pointerEvents = 'none';
@@ -908,14 +906,25 @@ function initApp() {
             authError.innerText = "Ошибка сервера";
             authError.style.opacity = '1';
         } finally {
-            // Возвращаем кнопку в исходное состояние, если была ошибка
             loginBtn.innerText = originalText;
             loginBtn.style.pointerEvents = 'auto';
         }
     }
 
-    // При старте скрываем экран и пытаемся получить заказы. 
-    window.finishLogin();
+    async function checkSession() {
+        try {
+            const res = await fetch('/api/orders', { method: 'GET', credentials: 'include' });
+            if (res.ok) {
+                window.finishLogin();
+            } else {
+                if (authScreen) authScreen.classList.remove('hidden');
+            }
+        } catch(e) {
+            if (authScreen) authScreen.classList.remove('hidden');
+        }
+    }
+    
+    checkSession();
 
     if (loginBtn) loginBtn.addEventListener('click', () => { checkPinCode(pinInput.value); });
     if (pinInput) {
