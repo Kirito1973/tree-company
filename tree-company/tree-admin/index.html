@@ -10,7 +10,7 @@
     
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#F9FAFB" id="themeColorMeta">
+    <meta name="theme-color" content="#F4F7F5" id="themeColorMeta">
 
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
@@ -34,9 +34,13 @@
 </head>
 <body>
 
+    <!-- ФОНОВЫЕ ЭФФЕКТЫ ИЗ ПРИЛОЖЕНИЯ СОТРУДНИКОВ -->
+    <div class="noise-overlay"></div>
+    <div class="ambient-glow"></div>
+
     <!-- Окно авторизации -->
     <div id="auth-screen" class="auth-overlay">
-        <!-- АНТИ-БЛИК СКРИПТ: Мгновенно прячет экран входа, если токен есть -->
+        <!-- АНТИ-БЛИК СКРИПТ -->
         <script>
             if (localStorage.getItem('tree_secure_token') === 'valid') {
                 document.getElementById('auth-screen').style.display = 'none';
@@ -51,7 +55,7 @@
             <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 30px; font-weight: 600;" data-i18n="welcome_admin"></p>
             
             <div style="width:100%; position: relative;">
-                <input type="password" id="pin-input" class="glass-input" data-i18n-placeholder="password_placeholder" style="text-align: center; font-size: 16px; letter-spacing: 4px; padding: 18px 45px 18px 18px; border-radius: 20px;">
+                <input type="password" id="pin-input" class="glass-input pin-input" data-i18n-placeholder="password_placeholder" style="text-align: center; font-size: 20px; letter-spacing: 8px; padding: 18px 45px 18px 18px; border-radius: 20px;" autocomplete="off">
                 
                 <button id="toggle-password-btn" type="button" style="position: absolute; right: 15px; top: 16px; background: transparent; border: none; color: var(--text-sec); cursor: pointer; display: flex; align-items: center; justify-content: center; height: 28px; width: 28px;">
                     <svg id="eye-icon-closed" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
@@ -242,7 +246,7 @@
 
         <!-- Модальные окна -->
         
-        <!-- НОВОЕ Окно Заказов с интегрированной кнопкой адреса -->
+        <!-- Окно Заказов с интегрированной кнопкой адреса -->
         <div id="order-modal" class="modal-overlay">
             <div class="modal-content glass-panel">
                 <button class="modal-close-x" onclick="closeOrderModal()">✖</button>
