@@ -34,7 +34,6 @@ window.currentEditingEmpId = null;
 window.currentEditingPartnerId = null;
 window.serverTranslations = {};
 
-// Данные
 window.ordersData = [];
 window.employeesData = [];
 window.servicesData = [];
@@ -81,9 +80,7 @@ window.generateEmpId = function() { return 'emp_' + Math.random().toString(36).s
 window.generateComplexPassword = function() {
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
     let pass = '';
-    for(let i = 0; i < 10; i++) {
-        pass += chars[Math.floor(Math.random() * chars.length)];
-    }
+    for(let i = 0; i < 10; i++) { pass += chars[Math.floor(Math.random() * chars.length)]; }
     return pass;
 };
 
@@ -148,11 +145,8 @@ window.toggleTheme = function(event) {
 window.updateThemeIcon = function() {
     const icon = document.getElementById('theme-icon');
     if (!icon) return;
-    if (document.documentElement.getAttribute('data-theme') === 'dark') {
-        icon.innerText = '🌙';
-    } else {
-        icon.innerText = '☀️';
-    }
+    if (document.documentElement.getAttribute('data-theme') === 'dark') { icon.innerText = '🌙'; } 
+    else { icon.innerText = '☀️'; }
 };
 
 window.switchTab = function(tabId, btnElement) {
@@ -240,11 +234,7 @@ window.updateDashDots = function() {
     const updateDot = (id, count) => {
         const dot = document.getElementById(id);
         if (!dot) return;
-        if (count > 0) {
-            dot.style.display = 'block'; 
-        } else {
-            dot.style.display = 'none'; 
-        }
+        if (count > 0) { dot.style.display = 'block'; } else { dot.style.display = 'none'; }
     };
 
     updateDot('dash-dot-orders', incOrders);
@@ -256,27 +246,21 @@ window.updateDashDots = function() {
 window.switchDashboardView = function(viewName) {
     document.querySelectorAll('.dash-view-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector(`[data-dash-view="${viewName}"]`).classList.add('active');
-    
     document.querySelectorAll('.dash-view-content').forEach(el => el.style.display = 'none');
     document.getElementById('dash-' + viewName).style.display = 'block';
 
     window.updateDashDots();
-
     if(viewName === 'overview') window.renderDashboardOverview();
     if(viewName === 'orders') window.renderDashboardOrders();
     if(viewName === 'masters') window.renderDashboardMasters();
     if(viewName === 'partners') window.renderDashboardPartnerRequests();
     
-    if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) {
-        navigator.vibrate(10);
-    }
+    if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) { navigator.vibrate(10); }
 };
 
 window.renderDashboardOverview = function() {
     let totalRating = 0;
-    if(window.reviewsData && window.reviewsData.length > 0) {
-        window.reviewsData.forEach(r => totalRating += r.rating);
-    }
+    if(window.reviewsData && window.reviewsData.length > 0) { window.reviewsData.forEach(r => totalRating += r.rating); }
     const avgRating = (window.reviewsData && window.reviewsData.length > 0) ? (totalRating / window.reviewsData.length).toFixed(1) : '0.0';
 
     document.getElementById('dash-avg-rating-hero').innerText = `★ ${avgRating}`;
@@ -315,11 +299,7 @@ window.openReviewModal = function(id) {
     const rev = window.reviewsData.find(r => r.id === id);
     if(!rev) return;
     
-    if (rev.isNew) { 
-        rev.isNew = false; 
-        window.renderDashboardOverview(); 
-        window.updateDashDots(); 
-    }
+    if (rev.isNew) { rev.isNew = false; window.renderDashboardOverview(); window.updateDashDots(); }
     
     document.getElementById('modal-rev-client').innerText = rev.clientName;
     document.getElementById('modal-rev-stars').innerText = '★'.repeat(Math.floor(rev.rating)) + (rev.rating % 1 !== 0 ? '½' : '');
@@ -335,11 +315,7 @@ window.renderDashboardOrders = function() {
     const list = document.getElementById('dash-orders-list'); list.innerHTML = '';
     if(!window.ordersData) { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; return; }
     
-    let filtered = window.ordersData.filter(o => 
-        o.status === 'incoming' || 
-        (o.status === 'new' && (!o.worker || o.worker === '---' || o.worker === 'Չկա'))
-    );
-    
+    let filtered = window.ordersData.filter(o => o.status === 'incoming' || (o.status === 'new' && (!o.worker || o.worker === '---' || o.worker === 'Չկա')));
     if(filtered.length > 0) {
         filtered.forEach(order => {
             let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
@@ -353,9 +329,7 @@ window.renderDashboardOrders = function() {
             list.appendChild(card);
         });
         window.applyAdminLanguage();
-    } else {
-        list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
-    }
+    } else { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; }
 };
 
 window.renderDashboardMasters = function() {
@@ -370,9 +344,7 @@ window.renderDashboardMasters = function() {
             list.appendChild(card);
         });
         window.applyAdminLanguage();
-    } else {
-        list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
-    }
+    } else { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; }
 };
 
 window.renderDashboardPartnerRequests = function() {
@@ -386,9 +358,7 @@ window.renderDashboardPartnerRequests = function() {
             card.innerHTML = `<div class="entity-header"><span class="entity-id">${escapeHTML(coop.company)}</span><span class="entity-status new">B2B</span></div><div class="entity-title">${escapeHTML(coop.contact)}</div><div class="entity-meta">${window.adminTranslations['lbl_phone'][window.currentAdminLang]} ${escapeHTML(coop.phone)}</div><div class="entity-meta">${escapeHTML(coop.date)}</div>`;
             list.appendChild(card);
         });
-    } else {
-        list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`;
-    }
+    } else { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; }
 };
 
 let currentActiveCoopId = null;
@@ -427,39 +397,25 @@ window.rejectCoop = function() {
 window.fetchOrders = async function() {
     try {
         const res = await fetch('/api/orders', { credentials: 'include' });
-        if (res.status === 401) {
-            sessionStorage.removeItem('tree_authenticated');
-            document.getElementById('auth-screen').classList.remove('hidden');
-            return;
-        }
+        if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').classList.remove('hidden'); return; }
         if (res.ok) {
             const data = await res.json();
             if (data && data.length > 0) window.ordersData = data;
             if(window.renderOrders) window.renderOrders();
-            window.renderDashboardOrders();
-            window.updateDashDots();
+            window.renderDashboardOrders(); window.updateDashDots();
         }
     } catch (err) { console.error('Ошибка загрузки заказов:', err); }
 };
 
 window.syncSingleOrder = async function(order, action = 'update') {
     try {
-        const res = await fetch('/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null })
-        });
-        if (res.status === 401) {
-            sessionStorage.removeItem('tree_authenticated');
-            document.getElementById('auth-screen').classList.remove('hidden');
-        }
+        const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null }) });
+        if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').classList.remove('hidden'); }
     } catch (err) { console.error('Ошибка синхронизации заказа:', err); }
 };
 
 window.renderOrders = function() {
-    const list = document.getElementById('orders-list'); if(!list) return;
-    list.innerHTML = '';
+    const list = document.getElementById('orders-list'); if(!list) return; list.innerHTML = '';
     if(window.ordersData.length === 0) { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; return; }
     window.ordersData.forEach(order => {
         let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
@@ -478,22 +434,13 @@ window.fetchEmployees = async function() {
         if (res.ok) {
             const data = await res.json();
             if (data && data.length > 0) window.employeesData = data;
-            window.renderEmployees();
-            window.renderDashboardMasters();
-            window.updateDashDots();
+            window.renderEmployees(); window.renderDashboardMasters(); window.updateDashDots();
         }
     } catch (err) { console.error('Ошибка загрузки сотрудников:', err); }
 };
 
 window.syncEmployeesToServer = async function() {
-    try {
-        await fetch('/api/employees', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ employees: window.employeesData })
-        });
-    } catch (err) { console.error('Ошибка синхронизации сотрудников:', err); }
+    try { await fetch('/api/employees', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ employees: window.employeesData }) }); } catch (err) { console.error('Ошибка синхронизации сотрудников:', err); }
 };
 
 window.setEmpFilter = function(filterValue) { 
@@ -502,25 +449,15 @@ window.setEmpFilter = function(filterValue) {
 };
 
 window.previewEmpPhoto = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    const file = event.target.files[0]; if (!file) return; const reader = new FileReader(); reader.readAsDataURL(file);
     reader.onload = e => {
-        const img = new Image();
-        img.src = e.target.result;
+        const img = new Image(); img.src = e.target.result;
         img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const scaleSize = 250 / img.width;
-            canvas.width = 250;
-            canvas.height = img.height * scaleSize;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const canvas = document.createElement('canvas'); const scaleSize = 250 / img.width; canvas.width = 250; canvas.height = img.height * scaleSize;
+            const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             const base64 = canvas.toDataURL('image/jpeg', 0.8);
-            document.getElementById('form-emp-photo-base64').value = base64;
-            document.getElementById('form-emp-photo-preview').style.backgroundImage = `url(${base64})`;
-            document.getElementById('photo-placeholder-icon').style.display = 'none';
-            document.getElementById('photo-placeholder-text').style.display = 'none';
+            document.getElementById('form-emp-photo-base64').value = base64; document.getElementById('form-emp-photo-preview').style.backgroundImage = `url(${base64})`;
+            document.getElementById('photo-placeholder-icon').style.display = 'none'; document.getElementById('photo-placeholder-text').style.display = 'none';
         }
     };
 };
@@ -534,12 +471,9 @@ window.renderEmployees = function() {
     if(!window.employeesData) return;
 
     window.employeesData.filter(e => e.status === 'active').forEach(emp => {
-        const textToSearch = (emp.name + " " + emp.phone).toLowerCase(); 
-        const matchesSearch = textToSearch.includes(empSearchTerm);
+        const textToSearch = (emp.name + " " + emp.phone).toLowerCase(); const matchesSearch = textToSearch.includes(empSearchTerm);
         let matchesFilter = false;
-        if (activeFilter === 'all') { matchesFilter = true; } 
-        else { matchesFilter = Array.isArray(emp.type) ? emp.type.includes(activeFilter) : (emp.type === activeFilter); }
-        
+        if (activeFilter === 'all') { matchesFilter = true; } else { matchesFilter = Array.isArray(emp.type) ? emp.type.includes(activeFilter) : (emp.type === activeFilter); }
         if (!matchesFilter || !matchesSearch) return;
         
         const bdayInfo = window.getBirthdayInfo(emp.birthDate); if (bdayInfo && bdayInfo.isToday) bdayEmployees.push(emp.name);
@@ -594,10 +528,7 @@ window.openEmployeeModal = function(empId) {
     if (emp.phone) { phoneLink.style.display = 'flex'; phoneLink.href = `tel:${emp.phone.replace(/[^\d+]/g, '')}`; } else phoneLink.style.display = 'none';
     document.getElementById('modal-emp-address').innerText = emp.address || '---'; document.getElementById('modal-emp-exp').innerText = emp.exp ? emp.exp.split('/')[0].trim() : '0'; document.getElementById('modal-emp-rating').innerText = `★ ${(emp.rating || 0).toFixed(1)}`;
     
-    const btnAccept = document.getElementById('modal-emp-accept-btn'); 
-    const btnReject = document.getElementById('modal-emp-reject-btn'); 
-    const btnEdit = document.getElementById('modal-emp-edit-btn');
-    const btnFire = document.getElementById('modal-emp-fire-btn');
+    const btnAccept = document.getElementById('modal-emp-accept-btn'); const btnReject = document.getElementById('modal-emp-reject-btn'); const btnEdit = document.getElementById('modal-emp-edit-btn'); const btnFire = document.getElementById('modal-emp-fire-btn');
 
     if (isPending) { btnAccept.style.display = 'flex'; btnReject.style.display = 'flex'; btnEdit.style.display = 'none'; if(btnFire) btnFire.style.display = 'none'; } 
     else { btnAccept.style.display = 'none'; btnReject.style.display = 'none'; btnEdit.style.display = 'flex'; if(btnFire) btnFire.style.display = 'flex'; }
@@ -615,8 +546,7 @@ window.acceptEmployee = async function() {
     if (!window.currentActiveEmpId) return; 
     const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
     if (emp) { 
-        emp.status = 'active'; 
-        if (!emp.accessKey) emp.accessKey = window.generateComplexPassword(); 
+        emp.status = 'active'; if (!emp.accessKey) emp.accessKey = window.generateComplexPassword(); 
         await window.syncEmployeesToServer();
         window.renderDashboardMasters(); window.renderEmployees(); window.updateDashDots(); window.openEmployeeModal(emp.id); 
         if (navigator.vibrate) navigator.vibrate(20); 
@@ -637,8 +567,7 @@ window.fireEmployee = async function() {
     if (confirm("Уволить сотрудника?")) { 
         const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
         if (emp) {
-            emp.status = 'dismissed'; 
-            await window.syncEmployeesToServer();
+            emp.status = 'dismissed'; await window.syncEmployeesToServer();
             window.renderDashboardMasters(); window.renderEmployees(); window.closeEmployeeModal(); window.updateDashDots(); 
         }
     } 
@@ -853,17 +782,10 @@ window.saveServiceForm = async function(e) {
     const updatedServices = [...window.servicesData, newService];
 
     try {
-        const res = await fetch('/api/services', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ services: updatedServices })
-        });
+        const res = await fetch('/api/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ services: updatedServices }) });
         if(res.ok) {
             window.servicesData = updatedServices;
-            window.renderAdminServices(); 
-            window.closeServiceForm(); 
-            if(navigator.vibrate) navigator.vibrate(20);
+            window.renderAdminServices(); window.closeServiceForm(); if(navigator.vibrate) navigator.vibrate(20);
         }
     } catch(err) { alert('Ошибка связи с сервером'); } 
     finally { submitBtn.innerText = origText; submitBtn.disabled = false; }
@@ -873,17 +795,8 @@ window.deleteService = async function(id) {
     if(confirm('Удалить услугу?')) { 
         const updatedServices = window.servicesData.filter(s => s.id !== id);
         try {
-            const res = await fetch('/api/services', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ services: updatedServices })
-            });
-            if(res.ok) {
-                window.servicesData = updatedServices; 
-                window.renderAdminServices(); 
-                if(navigator.vibrate) navigator.vibrate(20);
-            }
+            const res = await fetch('/api/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ services: updatedServices }) });
+            if(res.ok) { window.servicesData = updatedServices; window.renderAdminServices(); if(navigator.vibrate) navigator.vibrate(20); }
         } catch(err) { alert('Ошибка при удалении'); }
     } 
 };
@@ -932,4 +845,83 @@ window.uploadToServer = async function(buttonElement, originalText, spanElement)
 /* ==========================================================================
    INITIALIZATION
    ========================================================================== */
+function initApp() {
+    updateThemeIcon();
+    window.applyAdminLanguage();
+    
+    const authScreen = document.getElementById('auth-screen');
+    const pinInput = document.getElementById('pin-input');
+    const authError = document.getElementById('auth-error');
+    const loginBtn = document.getElementById('login-submit-btn');
+    const toggleBtn = document.getElementById('toggle-password-btn');
+    const eyeClosed = document.getElementById('eye-icon-closed');
+    const eyeOpen = document.getElementById('eye-icon-open');
+
+    // Логика кнопки показа пароля
+    if (toggleBtn && pinInput) {
+        toggleBtn.addEventListener('click', () => {
+            if (pinInput.type === 'password') {
+                pinInput.type = 'text';
+                eyeClosed.style.display = 'none';
+                eyeOpen.style.display = 'block';
+            } else {
+                pinInput.type = 'password';
+                eyeClosed.style.display = 'block';
+                eyeOpen.style.display = 'none';
+            }
+        });
+    }
+
+    async function checkPinCode(val) {
+        if (!val) return;
+        authError.style.opacity = '0';
+        
+        // Включаем красивую анимацию лоадера
+        const originalText = loginBtn.innerText;
+        loginBtn.innerHTML = '<svg class="spinner-icon" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><circle cx="12" cy="12" r="10" stroke-opacity="0.3"></circle><path d="M12 2a10 10 0 0 1 10 10"></path></svg>';
+        loginBtn.style.pointerEvents = 'none';
+        
+        try {
+            const res = await fetch('/api/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ pin: val })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                localStorage.setItem('tree_secure_token', 'valid'); 
+                pinInput.blur();
+                pinInput.value = ''; 
+                
+                if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
+                    setTimeout(() => { if (confirm("Включить вход по Touch ID?")) window.registerBiometric(); }, 500);
+                }
+                window.finishLogin();
+            } else {
+                if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
+                authError.innerText = data.error || "Սխալ գաղտնաբառ (Неверный пароль)";
+                authError.style.opacity = '1';
+            }
+        } catch (e) {
+            authError.innerText = "Ошибка сервера";
+            authError.style.opacity = '1';
+        } finally {
+            // Возвращаем кнопку в исходное состояние, если была ошибка
+            loginBtn.innerText = originalText;
+            loginBtn.style.pointerEvents = 'auto';
+        }
+    }
+
+    // При старте скрываем экран и пытаемся получить заказы. 
+    window.finishLogin();
+
+    if (loginBtn) loginBtn.addEventListener('click', () => { checkPinCode(pinInput.value); });
+    if (pinInput) {
+        pinInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPinCode(pinInput.value); });
+        pinInput.addEventListener('input', () => { authError.style.opacity = '0'; });
+    }
+}
+
 if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initApp); } else { initApp(); }
