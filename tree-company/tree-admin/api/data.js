@@ -19,7 +19,10 @@ export default async function handler(req, res) {
     
     if (req.method === 'POST') {
         const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('auth_token='))?.split('=')[1];
-        if (!token || !(await kv.get(`session_${token}`))) {
+        const sessionData = token ? await kv.get(`session_${token}`) : null;
+
+        // ИСПРАВЛЕНИЕ: Только админ может сохранять переводы
+        if (!token || sessionData !== 'admin') {
             return res.status(401).json({ error: 'Отказано в доступе' });
         }
 
