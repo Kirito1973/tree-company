@@ -3,7 +3,6 @@
    ========================================================================== */
 window.currentAdminLang = localStorage.getItem('tree_admin_lang') || 'AM';
 
-// Полный словарь всего приложения
 window.adminTranslations = {
     'welcome': { 'AM': 'Բարի գալուստ', 'RU': 'Добро пожаловать', 'EN': 'Welcome' },
     'welcome_admin': { 'AM': 'Բարի գալուստ, Ադմինիստրատոր', 'RU': 'Добро пожаловать, Администратор', 'EN': 'Welcome, Administrator' },
@@ -37,6 +36,7 @@ window.adminTranslations = {
     'search_employee': { 'AM': 'Աշխատակցի որոնում...', 'RU': 'Поиск сотрудника...', 'EN': 'Search employee...' },
     'add_employee': { 'AM': '+ Ավելացնել աշխատակից', 'RU': '+ Добавить сотрудника', 'EN': '+ Add employee' },
     'add_partner': { 'AM': '+ Ավելացնել գործընկեր', 'RU': '+ Добавить партнера', 'EN': '+ Add partner' },
+    'add_order': { 'AM': '+ Ավելացնել պատվեր', 'RU': '+ Добавить заказ', 'EN': '+ Add order' },
     'search_client': { 'AM': 'Հաճախորդի որոնում...', 'RU': 'Поиск клиента...', 'EN': 'Search client...' },
     'total_clients': { 'AM': 'Ընդհանուր հաճախորդներ', 'RU': 'Всего клиентов', 'EN': 'Total clients' },
     
@@ -102,13 +102,22 @@ window.currentEditingEmpId = null;
 window.currentEditingPartnerId = null;
 window.serverTranslations = {};
 
-window.ordersData = [];
-window.employeesData = [];
+// Примеры (Мок-данные), чтобы дашборд не был пустым
+window.reviewsData = [
+    { id: 'rev_mock1', isNew: true, rating: 5, clientName: 'Աննա Պետրոսյան', masterName: 'Տիգրան', text: 'Շատ գոհ եմ, արագ և որակով աշխատանք:', date: new Date().toLocaleDateString() }
+];
+window.ordersData = [
+    { id: 'ord_mock1', status: 'incoming', services: [{name: 'Դռների տեղադրում'}], clientName: 'Արմեն', clientPhone: '+374 99 12 34 56', address: 'Երևան, Աբովյան 15' }
+];
+window.employeesData = [
+    { id: 'emp_mock1', status: 'pending', name: 'Հակոբ Սարգսյան', type: ['electro'], exp: '5', phone: '+374 98 76 54 32' }
+];
+window.cooperationRequestsData = [
+    { id: 'coop_mock1', status: 'pending', company: 'ՇինՄոնտաժ ՍՊԸ', contact: 'Գուրգեն', phone: '+374 55 11 22 33', date: new Date().toLocaleDateString(), text: 'Ցանկանում ենք համագործակցել...' }
+];
 window.servicesData = [];
 window.partnersData = [];
 window.clientsData = [];
-window.reviewsData = [];
-window.cooperationRequestsData = [];
 
 /* ==========================================================================
    UTILITY FUNCTIONS
@@ -154,12 +163,10 @@ window.generateComplexPassword = function() { const chars = 'abcdefghijklmnopqrs
    UI, THEME, LANGUAGE & NAVIGATION
    ========================================================================== */
 window.applyAdminLanguage = function() {
-    // Внутренний текст
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         el.innerText = getTrans(key);
     });
-    // Плейсхолдеры
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         el.placeholder = getTrans(key);
@@ -181,7 +188,7 @@ window.setAdminLang = function(lang, event) {
     if(event && event.currentTarget) event.currentTarget.classList.add('active');
     window.applyAdminLanguage();
     document.getElementById('lang-switcher').classList.remove('open');
-    window.renderDashboardOverview(); window.renderDashboardOrders(); window.renderDashboardMasters(); window.renderEmployees();
+    window.renderDashboardOverview(); window.renderDashboardOrders(); window.renderDashboardMasters(); window.renderEmployees(); window.renderOrders();
 };
 
 window.toggleLangMenu = function(event) { event.stopPropagation(); document.getElementById('lang-switcher').classList.toggle('open'); };
@@ -197,12 +204,9 @@ window.toggleTheme = function(event) {
 window.updateThemeIcon = function() {
     const icon = document.getElementById('theme-icon');
     if (!icon) return;
-    // Красивые SVG иконки для Солнца и Луны
     const sunIcon = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
     const moonIcon = `<svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
-    
-    if (document.documentElement.getAttribute('data-theme') === 'dark') { icon.innerHTML = moonIcon; } 
-    else { icon.innerHTML = sunIcon; }
+    if (document.documentElement.getAttribute('data-theme') === 'dark') { icon.innerHTML = moonIcon; } else { icon.innerHTML = sunIcon; }
 };
 
 window.switchTab = function(tabId, btnElement) {
@@ -210,6 +214,9 @@ window.switchTab = function(tabId, btnElement) {
     document.getElementById(tabId).classList.add('active');
     document.querySelectorAll('.bottom-nav .tab-item').forEach(btn => btn.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
+    
+    // Сохраняем текущую вкладку в память сессии (до закрытия вкладки браузера)
+    sessionStorage.setItem('current_admin_tab', tabId);
     if (navigator.vibrate) navigator.vibrate(10);
 };
 
@@ -339,7 +346,7 @@ window.renderDashboardOrders = function() {
             let statText = order.status === 'incoming' ? getTrans('status_incoming') : getTrans('status_new');
             
             const card = document.createElement('div'); card.className = 'entity-card'; card.onclick = () => { if(window.openOrderModal) window.openOrderModal(order.id); };
-            card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statClass}">${statText}</span></div><div class="entity-title">${escapeHTML(mainTitle)}</div><div class="entity-meta">${escapeHTML(order.clientName || '---')}</div><div class="entity-meta">${escapeHTML(order.clientPhone)}</div><div class="entity-meta">${escapeHTML(order.address)}</div>`;
+            card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statClass}">${statText}</span></div><div class="entity-title">${escapeHTML(mainTitle)}</div><div class="entity-meta">${getTrans('lbl_name')} ${escapeHTML(order.clientName || '---')}</div><div class="entity-meta">${getTrans('lbl_phone')} ${escapeHTML(order.clientPhone)}</div><div class="entity-meta">${getTrans('lbl_address')} ${escapeHTML(order.address)}</div>`;
             list.appendChild(card);
         });
     } else { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">${getTrans('no_orders')}</div>`; }
@@ -393,13 +400,18 @@ window.rejectCoop = function() { if(!currentActiveCoopId) return; if(confirm(get
 window.fetchOrders = async function() {
     try {
         const res = await fetch('/api/orders', { credentials: 'include' });
-        if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').classList.remove('hidden'); return; }
-        if (res.ok) { const data = await res.json(); if (data && data.length > 0) window.ordersData = data; if(window.renderOrders) window.renderOrders(); window.renderDashboardOrders(); window.updateDashDots(); }
+        if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').style.display = 'flex'; return; }
+        if (res.ok) { 
+            const data = await res.json(); 
+            // Если база вернула пустой массив, мы НЕ затираем наши примеры (Mock Data)
+            if (data && data.length > 0) window.ordersData = data; 
+            if(window.renderOrders) window.renderOrders(); window.renderDashboardOrders(); window.updateDashDots(); 
+        }
     } catch (err) { console.error('Ошибка загрузки заказов:', err); }
 };
 
 window.syncSingleOrder = async function(order, action = 'update') {
-    try { const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null }) }); if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').classList.remove('hidden'); } } catch (err) { console.error('Ошибка синхронизации заказа:', err); }
+    try { const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null }) }); if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').style.display = 'flex'; } } catch (err) { console.error('Ошибка синхронизации заказа:', err); }
 };
 
 window.renderOrders = function() {
@@ -413,11 +425,23 @@ window.renderOrders = function() {
     });
 };
 
+window.openOrderForm = function() {
+    alert(getTrans('in_development'));
+};
+
 /* ==========================================================================
    EMPLOYEES LOGIC
    ========================================================================== */
 window.fetchEmployees = async function() {
-    try { const res = await fetch('/api/employees', { credentials: 'include' }); if (res.ok) { const data = await res.json(); if (data && data.length > 0) window.employeesData = data; window.renderEmployees(); window.renderDashboardMasters(); window.updateDashDots(); } } catch (err) { console.error('Ошибка загрузки сотрудников:', err); }
+    try { 
+        const res = await fetch('/api/employees', { credentials: 'include' }); 
+        if (res.ok) { 
+            const data = await res.json(); 
+            // Оставляем примеры, если база пустая
+            if (data && data.length > 0) window.employeesData = data; 
+            window.renderEmployees(); window.renderDashboardMasters(); window.updateDashDots(); 
+        } 
+    } catch (err) { console.error('Ошибка загрузки сотрудников:', err); }
 };
 window.syncEmployeesToServer = async function() { try { await fetch('/api/employees', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ employees: window.employeesData }) }); } catch (err) { console.error('Ошибка синхронизации:', err); } };
 
@@ -624,6 +648,13 @@ function initApp() {
     window.updateThemeIcon();
     window.applyAdminLanguage();
     
+    // Восстанавливаем вкладку из памяти сессии (если обновили страницу)
+    const savedTab = sessionStorage.getItem('current_admin_tab') || 'screen-dashboard';
+    const tabBtn = document.querySelector(`[onclick*="${savedTab}"]`);
+    if (tabBtn) {
+        window.switchTab(savedTab, tabBtn);
+    }
+    
     const authScreen = document.getElementById('auth-screen');
     const pinInput = document.getElementById('pin-input');
     const authError = document.getElementById('auth-error');
@@ -689,12 +720,22 @@ function initApp() {
     async function checkSession() {
         try {
             const res = await fetch('/api/orders', { method: 'GET', credentials: 'include' });
-            if (res.ok) { window.finishLogin(); } 
-            else { if (authScreen) authScreen.classList.remove('hidden'); }
-        } catch(e) { if (authScreen) authScreen.classList.remove('hidden'); }
+            if (res.ok) { 
+                window.finishLogin(); 
+            } else { 
+                if (authScreen) authScreen.style.display = 'flex'; 
+            }
+        } catch(e) { 
+            if (authScreen) authScreen.style.display = 'flex'; 
+        }
     }
     
-    checkSession();
+    // Если токена нет, сразу показываем экран входа (на случай если анти-блик скрипт его спрятал)
+    if (localStorage.getItem('tree_secure_token') !== 'valid') {
+        if (authScreen) authScreen.style.display = 'flex';
+    } else {
+        checkSession();
+    }
 
     if (loginBtn) loginBtn.addEventListener('click', () => { checkPinCode(pinInput.value); });
     if (pinInput) {
