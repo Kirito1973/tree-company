@@ -32,18 +32,26 @@ export default async function handler(req, res) {
 
         if (req.method === 'POST') {
             const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('auth_token='))?.split('=')[1];
-            if (!token || !(await kv.get(`session_${token}`))) {
-                return res.status(401).json({ error: 'Отказано в доступе' });
+            const sessionData = token ? await kv.get(`session_${token}`) : null;
+
+            // ИСПРАВЛЕНИЕ: Строгая проверка роли
+            if (!token || sessionData !== 'admin') {
+                return res.status(401).json({ error: 'Отказано в доступе. Требуются права администратора.' });
             }
 
-            const { services } = req.body;
-            if (services && Array.isArray(services)) {
-                const updateDict = {};
-                services.forEach(s => updateDict[s.id] = s);
-                await kv.del('tree_services');
-                if (Object.keys(updateDict).length > 0) await kv.hset('tree_services', updateDict);
+            // ИСПРАВЛЕНИЕ: Точечное обновление без полного удаления
+            const { action, service, serviceId } = req.body;
+            
+            if (action === 'delete' && serviceId) {
+                await kv.hdel('tree_services', serviceId);
                 return res.status(200).json({ success: true });
             }
+            
+            if (action === 'update' && service && service.id) {
+                await kv.hset('tree_services', { [service.id]: service });
+                return res.status(200).json({ success: true });
+            }
+
             return res.status(400).json({ error: 'Неверный формат данных' });
         }
         return res.status(405).json({ error: 'Method not allowed' });
