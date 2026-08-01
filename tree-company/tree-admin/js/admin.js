@@ -24,6 +24,15 @@ window.adminTranslations = {
     'sw_inc_masters': { 'AM': 'Նոր աշխատակիցներ', 'RU': 'Новые сотрудники', 'EN': 'New staff' },
     'lbl_new_partners': { 'AM': 'Նոր գործընկերներ', 'RU': 'Новые партнеры', 'EN': 'New partners' },
     
+    // Новые переводы для карточек, чтобы не было "lbl_name"
+    'lbl_name': { 'AM': 'Անուն:', 'RU': 'Имя:', 'EN': 'Name:' },
+    'lbl_phone': { 'AM': 'Հեռ:', 'RU': 'Тел:', 'EN': 'Phone:' },
+    'lbl_address': { 'AM': 'Հասցե:', 'RU': 'Адрес:', 'EN': 'Address:' },
+    'date': { 'AM': 'Ամսաթիվ:', 'RU': 'Дата:', 'EN': 'Date:' },
+    
+    'client': { 'AM': 'Հաճախորդ', 'RU': 'Клиент', 'EN': 'Client' },
+    'address': { 'AM': 'Հասցե', 'RU': 'Адрес', 'EN': 'Address' },
+    
     'in_development': { 'AM': 'Մշակման փուլում է', 'RU': 'В разработке', 'EN': 'In development' },
     'no_reviews': { 'AM': 'Կարծիքներ չկան', 'RU': 'Нет отзывов', 'EN': 'No reviews' },
     'no_orders': { 'AM': 'Պատվերներ չկան', 'RU': 'Нет заказов', 'EN': 'No orders' },
@@ -102,9 +111,9 @@ window.currentEditingEmpId = null;
 window.currentEditingPartnerId = null;
 window.serverTranslations = {};
 
-// Примеры (Мок-данные), чтобы дашборд не был пустым
+// Примеры (Мок-данные)
 window.reviewsData = [
-    { id: 'rev_mock1', isNew: true, rating: 5, clientName: 'Աննա Պետրոսյան', masterName: 'Տիգրան', text: 'Շատ գոհ եմ, արագ և որակով աշխատանք:', date: new Date().toLocaleDateString() }
+    { id: 'rev_mock1', isNew: true, rating: 5, clientName: 'Աննա Պետրոսյան', masterName: 'Տիգրան', text: 'Շատ գոհ եմ, արագ և որակով աշխատանք: Վարպետը շատ բարեհամբույր էր:', date: new Date().toLocaleDateString() }
 ];
 window.ordersData = [
     { id: 'ord_mock1', status: 'incoming', services: [{name: 'Դռների տեղադրում'}], clientName: 'Արմեն', clientPhone: '+374 99 12 34 56', address: 'Երևան, Աբովյան 15' }
@@ -113,7 +122,7 @@ window.employeesData = [
     { id: 'emp_mock1', status: 'pending', name: 'Հակոբ Սարգսյան', type: ['electro'], exp: '5', phone: '+374 98 76 54 32' }
 ];
 window.cooperationRequestsData = [
-    { id: 'coop_mock1', status: 'pending', company: 'ՇինՄոնտաժ ՍՊԸ', contact: 'Գուրգեն', phone: '+374 55 11 22 33', date: new Date().toLocaleDateString(), text: 'Ցանկանում ենք համագործակցել...' }
+    { id: 'coop_mock1', status: 'pending', company: 'ՇինՄոնտաժ ՍՊԸ', contact: 'Գուրգեն', phone: '+374 55 11 22 33', date: new Date().toLocaleDateString(), text: 'Բարև ձեզ, մենք ցանկանում ենք համագործակցել ձեր ընկերության հետ դռների մեծածախ տեղադրման համար: Խնդրում ենք կապվել մեզ հետ մանրամասների համար:' }
 ];
 window.servicesData = [];
 window.partnersData = [];
@@ -188,7 +197,7 @@ window.setAdminLang = function(lang, event) {
     if(event && event.currentTarget) event.currentTarget.classList.add('active');
     window.applyAdminLanguage();
     document.getElementById('lang-switcher').classList.remove('open');
-    window.renderDashboardOverview(); window.renderDashboardOrders(); window.renderDashboardMasters(); window.renderEmployees(); window.renderOrders();
+    window.renderDashboardOverview(); window.renderDashboardOrders(); window.renderDashboardMasters(); window.renderDashboardPartnerRequests(); window.renderEmployees(); window.renderOrders();
 };
 
 window.toggleLangMenu = function(event) { event.stopPropagation(); document.getElementById('lang-switcher').classList.toggle('open'); };
@@ -215,7 +224,6 @@ window.switchTab = function(tabId, btnElement) {
     document.querySelectorAll('.bottom-nav .tab-item').forEach(btn => btn.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
     
-    // Сохраняем текущую вкладку в память сессии (до закрытия вкладки браузера)
     sessionStorage.setItem('current_admin_tab', tabId);
     if (navigator.vibrate) navigator.vibrate(10);
 };
@@ -345,8 +353,16 @@ window.renderDashboardOrders = function() {
             let statClass = order.status === 'incoming' ? 'incoming' : 'new';
             let statText = order.status === 'incoming' ? getTrans('status_incoming') : getTrans('status_new');
             
-            const card = document.createElement('div'); card.className = 'entity-card'; card.onclick = () => { if(window.openOrderModal) window.openOrderModal(order.id); };
-            card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statClass}">${statText}</span></div><div class="entity-title">${escapeHTML(mainTitle)}</div><div class="entity-meta">${getTrans('lbl_name')} ${escapeHTML(order.clientName || '---')}</div><div class="entity-meta">${getTrans('lbl_phone')} ${escapeHTML(order.clientPhone)}</div><div class="entity-meta">${getTrans('lbl_address')} ${escapeHTML(order.address)}</div>`;
+            const card = document.createElement('div'); card.className = 'entity-card'; 
+            // Теперь карточка кликабельна и открывает детальное окно
+            card.onclick = () => { if(window.openOrderModal) window.openOrderModal(order.id); };
+            card.innerHTML = `
+                <div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statClass}">${statText}</span></div>
+                <div class="entity-title" style="margin-bottom: 6px;">${escapeHTML(mainTitle)}</div>
+                <div class="entity-meta"><span>${getTrans('lbl_name')}</span> <b style="color:var(--text);">${escapeHTML(order.clientName || '---')}</b></div>
+                <div class="entity-meta"><span>${getTrans('lbl_phone')}</span> <b style="color:var(--text);">${escapeHTML(order.clientPhone)}</b></div>
+                <div class="entity-meta"><span>${getTrans('lbl_address')}</span> <span style="text-align:right;">${escapeHTML(order.address)}</span></div>
+            `;
             list.appendChild(card);
         });
     } else { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">${getTrans('no_orders')}</div>`; }
@@ -374,7 +390,14 @@ window.renderDashboardPartnerRequests = function() {
     if(pendingPartners.length > 0) {
         pendingPartners.forEach(coop => {
             const card = document.createElement('div'); card.className = 'entity-card'; card.onclick = () => openCoopModal(coop.id);
-            card.innerHTML = `<div class="entity-header"><span class="entity-id">${escapeHTML(coop.company)}</span><span class="entity-status new">B2B</span></div><div class="entity-title">${escapeHTML(coop.contact)}</div><div class="entity-meta">${escapeHTML(coop.phone)}</div><div class="entity-meta">${escapeHTML(coop.date)}</div>`;
+            // Добавлен предпросмотр текста сообщения прямо на карточку!
+            card.innerHTML = `
+                <div class="entity-header"><span class="entity-id">${escapeHTML(coop.company)}</span><span class="entity-status new">B2B</span></div>
+                <div class="entity-title">${escapeHTML(coop.contact)}</div>
+                <div class="entity-meta"><span>${getTrans('phone')}:</span> <b style="color:var(--text);">${escapeHTML(coop.phone)}</b></div>
+                <div class="entity-meta" style="margin-top:4px;"><span>${getTrans('date')}</span> <span>${escapeHTML(coop.date)}</span></div>
+                <div class="truncate-text" style="font-size: 11px; font-weight: 600; font-style: italic; color: var(--text-sec); margin-top: 8px; border-top: 1px dashed var(--card-border); padding-top: 8px;">"${escapeHTML(coop.text)}"</div>
+            `;
             list.appendChild(card);
         });
     } else { list.innerHTML = `<div style="text-align:center; font-size: 11px; color: var(--text-sec);">---</div>`; }
@@ -383,7 +406,13 @@ window.renderDashboardPartnerRequests = function() {
 let currentActiveCoopId = null;
 window.openCoopModal = function(id) {
     currentActiveCoopId = id; const coop = window.cooperationRequestsData.find(c => c.id === id); if(!coop) return;
-    document.getElementById('modal-coop-company').innerText = coop.company; document.getElementById('modal-coop-contact').innerText = coop.contact; document.getElementById('modal-coop-phone').innerText = coop.phone; document.getElementById('modal-coop-phone-link').href = `tel:${coop.phone.replace(/[^\d+]/g, '')}`; document.getElementById('modal-coop-text').innerText = coop.text; document.getElementById('coop-modal').classList.add('active');
+    document.getElementById('modal-coop-company').innerText = coop.company; 
+    document.getElementById('modal-coop-contact').innerText = coop.contact; 
+    document.getElementById('modal-coop-phone').innerText = coop.phone; 
+    document.getElementById('modal-coop-phone-link').href = `tel:${coop.phone.replace(/[^\d+]/g, '')}`; 
+    document.getElementById('modal-coop-date').innerText = coop.date;
+    document.getElementById('modal-coop-text').innerText = coop.text; 
+    document.getElementById('coop-modal').classList.add('active');
 };
 window.closeCoopModal = function() { document.getElementById('coop-modal').classList.remove('active'); currentActiveCoopId = null; };
 window.acceptCoop = function() {
@@ -395,7 +424,7 @@ window.acceptCoop = function() {
 window.rejectCoop = function() { if(!currentActiveCoopId) return; if(confirm(getTrans('reject') + "?")) { window.cooperationRequestsData = window.cooperationRequestsData.filter(c => c.id !== currentActiveCoopId); window.renderDashboardPartnerRequests(); window.updateDashDots(); window.closeCoopModal(); } };
 
 /* ==========================================================================
-   ORDERS LOGIC
+   ORDERS LOGIC (Окно и отображение)
    ========================================================================== */
 window.fetchOrders = async function() {
     try {
@@ -403,7 +432,6 @@ window.fetchOrders = async function() {
         if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').style.display = 'flex'; return; }
         if (res.ok) { 
             const data = await res.json(); 
-            // Если база вернула пустой массив, мы НЕ затираем наши примеры (Mock Data)
             if (data && data.length > 0) window.ordersData = data; 
             if(window.renderOrders) window.renderOrders(); window.renderDashboardOrders(); window.updateDashDots(); 
         }
@@ -420,9 +448,34 @@ window.renderOrders = function() {
     window.ordersData.forEach(order => {
         let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
         const card = document.createElement('div'); card.className = 'entity-card';
+        // Клик по карточке заказа в отделе Заказов
+        card.onclick = () => { if(window.openOrderModal) window.openOrderModal(order.id); };
         card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span></div><div class="entity-title">${escapeHTML(mainTitle)}</div><div class="entity-meta">${escapeHTML(order.clientName || '---')} - ${escapeHTML(order.clientPhone)}</div>`;
         list.appendChild(card);
     });
+};
+
+// Функция открытия окна заказа
+window.openOrderModal = function(id) {
+    const order = window.ordersData.find(o => o.id === id);
+    if(!order) return;
+    document.getElementById('modal-order-id').innerText = order.id;
+    document.getElementById('modal-order-client').innerText = order.clientName || '---';
+    document.getElementById('modal-order-phone').innerText = order.clientPhone || '---';
+    const phoneLink = document.getElementById('modal-order-phone-link');
+    if (order.clientPhone) { phoneLink.style.display = 'flex'; phoneLink.href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`; } else phoneLink.style.display = 'none';
+    document.getElementById('modal-order-address').innerText = order.address || '---';
+    
+    let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
+    if(order.services && order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
+    document.getElementById('modal-order-service').innerText = mainTitle;
+    
+    document.getElementById('order-modal').classList.add('active');
+    if (navigator.vibrate) navigator.vibrate(10);
+};
+
+window.closeOrderModal = function() {
+    document.getElementById('order-modal').classList.remove('active');
 };
 
 window.openOrderForm = function() {
@@ -437,7 +490,6 @@ window.fetchEmployees = async function() {
         const res = await fetch('/api/employees', { credentials: 'include' }); 
         if (res.ok) { 
             const data = await res.json(); 
-            // Оставляем примеры, если база пустая
             if (data && data.length > 0) window.employeesData = data; 
             window.renderEmployees(); window.renderDashboardMasters(); window.updateDashDots(); 
         } 
@@ -648,7 +700,6 @@ function initApp() {
     window.updateThemeIcon();
     window.applyAdminLanguage();
     
-    // Восстанавливаем вкладку из памяти сессии (если обновили страницу)
     const savedTab = sessionStorage.getItem('current_admin_tab') || 'screen-dashboard';
     const tabBtn = document.querySelector(`[onclick*="${savedTab}"]`);
     if (tabBtn) {
@@ -730,7 +781,6 @@ function initApp() {
         }
     }
     
-    // Если токена нет, сразу показываем экран входа (на случай если анти-блик скрипт его спрятал)
     if (localStorage.getItem('tree_secure_token') !== 'valid') {
         if (authScreen) authScreen.style.display = 'flex';
     } else {
