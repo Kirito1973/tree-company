@@ -10,7 +10,6 @@ window.adminTranslations = {
     'login_btn': { 'AM': 'Մուտք', 'RU': 'Войти', 'EN': 'Login' },
     'or_text': { 'AM': 'ԿԱՄ', 'RU': 'ИЛИ', 'EN': 'OR' },
     'touch_id': { 'AM': 'Touch ID', 'RU': 'Touch ID', 'EN': 'Touch ID' },
-
     'tab_dashboard': { 'AM': 'Գլխավոր', 'RU': 'Главная', 'EN': 'Dashboard' },
     'tab_orders': { 'AM': 'Պատվերներ', 'RU': 'Заказы', 'EN': 'Orders' },
     'tab_finance': { 'AM': 'Ֆինանսներ', 'RU': 'Финансы', 'EN': 'Finance' },
@@ -18,37 +17,29 @@ window.adminTranslations = {
     'tab_partners': { 'AM': 'Գործընկ.', 'RU': 'Партнеры', 'EN': 'Partners' },
     'tab_clients': { 'AM': 'Հաճախորդ', 'RU': 'Клиенты', 'EN': 'Clients' },
     'tab_management': { 'AM': 'Կառավար.', 'RU': 'Управление', 'EN': 'Manage' },
-
     'lbl_recent_reviews': { 'AM': 'Վերջին կարծիքները', 'RU': 'Последние отзывы', 'EN': 'Recent reviews' },
     'lbl_new_requests': { 'AM': 'Նոր հայտեր', 'RU': 'Новые заявки', 'EN': 'New requests' },
     'sw_inc_masters': { 'AM': 'Նոր աշխատակիցներ', 'RU': 'Новые сотрудники', 'EN': 'New staff' },
     'lbl_new_partners': { 'AM': 'Նոր գործընկերներ', 'RU': 'Новые партнеры', 'EN': 'New partners' },
-    
-    // Новые переводы для карточек, чтобы не было "lbl_name"
     'lbl_name': { 'AM': 'Անուն:', 'RU': 'Имя:', 'EN': 'Name:' },
     'lbl_phone': { 'AM': 'Հեռ:', 'RU': 'Тел:', 'EN': 'Phone:' },
     'lbl_address': { 'AM': 'Հասցե:', 'RU': 'Адрес:', 'EN': 'Address:' },
     'date': { 'AM': 'Ամսաթիվ:', 'RU': 'Дата:', 'EN': 'Date:' },
-    
     'client': { 'AM': 'Հաճախորդ', 'RU': 'Клиент', 'EN': 'Client' },
     'address': { 'AM': 'Հասցե', 'RU': 'Адрес', 'EN': 'Address' },
-    
     'in_development': { 'AM': 'Մշակման փուլում է', 'RU': 'В разработке', 'EN': 'In development' },
     'no_reviews': { 'AM': 'Կարծիքներ չկան', 'RU': 'Нет отзывов', 'EN': 'No reviews' },
     'no_orders': { 'AM': 'Պատվերներ չկան', 'RU': 'Нет заказов', 'EN': 'No orders' },
-    
     'filter_all': { 'AM': 'Բոլորը', 'RU': 'Все', 'EN': 'All' },
     'filter_doors': { 'AM': 'Դռներ', 'RU': 'Двери', 'EN': 'Doors' },
     'filter_electro': { 'AM': 'Էլեկտրական', 'RU': 'Электрика', 'EN': 'Electrical' },
     'filter_universal': { 'AM': 'Ունիվերսալ', 'RU': 'Универсал', 'EN': 'Universal' },
-    
     'search_employee': { 'AM': 'Աշխատակցի որոնում...', 'RU': 'Поиск сотрудника...', 'EN': 'Search employee...' },
     'add_employee': { 'AM': '+ Ավելացնել աշխատակից', 'RU': '+ Добавить сотрудника', 'EN': '+ Add employee' },
     'add_partner': { 'AM': '+ Ավելացնել գործընկեր', 'RU': '+ Добавить партнера', 'EN': '+ Add partner' },
     'add_order': { 'AM': '+ Ավելացնել պատվեր', 'RU': '+ Добавить заказ', 'EN': '+ Add order' },
     'search_client': { 'AM': 'Հաճախորդի որոնում...', 'RU': 'Поиск клиента...', 'EN': 'Search client...' },
     'total_clients': { 'AM': 'Ընդհանուր հաճախորդներ', 'RU': 'Всего клиентов', 'EN': 'Total clients' },
-    
     'tab_mng_services': { 'AM': 'Ծառայություններ', 'RU': 'Услуги', 'EN': 'Services' },
     'tab_mng_translations': { 'AM': 'Թարգմանություններ', 'RU': 'Переводы', 'EN': 'Translations' },
     'tab_mng_promo': { 'AM': 'Պրոմո', 'RU': 'Промо', 'EN': 'Promo' },
@@ -56,13 +47,11 @@ window.adminTranslations = {
     'save_translations': { 'AM': 'Պահպանել թարգմանությունները', 'RU': 'Сохранить переводы', 'EN': 'Save translations' },
     'save_promo': { 'AM': 'Պահպանել պրոմոն', 'RU': 'Сохранить промо', 'EN': 'Save promo' },
     'discount_percent': { 'AM': 'Զեղչ %', 'RU': 'Скидка %', 'EN': 'Discount %' },
-
     'contact': { 'AM': 'Կոնտակտ', 'RU': 'Контакт', 'EN': 'Contact' },
     'phone': { 'AM': 'Հեռախոս', 'RU': 'Телефон', 'EN': 'Phone' },
     'message': { 'AM': 'Հաղորդագրություն', 'RU': 'Сообщение', 'EN': 'Message' },
     'accept': { 'AM': 'Ընդունել', 'RU': 'Принять', 'EN': 'Accept' },
     'reject': { 'AM': 'Մերժել', 'RU': 'Отклонить', 'EN': 'Reject' },
-    
     'emp_pin': { 'AM': 'PIN-կոդ', 'RU': 'PIN-код', 'EN': 'PIN code' },
     'emp_address': { 'AM': 'Հասցե', 'RU': 'Адрес', 'EN': 'Address' },
     'emp_exp': { 'AM': 'Փորձ', 'RU': 'Опыт', 'EN': 'Experience' },
@@ -76,7 +65,6 @@ window.adminTranslations = {
     'orders': { 'AM': 'Պատվերներ', 'RU': 'Заказы', 'EN': 'Orders' },
     'edit': { 'AM': 'Փոփոխել', 'RU': 'Изменить', 'EN': 'Edit' },
     'fire': { 'AM': 'Հեռացնել', 'RU': 'Уволить', 'EN': 'Fire' },
-
     'employee': { 'AM': 'Աշխատակից', 'RU': 'Сотрудник', 'EN': 'Employee' },
     'emp_name': { 'AM': 'Անուն', 'RU': 'Имя', 'EN': 'Name' },
     'emp_phone': { 'AM': 'Հեռախոս', 'RU': 'Телефон', 'EN': 'Phone' },
@@ -84,18 +72,15 @@ window.adminTranslations = {
     'specialties': { 'AM': 'Մասնագիտություններ', 'RU': 'Специальности', 'EN': 'Specialties' },
     'add_specialty': { 'AM': '+ Ավելացնել մասնագիտություն', 'RU': '+ Добавить специальность', 'EN': '+ Add specialty' },
     'save': { 'AM': 'Պահպանել', 'RU': 'Сохранить', 'EN': 'Save' },
-
     'service': { 'AM': 'Ծառայություն', 'RU': 'Услуга', 'EN': 'Service' },
     'name': { 'AM': 'Անվանում', 'RU': 'Название', 'EN': 'Name' },
     'price': { 'AM': 'Գին (֏)', 'RU': 'Цена (֏)', 'EN': 'Price (֏)' },
     'svg_icon': { 'AM': 'SVG Իկոնկա', 'RU': 'SVG Иконка', 'EN': 'SVG Icon' },
     'active': { 'AM': 'Ակտիվ է', 'RU': 'Активна', 'EN': 'Active' },
     'disabled': { 'AM': 'Անջատված է', 'RU': 'Отключена', 'EN': 'Disabled' },
-
     'partner': { 'AM': 'Գործընկեր', 'RU': 'Партнер', 'EN': 'Partner' },
     'company_name': { 'AM': 'Ընկերության անվանումը', 'RU': 'Название компании', 'EN': 'Company name' },
     'svg_logo': { 'AM': 'SVG Լոգոտիպ', 'RU': 'SVG Логотип', 'EN': 'SVG Logo' },
-
     'lbl_master': { 'AM': 'Վարպետ:', 'RU': 'Мастер:', 'EN': 'Master:' },
     'status_incoming': { 'AM': 'ՆՈՐ ՀԱՅՏ', 'RU': 'ВХОДЯЩИЙ', 'EN': 'INCOMING' },
     'status_new': { 'AM': 'ՆՈՐ', 'RU': 'НОВЫЙ', 'EN': 'NEW' },
@@ -111,19 +96,11 @@ window.currentEditingEmpId = null;
 window.currentEditingPartnerId = null;
 window.serverTranslations = {};
 
-// Примеры (Мок-данные)
-window.reviewsData = [
-    { id: 'rev_mock1', isNew: true, rating: 5, clientName: 'Աննա Պետրոսյան', masterName: 'Տիգրան', text: 'Շատ գոհ եմ, արագ և որակով աշխատանք: Վարպետը շատ բարեհամբույր էր:', date: new Date().toLocaleDateString() }
-];
-window.ordersData = [
-    { id: 'ord_mock1', status: 'incoming', services: [{name: 'Դռների տեղադրում'}], clientName: 'Արմեն', clientPhone: '+374 99 12 34 56', address: 'Երևան, Աբովյան 15' }
-];
-window.employeesData = [
-    { id: 'emp_mock1', status: 'pending', name: 'Հակոբ Սարգսյան', type: ['electro'], exp: '5', phone: '+374 98 76 54 32' }
-];
-window.cooperationRequestsData = [
-    { id: 'coop_mock1', status: 'pending', company: 'ՇինՄոնտաժ ՍՊԸ', contact: 'Գուրգեն', phone: '+374 55 11 22 33', date: new Date().toLocaleDateString(), text: 'Բարև ձեզ, մենք ցանկանում ենք համագործակցել ձեր ընկերության հետ դռների մեծածախ տեղադրման համար: Խնդրում ենք կապվել մեզ հետ մանրամասների համար:' }
-];
+// ИСПРАВЛЕНИЕ: Очистка мок-данных, чтобы администратор не видел фейковую информацию
+window.reviewsData = [];
+window.ordersData = [];
+window.employeesData = [];
+window.cooperationRequestsData = [];
 window.servicesData = [];
 window.partnersData = [];
 window.clientsData = [];
@@ -165,7 +142,8 @@ window.getEmpTypeLabel = function(typeArray) {
     }).join(', ');
 };
 
-window.generateEmpId = function() { return 'emp_' + Math.random().toString(36).substr(2, 9); };
+// ИСПРАВЛЕНИЕ: Более надежная генерация ID
+window.generateEmpId = function() { return 'emp_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5); };
 window.generateComplexPassword = function() { const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'; let pass = ''; for(let i = 0; i < 10; i++) { pass += chars[Math.floor(Math.random() * chars.length)]; } return pass; };
 
 /* ==========================================================================
@@ -354,7 +332,6 @@ window.renderDashboardOrders = function() {
             let statText = order.status === 'incoming' ? getTrans('status_incoming') : getTrans('status_new');
             
             const card = document.createElement('div'); card.className = 'entity-card'; 
-            // Теперь карточка кликабельна и открывает детальное окно
             card.onclick = () => { if(window.openOrderModal) window.openOrderModal(order.id); };
             card.innerHTML = `
                 <div class="entity-header"><span class="entity-id">${order.id}</span><span class="entity-status ${statClass}">${statText}</span></div>
@@ -390,7 +367,6 @@ window.renderDashboardPartnerRequests = function() {
     if(pendingPartners.length > 0) {
         pendingPartners.forEach(coop => {
             const card = document.createElement('div'); card.className = 'entity-card'; card.onclick = () => openCoopModal(coop.id);
-            // Добавлен предпросмотр текста сообщения прямо на карточку!
             card.innerHTML = `
                 <div class="entity-header"><span class="entity-id">${escapeHTML(coop.company)}</span><span class="entity-status new">B2B</span></div>
                 <div class="entity-title">${escapeHTML(coop.contact)}</div>
@@ -424,7 +400,7 @@ window.acceptCoop = function() {
 window.rejectCoop = function() { if(!currentActiveCoopId) return; if(confirm(getTrans('reject') + "?")) { window.cooperationRequestsData = window.cooperationRequestsData.filter(c => c.id !== currentActiveCoopId); window.renderDashboardPartnerRequests(); window.updateDashDots(); window.closeCoopModal(); } };
 
 /* ==========================================================================
-   ORDERS LOGIC (Окно и отображение)
+   ORDERS LOGIC
    ========================================================================== */
 window.fetchOrders = async function() {
     try {
@@ -448,14 +424,12 @@ window.renderOrders = function() {
     window.ordersData.forEach(order => {
         let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
         const card = document.createElement('div'); card.className = 'entity-card';
-        // Клик по карточке заказа в отделе Заказов
         card.onclick = () => { if(window.openOrderModal) window.openOrderModal(order.id); };
         card.innerHTML = `<div class="entity-header"><span class="entity-id">${order.id}</span></div><div class="entity-title">${escapeHTML(mainTitle)}</div><div class="entity-meta">${escapeHTML(order.clientName || '---')} - ${escapeHTML(order.clientPhone)}</div>`;
         list.appendChild(card);
     });
 };
 
-// Функция открытия окна заказа
 window.openOrderModal = function(id) {
     const order = window.ordersData.find(o => o.id === id);
     if(!order) return;
@@ -464,7 +438,17 @@ window.openOrderModal = function(id) {
     document.getElementById('modal-order-phone').innerText = order.clientPhone || '---';
     const phoneLink = document.getElementById('modal-order-phone-link');
     if (order.clientPhone) { phoneLink.style.display = 'flex'; phoneLink.href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`; } else phoneLink.style.display = 'none';
-    document.getElementById('modal-order-address').innerText = order.address || '---';
+    
+    // ИСПРАВЛЕНИЕ: Интеграция с Yandex Maps
+    const address = order.address || '';
+    document.getElementById('modal-order-address').innerText = address || '---';
+    const mapLink = document.getElementById('modal-order-address-link');
+    if (address) {
+        mapLink.style.display = 'flex';
+        mapLink.href = `https://yandex.ru/maps/?text=${encodeURIComponent(address)}`;
+    } else {
+        mapLink.style.display = 'none';
+    }
     
     let mainTitle = order.services && order.services.length > 0 ? order.services[0].name : "---";
     if(order.services && order.services.length > 1) mainTitle += ` (+${order.services.length - 1})`;
@@ -495,7 +479,18 @@ window.fetchEmployees = async function() {
         } 
     } catch (err) { console.error('Ошибка загрузки сотрудников:', err); }
 };
-window.syncEmployeesToServer = async function() { try { await fetch('/api/employees', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ employees: window.employeesData }) }); } catch (err) { console.error('Ошибка синхронизации:', err); } };
+
+// ИСПРАВЛЕНИЕ: Точечная отправка сотрудника вместо всего массива
+window.syncSingleEmployee = async function(employee, action = 'update') {
+    try {
+        await fetch('/api/employees', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ action: action, employee: employee, empId: employee ? employee.id : null })
+        });
+    } catch (err) { console.error('Ошибка синхронизации сотрудника:', err); }
+};
 
 window.setEmpFilter = function(filterValue) { document.querySelectorAll('#screen-employees .filter-tab').forEach(t => { if (t.getAttribute('data-emp-filter') === filterValue) t.classList.add('active'); else t.classList.remove('active'); }); window.renderEmployees(); };
 
@@ -585,10 +580,31 @@ window.toggleEmpOrders = function() { document.getElementById('modal-emp-orders-
 
 window.acceptEmployee = async function() { 
     if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
-    if (emp) { emp.status = 'active'; if (!emp.accessKey) emp.accessKey = window.generateComplexPassword(); await window.syncEmployeesToServer(); window.renderDashboardMasters(); window.renderEmployees(); window.updateDashDots(); window.openEmployeeModal(emp.id); if (navigator.vibrate) navigator.vibrate(20); } 
+    if (emp) { 
+        emp.status = 'active'; if (!emp.accessKey) emp.accessKey = window.generateComplexPassword(); 
+        await window.syncSingleEmployee(emp); 
+        window.renderDashboardMasters(); window.renderEmployees(); window.updateDashDots(); window.openEmployeeModal(emp.id); if (navigator.vibrate) navigator.vibrate(20); 
+    } 
 };
-window.rejectEmployee = async function() { if (!window.currentActiveEmpId) return; if (confirm(getTrans('reject')+"?")) { window.employeesData = window.employeesData.filter(e => e.id !== window.currentActiveEmpId); await window.syncEmployeesToServer(); window.renderDashboardMasters(); window.closeEmployeeModal(); window.updateDashDots(); } };
-window.fireEmployee = async function() { if (!window.currentActiveEmpId) return; if (confirm(getTrans('fire')+"?")) { const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); if (emp) { emp.status = 'dismissed'; await window.syncEmployeesToServer(); window.renderDashboardMasters(); window.renderEmployees(); window.closeEmployeeModal(); window.updateDashDots(); } } };
+window.rejectEmployee = async function() { 
+    if (!window.currentActiveEmpId) return; 
+    if (confirm(getTrans('reject')+"?")) { 
+        await window.syncSingleEmployee({id: window.currentActiveEmpId}, 'delete');
+        window.employeesData = window.employeesData.filter(e => e.id !== window.currentActiveEmpId); 
+        window.renderDashboardMasters(); window.closeEmployeeModal(); window.updateDashDots(); 
+    } 
+};
+window.fireEmployee = async function() { 
+    if (!window.currentActiveEmpId) return; 
+    if (confirm(getTrans('fire')+"?")) { 
+        const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
+        if (emp) { 
+            emp.status = 'dismissed'; 
+            await window.syncSingleEmployee(emp); 
+            window.renderDashboardMasters(); window.renderEmployees(); window.closeEmployeeModal(); window.updateDashDots(); 
+        } 
+    } 
+};
 
 window.adjustEmpDebt = async function(action) {
     if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); if (!emp) return;
@@ -596,7 +612,7 @@ window.adjustEmpDebt = async function(action) {
     if (isNaN(val) || val <= 0) return alert("Err");
     if (emp.companyDebt === undefined || isNaN(emp.companyDebt)) emp.companyDebt = 0;
     if (action === 'add') emp.companyDebt += val; else if (action === 'bonus') emp.companyDebt -= val; 
-    await window.syncEmployeesToServer();
+    await window.syncSingleEmployee(emp);
     const debtEl = document.getElementById('modal-emp-debt'); debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏'; debtEl.style.color = emp.companyDebt < 0 ? 'var(--tree-light)' : 'var(--danger)';
     inputEl.value = ''; window.renderEmployees(); if (navigator.vibrate) navigator.vibrate(20);
 };
@@ -640,9 +656,17 @@ window.saveEmployeeForm = async function(event) {
     const submitBtn = event.target.querySelector('button[type="submit"]'); const origText = submitBtn.innerText; submitBtn.innerText = '...'; submitBtn.disabled = true;
     const name = document.getElementById('form-emp-name').value; const phone = document.getElementById('form-emp-phone').value; const address = document.getElementById('form-emp-address').value; const birthDate = document.getElementById('form-emp-birth').value; const exp = document.getElementById('form-emp-exp').value; const accessKey = document.getElementById('form-emp-access-key').value; const photo = document.getElementById('form-emp-photo-base64').value; 
     
-    if (window.currentEditingEmpId) { const emp = window.employeesData.find(e => e.id === window.currentEditingEmpId); if (emp) { emp.name = name; emp.phone = phone; emp.address = address; emp.birthDate = birthDate; emp.type = finalTypes; emp.exp = exp; emp.accessKey = accessKey; emp.photo = photo; } } 
-    else { window.employeesData.push({ id: window.generateEmpId(), status: 'active', name: name, type: finalTypes, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [], photo: photo }); }
-    await window.syncEmployeesToServer(); window.renderEmployees(); window.renderDashboardMasters(); window.closeEmployeeFormModal(); window.updateDashDots(); if (navigator.vibrate) navigator.vibrate(50);
+    let targetEmp;
+    if (window.currentEditingEmpId) { 
+        targetEmp = window.employeesData.find(e => e.id === window.currentEditingEmpId); 
+        if (targetEmp) { targetEmp.name = name; targetEmp.phone = phone; targetEmp.address = address; targetEmp.birthDate = birthDate; targetEmp.type = finalTypes; targetEmp.exp = exp; targetEmp.accessKey = accessKey; targetEmp.photo = photo; } 
+    } else { 
+        targetEmp = { id: window.generateEmpId(), status: 'active', name: name, type: finalTypes, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [], photo: photo };
+        window.employeesData.push(targetEmp); 
+    }
+    
+    await window.syncSingleEmployee(targetEmp); 
+    window.renderEmployees(); window.renderDashboardMasters(); window.closeEmployeeFormModal(); window.updateDashDots(); if (navigator.vibrate) navigator.vibrate(50);
     submitBtn.innerText = origText; submitBtn.disabled = false;
 };
 
@@ -682,8 +706,32 @@ window.renderAdminServices = function() { const list = document.getElementById('
 window.fetchServices = async function() { try { const res = await fetch('/api/services', { credentials: 'include' }); if(res.ok) { const data = await res.json(); window.servicesData = data || []; window.renderAdminServices(); } } catch(err) { console.error('Error:', err); } };
 window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-price').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
 window.closeServiceForm = function() { document.getElementById('service-form-modal').classList.remove('active'); };
-window.saveServiceForm = async function(e) { e.preventDefault(); const submitBtn = e.target.querySelector('button[type="submit"]'); const origText = submitBtn.innerText; submitBtn.innerText = '...'; submitBtn.disabled = true; const newService = { id: 's' + Date.now(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }; const updatedServices = [...window.servicesData, newService]; try { const res = await fetch('/api/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ services: updatedServices }) }); if(res.ok) { window.servicesData = updatedServices; window.renderAdminServices(); window.closeServiceForm(); if(navigator.vibrate) navigator.vibrate(20); } } catch(err) { alert('Err'); } finally { submitBtn.innerText = origText; submitBtn.disabled = false; } };
-window.deleteService = async function(id) { if(confirm('Delete?')) { const updatedServices = window.servicesData.filter(s => s.id !== id); try { const res = await fetch('/api/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ services: updatedServices }) }); if(res.ok) { window.servicesData = updatedServices; window.renderAdminServices(); if(navigator.vibrate) navigator.vibrate(20); } } catch(err) { alert('Err'); } } };
+
+// ИСПРАВЛЕНИЕ: Точечная отправка услуг
+window.saveServiceForm = async function(e) { 
+    e.preventDefault(); const submitBtn = e.target.querySelector('button[type="submit"]'); const origText = submitBtn.innerText; submitBtn.innerText = '...'; submitBtn.disabled = true; 
+    const newService = { id: 's' + Date.now(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }; 
+    
+    try { 
+        const res = await fetch('/api/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ action: 'update', service: newService }) }); 
+        if(res.ok) { 
+            window.servicesData.push(newService); 
+            window.renderAdminServices(); window.closeServiceForm(); if(navigator.vibrate) navigator.vibrate(20); 
+        } 
+    } catch(err) { alert('Err'); } finally { submitBtn.innerText = origText; submitBtn.disabled = false; } 
+};
+
+window.deleteService = async function(id) { 
+    if(confirm('Delete?')) { 
+        try { 
+            const res = await fetch('/api/services', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ action: 'delete', serviceId: id }) }); 
+            if(res.ok) { 
+                window.servicesData = window.servicesData.filter(s => s.id !== id); 
+                window.renderAdminServices(); if(navigator.vibrate) navigator.vibrate(20); 
+            } 
+        } catch(err) { alert('Err'); } 
+    } 
+};
 
 window.fetchAppDatabase = async function() { try { const res = await fetch('/api/data', { credentials: 'include' }); const data = await res.json(); window.serverTranslations = data || {}; window.renderTranslationsEditor(); window.loadPromoAndNewsValues(); } catch (err) { console.error(err); } };
 window.loadPromoAndNewsValues = function() { if(window.serverTranslations['promo_title']) { if(window.serverTranslations['promo_title']['AM']) document.getElementById('promo-text-am').value = window.serverTranslations['promo_title']['AM']; if(window.serverTranslations['promo_title']['RU']) document.getElementById('promo-text-ru').value = window.serverTranslations['promo_title']['RU']; if(window.serverTranslations['promo_title']['EN']) document.getElementById('promo-text-en').value = window.serverTranslations['promo_title']['EN']; } if(window.serverTranslations['global_discount']) { document.getElementById('promo-discount-input').value = window.serverTranslations['global_discount']; } };
