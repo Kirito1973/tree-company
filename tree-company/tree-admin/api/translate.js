@@ -1,5 +1,14 @@
 export default async function handler(req, res) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    // ИСПРАВЛЕНИЕ: Защита от сторонних запросов. Можно настроить разрешенные домены через переменные окружения Vercel
+    const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['*'];
+    const origin = req.headers.origin;
+
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+        res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    } else {
+        return res.status(403).json({ success: false, message: 'CORS policy restriction' });
+    }
+    
     res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
