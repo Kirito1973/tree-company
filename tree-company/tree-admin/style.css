@@ -67,7 +67,6 @@ body {
 .dash-tab.active { background: var(--tree-light); box-shadow: 0 8px 20px rgba(31, 150, 81, 0.4); transform: translateY(-4px); }
 .dash-tab.active svg { stroke: white; }
 
-/* Упрощенная индикаторная точка без цифр */
 .notif-dot { position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background-color: #ff4444; border-radius: 50%; box-shadow: 0 2px 6px rgba(255, 68, 68, 0.5); border: 2px solid var(--bg-base); z-index: 2; pointer-events: none; }
 .notif-dot-card { position: absolute; top: 12px; right: 12px; width: 10px; height: 10px; background-color: #ff4444; border-radius: 50%; box-shadow: 0 0 8px rgba(255, 68, 68, 0.8); animation: pulse-dot 1.5s infinite; pointer-events: none; }
 @keyframes pulse-dot { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); } }
@@ -80,7 +79,6 @@ body {
 .view-switch-btn { flex: 1; text-align: center; padding: 12px; font-size: 12px; font-weight: 800; color: var(--text-sec); border-radius: 14px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border: none; background: transparent; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .view-switch-btn.active { background: var(--tree-light); color: white; box-shadow: 0 6px 15px rgba(31,150,81,0.3); }
 
-/* Сплошная панель, без блюра */
 .glass-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 20px; box-shadow: 0 10px 30px var(--shadow); width: 100%; display: flex; flex-direction: column; gap: 12px; }
 .screen-title { font-size: 18px; font-weight: 900; color: var(--text); margin-bottom: 4px; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
 
@@ -89,6 +87,24 @@ body {
 .glass-input { width: 100%; background: rgba(128, 128, 128, 0.08); border: 1px solid rgba(128, 128, 128, 0.2); border-radius: 16px; padding: 14px; color: var(--text); font-family: inherit; font-size: 13px; font-weight: 600; outline: none; transition: all 0.3s ease; }
 [data-theme="dark"] .glass-input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); }
 .glass-input:focus { border-color: var(--tree-light); box-shadow: 0 0 0 3px rgba(35, 169, 91, 0.15); transform: translateY(-1px); }
+
+/* Открытый пароль: убираем отступы, чтобы влезали все символы */
+input[type="text"]#pin-input {
+    letter-spacing: 1px !important;
+    font-size: 15px !important;
+}
+
+/* Красивый лоадер для кнопки */
+.spinner-icon {
+    animation: rotate-spinner 1s linear infinite;
+    width: 22px;
+    height: 22px;
+    transform-origin: center center;
+}
+@keyframes rotate-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 select.glass-input { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; cursor: pointer; }
 select.glass-input option { background-color: var(--card-bg); color: var(--text); font-weight: 600; }
