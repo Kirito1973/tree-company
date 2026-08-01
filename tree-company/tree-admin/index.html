@@ -36,6 +36,12 @@
 
     <!-- Окно авторизации -->
     <div id="auth-screen" class="auth-overlay">
+        <!-- АНТИ-БЛИК СКРИПТ: Мгновенно прячет экран входа, если токен есть -->
+        <script>
+            if (localStorage.getItem('tree_secure_token') === 'valid') {
+                document.getElementById('auth-screen').style.display = 'none';
+            }
+        </script>
         <div class="auth-card glass-panel" style="position: relative; padding: 40px 30px; text-align: center;">
             <div class="header-logo-container" style="width: 80px; margin: 0 auto 20px auto;">
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
@@ -146,9 +152,11 @@
             </div>
         </section>
 
+        <!-- Вкладка Заказы (Восстановлена кнопка добавления) -->
         <section class="admin-screen" id="screen-orders">
             <h2 class="screen-title" data-i18n="tab_orders"></h2>
             <div class="glass-panel">
+                <button class="submit-btn" onclick="openOrderForm()" data-i18n="add_order"></button>
                 <div class="entity-list" id="orders-list"></div>
             </div>
         </section>
