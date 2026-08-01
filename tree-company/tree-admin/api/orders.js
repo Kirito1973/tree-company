@@ -10,8 +10,11 @@ export default async function handler(req, res) {
     if (req.method === 'OPTIONS') return res.status(200).end();
 
     const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('auth_token='))?.split('=')[1];
-    if (!token || !(await kv.get(`session_${token}`))) {
-        return res.status(401).json({ error: 'Отказано в доступе. Вы не авторизованы.' });
+    const sessionData = token ? await kv.get(`session_${token}`) : null;
+
+    // ИСПРАВЛЕНИЕ: Строгая проверка на то, что это именно администратор
+    if (!token || sessionData !== 'admin') {
+        return res.status(401).json({ error: 'Отказано в доступе. Требуются права администратора.' });
     }
 
     try {
