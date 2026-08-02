@@ -138,8 +138,6 @@ window.getEmpTypeLabel = function(typeArray) {
 };
 
 window.generateEmpId = function() { return 'emp_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5); };
-
-// ИЗМЕНЕНИЕ: Теперь генерируется 6-значный цифровой PIN-код
 window.generateComplexPassword = function() { return Math.floor(100000 + Math.random() * 900000).toString(); };
 
 window.applyAdminLanguage = function() {
@@ -201,56 +199,84 @@ window.switchTab = function(tabId, btnElement) {
 
 window.finishLogin = function() {
     const authScreen = document.getElementById('auth-screen');
-    if (authScreen) authScreen.classList.add('hidden');
+    if (authScreen) {
+        authScreen.classList.add('hidden');
+        setTimeout(() => { authScreen.style.display = 'none'; }, 300);
+    }
     window.fetchOrders(); window.fetchEmployees(); window.fetchServices(); window.fetchAppDatabase();
 };
 
-// --- ФУНКЦИЯ ВЫХОДА АДМИНИСТРАТОРА ---
 window.logoutAdmin = function() {
     if (confirm(getTrans('logout_btn') + "?")) {
-        // Очищаем куки с токенами
         document.cookie = "tree_admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        // Очищаем локальные данные
         localStorage.removeItem('tree_secure_token');
-        // Перезагружаем страницу, чтобы полностью сбросить состояние приложения
         window.location.reload(true);
     }
 };
 
+// ИСПРАВЛЕНИЕ: Прямой вызов регистрации при клике по кнопке в модалке
 window.registerBiometric = async function() {
     try {
         const publicKeyCredentialCreationOptions = {
             challenge: Uint8Array.from(Math.random().toString(36).substring(2), c => c.charCodeAt(0)),
             rp: { name: "TREE Admin" },
             user: { id: Uint8Array.from("admin", c => c.charCodeAt(0)), name: "admin", displayName: "Administrator" },
-            pubKeyCredParams: [{alg: -7, type: "public-key"}],
+            pubKeyCredParams: [{alg: -7, type: "public-key"}, {alg: -257, type: "public-key"}], // Добавлен RS256 для поддержки старых устройств
             authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
             timeout: 60000,
             attestation: "direct"
         };
         const credential = await navigator.credentials.create({ publicKey: publicKeyCredentialCreationOptions });
         localStorage.setItem('tree_biometric_id', credential.id);
+        document.getElementById('bio-prompt-modal').classList.remove('active');
         alert("Touch ID հաջողությամբ պահպանվեց! (Touch ID успешно сохранен!)");
-    } catch (err) { console.error(err); }
+    } catch (err) { 
+        console.error(err); 
+        alert("Ошибка регистрации: " + err.message);
+    }
 };
 
-window.authenticateBiometric = async function() {
+// ИСПРАВЛЕНИЕ: Правильное декодирование Base64url ключа для входа
+window.authenticateBiometric = async function(auto = false) {
     const bioId = localStorage.getItem('tree_biometric_id');
     const secureToken = localStorage.getItem('tree_secure_token'); 
-    if (!bioId || !secureToken) { alert("Դուք դեռ չեք պահպանել Touch ID (Вы еще не сохранили Touch ID или сессия истекла). Войдите по паролю."); return; }
+    
+    if (!bioId) { 
+        if(!auto) alert("Դուք դեռ չեք պահպանել Touch ID (Вы еще не сохранили Touch ID)."); 
+        return; 
+    }
+    
     try {
+        // Добавляем выравнивание Base64 для безопасного декодирования
+        let b64 = bioId.replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4) b64 += '=';
+        const credentialIdArray = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+
         const publicKeyCredentialRequestOptions = {
             challenge: Uint8Array.from(Math.random().toString(36).substring(2), c => c.charCodeAt(0)),
-            allowCredentials: [{ id: Uint8Array.from(atob(bioId.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0)), type: 'public-key', transports: ['internal'] }],
-            userVerification: "required", timeout: 60000
+            allowCredentials: [{ id: credentialIdArray, type: 'public-key', transports: ['internal'] }],
+            userVerification: "required", 
+            timeout: 60000
         };
+        
         const assertion = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
+        
         if (assertion) {
+            // Отпечаток совпал! Проверяем сессию на сервере
             const res = await fetch('/api/orders', { method: 'GET', credentials: 'include' });
-            if(res.ok) { window.finishLogin(); } else { alert("Сессия на сервере истекла. Войдите по паролю."); document.getElementById('auth-screen').classList.remove('hidden'); }
+            if(res.ok) { 
+                window.finishLogin(); 
+            } else { 
+                alert("Сессия на сервере истекла. Войдите по паролю."); 
+                localStorage.removeItem('tree_secure_token');
+                document.getElementById('auth-screen').classList.remove('hidden');
+            }
         }
-    } catch (err) { console.error(err); alert("Touch ID սխալ (Ошибка Touch ID)"); }
+    } catch (err) { 
+        console.error(err); 
+        if(!auto) alert("Touch ID սխալ (Ошибка или отмена Touch ID)"); 
+    }
 };
 
 window.updateDashDots = function() {
@@ -473,9 +499,6 @@ window.fetchEmployees = async function() {
     } catch (err) { console.error('Ошибка загрузки сотрудников:', err); }
 };
 
-// ==========================================
-// НАДЕЖНАЯ ФУНКЦИЯ СИНХРОНИЗАЦИИ (с проверкой ответа базы)
-// ==========================================
 window.syncSingleEmployee = async function(employee, action = 'update') {
     try {
         const res = await fetch('/api/employees', {
@@ -589,7 +612,6 @@ window.acceptEmployee = async function() {
     if (!window.currentActiveEmpId) return; 
     const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
     if (emp) { 
-        // Временно сохраняем состояние
         const oldStatus = emp.status;
         const oldKey = emp.accessKey;
         
@@ -600,7 +622,6 @@ window.acceptEmployee = async function() {
         if (success) {
             window.renderDashboardMasters(); window.renderEmployees(); window.updateDashDots(); window.openEmployeeModal(emp.id); if (navigator.vibrate) navigator.vibrate(20); 
         } else {
-            // Откат изменений при ошибке
             emp.status = oldStatus;
             emp.accessKey = oldKey;
         }
@@ -837,10 +858,12 @@ function initApp() {
                 pinInput.blur();
                 pinInput.value = ''; 
                 
-                if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
-                    setTimeout(() => { if (confirm("Включить вход по Touch ID?")) window.registerBiometric(); }, 500);
-                }
                 window.finishLogin();
+                
+                // ИСПРАВЛЕНИЕ: Если Touch ID доступен, но не сохранен — показываем модальное окно регистрации
+                if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
+                    setTimeout(() => { document.getElementById('bio-prompt-modal').classList.add('active'); }, 500);
+                }
             } else {
                 if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
                 authError.innerText = data.error || "Սխալ գաղտնաբառ";
@@ -855,23 +878,34 @@ function initApp() {
         }
     }
 
+    // ИСПРАВЛЕНИЕ: Логика защиты приложения (App Lock)
     async function checkSession() {
         try {
             const res = await fetch('/api/orders', { method: 'GET', credentials: 'include' });
             if (res.ok) { 
                 window.finishLogin(); 
             } else { 
-                if (authScreen) authScreen.style.display = 'flex'; 
+                if (authScreen) { authScreen.style.display = 'flex'; authScreen.classList.remove('hidden'); }
             }
         } catch(e) { 
-            if (authScreen) authScreen.style.display = 'flex'; 
+            if (authScreen) { authScreen.style.display = 'flex'; authScreen.classList.remove('hidden'); }
         }
     }
     
-    if (localStorage.getItem('tree_secure_token') !== 'valid') {
-        if (authScreen) authScreen.style.display = 'flex';
+    const secureToken = localStorage.getItem('tree_secure_token');
+    const bioId = localStorage.getItem('tree_biometric_id');
+
+    if (secureToken === 'valid') {
+        if (bioId) {
+            // Сессия жива, НО у пользователя включен Touch ID -> Блокируем экран и требуем палец!
+            if (authScreen) { authScreen.style.display = 'flex'; authScreen.classList.remove('hidden'); }
+            setTimeout(() => window.authenticateBiometric(true), 400); // Автоматически вызываем проверку отпечатка
+        } else {
+            // Touch ID нет, просто молча заходим
+            checkSession();
+        }
     } else {
-        checkSession();
+        if (authScreen) { authScreen.style.display = 'flex'; authScreen.classList.remove('hidden'); }
     }
 
     if (loginBtn) loginBtn.addEventListener('click', () => { checkPinCode(pinInput.value); });
