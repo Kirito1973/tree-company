@@ -18,11 +18,11 @@ export default async function handler(req, res) {
     } 
     
     if (req.method === 'POST') {
-        const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('auth_token='))?.split('=')[1];
-        const sessionData = token ? await kv.get(`session_${token}`) : null;
+        // Защита: ищем новую админскую печеньку
+        const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('tree_admin_token='))?.split('=')[1];
+        const sessionData = token ? await kv.get(`admin_session_${token}`) : null;
 
-        // ИСПРАВЛЕНИЕ: Только админ может сохранять переводы
-        if (!token || sessionData !== 'admin') {
+        if (!token || !sessionData) {
             return res.status(401).json({ error: 'Отказано в доступе' });
         }
 
@@ -34,6 +34,5 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: 'Database write error' });
         }
     }
-
     return res.status(405).json({ error: 'Method not allowed' });
 }
