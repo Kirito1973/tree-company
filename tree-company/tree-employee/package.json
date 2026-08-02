@@ -1,0 +1,12 @@
+{
+  "name": "tree-employee",
+  "version": "1.0.0",
+  "description": "App for Tree Company Employees",
+  "main": "employee.js",
+  "scripts": {
+    "start": "node employee.js"
+  },
+  "dependencies": {
+    "@vercel/kv": "^3.0.0"
+  }
+}
