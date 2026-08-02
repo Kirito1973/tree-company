@@ -16,7 +16,15 @@ export default async function handler(req, res) {
 
             if (!pin) return res.status(400).json({ error: 'PIN-կոդը մուտքագրված չէ (Пароль не указан)' });
 
-            const employeesDict = await kv.hgetall('tree_employees') || {};
+            // Безопасное извлечение сотрудников (защита от старого формата Array)
+            let employeesDict;
+            try {
+                employeesDict = await kv.hgetall('tree_employees') || {};
+            } catch (e) {
+                const oldArray = await kv.get('tree_employees') || [];
+                employeesDict = {};
+                oldArray.forEach(emp => employeesDict[emp.id] = emp);
+            }
             const employees = Object.values(employeesDict);
 
             // Ищем сотрудника с совпадающим паролем и активным статусом
@@ -26,8 +34,8 @@ export default async function handler(req, res) {
                 const token = 'sk_emp_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
                 await kv.set(`session_${token}`, `employee_${emp.id}`, { ex: 86400 }); // Сессия на 24 часа
                 
-                // ИЗМЕНЕНИЕ: Убран флаг Secure для корректной работы локально
-                res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`);
+                // Флаг Secure возвращен для безопасной работы на доменах Vercel (HTTPS)
+                res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict; Secure`);
 
                 return res.status(200).json({
                     success: true,
