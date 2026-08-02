@@ -1,4 +1,4 @@
-const APP_VERSION = '8.0.0';
+const APP_VERSION = '8.0.1';
 
 if (localStorage.getItem('tree_emp_version') !== APP_VERSION) {
     console.log('Обнаружена новая версия! Очистка старого кэша...');
@@ -144,7 +144,7 @@ function applyLanguage() {
     }
 }
 
-// Данные загружаются с сервера, а не хранятся локально
+// Данные загружаются с сервера
 let ordersData = [];
 let employeesData = [];
 let reviewsData = [];
@@ -154,7 +154,6 @@ let currentActiveOrderId = null;
 let currentOrderFilter = 'new'; 
 let calendarDate = new Date();
 
-// Функция синхронизации изменений с сервером
 window.syncData = async function(type, data) {
     try {
         const res = await fetch('/api/sync', {
@@ -223,16 +222,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.renderEmployeeNews(); window.renderEmployeeOrders(); window.renderEmployeeProfile(employeesData.find(emp => emp.id === loggedInEmpId));
                 window.renderWeeklySchedule(); window.renderCalendar(); window.renderEmployeeFinance();
                 const emp = employeesData.find(emp => emp.id === loggedInEmpId);
-                const firstName = emp.name.split(' ')[0];
-                const greetings = { "AM": "Բարև", "RU": "Привет", "EN": "Hello" };
-                document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `${greetings[currentLang]}, <b>${firstName}</b>!`);
+                if (emp) {
+                    const firstName = emp.name.split(' ')[0];
+                    const greetings = { "AM": "Բարև", "RU": "Привет", "EN": "Hello" };
+                    document.querySelectorAll('#emp-greeting').forEach(el => el.innerHTML = `${greetings[currentLang]}, <b>${firstName}</b>!`);
+                }
                 if (document.getElementById('order-modal').classList.contains('active') && currentActiveOrderId) window.openOrderModal(currentActiveOrderId);
             } else { applyLanguage(); }
             langSwitcher.classList.remove('open');
         });
     });
 
-    // Обработка кнопки логина
     const loginBtn = document.getElementById('login-submit-btn');
     if (loginBtn) {
         loginBtn.addEventListener('click', () => {
@@ -258,6 +258,13 @@ window.initApp = async function() {
 };
 
 window.loginEmployee = async function(pin) {
+    const loginBtn = document.getElementById('login-submit-btn');
+    const originalText = loginBtn ? loginBtn.innerText : '';
+    if (loginBtn) { 
+        loginBtn.innerText = 'Загрузка...'; 
+        loginBtn.style.pointerEvents = 'none'; 
+    }
+
     try {
         const res = await fetch('/api/auth', {
             method: 'POST',
@@ -276,7 +283,12 @@ window.loginEmployee = async function(pin) {
             alert(data.error); 
         }
     } catch (e) {
-        alert("Ошибка связи с сервером");
+        alert("Ошибка связи с сервером при авторизации.");
+    } finally {
+        if (loginBtn) { 
+            loginBtn.innerText = originalText; 
+            loginBtn.style.pointerEvents = 'auto'; 
+        }
     }
 };
 
@@ -285,6 +297,7 @@ window.fetchEmployeeAppDatabase = async function(empId) {
         const res = await fetch('/api/data', { credentials: 'include' });
         
         if (res.status === 401) {
+            alert("Сессия истекла или у вас нет доступа. Пожалуйста, войдите снова.");
             window.logoutEmployee();
             return;
         }
@@ -296,9 +309,13 @@ window.fetchEmployeeAppDatabase = async function(empId) {
             window.reviewsData = dbData.reviews || [];
 
             window.showEmployeeDashboard(empId);
+        } else {
+            const errorText = await res.text();
+            alert(`Ошибка при загрузке данных (${res.status}): ${errorText}`);
         }
     } catch (err) {
         console.error('Ошибка синхронизации данных:', err);
+        alert("Произошла ошибка сети при попытке загрузить базу данных.");
     }
 };
 
@@ -338,7 +355,11 @@ window.renderEmployeeNews = function() {
 
 window.showEmployeeDashboard = function(empId) {
     const emp = employeesData.find(e => e.id === empId);
-    if (!emp) { window.logoutEmployee(); return; }
+    if (!emp) { 
+        alert("Профиль сотрудника не найден в базе данных.");
+        window.logoutEmployee(); 
+        return; 
+    }
 
     document.querySelectorAll('.emp-screen').forEach(scr => scr.classList.remove('active'));
     document.querySelectorAll('.tab-item').forEach(btn => btn.classList.remove('active'));
@@ -401,7 +422,6 @@ window.renderEmployeeFinance = function() {
             }
 
             totalAllTime += myEarnings;
-            // Долг компании рассчитывается админом, но можно добавить локальную визуализацию, если нужно.
 
             const targetDate = order.completedAt || order.createdAt;
             if (targetDate) {
@@ -740,7 +760,6 @@ window.toggleServiceStatus = async function(orderId, serviceIndex, checkboxElem)
         if (navigator.vibrate) navigator.vibrate(10);
         window.checkIfOrderCanBeFinished(orderId);
         
-        // Синхронизируем изменения с сервером
         await window.syncData('order', order);
     }
 };
@@ -762,10 +781,7 @@ window.acceptOrder = async function(orderId) {
     const order = ordersData.find(o => o.id === orderId);
     if(order) {
         order.status = 'progress'; order.acceptedAt = getNowString(); 
-        
-        // Синхронизация с БД
         await window.syncData('order', order);
-
         if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
         closeOrderModal(); window.updateOrderCounts();
         filterEmpOrders('progress', document.getElementById('tab-progress')); 
@@ -788,7 +804,6 @@ window.finishOrder = async function(orderId) {
     order.completedAt = getNowString();
     order.isCommissionPaid = false; 
 
-    // Сохраняем в БД
     await window.syncData('order', order);
 
     if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
@@ -877,7 +892,6 @@ window.confirmSplitAndFinish = async function() {
     orderToSplit.completedAt = getNowString();
     orderToSplit.isCommissionPaid = false; 
 
-    // Сохранение распределения прибыли в БД
     await window.syncData('order', orderToSplit);
 
     closeSplitProfitModal(); closeOrderModal();
@@ -932,7 +946,6 @@ window.saveEmpSelfEdit = async function(e) {
     emp.birthDate = document.getElementById('self-edit-birth').value;
     emp.address = document.getElementById('self-edit-address').value;
 
-    // Синхронизация данных профиля
     await window.syncData('employee', emp);
 
     closeEmpSelfEdit(); window.renderEmployeeProfile(emp);
@@ -995,7 +1008,6 @@ window.saveWeeklySchedule = async function() {
     selected.forEach(d => { if (!newWorkingDates.includes(d)) newWorkingDates.push(d); });
     emp.workingDates = newWorkingDates; 
 
-    // Сохранение графика на сервер
     await window.syncData('employee', emp);
 
     if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
@@ -1025,7 +1037,6 @@ window.renderCalendar = function() {
     const todayStr = String(actualToday.getDate()).padStart(2, '0') + '.' + String(actualToday.getMonth() + 1).padStart(2, '0') + '.' + actualToday.getFullYear();
     const workingDates = emp.workingDates || [];
     
-    // Восстановленный блок генерации дат
     for (let i = 1; i <= daysInMonth; i++) {
         const dateStr = String(i).padStart(2, '0') + '.' + String(month + 1).padStart(2, '0') + '.' + year;
         const isWorking = workingDates.includes(dateStr);
