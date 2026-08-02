@@ -7,15 +7,12 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>TREE Admin</title>
-    
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#F4F7F5" id="themeColorMeta">
-
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
     <link rel="manifest" href="manifest.json">
-
     <script>
         (function() {
             try {
@@ -28,19 +25,15 @@
             } catch (e) {}
         })();
     </script>
-
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Noto+Sans+Armenian:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ФОНОВЫЕ ЭФФЕКТЫ ИЗ ПРИЛОЖЕНИЯ СОТРУДНИКОВ -->
     <div class="noise-overlay"></div>
     <div class="ambient-glow"></div>
 
-    <!-- Окно авторизации -->
     <div id="auth-screen" class="auth-overlay">
-        <!-- АНТИ-БЛИК СКРИПТ -->
         <script>
             if (localStorage.getItem('tree_secure_token') === 'valid') {
                 document.getElementById('auth-screen').style.display = 'none';
@@ -50,27 +43,21 @@
             <div class="header-logo-container" style="width: 80px; margin: 0 auto 20px auto;">
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
             </div>
-            
             <h2 class="screen-title" style="margin-bottom: 5px; font-size: 22px;" data-i18n="welcome"></h2>
             <p style="font-size: 12px; color: var(--text-sec); margin-bottom: 30px; font-weight: 600;" data-i18n="welcome_admin"></p>
-            
             <div style="width:100%; position: relative;">
                 <input type="password" id="pin-input" class="glass-input pin-input" data-i18n-placeholder="password_placeholder" style="text-align: center; font-size: 20px; letter-spacing: 8px; padding: 18px 45px 18px 18px; border-radius: 20px;" autocomplete="off">
-                
                 <button id="toggle-password-btn" type="button" style="position: absolute; right: 15px; top: 16px; background: transparent; border: none; color: var(--text-sec); cursor: pointer; display: flex; align-items: center; justify-content: center; height: 28px; width: 28px;">
                     <svg id="eye-icon-closed" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                     <svg id="eye-icon-open" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 </button>
-
                 <button id="login-submit-btn" class="submit-btn success" style="margin-top: 15px; border-radius: 20px; font-size: 14px; height: 52px;" data-i18n="login_btn"></button>
             </div>
-
             <div style="display: flex; align-items: center; width: 100%; margin: 25px 0;">
                 <div style="flex: 1; height: 1px; background: var(--card-border);"></div>
                 <span style="font-size: 10px; color: var(--text-sec); padding: 0 10px; text-transform: uppercase; font-weight: 800;" data-i18n="or_text"></span>
                 <div style="flex: 1; height: 1px; background: var(--card-border);"></div>
             </div>
-
             <button id="bio-scan-btn" class="bio-icon-btn" onclick="authenticateBiometric()" style="display: flex; flex-direction: column; align-items: center; background: transparent; border: none; cursor: pointer; width: 100%;">
                 <div class="bio-icon-circle" id="bio-icon-circle">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -83,27 +70,34 @@
                 </div>
                 <span style="font-size: 10px; color: var(--text); margin-top: 12px; font-weight: 800; text-transform: uppercase;" data-i18n="touch_id"></span>
             </button>
-            
             <div id="auth-error" style="color: var(--danger); font-size: 11px; font-weight: bold; text-align: center; margin-top: 20px; opacity: 0; transition: opacity 0.3s;"></div>
         </div>
     </div>
 
     <div class="app-container">
         <header class="app-header">
-            <button class="theme-btn" id="theme-btn" aria-label="Theme" onclick="toggleTheme(event)">
-                <span class="theme-icon" id="theme-icon"></span>
-            </button>
-            <div class="header-logo-container">
-                <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
-            </div>
-            <div class="lang-switcher" id="lang-switcher">
-                <button class="lang-btn-main" id="current-lang-btn" type="button" onclick="toggleLangMenu(event)">
-                    <img src="assets/free-icon-armenia-197516.png" class="lang-flag">
+            <button class="theme-btn" id="theme-btn" aria-label="Theme" onclick="toggleTheme(event)"><span class="theme-icon" id="theme-icon"></span></button>
+            <div class="header-logo-container"><img src="assets/tree.png" alt="Tree Logo" class="main-logo"></div>
+            
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <!-- Кнопка Выхода -->
+                <button class="theme-btn" onclick="logoutAdmin()" aria-label="Logout" style="color: var(--danger);">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
                 </button>
-                <div class="lang-dropdown-content">
-                    <button type="button" class="lang-tab active" data-lang="AM" onclick="setAdminLang('AM', event)"><img src="assets/free-icon-armenia-197516.png" class="lang-flag"></button>
-                    <button type="button" class="lang-tab" data-lang="RU" onclick="setAdminLang('RU', event)"><img src="assets/free-icon-russia-9994030.png" class="lang-flag"></button>
-                    <button type="button" class="lang-tab" data-lang="EN" onclick="setAdminLang('EN', event)"><img src="assets/united-kingdom.png" class="lang-flag"></button>
+                
+                <div class="lang-switcher" id="lang-switcher">
+                    <button class="lang-btn-main" id="current-lang-btn" type="button" onclick="toggleLangMenu(event)">
+                        <img src="assets/free-icon-armenia-197516.png" class="lang-flag">
+                    </button>
+                    <div class="lang-dropdown-content">
+                        <button type="button" class="lang-tab active" data-lang="AM" onclick="setAdminLang('AM', event)"><img src="assets/free-icon-armenia-197516.png" class="lang-flag"></button>
+                        <button type="button" class="lang-tab" data-lang="RU" onclick="setAdminLang('RU', event)"><img src="assets/free-icon-russia-9994030.png" class="lang-flag"></button>
+                        <button type="button" class="lang-tab" data-lang="EN" onclick="setAdminLang('EN', event)"><img src="assets/united-kingdom.png" class="lang-flag"></button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -156,7 +150,6 @@
             </div>
         </section>
 
-        <!-- Вкладка Заказы -->
         <section class="admin-screen" id="screen-orders">
             <h2 class="screen-title" data-i18n="tab_orders"></h2>
             <div class="glass-panel">
@@ -218,21 +211,18 @@
                 <button class="view-switch-btn" onclick="switchManagementTab('translations', this)" data-i18n="tab_mng_translations"></button>
                 <button class="view-switch-btn" onclick="switchManagementTab('promo', this)" data-i18n="tab_mng_promo"></button>
             </div>
-            
             <div id="mng-view-services" style="display:block;">
                 <div class="glass-panel">
                     <button class="submit-btn" onclick="openServiceForm()" data-i18n="add_service"></button>
                     <div class="entity-list" id="admin-services-list"></div>
                 </div>
             </div>
-            
             <div id="mng-view-translations" style="display:none;">
                 <div class="glass-panel">
                     <div class="entity-list" id="translations-list"></div>
                     <button id="trans-save-btn" class="submit-btn success" onclick="saveTranslations()"><span data-i18n="save_translations"></span></button>
                 </div>
             </div>
-            
             <div id="mng-view-promo" style="display:none;">
                 <div class="glass-panel">
                     <input type="text" id="promo-text-am" class="glass-input" placeholder="Promo AM">
@@ -244,9 +234,7 @@
             </div>
         </section>
 
-        <!-- Модальные окна -->
-        
-        <!-- Окно Заказов с интегрированной кнопкой адреса -->
+        <!-- Модальные окна Админки -->
         <div id="order-modal" class="modal-overlay">
             <div class="modal-content glass-panel">
                 <button class="modal-close-x" onclick="closeOrderModal()">✖</button>
@@ -267,7 +255,6 @@
             </div>
         </div>
 
-        <!-- Окно Отзывов -->
         <div id="review-modal" class="modal-overlay">
             <div class="modal-content glass-panel">
                 <button class="modal-close-x" onclick="closeReviewModal()">✖</button>
@@ -278,7 +265,6 @@
             </div>
         </div>
 
-        <!-- Окно Партнеров -->
         <div id="coop-modal" class="modal-overlay">
             <div class="modal-content glass-panel">
                 <button class="modal-close-x" onclick="closeCoopModal()">✖</button>
@@ -299,7 +285,6 @@
             </div>
         </div>
 
-        <!-- Окно Сотрудника -->
         <div id="employee-modal" class="modal-overlay">
             <div class="modal-content glass-panel modal-scroll">
                 <button class="modal-close-x" onclick="closeEmployeeModal()">✖</button>
@@ -412,36 +397,14 @@
     </div>
 
     <nav class="bottom-nav">
-        <button class="tab-item active" onclick="switchTab('screen-dashboard', this)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-            <span data-i18n="tab_dashboard"></span>
-        </button>
-        <button class="tab-item" onclick="switchTab('screen-orders', this)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
-            <span data-i18n="tab_orders"></span>
-        </button>
-        <button class="tab-item" onclick="switchTab('screen-finance', this)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-            <span data-i18n="tab_finance"></span>
-        </button>
-        <button class="tab-item" onclick="switchTab('screen-employees', this)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            <span data-i18n="tab_employees"></span>
-        </button>
-        <button class="tab-item" onclick="switchTab('screen-partners', this)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path></svg>
-            <span data-i18n="tab_partners"></span>
-        </button>
-        <button class="tab-item" onclick="switchTab('screen-clients', this)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            <span data-i18n="tab_clients"></span>
-        </button>
-        <button class="tab-item" onclick="switchTab('screen-management', this)">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span data-i18n="tab_management"></span>
-        </button>
+        <button class="tab-item active" onclick="switchTab('screen-dashboard', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span data-i18n="tab_dashboard"></span></button>
+        <button class="tab-item" onclick="switchTab('screen-orders', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg><span data-i18n="tab_orders"></span></button>
+        <button class="tab-item" onclick="switchTab('screen-finance', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg><span data-i18n="tab_finance"></span></button>
+        <button class="tab-item" onclick="switchTab('screen-employees', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span data-i18n="tab_employees"></span></button>
+        <button class="tab-item" onclick="switchTab('screen-partners', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path></svg><span data-i18n="tab_partners"></span></button>
+        <button class="tab-item" onclick="switchTab('screen-clients', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg><span data-i18n="tab_clients"></span></button>
+        <button class="tab-item" onclick="switchTab('screen-management', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg><span data-i18n="tab_management"></span></button>
     </nav>
-
     <script src="js/admin.js"></script>
 </body>
 </html>
