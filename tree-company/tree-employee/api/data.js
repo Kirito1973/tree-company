@@ -18,12 +18,40 @@ export default async function handler(req, res) {
 
     try {
         if (req.method === 'GET') {
-            const ordersDict = await kv.hgetall('tree_orders') || {};
-            const employeesDict = await kv.hgetall('tree_employees') || {};
+            // Безопасное извлечение заказов
+            let ordersDict;
+            try {
+                ordersDict = await kv.hgetall('tree_orders') || {};
+            } catch (e) {
+                const oldArray = await kv.get('tree_orders') || [];
+                ordersDict = {};
+                oldArray.forEach(o => ordersDict[o.id] = o);
+            }
+
+            // Безопасное извлечение сотрудников
+            let employeesDict;
+            try {
+                employeesDict = await kv.hgetall('tree_employees') || {};
+            } catch (e) {
+                const oldArray = await kv.get('tree_employees') || [];
+                employeesDict = {};
+                oldArray.forEach(emp => employeesDict[emp.id] = emp);
+            }
+            
+            // Безопасное извлечение отзывов
+            let reviewsDict;
+            try {
+                reviewsDict = await kv.hgetall('tree_reviews') || {};
+            } catch (e) {
+                const oldArray = await kv.get('tree_reviews') || [];
+                reviewsDict = {};
+                oldArray.forEach(r => reviewsDict[r.id] = r);
+            }
             
             return res.status(200).json({
                 orders: Object.values(ordersDict),
-                employees: Object.values(employeesDict)
+                employees: Object.values(employeesDict),
+                reviews: Object.values(reviewsDict)
             });
         }
         return res.status(405).json({ error: 'Method not allowed' });
