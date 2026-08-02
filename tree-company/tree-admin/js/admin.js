@@ -473,15 +473,30 @@ window.fetchEmployees = async function() {
     } catch (err) { console.error('Ошибка загрузки сотрудников:', err); }
 };
 
+// ==========================================
+// НАДЕЖНАЯ ФУНКЦИЯ СИНХРОНИЗАЦИИ (с проверкой ответа базы)
+// ==========================================
 window.syncSingleEmployee = async function(employee, action = 'update') {
     try {
-        await fetch('/api/employees', {
+        const res = await fetch('/api/employees', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({ action: action, employee: employee, empId: employee ? employee.id : null })
         });
-    } catch (err) { console.error('Ошибка синхронизации сотрудника:', err); }
+        
+        if (!res.ok) {
+            const errorData = await res.json();
+            alert(`Ошибка сохранения в базу: ${errorData.error || 'Сбой на сервере'}`);
+            console.error('Сбой БД:', errorData);
+            return false;
+        }
+        return true;
+    } catch (err) { 
+        console.error('Ошибка сети при синхронизации сотрудника:', err); 
+        alert('Ошибка сети: не удалось связаться с базой данных!');
+        return false;
+    }
 };
 
 window.setEmpFilter = function(filterValue) { document.querySelectorAll('#screen-employees .filter-tab').forEach(t => { if (t.getAttribute('data-emp-filter') === filterValue) t.classList.add('active'); else t.classList.remove('active'); }); window.renderEmployees(); };
@@ -571,29 +586,52 @@ window.closeEmployeeModal = function() { document.getElementById('employee-modal
 window.toggleEmpOrders = function() { document.getElementById('modal-emp-orders-list').classList.toggle('open'); };
 
 window.acceptEmployee = async function() { 
-    if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
+    if (!window.currentActiveEmpId) return; 
+    const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
     if (emp) { 
-        emp.status = 'active'; if (!emp.accessKey) emp.accessKey = window.generateComplexPassword(); 
-        await window.syncSingleEmployee(emp); 
-        window.renderDashboardMasters(); window.renderEmployees(); window.updateDashDots(); window.openEmployeeModal(emp.id); if (navigator.vibrate) navigator.vibrate(20); 
+        // Временно сохраняем состояние
+        const oldStatus = emp.status;
+        const oldKey = emp.accessKey;
+        
+        emp.status = 'active'; 
+        if (!emp.accessKey) emp.accessKey = window.generateComplexPassword(); 
+        
+        const success = await window.syncSingleEmployee(emp); 
+        if (success) {
+            window.renderDashboardMasters(); window.renderEmployees(); window.updateDashDots(); window.openEmployeeModal(emp.id); if (navigator.vibrate) navigator.vibrate(20); 
+        } else {
+            // Откат изменений при ошибке
+            emp.status = oldStatus;
+            emp.accessKey = oldKey;
+        }
     } 
 };
+
 window.rejectEmployee = async function() { 
     if (!window.currentActiveEmpId) return; 
     if (confirm(getTrans('reject')+"?")) { 
-        await window.syncSingleEmployee({id: window.currentActiveEmpId}, 'delete');
-        window.employeesData = window.employeesData.filter(e => e.id !== window.currentActiveEmpId); 
-        window.renderDashboardMasters(); window.closeEmployeeModal(); window.updateDashDots(); 
+        const success = await window.syncSingleEmployee({id: window.currentActiveEmpId}, 'delete');
+        if (success) {
+            window.employeesData = window.employeesData.filter(e => e.id !== window.currentActiveEmpId); 
+            window.renderDashboardMasters(); window.closeEmployeeModal(); window.updateDashDots(); 
+        }
     } 
 };
+
 window.fireEmployee = async function() { 
     if (!window.currentActiveEmpId) return; 
     if (confirm(getTrans('fire')+"?")) { 
         const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); 
         if (emp) { 
+            const oldStatus = emp.status;
             emp.status = 'dismissed'; 
-            await window.syncSingleEmployee(emp); 
-            window.renderDashboardMasters(); window.renderEmployees(); window.closeEmployeeModal(); window.updateDashDots(); 
+            
+            const success = await window.syncSingleEmployee(emp); 
+            if (success) {
+                window.renderDashboardMasters(); window.renderEmployees(); window.closeEmployeeModal(); window.updateDashDots(); 
+            } else {
+                emp.status = oldStatus;
+            }
         } 
     } 
 };
@@ -602,11 +640,19 @@ window.adjustEmpDebt = async function(action) {
     if (!window.currentActiveEmpId) return; const emp = window.employeesData.find(e => e.id === window.currentActiveEmpId); if (!emp) return;
     const inputEl = document.getElementById('emp-finance-input'); const val = parseInt(inputEl.value, 10); 
     if (isNaN(val) || val <= 0) return alert("Err");
+    
     if (emp.companyDebt === undefined || isNaN(emp.companyDebt)) emp.companyDebt = 0;
+    const oldDebt = emp.companyDebt;
+    
     if (action === 'add') emp.companyDebt += val; else if (action === 'bonus') emp.companyDebt -= val; 
-    await window.syncSingleEmployee(emp);
-    const debtEl = document.getElementById('modal-emp-debt'); debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏'; debtEl.style.color = emp.companyDebt < 0 ? 'var(--tree-light)' : 'var(--danger)';
-    inputEl.value = ''; window.renderEmployees(); if (navigator.vibrate) navigator.vibrate(20);
+    
+    const success = await window.syncSingleEmployee(emp);
+    if (success) {
+        const debtEl = document.getElementById('modal-emp-debt'); debtEl.innerText = emp.companyDebt.toLocaleString() + ' ֏'; debtEl.style.color = emp.companyDebt < 0 ? 'var(--tree-light)' : 'var(--danger)';
+        inputEl.value = ''; window.renderEmployees(); if (navigator.vibrate) navigator.vibrate(20);
+    } else {
+        emp.companyDebt = oldDebt;
+    }
 };
 
 window.renderProfessionsForm = function(selected = []) {
@@ -649,16 +695,30 @@ window.saveEmployeeForm = async function(event) {
     const name = document.getElementById('form-emp-name').value; const phone = document.getElementById('form-emp-phone').value; const address = document.getElementById('form-emp-address').value; const birthDate = document.getElementById('form-emp-birth').value; const exp = document.getElementById('form-emp-exp').value; const accessKey = document.getElementById('form-emp-access-key').value; const photo = document.getElementById('form-emp-photo-base64').value; 
     
     let targetEmp;
+    let isNew = false;
+    let backupState = {};
+
     if (window.currentEditingEmpId) { 
         targetEmp = window.employeesData.find(e => e.id === window.currentEditingEmpId); 
-        if (targetEmp) { targetEmp.name = name; targetEmp.phone = phone; targetEmp.address = address; targetEmp.birthDate = birthDate; targetEmp.type = finalTypes; targetEmp.exp = exp; targetEmp.accessKey = accessKey; targetEmp.photo = photo; } 
+        if (targetEmp) { 
+            backupState = { ...targetEmp };
+            targetEmp.name = name; targetEmp.phone = phone; targetEmp.address = address; targetEmp.birthDate = birthDate; targetEmp.type = finalTypes; targetEmp.exp = exp; targetEmp.accessKey = accessKey; targetEmp.photo = photo; 
+        } 
     } else { 
+        isNew = true;
         targetEmp = { id: window.generateEmpId(), status: 'active', name: name, type: finalTypes, phone: phone, exp: exp || '0', rating: 0.0, birthDate: birthDate, address: address, accessKey: accessKey, companyDebt: 0, workingDates: [], photo: photo };
-        window.employeesData.push(targetEmp); 
     }
     
-    await window.syncSingleEmployee(targetEmp); 
-    window.renderEmployees(); window.renderDashboardMasters(); window.closeEmployeeFormModal(); window.updateDashDots(); if (navigator.vibrate) navigator.vibrate(50);
+    const success = await window.syncSingleEmployee(targetEmp); 
+    if (success) {
+        if (isNew) window.employeesData.push(targetEmp); 
+        window.renderEmployees(); window.renderDashboardMasters(); window.closeEmployeeFormModal(); window.updateDashDots(); if (navigator.vibrate) navigator.vibrate(50);
+    } else {
+        if (!isNew && targetEmp) {
+            Object.assign(targetEmp, backupState);
+        }
+    }
+    
     submitBtn.innerText = origText; submitBtn.disabled = false;
 };
 
