@@ -153,9 +153,17 @@
         <section class="admin-screen" id="screen-orders">
             <h2 class="screen-title" data-i18n="tab_orders"></h2>
             <div class="glass-panel">
-                <button class="submit-btn" onclick="openOrderForm()" data-i18n="add_order"></button>
                 <div class="entity-list" id="orders-list"></div>
             </div>
+            <!-- Плавающая кнопка для заказов (Иконка Документ +) -->
+            <button class="fab-btn" onclick="openOrderForm()">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+            </button>
         </section>
 
         <section class="admin-screen" id="screen-finance">
@@ -178,17 +186,33 @@
             </div>
             <div id="bday-banner-container"></div>
             <div class="glass-panel">
-                <button class="submit-btn" onclick="openEmployeeForm()" data-i18n="add_employee"></button>
                 <div class="entity-list" id="employees-list"></div>
             </div>
+            <!-- Плавающая кнопка для сотрудников (Иконка Пользователь +) -->
+            <button class="fab-btn" onclick="openEmployeeForm()">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="8.5" cy="7" r="4"></circle>
+                    <line x1="20" y1="8" x2="20" y2="14"></line>
+                    <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+            </button>
         </section>
 
         <section class="admin-screen" id="screen-partners">
             <h2 class="screen-title" data-i18n="tab_partners"></h2>
             <div class="glass-panel">
-                <button class="submit-btn" onclick="openPartnerForm()" data-i18n="add_partner"></button>
                 <div class="entity-list" id="admin-partners-list"></div>
             </div>
+            <!-- Плавающая кнопка для партнеров (Иконка Портфель +) -->
+            <button class="fab-btn" onclick="openPartnerForm()">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    <line x1="12" y1="11" x2="12" y2="17"></line>
+                    <line x1="9" y1="14" x2="15" y2="14"></line>
+                </svg>
+            </button>
         </section>
 
         <section class="admin-screen" id="screen-clients">
@@ -211,11 +235,17 @@
                 <button class="view-switch-btn" onclick="switchManagementTab('translations', this)" data-i18n="tab_mng_translations"></button>
                 <button class="view-switch-btn" onclick="switchManagementTab('promo', this)" data-i18n="tab_mng_promo"></button>
             </div>
-            <div id="mng-view-services" style="display:block;">
+            <div id="mng-view-services" style="display:block; position: relative;">
                 <div class="glass-panel">
-                    <button class="submit-btn" onclick="openServiceForm()" data-i18n="add_service"></button>
                     <div class="entity-list" id="admin-services-list"></div>
                 </div>
+                <!-- Плавающая кнопка для услуг (Иконка Большой Плюс) -->
+                <button class="fab-btn" onclick="openServiceForm()">
+                    <svg viewBox="0 0 24 24" width="30" height="30" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
             </div>
             <div id="mng-view-translations" style="display:none;">
                 <div class="glass-panel">
