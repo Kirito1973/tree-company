@@ -18,31 +18,36 @@ export default async function handler(req, res) {
                 return res.status(400).json({ success: false, error: 'Գաղտնաբառը մուտքագրված չէ (Пароль не указан)' });
             }
 
-            // Берем пароли из переменных окружения Vercel
+            // Поддерживаем как старый ADMIN_PIN, так и новые раздельные роли
+            const adminPin = process.env.ADMIN_PIN ? String(process.env.ADMIN_PIN).trim() : null;
             const superAdminPin = process.env.SUPER_ADMIN_PIN ? String(process.env.SUPER_ADMIN_PIN).trim() : null;
             const managerPin = process.env.MANAGER_PIN ? String(process.env.MANAGER_PIN).trim() : null;
 
             let roleLevel = null;
 
-            // Распределяем роли
-            if (superAdminPin && pin === superAdminPin) {
-                roleLevel = 'superadmin'; // 100% доступ
-            } else if (managerPin && pin === managerPin) {
-                roleLevel = 'manager'; // 50% доступ
+            // Если введен пароль главного админа
+            if ((adminPin && pin === adminPin) || (superAdminPin && pin === superAdminPin)) {
+                roleLevel = 'superadmin';
+            } 
+            // Если введен пароль менеджера
+            else if (managerPin && pin === managerPin) {
+                roleLevel = 'manager';
             }
 
+            // Если роль определена (пароль подошел)
             if (roleLevel) {
                 const token = 'sk_admin_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
                 
-                // Сохраняем сессию вместе с ролью
+                // Сохраняем сессию в базу вместе с уровнем прав
                 await kv.set(`admin_session_${token}`, { role: roleLevel }, { ex: 86400 }); 
                 
-                // ВЫДАЕМ ИМЕННО АДМИНСКУЮ ПЕЧЕНЬКУ (tree_admin_token)
+                // Выдаем защищенную куки именно для админки
                 res.setHeader('Set-Cookie', `tree_admin_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict; Secure`);
                 
                 return res.status(200).json({ success: true, role: roleLevel });
             }
 
+            // Если пароль не подошел
             return res.status(401).json({ success: false, error: 'Սխալ գաղտնաբառ (Неверный пароль)' });
         }
         return res.status(405).json({ error: 'Method not allowed' });
