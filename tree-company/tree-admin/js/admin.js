@@ -138,7 +138,9 @@ window.getEmpTypeLabel = function(typeArray) {
 };
 
 window.generateEmpId = function() { return 'emp_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5); };
-window.generateComplexPassword = function() { const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'; let pass = ''; for(let i = 0; i < 10; i++) { pass += chars[Math.floor(Math.random() * chars.length)]; } return pass; };
+
+// ИЗМЕНЕНИЕ: Теперь генерируется 6-значный цифровой PIN-код
+window.generateComplexPassword = function() { return Math.floor(100000 + Math.random() * 900000).toString(); };
 
 window.applyAdminLanguage = function() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
