@@ -1,6 +1,4 @@
-/* ==========================================================================
-   GLOBAL VARIABLES & CONFIG & TRANSLATIONS
-   ========================================================================== */
+/* GLOBAL VARIABLES & CONFIG & TRANSLATIONS */
 window.currentAdminLang = localStorage.getItem('tree_admin_lang') || 'AM';
 
 window.adminTranslations = {
@@ -8,6 +6,7 @@ window.adminTranslations = {
     'welcome_admin': { 'AM': 'Բարի գալուստ, Ադմինիստրատոր', 'RU': 'Добро пожаловать, Администратор', 'EN': 'Welcome, Administrator' },
     'password_placeholder': { 'AM': 'Գաղտնաբառ', 'RU': 'Пароль', 'EN': 'Password' },
     'login_btn': { 'AM': 'Մուտք', 'RU': 'Войти', 'EN': 'Login' },
+    'logout_btn': { 'AM': 'Ելք', 'RU': 'Выйти', 'EN': 'Logout' },
     'or_text': { 'AM': 'ԿԱՄ', 'RU': 'ИЛИ', 'EN': 'OR' },
     'touch_id': { 'AM': 'Touch ID', 'RU': 'Touch ID', 'EN': 'Touch ID' },
     'tab_dashboard': { 'AM': 'Գլխավոր', 'RU': 'Главная', 'EN': 'Dashboard' },
@@ -96,7 +95,6 @@ window.currentEditingEmpId = null;
 window.currentEditingPartnerId = null;
 window.serverTranslations = {};
 
-// ИСПРАВЛЕНИЕ: Очистка мок-данных, чтобы администратор не видел фейковую информацию
 window.reviewsData = [];
 window.ordersData = [];
 window.employeesData = [];
@@ -105,9 +103,6 @@ window.servicesData = [];
 window.partnersData = [];
 window.clientsData = [];
 
-/* ==========================================================================
-   UTILITY FUNCTIONS
-   ========================================================================== */
 function escapeHTML(str) {
     if(!str) return '';
     return str.replace(/[&<>'"]/g, tag => ({
@@ -142,13 +137,9 @@ window.getEmpTypeLabel = function(typeArray) {
     }).join(', ');
 };
 
-// ИСПРАВЛЕНИЕ: Более надежная генерация ID
 window.generateEmpId = function() { return 'emp_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5); };
 window.generateComplexPassword = function() { const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'; let pass = ''; for(let i = 0; i < 10; i++) { pass += chars[Math.floor(Math.random() * chars.length)]; } return pass; };
 
-/* ==========================================================================
-   UI, THEME, LANGUAGE & NAVIGATION
-   ========================================================================== */
 window.applyAdminLanguage = function() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -206,13 +197,23 @@ window.switchTab = function(tabId, btnElement) {
     if (navigator.vibrate) navigator.vibrate(10);
 };
 
-/* ==========================================================================
-   AUTHENTICATION & SECURITY
-   ========================================================================== */
 window.finishLogin = function() {
     const authScreen = document.getElementById('auth-screen');
     if (authScreen) authScreen.classList.add('hidden');
     window.fetchOrders(); window.fetchEmployees(); window.fetchServices(); window.fetchAppDatabase();
+};
+
+// --- ФУНКЦИЯ ВЫХОДА АДМИНИСТРАТОРА ---
+window.logoutAdmin = function() {
+    if (confirm(getTrans('logout_btn') + "?")) {
+        // Очищаем куки с токенами
+        document.cookie = "tree_admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "auth_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        // Очищаем локальные данные
+        localStorage.removeItem('tree_secure_token');
+        // Перезагружаем страницу, чтобы полностью сбросить состояние приложения
+        window.location.reload(true);
+    }
 };
 
 window.registerBiometric = async function() {
@@ -250,9 +251,6 @@ window.authenticateBiometric = async function() {
     } catch (err) { console.error(err); alert("Touch ID սխալ (Ошибка Touch ID)"); }
 };
 
-/* ==========================================================================
-   DASHBOARD LOGIC
-   ========================================================================== */
 window.updateDashDots = function() {
     const incOrders = window.ordersData ? window.ordersData.filter(o => o.status === 'incoming' || (o.status === 'new' && (!o.worker || o.worker === '---' || o.worker === 'Չկա'))).length : 0;
     const incMasters = window.employeesData ? window.employeesData.filter(e => e.status === 'pending').length : 0;
@@ -399,9 +397,6 @@ window.acceptCoop = function() {
 };
 window.rejectCoop = function() { if(!currentActiveCoopId) return; if(confirm(getTrans('reject') + "?")) { window.cooperationRequestsData = window.cooperationRequestsData.filter(c => c.id !== currentActiveCoopId); window.renderDashboardPartnerRequests(); window.updateDashDots(); window.closeCoopModal(); } };
 
-/* ==========================================================================
-   ORDERS LOGIC
-   ========================================================================== */
 window.fetchOrders = async function() {
     try {
         const res = await fetch('/api/orders', { credentials: 'include' });
@@ -439,7 +434,6 @@ window.openOrderModal = function(id) {
     const phoneLink = document.getElementById('modal-order-phone-link');
     if (order.clientPhone) { phoneLink.style.display = 'flex'; phoneLink.href = `tel:${order.clientPhone.replace(/[^\d+]/g, '')}`; } else phoneLink.style.display = 'none';
     
-    // ИСПРАВЛЕНИЕ: Интеграция с Yandex Maps
     const address = order.address || '';
     document.getElementById('modal-order-address').innerText = address || '---';
     const mapLink = document.getElementById('modal-order-address-link');
@@ -466,9 +460,6 @@ window.openOrderForm = function() {
     alert(getTrans('in_development'));
 };
 
-/* ==========================================================================
-   EMPLOYEES LOGIC
-   ========================================================================== */
 window.fetchEmployees = async function() {
     try { 
         const res = await fetch('/api/employees', { credentials: 'include' }); 
@@ -480,7 +471,6 @@ window.fetchEmployees = async function() {
     } catch (err) { console.error('Ошибка загрузки сотрудников:', err); }
 };
 
-// ИСПРАВЛЕНИЕ: Точечная отправка сотрудника вместо всего массива
 window.syncSingleEmployee = async function(employee, action = 'update') {
     try {
         await fetch('/api/employees', {
@@ -670,9 +660,6 @@ window.saveEmployeeForm = async function(event) {
     submitBtn.innerText = origText; submitBtn.disabled = false;
 };
 
-/* ==========================================================================
-   CLIENTS LOGIC
-   ========================================================================== */
 window.renderClients = function() {
     const list = document.getElementById('clients-list'); if (!list) return; list.innerHTML = '';
     const searchInput = document.getElementById('client-search'); const searchTerm = searchInput ? searchInput.value.toLowerCase() : ''; let count = 0;
@@ -686,9 +673,6 @@ document.addEventListener('DOMContentLoaded', () => { if (document.getElementByI
 window.changeDiscount = function(id, val) { const inp = document.getElementById(`discount-input-${id}`); let current = parseInt(inp.value) || 0; let next = current + val; if (next < 0) next = 0; if (next > 100) next = 100; inp.value = next; if (navigator.vibrate) navigator.vibrate(10); };
 window.updateClientDiscount = function(id) { const c = window.clientsData.find(x => x.id === id); if (c) { const val = parseInt(document.getElementById(`discount-input-${id}`).value) || 0; c.discount = val; if (navigator.vibrate) navigator.vibrate([20, 50, 20]); window.renderClients(); } };
 
-/* ==========================================================================
-   PARTNERS LOGIC
-   ========================================================================== */
 window.renderAdminPartners = function() {
     const list = document.getElementById('admin-partners-list'); if (!list) return; list.innerHTML = '';
     window.partnersData.forEach(p => { list.innerHTML += `<div class="entity-card" style="flex-direction: row; align-items: center; justify-content: space-between;"><div style="display: flex; align-items: center; gap: 12px;"><div style="width: 50px; height: 50px; border-radius: 16px; border: 1px dashed var(--card-border); display: flex; justify-content: center; align-items: center; overflow: hidden;">${p.logo}</div><div style="font-size: 14px; font-weight: 800; color: var(--text);">${escapeHTML(p.name)}</div></div><div style="display: flex; gap: 4px;"><button class="serv-del-btn" style="color:var(--text); border-color:var(--text-sec); background:var(--bg-base);" onclick="openPartnerForm('${p.id}')"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></button><button class="serv-del-btn" onclick="deletePartner('${p.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></div></div>`; });
@@ -698,16 +682,12 @@ window.closePartnerForm = function() { document.getElementById('partner-form-mod
 window.savePartnerForm = function(e) { e.preventDefault(); const name = document.getElementById('form-partner-name').value; const logo = document.getElementById('form-partner-logo').value; if(window.currentEditingPartnerId) { const p = window.partnersData.find(x => x.id === window.currentEditingPartnerId); if(p) { p.name = name; p.logo = logo; } } else { window.partnersData.push({ id: 'p' + Math.random(), name, logo }); } window.renderAdminPartners(); window.closePartnerForm(); if(navigator.vibrate)navigator.vibrate(20); };
 window.deletePartner = function(id) { if(confirm('Delete?')) { window.partnersData = window.partnersData.filter(p => p.id !== id); window.renderAdminPartners(); } };
 
-/* ==========================================================================
-   MANAGEMENT LOGIC (SERVICES & TRANSLATIONS)
-   ========================================================================== */
 window.switchManagementTab = function(tabName, btnElement) { document.querySelectorAll('#screen-management > div[id^="mng-view-"]').forEach(el => el.style.display = 'none'); document.getElementById('mng-view-' + tabName).style.display = 'block'; document.querySelectorAll('#screen-management .view-switch-btn').forEach(btn => btn.classList.remove('active')); btnElement.classList.add('active'); if(tabName === 'services' && window.renderAdminServices) window.renderAdminServices(); if (navigator.vibrate) navigator.vibrate(10); };
 window.renderAdminServices = function() { const list = document.getElementById('admin-services-list'); if (!list) return; list.innerHTML = ''; window.servicesData.forEach(s => { list.innerHTML += `<div class="entity-card" style="flex-direction: row; align-items: center; justify-content: space-between;"><div style="display: flex; align-items: center; gap: 12px;"><div style="width: 40px; height: 40px; border-radius: 50%; background: var(--btn-shadow); color: var(--tree-light); display: flex; justify-content: center; align-items: center;">${s.icon}</div><div><div style="font-size: 13px; font-weight: 800; color: var(--text);">${escapeHTML(s.name)}</div><div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.price} ֏</div></div></div><button class="serv-del-btn" onclick="deleteService('${s.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></div>`; }); };
 window.fetchServices = async function() { try { const res = await fetch('/api/services', { credentials: 'include' }); if(res.ok) { const data = await res.json(); window.servicesData = data || []; window.renderAdminServices(); } } catch(err) { console.error('Error:', err); } };
 window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-price').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
 window.closeServiceForm = function() { document.getElementById('service-form-modal').classList.remove('active'); };
 
-// ИСПРАВЛЕНИЕ: Точечная отправка услуг
 window.saveServiceForm = async function(e) { 
     e.preventDefault(); const submitBtn = e.target.querySelector('button[type="submit"]'); const origText = submitBtn.innerText; submitBtn.innerText = '...'; submitBtn.disabled = true; 
     const newService = { id: 's' + Date.now(), name: document.getElementById('form-cat-name').value, price: parseInt(document.getElementById('form-cat-price').value) || 0, icon: document.getElementById('form-cat-icon').value || '<svg></svg>', status: document.getElementById('form-cat-status').value }; 
@@ -741,9 +721,6 @@ window.updateLiveValue = function(key, lang, val) { if(!window.serverTranslation
 window.saveTranslations = async function() { const btn = document.getElementById('trans-save-btn'); const span = btn.querySelector('span'); const origText = span.innerHTML; span.innerHTML = '...'; await window.uploadToServer(btn, origText, span); };
 window.uploadToServer = async function(buttonElement, originalText, spanElement) { try { const response = await fetch('/api/data', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(window.serverTranslations) }); const resData = await response.json(); if(resData.success) { buttonElement.classList.add('success'); spanElement.innerHTML = '✅'; if (navigator.vibrate) navigator.vibrate(50); setTimeout(() => { buttonElement.classList.remove('success'); spanElement.innerHTML = originalText; }, 2500); } } catch(e) { console.error('Err'); spanElement.innerHTML = originalText; } };
 
-/* ==========================================================================
-   INITIALIZATION
-   ========================================================================== */
 function initApp() {
     window.updateThemeIcon();
     window.applyAdminLanguage();
