@@ -9,12 +9,15 @@ export default async function handler(req, res) {
     
     if (req.method === 'OPTIONS') return res.status(200).end();
 
-    const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('auth_token='))?.split('=')[1];
-    const sessionData = token ? await kv.get(`session_${token}`) : null;
+    // 1. Ищем ИМЕННО админскую печеньку
+    const token = req.headers.cookie?.split(';').find(c => c.trim().startsWith('tree_admin_token='))?.split('=')[1];
 
-    // ИСПРАВЛЕНИЕ: Строгая проверка на то, что это именно администратор
-    if (!token || sessionData !== 'admin') {
-        return res.status(401).json({ error: 'Отказано в доступе. Требуются права администратора.' });
+    // 2. Достаем сессию из базы
+    const sessionData = token ? await kv.get(`admin_session_${token}`) : null;
+
+    // 3. Если сессии нет — блокируем намертво
+    if (!token || !sessionData) {
+        return res.status(401).json({ error: 'Доступ запрещен. Вы не авторизованы.' });
     }
 
     try {
@@ -34,14 +37,23 @@ export default async function handler(req, res) {
 
         if (req.method === 'POST') {
             const { action, order, orderId } = req.body;
-            if (action === 'delete' && orderId) {
-                await kv.hdel('tree_orders', orderId);
-                return res.status(200).json({ success: true });
+            
+            // 4. Проверка прав (только superadmin может удалять заказы)
+            if (action === 'delete') {
+                if (sessionData.role !== 'superadmin') {
+                    return res.status(403).json({ error: 'У вас нет прав на удаление заказов.' });
+                }
+                if (orderId) {
+                    await kv.hdel('tree_orders', orderId);
+                    return res.status(200).json({ success: true });
+                }
             }
+            
             if (action === 'update' && order && order.id) {
                 await kv.hset('tree_orders', { [order.id]: order });
                 return res.status(200).json({ success: true, orderId: order.id });
             }
+            
             return res.status(400).json({ error: 'Неверный формат данных' });
         }
         return res.status(405).json({ error: 'Method not allowed' });
