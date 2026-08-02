@@ -22,9 +22,19 @@
                 } else {
                     document.documentElement.setAttribute('data-theme', 'light');
                 }
+                
+                // Моментально прячем экран входа, если токен уже есть, чтобы не было мерцания
+                if (localStorage.getItem('tree_secure_token') === 'valid') {
+                    document.documentElement.style.setProperty('--auth-display', 'none');
+                } else {
+                    document.documentElement.style.setProperty('--auth-display', 'flex');
+                }
             } catch (e) {}
         })();
     </script>
+    <style>
+        .auth-overlay { display: var(--auth-display, flex); }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Noto+Sans+Armenian:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -34,12 +44,6 @@
     <div class="ambient-glow"></div>
 
     <div id="auth-screen" class="auth-overlay">
-        <script>
-            // ИСПРАВЛЕНИЕ: Если Touch ID сохранен, не скрываем экран автоматически, чтобы запросить отпечаток
-            if (localStorage.getItem('tree_secure_token') === 'valid' && !localStorage.getItem('tree_biometric_id')) {
-                document.getElementById('auth-screen').style.display = 'none';
-            }
-        </script>
         <div class="auth-card glass-panel" style="position: relative; padding: 40px 30px; text-align: center;">
             <div class="header-logo-container" style="width: 80px; margin: 0 auto 20px auto;">
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
@@ -155,14 +159,6 @@
             <div class="glass-panel">
                 <div class="entity-list" id="orders-list"></div>
             </div>
-            <button class="fab-btn" onclick="openOrderForm()">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="12" y1="18" x2="12" y2="12"></line>
-                    <line x1="9" y1="15" x2="15" y2="15"></line>
-                </svg>
-            </button>
         </section>
 
         <section class="admin-screen" id="screen-finance">
@@ -187,14 +183,6 @@
             <div class="glass-panel">
                 <div class="entity-list" id="employees-list"></div>
             </div>
-            <button class="fab-btn" onclick="openEmployeeForm()">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <line x1="20" y1="8" x2="20" y2="14"></line>
-                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                </svg>
-            </button>
         </section>
 
         <section class="admin-screen" id="screen-partners">
@@ -202,14 +190,6 @@
             <div class="glass-panel">
                 <div class="entity-list" id="admin-partners-list"></div>
             </div>
-            <button class="fab-btn" onclick="openPartnerForm()">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                    <line x1="12" y1="11" x2="12" y2="17"></line>
-                    <line x1="9" y1="14" x2="15" y2="14"></line>
-                </svg>
-            </button>
         </section>
 
         <section class="admin-screen" id="screen-clients">
@@ -236,12 +216,6 @@
                 <div class="glass-panel">
                     <div class="entity-list" id="admin-services-list"></div>
                 </div>
-                <button class="fab-btn" onclick="openServiceForm()">
-                    <svg viewBox="0 0 24 24" width="30" height="30" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                </button>
             </div>
             <div id="mng-view-translations" style="display:none;">
                 <div class="glass-panel">
@@ -259,6 +233,20 @@
                 </div>
             </div>
         </section>
+
+        <button id="fab-orders" class="fab-btn" onclick="openOrderForm()" style="display: none;">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+        </button>
+        <button id="fab-employees" class="fab-btn" onclick="openEmployeeForm()" style="display: none;">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+        </button>
+        <button id="fab-partners" class="fab-btn" onclick="openPartnerForm()" style="display: none;">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><line x1="12" y1="11" x2="12" y2="17"></line><line x1="9" y1="14" x2="15" y2="14"></line></svg>
+        </button>
+        <button id="fab-services" class="fab-btn" onclick="openServiceForm()" style="display: none;">
+            <svg viewBox="0 0 24 24" width="30" height="30" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+
 
         <div id="bio-prompt-modal" class="modal-overlay">
             <div class="modal-content glass-panel" style="text-align: center; padding: 30px;">
