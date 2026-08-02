@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Աշխատակիցներ</title>
     
+    <!-- ЖЕСТКИЙ ЗАПРЕТ КЭШИРОВАНИЯ -->
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -30,7 +35,7 @@
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&family=Noto+Sans+Armenian:wght@500;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=7.7.0">
+    <link rel="stylesheet" href="style.css?v=8.0.0">
 </head>
 <body>
 
@@ -48,20 +53,31 @@
                 <img src="assets/tree.png" alt="Tree Logo" class="main-logo">
             </div>
 
-            <div class="lang-switcher" id="lang-switcher">
-                <button class="lang-btn-main" id="current-lang-btn" aria-label="Language" type="button">
-                    <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <!-- Кнопка Выхода -->
+                <button class="theme-btn" onclick="logoutEmployee()" aria-label="Logout" style="color: var(--danger);">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
                 </button>
-                <div class="lang-dropdown-content">
-                    <button type="button" class="lang-tab active" data-lang="AM" aria-label="Armenian">
+
+                <div class="lang-switcher" id="lang-switcher">
+                    <button class="lang-btn-main" id="current-lang-btn" aria-label="Language" type="button">
                         <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
                     </button>
-                    <button type="button" class="lang-tab" data-lang="RU" aria-label="Russian">
-                        <img src="assets/free-icon-russia-9994030.png" alt="RU" class="lang-flag">
-                    </button>
-                    <button type="button" class="lang-tab" data-lang="EN" aria-label="English">
-                        <img src="assets/united-kingdom.png" alt="EN" class="lang-flag">
-                    </button>
+                    <div class="lang-dropdown-content">
+                        <button type="button" class="lang-tab active" data-lang="AM" aria-label="Armenian">
+                            <img src="assets/free-icon-armenia-197516.png" alt="AM" class="lang-flag">
+                        </button>
+                        <button type="button" class="lang-tab" data-lang="RU" aria-label="Russian">
+                            <img src="assets/free-icon-russia-9994030.png" alt="RU" class="lang-flag">
+                        </button>
+                        <button type="button" class="lang-tab" data-lang="EN" aria-label="English">
+                            <img src="assets/united-kingdom.png" alt="EN" class="lang-flag">
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -78,9 +94,13 @@
             <div class="glass-panel" style="text-align: center; padding: 40px 20px;">
                 <h3 class="screen-title" style="margin-bottom: 10px;" data-i18n="login_title">Մուտք</h3>
                 <p style="font-size: 11px; font-weight: 600; color: var(--text-sec); margin-bottom: 30px;" data-i18n="login_desc">
-                    Մուտքագրեք 6-նիշանոց PIN կոդը
+                    Մուտքագրեք Ձեր գաղտնաբառը
                 </p>
-                <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="emp-pin-input" class="glass-input pin-input" placeholder="••••••" autocomplete="off">
+                <input type="password" id="pin-input" class="glass-input pin-input" placeholder="••••••" autocomplete="off" style="text-align: center; font-size: 20px; letter-spacing: 4px; padding: 18px; border-radius: 20px; width: 100%;">
+                
+                <button id="login-submit-btn" class="submit-btn success" style="margin-top: 15px; border-radius: 20px; font-size: 14px; height: 52px; width: 100%;">
+                    <span data-i18n="login_title">Մուտք</span>
+                </button>
             </div>
         </section>
 
@@ -370,6 +390,6 @@
         <button class="tab-item" onclick="switchEmpTab('screen-emp-profile', this)"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg><span data-i18n="tab_emp_profile">Իմ էջը</span></button>
     </nav>
 
-    <script src="employee.js?v=7.7.0"></script>
+    <script src="employee.js?v=8.0.0"></script>
 </body>
 </html>
