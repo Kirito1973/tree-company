@@ -214,3 +214,87 @@ select.glass-input option { background-color: var(--bg-base); color: var(--text)
 
 .spinner-icon { animation: rotate-spinner 1s linear infinite; width: 22px; height: 22px; transform-origin: center center; }
 @keyframes rotate-spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* =========================================================
+   АДАПТИВНОСТЬ ДЛЯ ПЛАНШЕТОВ И КОМПЬЮТЕРОВ (DESKTOP & TABLET)
+   ========================================================= */
+
+@media (min-width: 768px) {
+    /* Перестраиваем общую структуру */
+    body {
+        padding-bottom: 0;
+        padding-left: 90px; /* Место под боковое меню */
+        align-items: flex-start;
+    }
+
+    /* Расширяем главный контейнер */
+    .app-container {
+        max-width: 1200px;
+        padding: 30px 40px;
+        margin: 0 auto;
+    }
+
+    /* Превращаем нижнюю панель в боковой Sidebar */
+    .bottom-nav {
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 90px;
+        height: 100vh;
+        max-width: none;
+        flex-direction: column;
+        justify-content: center;
+        border-radius: 0 24px 24px 0;
+        border-top: none;
+        border-right: 1px solid var(--card-border);
+        transform: none; /* Убираем центрирование по X, которое нужно было мобилке */
+        padding: 40px 0;
+        gap: 15px;
+    }
+
+    /* Адаптируем кнопки навигации */
+    .tab-item {
+        flex: none;
+        height: 70px;
+        width: 100%;
+    }
+
+    .tab-item.active svg {
+        /* При клике иконка сдвигается вправо, а не вверх */
+        transform: translateX(4px) scale(1.15); 
+    }
+
+    /* Выравниваем переключатели дашборда по левому краю */
+    .dash-switcher {
+        justify-content: flex-start;
+    }
+
+    /* Превращаем вертикальные списки карточек в Grid-сетку */
+    .entity-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 16px;
+        align-items: start;
+    }
+
+    /* Делаем модальные окна шире на десктопе */
+    .modal-content {
+        max-width: 500px;
+    }
+
+    /* Расширяем карточку авторизации */
+    .auth-card {
+        max-width: 400px;
+    }
+}
+
+/* ДОПОЛНИТЕЛЬНО: ДЛЯ БОЛЬШИХ МОНИТОРОВ */
+@media (min-width: 1024px) {
+    .app-container {
+        padding: 40px 60px;
+    }
+    
+    .entity-list {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+}
