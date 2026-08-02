@@ -187,13 +187,31 @@ window.updateThemeIcon = function() {
     if (document.documentElement.getAttribute('data-theme') === 'dark') { icon.innerHTML = moonIcon; } else { icon.innerHTML = sunIcon; }
 };
 
+// ИСПРАВЛЕНИЕ: Запоминаем текущую вкладку в localStorage, а также управляем круглыми кнопками
 window.switchTab = function(tabId, btnElement) {
     document.querySelectorAll('.admin-screen').forEach(el => el.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    document.querySelectorAll('.bottom-nav .tab-item').forEach(btn => btn.classList.remove('active'));
-    if (btnElement) btnElement.classList.add('active');
+    const targetScreen = document.getElementById(tabId);
+    if(targetScreen) targetScreen.classList.add('active');
     
-    sessionStorage.setItem('current_admin_tab', tabId);
+    if (btnElement) {
+        document.querySelectorAll('.bottom-nav .tab-item').forEach(btn => btn.classList.remove('active'));
+        btnElement.classList.add('active');
+    }
+    
+    localStorage.setItem('current_admin_tab', tabId);
+    
+    // Скрываем все круглые кнопки (FAB), показываем только нужную для текущей вкладки
+    document.querySelectorAll('.fab-btn').forEach(btn => btn.style.display = 'none');
+    if (tabId === 'screen-orders') document.getElementById('fab-orders').style.display = 'flex';
+    if (tabId === 'screen-employees') document.getElementById('fab-employees').style.display = 'flex';
+    if (tabId === 'screen-partners') document.getElementById('fab-partners').style.display = 'flex';
+    
+    // Если вкладка управления, показываем кнопку в зависимости от под-меню
+    if (tabId === 'screen-management') {
+        const activeMngView = localStorage.getItem('current_mng_view') || 'services';
+        if(activeMngView === 'services') document.getElementById('fab-services').style.display = 'flex';
+    }
+
     if (navigator.vibrate) navigator.vibrate(10);
 };
 
@@ -215,14 +233,13 @@ window.logoutAdmin = function() {
     }
 };
 
-// ИСПРАВЛЕНИЕ: Прямой вызов регистрации при клике по кнопке в модалке
 window.registerBiometric = async function() {
     try {
         const publicKeyCredentialCreationOptions = {
             challenge: Uint8Array.from(Math.random().toString(36).substring(2), c => c.charCodeAt(0)),
             rp: { name: "TREE Admin" },
             user: { id: Uint8Array.from("admin", c => c.charCodeAt(0)), name: "admin", displayName: "Administrator" },
-            pubKeyCredParams: [{alg: -7, type: "public-key"}, {alg: -257, type: "public-key"}], // Добавлен RS256 для поддержки старых устройств
+            pubKeyCredParams: [{alg: -7, type: "public-key"}, {alg: -257, type: "public-key"}],
             authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required" },
             timeout: 60000,
             attestation: "direct"
@@ -237,7 +254,6 @@ window.registerBiometric = async function() {
     }
 };
 
-// ИСПРАВЛЕНИЕ: Правильное декодирование Base64url ключа для входа
 window.authenticateBiometric = async function(auto = false) {
     const bioId = localStorage.getItem('tree_biometric_id');
     const secureToken = localStorage.getItem('tree_secure_token'); 
@@ -248,7 +264,6 @@ window.authenticateBiometric = async function(auto = false) {
     }
     
     try {
-        // Добавляем выравнивание Base64 для безопасного декодирования
         let b64 = bioId.replace(/-/g, '+').replace(/_/g, '/');
         while (b64.length % 4) b64 += '=';
         const credentialIdArray = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
@@ -263,14 +278,14 @@ window.authenticateBiometric = async function(auto = false) {
         const assertion = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
         
         if (assertion) {
-            // Отпечаток совпал! Проверяем сессию на сервере
             const res = await fetch('/api/orders', { method: 'GET', credentials: 'include' });
             if(res.ok) { 
                 window.finishLogin(); 
             } else { 
                 alert("Сессия на сервере истекла. Войдите по паролю."); 
                 localStorage.removeItem('tree_secure_token');
-                document.getElementById('auth-screen').classList.remove('hidden');
+                const authScreen = document.getElementById('auth-screen');
+                if(authScreen) { authScreen.style.display = 'flex'; authScreen.classList.remove('hidden'); }
             }
         }
     } catch (err) { 
@@ -289,13 +304,18 @@ window.updateDashDots = function() {
     updateDot('dash-dot-orders', incOrders); updateDot('dash-dot-masters', incMasters); updateDot('dash-dot-partners', incPartners); updateDot('dash-dot-overview', incReviews);
 };
 
+// ИСПРАВЛЕНИЕ: Запоминаем под-меню дашборда
 window.switchDashboardView = function(viewName) {
     document.querySelectorAll('.dash-view-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector(`[data-dash-view="${viewName}"]`).classList.add('active');
+    const targetBtn = document.querySelector(`[data-dash-view="${viewName}"]`);
+    if(targetBtn) targetBtn.classList.add('active');
+    
     document.querySelectorAll('.dash-view-content').forEach(el => el.style.display = 'none');
     document.getElementById('dash-' + viewName).style.display = 'block';
 
+    localStorage.setItem('current_dash_view', viewName);
     window.updateDashDots();
+    
     if(viewName === 'overview') window.renderDashboardOverview();
     if(viewName === 'orders') window.renderDashboardOrders();
     if(viewName === 'masters') window.renderDashboardMasters();
@@ -428,7 +448,7 @@ window.rejectCoop = function() { if(!currentActiveCoopId) return; if(confirm(get
 window.fetchOrders = async function() {
     try {
         const res = await fetch('/api/orders', { credentials: 'include' });
-        if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').style.display = 'flex'; return; }
+        if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); const authScreen = document.getElementById('auth-screen'); if(authScreen){ authScreen.style.display = 'flex'; authScreen.classList.remove('hidden');} return; }
         if (res.ok) { 
             const data = await res.json(); 
             if (data && data.length > 0) window.ordersData = data; 
@@ -438,7 +458,7 @@ window.fetchOrders = async function() {
 };
 
 window.syncSingleOrder = async function(order, action = 'update') {
-    try { const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null }) }); if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); document.getElementById('auth-screen').style.display = 'flex'; } } catch (err) { console.error('Ошибка синхронизации заказа:', err); }
+    try { const res = await fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ action: action, order: order, orderId: order ? order.id : null }) }); if (res.status === 401) { sessionStorage.removeItem('tree_authenticated'); const authScreen = document.getElementById('auth-screen'); if(authScreen){ authScreen.style.display = 'flex'; authScreen.classList.remove('hidden');} } } catch (err) { console.error('Ошибка синхронизации заказа:', err); }
 };
 
 window.renderOrders = function() {
@@ -765,7 +785,30 @@ window.closePartnerForm = function() { document.getElementById('partner-form-mod
 window.savePartnerForm = function(e) { e.preventDefault(); const name = document.getElementById('form-partner-name').value; const logo = document.getElementById('form-partner-logo').value; if(window.currentEditingPartnerId) { const p = window.partnersData.find(x => x.id === window.currentEditingPartnerId); if(p) { p.name = name; p.logo = logo; } } else { window.partnersData.push({ id: 'p' + Math.random(), name, logo }); } window.renderAdminPartners(); window.closePartnerForm(); if(navigator.vibrate)navigator.vibrate(20); };
 window.deletePartner = function(id) { if(confirm('Delete?')) { window.partnersData = window.partnersData.filter(p => p.id !== id); window.renderAdminPartners(); } };
 
-window.switchManagementTab = function(tabName, btnElement) { document.querySelectorAll('#screen-management > div[id^="mng-view-"]').forEach(el => el.style.display = 'none'); document.getElementById('mng-view-' + tabName).style.display = 'block'; document.querySelectorAll('#screen-management .view-switch-btn').forEach(btn => btn.classList.remove('active')); btnElement.classList.add('active'); if(tabName === 'services' && window.renderAdminServices) window.renderAdminServices(); if (navigator.vibrate) navigator.vibrate(10); };
+// ИСПРАВЛЕНИЕ: Запоминаем вкладку в управлении (Management)
+window.switchManagementTab = function(tabName, btnElement) { 
+    document.querySelectorAll('#screen-management > div[id^="mng-view-"]').forEach(el => el.style.display = 'none'); 
+    document.getElementById('mng-view-' + tabName).style.display = 'block'; 
+    
+    if (btnElement) {
+        document.querySelectorAll('#screen-management .view-switch-btn').forEach(btn => btn.classList.remove('active')); 
+        btnElement.classList.add('active'); 
+    }
+    
+    localStorage.setItem('current_mng_view', tabName);
+    
+    // Показываем/Скрываем плавающую кнопку в зависимости от того, мы в услугах или нет
+    if(tabName === 'services') {
+        document.getElementById('fab-services').style.display = 'flex';
+        if(window.renderAdminServices) window.renderAdminServices(); 
+    } else {
+        const fabServ = document.getElementById('fab-services');
+        if(fabServ) fabServ.style.display = 'none';
+    }
+    
+    if (navigator.vibrate) navigator.vibrate(10); 
+};
+
 window.renderAdminServices = function() { const list = document.getElementById('admin-services-list'); if (!list) return; list.innerHTML = ''; window.servicesData.forEach(s => { list.innerHTML += `<div class="entity-card" style="flex-direction: row; align-items: center; justify-content: space-between;"><div style="display: flex; align-items: center; gap: 12px;"><div style="width: 40px; height: 40px; border-radius: 50%; background: var(--btn-shadow); color: var(--tree-light); display: flex; justify-content: center; align-items: center;">${s.icon}</div><div><div style="font-size: 13px; font-weight: 800; color: var(--text);">${escapeHTML(s.name)}</div><div style="font-size: 10px; color: var(--text-sec); font-weight: 700;">${s.price} ֏</div></div></div><button class="serv-del-btn" onclick="deleteService('${s.id}')"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></div>`; }); };
 window.fetchServices = async function() { try { const res = await fetch('/api/services', { credentials: 'include' }); if(res.ok) { const data = await res.json(); window.servicesData = data || []; window.renderAdminServices(); } } catch(err) { console.error('Error:', err); } };
 window.openServiceForm = function() { document.getElementById('form-cat-name').value = ''; document.getElementById('form-cat-price').value = ''; document.getElementById('form-cat-icon').value = ''; document.getElementById('service-form-modal').classList.add('active'); };
@@ -808,11 +851,17 @@ function initApp() {
     window.updateThemeIcon();
     window.applyAdminLanguage();
     
-    const savedTab = sessionStorage.getItem('current_admin_tab') || 'screen-dashboard';
-    const tabBtn = document.querySelector(`[onclick*="${savedTab}"]`);
-    if (tabBtn) {
-        window.switchTab(savedTab, tabBtn);
-    }
+    // ИСПРАВЛЕНИЕ: Восстанавливаем точное место, где был администратор
+    const savedTab = localStorage.getItem('current_admin_tab') || 'screen-dashboard';
+    const tabBtn = document.querySelector(`[onclick*="switchTab('${savedTab}'"]`);
+    window.switchTab(savedTab, tabBtn);
+
+    const savedDashView = localStorage.getItem('current_dash_view') || 'overview';
+    window.switchDashboardView(savedDashView);
+
+    const savedMngView = localStorage.getItem('current_mng_view') || 'services';
+    const mngBtn = document.querySelector(`[onclick*="switchManagementTab('${savedMngView}'"]`);
+    window.switchManagementTab(savedMngView, mngBtn);
     
     const authScreen = document.getElementById('auth-screen');
     const pinInput = document.getElementById('pin-input');
@@ -860,7 +909,6 @@ function initApp() {
                 
                 window.finishLogin();
                 
-                // ИСПРАВЛЕНИЕ: Если Touch ID доступен, но не сохранен — показываем модальное окно регистрации
                 if (window.PublicKeyCredential && !localStorage.getItem('tree_biometric_id')) {
                     setTimeout(() => { document.getElementById('bio-prompt-modal').classList.add('active'); }, 500);
                 }
@@ -878,7 +926,6 @@ function initApp() {
         }
     }
 
-    // ИСПРАВЛЕНИЕ: Логика защиты приложения (App Lock)
     async function checkSession() {
         try {
             const res = await fetch('/api/orders', { method: 'GET', credentials: 'include' });
@@ -892,18 +939,11 @@ function initApp() {
         }
     }
     
+    // ИСПРАВЛЕНИЕ: Мягкая проверка токена. Если токен есть, не блокируем экран принудительно (App Lock убран)
     const secureToken = localStorage.getItem('tree_secure_token');
-    const bioId = localStorage.getItem('tree_biometric_id');
 
     if (secureToken === 'valid') {
-        if (bioId) {
-            // Сессия жива, НО у пользователя включен Touch ID -> Блокируем экран и требуем палец!
-            if (authScreen) { authScreen.style.display = 'flex'; authScreen.classList.remove('hidden'); }
-            setTimeout(() => window.authenticateBiometric(true), 400); // Автоматически вызываем проверку отпечатка
-        } else {
-            // Touch ID нет, просто молча заходим
-            checkSession();
-        }
+        checkSession();
     } else {
         if (authScreen) { authScreen.style.display = 'flex'; authScreen.classList.remove('hidden'); }
     }
