@@ -25,7 +25,9 @@ export default async function handler(req, res) {
             if (emp) {
                 const token = 'sk_emp_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
                 await kv.set(`session_${token}`, `employee_${emp.id}`, { ex: 86400 }); // Сессия на 24 часа
-                res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict; Secure`);
+                
+                // ИЗМЕНЕНИЕ: Убран флаг Secure для корректной работы локально
+                res.setHeader('Set-Cookie', `auth_token=${token}; HttpOnly; Path=/; Max-Age=86400; SameSite=Strict`);
 
                 return res.status(200).json({
                     success: true,
